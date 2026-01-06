@@ -1,0 +1,1 @@
+This is the main Gradle project for this repository, and is responsible for containing (and publishing!) all the necessary SDK artifacts.

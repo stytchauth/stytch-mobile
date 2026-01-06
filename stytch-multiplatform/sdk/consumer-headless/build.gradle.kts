@@ -5,6 +5,8 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.android.kotlin.multiplatform.library)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.ktorfit)
 }
 
 kotlin {
@@ -12,8 +14,14 @@ kotlin {
 
     androidLibrary {
         namespace = "com.stytch.sdk.consumer"
-        compileSdk = libs.versions.android.compileSdk.get().toInt()
-        minSdk = libs.versions.android.minSdk.get().toInt()
+        compileSdk =
+            libs.versions.android.compileSdk
+                .get()
+                .toInt()
+        minSdk =
+            libs.versions.android.minSdk
+                .get()
+                .toInt()
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_11)
         }
@@ -47,6 +55,11 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             api(projects.sdk.shared)
+            implementation(libs.ktorfit.lib.light)
         }
     }
+}
+
+ktorfit {
+    compilerPluginVersion.set("2.3.3")
 }

@@ -8,3 +8,10 @@ Very basic POC, just to prove that this works the way I expect it to.
 
 **TODO**
 Validate the flow for react-native 😬
+
+
+**Publishing thoughts**
+This repo publishes:
+* Android/KMP artifacts directly to maven
+* RN package directly to NPM (a subdirectory-TBD will house any _pure_ TS files for things like hooks/context providers)
+* An XCFramework that gets copied to a separate stytch-ios repo (that repo would then ONLY include a Package.swift and the .xcframework file(s))
