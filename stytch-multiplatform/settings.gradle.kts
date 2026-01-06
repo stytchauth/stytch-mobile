@@ -34,5 +34,3 @@ plugins {
 
 include(":sdk:shared")
 include(":sdk:consumer-headless")
-include(":examples:consumer-android")
-include(":examples:consumer-ios")
