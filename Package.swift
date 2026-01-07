@@ -10,7 +10,7 @@ let package = Package(
     targets: [
         .binaryTarget(
             name: "stytch-consumer-headless",
-            path: "../stytch-multiplatform/sdk/consumer-headless/build/XCFrameworks/release/StytchConsumer.xcframework" // for testing, in a real publish flow this would point to a permanent location
+            path: "./artifacts/StytchConsumer.xcframework"
         )
     ]
 )

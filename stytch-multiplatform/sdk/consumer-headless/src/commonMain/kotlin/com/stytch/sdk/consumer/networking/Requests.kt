@@ -2,7 +2,9 @@ package com.stytch.sdk.consumer.networking
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlin.js.JsExport
 
+@JsExport
 public object Requests {
     public object OTP {
         public object SMS {
