@@ -9,6 +9,7 @@ import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.DefaultRequest
 import io.ktor.client.plugins.HttpTimeout
+import io.ktor.client.plugins.UserAgent
 import io.ktor.client.plugins.auth.Auth
 import io.ktor.client.plugins.auth.providers.BasicAuthCredentials
 import io.ktor.client.plugins.auth.providers.basic
@@ -47,6 +48,9 @@ public fun getStytchNetworkingClient(
             requestTimeoutMillis = THIRTY_SECONDS_IN_MS
             connectTimeoutMillis = TEN_SECONDS_IN_MS
             socketTimeoutMillis = TEN_SECONDS_IN_MS
+        }
+        install(UserAgent) {
+            agent = "${BuildConfig.SDK_NAME}/${BuildConfig.SDK_VERSION}"
         }
         install(DefaultRequest) {
             header(HttpHeaders.ContentType, ContentType.Application.Json)

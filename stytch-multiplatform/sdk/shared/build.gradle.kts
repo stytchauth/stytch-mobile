@@ -88,6 +88,6 @@ publishing {
 
 buildConfig {
     useKotlinOutput()
-    buildConfigField("SDK_NAME", "stytch-kmp")
+    buildConfigField("SDK_NAME", "stytch-multiplatform")
     buildConfigField("SDK_VERSION", version.toString())
 }
