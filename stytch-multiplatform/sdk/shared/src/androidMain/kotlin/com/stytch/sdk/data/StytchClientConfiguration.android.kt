@@ -8,15 +8,15 @@ import kotlin.uuid.Uuid
 
 public actual class StytchClientConfiguration(
     internal val context: Context,
-    publicToken: String,
-    public actual val endpointOptions: EndpointOptions = EndpointOptions(),
+    internal val publicToken: String,
+    internal val endpointOptions: EndpointOptions = EndpointOptions(),
 ) {
-    public actual val tokenInfo: PublicTokenInfo = getPublicTokenInfo(publicToken)
-    internal actual val deviceInfo: DeviceInfo = context.getDeviceInfo()
-
-    @OptIn(ExperimentalUuidApi::class)
-    internal actual val appSessionId: String = Uuid.generateV4().toString()
-    internal actual val timezone: String = TimeZone.currentSystemDefault().id
+    public actual fun toInternal(): StytchClientConfigurationInternal =
+        StytchClientConfigurationInternal(
+            publicToken = publicToken,
+            endpointOptions = endpointOptions,
+            deviceInfo = context.getDeviceInfo(),
+        )
 }
 
 private fun Context.getDeviceInfo(): DeviceInfo {

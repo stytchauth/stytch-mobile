@@ -1,12 +1,12 @@
 package com.stytch.sdk.consumer.networking
 
 import com.stytch.sdk.data.SDK_URL_PATH
-import com.stytch.sdk.data.StytchClientConfiguration
+import com.stytch.sdk.data.StytchClientConfigurationInternal
 import com.stytch.sdk.networking.getStytchNetworkingClient
 import de.jensklingenberg.ktorfit.Ktorfit
 
 internal class NetworkingClient(
-    configuration: StytchClientConfiguration,
+    configuration: StytchClientConfigurationInternal,
     getSessionToken: () -> String?,
 ) {
     internal val api: API

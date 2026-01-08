@@ -5,6 +5,7 @@ import com.stytch.sdk.consumer.networking.NetworkingClient
 import com.stytch.sdk.consumer.otp.OTP
 import com.stytch.sdk.consumer.otp.OTPImpl
 import com.stytch.sdk.data.StytchClientConfiguration
+import com.stytch.sdk.data.StytchClientConfigurationInternal
 import kotlin.concurrent.Volatile
 import kotlin.js.JsExport
 import kotlin.js.JsName
@@ -20,7 +21,7 @@ public interface StytchConsumer : StytchClient {
 public fun createStytchConsumer(configuration: StytchClientConfiguration): StytchConsumer = DefaultStytchConsumer.getInstance(configuration)
 
 private class DefaultStytchConsumer(
-    configuration: StytchClientConfiguration,
+    configuration: StytchClientConfigurationInternal,
 ) : StytchConsumer {
     private val networkingClient =
         NetworkingClient(configuration) {
@@ -35,6 +36,6 @@ private class DefaultStytchConsumer(
         private var instance: StytchConsumer? = null
 
         fun getInstance(configuration: StytchClientConfiguration): StytchConsumer =
-            instance ?: DefaultStytchConsumer(configuration).also { instance = it }
+            instance ?: DefaultStytchConsumer(configuration.toInternal()).also { instance = it }
     }
 }

@@ -1,14 +1,13 @@
 package com.stytch.sdk.data
 
 public actual class StytchClientConfiguration(
-    publicToken: String,
-    public actual val endpointOptions: EndpointOptions = EndpointOptions(),
+    internal val publicToken: String,
+    internal val endpointOptions: EndpointOptions = EndpointOptions(),
 ) {
-    public actual val tokenInfo: PublicTokenInfo = getPublicTokenInfo(publicToken)
-    internal actual val deviceInfo: DeviceInfo
-        get() = TODO("Not yet implemented")
-    internal actual val appSessionId: String
-        get() = TODO("Not yet implemented")
-    internal actual val timezone: String
-        get() = TODO("Not yet implemented")
+    public actual fun toInternal(): StytchClientConfigurationInternal =
+        StytchClientConfigurationInternal(
+            publicToken = publicToken,
+            endpointOptions = endpointOptions,
+            deviceInfo = DeviceInfo("", "", "", "", "", ""),
+        )
 }

@@ -1,6 +1,6 @@
 package com.stytch.sdk.networking
 
-import com.stytch.sdk.data.StytchClientConfiguration
+import com.stytch.sdk.data.StytchClientConfigurationInternal
 import com.stytch.sdk.shared.BuildConfig
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
@@ -30,7 +30,7 @@ private const val TEN_SECONDS_IN_MS = 10_000L
 private const val X_SDK_CLIENT_HEADER = "X-SDK-CLIENT"
 
 public fun getStytchNetworkingClient(
-    configuration: StytchClientConfiguration,
+    configuration: StytchClientConfigurationInternal,
     getSessionToken: () -> String?,
 ): HttpClient =
     HttpClient {
@@ -82,7 +82,7 @@ public fun getStytchNetworkingClient(
     }
 
 @OptIn(ExperimentalUuidApi::class)
-private fun StytchClientConfiguration.asSdkHeader(context: HttpMessageBuilder): HttpMessageBuilder {
+private fun StytchClientConfigurationInternal.asSdkHeader(context: HttpMessageBuilder): HttpMessageBuilder {
     val eventId: String = Uuid.generateV4().toString()
     // I've NEVER understood what this was, but maintaining parity...
     val persistentId: String = Uuid.generateV4().toString()

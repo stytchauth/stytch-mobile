@@ -11,27 +11,24 @@ import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
 public actual class StytchClientConfiguration(
-    publicToken: String,
-    public actual val endpointOptions: EndpointOptions = EndpointOptions(),
+    internal val publicToken: String,
+    internal val endpointOptions: EndpointOptions = EndpointOptions(),
 ) {
-    public constructor(publicToken: String) : this(publicToken, EndpointOptions())
-
-    public actual val tokenInfo: PublicTokenInfo = getPublicTokenInfo(publicToken)
-
     @OptIn(ExperimentalForeignApi::class)
-    internal actual val deviceInfo: DeviceInfo =
-        DeviceInfo(
-            applicationPackageName = NSBundle.mainBundle.bundleIdentifier ?: "unknown_bundle_id",
-            applicationVersion = NSBundle.mainBundle.getVersion(),
-            osName = UIDevice.currentDevice.systemName,
-            osVersion = NSProcessInfo.processInfo.operatingSystemVersionString,
-            deviceName = UIDevice.currentDevice.model.lowercase(),
-            screenSize = UIScreen.mainScreen.bounds.useContents { "(${size.width},${size.height})" },
+    public actual fun toInternal(): StytchClientConfigurationInternal =
+        StytchClientConfigurationInternal(
+            publicToken = publicToken,
+            endpointOptions = endpointOptions,
+            deviceInfo =
+                DeviceInfo(
+                    applicationPackageName = NSBundle.mainBundle.bundleIdentifier ?: "unknown_bundle_id",
+                    applicationVersion = NSBundle.mainBundle.getVersion(),
+                    osName = UIDevice.currentDevice.systemName,
+                    osVersion = NSProcessInfo.processInfo.operatingSystemVersionString,
+                    deviceName = UIDevice.currentDevice.model.lowercase(),
+                    screenSize = UIScreen.mainScreen.bounds.useContents { "(${size.width},${size.height})" },
+                ),
         )
-
-    @OptIn(ExperimentalUuidApi::class)
-    internal actual val appSessionId: String = Uuid.generateV4().toString()
-    internal actual val timezone: String = TimeZone.currentSystemDefault().id
 }
 
 private fun NSBundle.getVersion(): String =
