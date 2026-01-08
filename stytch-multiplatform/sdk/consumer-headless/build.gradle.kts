@@ -69,6 +69,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             api(projects.sdk.shared)
+            implementation(libs.kotlinx.coroutines.core)
             implementation(libs.kotlinx.datetime)
             implementation(libs.ktorfit.lib.light)
             implementation(libs.kotlinx.serialization.json)

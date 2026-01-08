@@ -41,9 +41,19 @@ kotlin {
         }
     }
 
-    iosX64()
-    iosArm64()
-    iosSimulatorArm64()
+    listOf(
+        iosX64(),
+        iosArm64(),
+        iosSimulatorArm64(),
+    ).forEach { target ->
+        target.compilations["main"].cinterops {
+            val StytchEncryptionManagerSwift by creating {
+                definitionFile.set(project.layout.projectDirectory.file("src/iosMain/interop/StytchEncryptionManagerSwift.def"))
+                headers(project.layout.projectDirectory.file("src/iosMain/interop/StytchEncryptionManagerSwift.h"))
+                packageName("com.stytch.sdk.encryption")
+            }
+        }
+    }
 
     js {
         browser()

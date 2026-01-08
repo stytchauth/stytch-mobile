@@ -6,6 +6,11 @@ import com.stytch.sdk.consumer.otp.Otp
 import com.stytch.sdk.consumer.otp.OtpImpl
 import com.stytch.sdk.data.StytchClientConfiguration
 import com.stytch.sdk.data.StytchClientConfigurationInternal
+import com.stytch.sdk.encryption.StytchEncryptionManager
+import io.ktor.utils.io.core.toByteArray
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlin.concurrent.Volatile
 import kotlin.js.JsExport
 import kotlin.js.JsName
@@ -29,7 +34,25 @@ private class DefaultStytchConsumer(
             null
         }
 
+    private val encryptionManager = StytchEncryptionManager()
+
     override val otp: Otp = OtpImpl(networkingClient)
+
+    init {
+        CoroutineScope(Dispatchers.Default).launch {
+            val plaintext = "Jordan's Cool Plaintext String"
+            val encrypted = encryptionManager.encrypt(plaintext.toByteArray())
+            val decrypted = encryptionManager.decrypt(encrypted).decodeToString()
+            println(
+                """
+                JORDAN ENCRYPTION TEST:
+                PLAINTEXT = $plaintext
+                ENCRYPTED = $encrypted
+                DECRYPTED = $decrypted
+                """.trimIndent(),
+            )
+        }
+    }
 
     companion object {
         @Volatile
