@@ -9,8 +9,10 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
 import com.stytch.sdk.consumer.StytchConsumer
 import com.stytch.sdk.consumer.createStytchConsumer
-import com.stytch.sdk.consumer.networking.Requests
-import com.stytch.sdk.consumer.networking.Responses
+import com.stytch.sdk.consumer.networking.OtpAuthenticateRequest
+import com.stytch.sdk.consumer.networking.OtpAuthenticateResponse
+import com.stytch.sdk.consumer.networking.OtpSmsLoginOrCreateRequest
+import com.stytch.sdk.consumer.networking.OtpSmsLoginOrCreateResponse
 import com.stytch.sdk.data.StytchClientConfiguration
 import com.stytch.sdk.data.StytchResult
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,7 +28,7 @@ class MainViewModel(
 
     fun sendSms(phoneNumber: String) {
         val request =
-            Requests.OTP.SMS.LoginOrCreate(
+            OtpSmsLoginOrCreateRequest(
                 phoneNumber = phoneNumber,
                 expirationMinutes = 5,
             )
@@ -41,7 +43,7 @@ class MainViewModel(
                     )
                 }
 
-                is StytchResult.Success<Responses.OTP.SMS.LoginOrCreateResponse> -> {
+                is StytchResult.Success<OtpSmsLoginOrCreateResponse> -> {
                     _state.emit(
                         state.value.copy(
                             methodId = response.data.methodId,
@@ -57,7 +59,7 @@ class MainViewModel(
     fun authSms(token: String) {
         val methodId = _state.value.methodId ?: return
         val request =
-            Requests.OTP.Authenticate(
+            OtpAuthenticateRequest(
                 token = token,
                 methodId = methodId,
                 sessionDurationMinutes = 30,
@@ -72,7 +74,7 @@ class MainViewModel(
                     )
                 }
 
-                is StytchResult.Success<Responses.OTP.AuthenticateResponse> -> {
+                is StytchResult.Success<OtpAuthenticateResponse> -> {
                     _state.emit(
                         state.value.copy(
                             step = Step.AUTHENTICATED,

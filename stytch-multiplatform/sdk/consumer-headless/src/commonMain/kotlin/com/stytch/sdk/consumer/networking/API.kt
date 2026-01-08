@@ -8,12 +8,12 @@ internal interface API {
     // region OTP
     @POST("otps/sms/login_or_create")
     suspend fun otpSmsLoginOrCreate(
-        @Body request: Requests.OTP.SMS.LoginOrCreate,
-    ): StytchDataResponse<Responses.OTP.SMS.LoginOrCreateResponse>
+        @Body request: OtpSmsLoginOrCreateRequest,
+    ): StytchDataResponse<OtpSmsLoginOrCreateResponse>
 
     @POST("otps/authenticate")
     suspend fun otpAuthenticate(
-        @Body request: Requests.OTP.Authenticate,
-    ): StytchDataResponse<Responses.OTP.AuthenticateResponse>
+        @Body request: OtpAuthenticateRequest,
+    ): StytchDataResponse<OtpAuthenticateResponse>
     // endregion OTP
 }

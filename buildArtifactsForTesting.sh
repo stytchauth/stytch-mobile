@@ -21,7 +21,6 @@ echo "Building JS artifact..."
 echo "Copying build artifacts to folder..."
 cd ..
 cp -r stytch-multiplatform/sdk/consumer-headless/build/XCFrameworks/release/StytchConsumerSDK.xcframework artifacts
-cp -r stytch-multiplatform/sdk/shared/build/XCFrameworks/release/StytchSDK.xcframework artifacts
 cp -r stytch-multiplatform/sdk/consumer-headless/build/dist/js/productionLibrary artifacts
 
 echo "Done."

@@ -39,7 +39,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.stytch.mobile.demo.ui.theme.StytchMobileAndroidDemoTheme
-import com.stytch.sdk.consumer.networking.Responses
+import com.stytch.sdk.consumer.networking.OtpAuthenticateResponse
+import com.stytch.sdk.consumer.networking.OtpSmsLoginOrCreateResponse
 import com.stytch.sdk.data.StytchResult
 
 class MainActivity : ComponentActivity() {
@@ -135,7 +136,7 @@ private fun <T> StytchResult<T>.toFriendlyDisplay(): String =
     when (this) {
         is StytchResult.Success<T> -> {
             when (val content = data) {
-                is Responses.OTP.SMS.LoginOrCreateResponse -> {
+                is OtpSmsLoginOrCreateResponse -> {
                     """
                     Code Sent!
 
@@ -150,7 +151,7 @@ private fun <T> StytchResult<T>.toFriendlyDisplay(): String =
                     """.trimIndent()
                 }
 
-                is Responses.OTP.AuthenticateResponse -> {
+                is OtpAuthenticateResponse -> {
                     """
                     Logged In!
 
