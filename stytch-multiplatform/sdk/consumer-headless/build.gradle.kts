@@ -10,6 +10,7 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.ktorfit)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.skie)
     id("maven-publish")
 }
 
@@ -44,14 +45,14 @@ kotlin {
         }
     }
 
-    val xcFramework = XCFramework("StytchConsumer")
+    val xcFramework = XCFramework("StytchConsumerSDK")
     listOf(
         iosX64(),
         iosArm64(),
         iosSimulatorArm64(),
     ).forEach {
         it.binaries.framework {
-            baseName = "StytchConsumer"
+            baseName = "StytchConsumerSDK"
             xcFramework.add(this)
         }
     }
@@ -72,6 +73,7 @@ kotlin {
             implementation(libs.kotlinx.datetime)
             implementation(libs.ktorfit.lib.light)
             implementation(libs.kotlinx.serialization.json)
+            implementation(libs.skie.configuration.annotations)
         }
     }
 }
@@ -91,4 +93,8 @@ publishing {
 
 tasks.named("sourcesJar").configure {
     setDependsOn(listOf("kspCommonMainKotlinMetadata"))
+}
+
+skie {
+    isEnabled = true
 }

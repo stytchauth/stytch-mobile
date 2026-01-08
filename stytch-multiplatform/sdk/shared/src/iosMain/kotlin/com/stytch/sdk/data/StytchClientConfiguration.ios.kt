@@ -4,9 +4,18 @@ public actual class StytchClientConfiguration(
     public actual val publicToken: String,
     public actual val endpointOptions: EndpointOptions = EndpointOptions(),
 ) {
+    public constructor(publicToken: String) : this(publicToken, EndpointOptions())
+
     public actual val isTestToken: Boolean
-    internal actual val deviceInfo: DeviceInfo
-        get() = TODO("Not yet implemented")
+    internal actual val deviceInfo: DeviceInfo =
+        DeviceInfo(
+            applicationPackageName = "TODO()",
+            applicationVersion = "TODO()",
+            osName = "TODO()",
+            osVersion = "TODO()",
+            deviceName = "TODO()",
+            screenSize = "TODO()",
+        )
 
     init {
         val matches = PUBLIC_TOKEN_REGEX.find(publicToken)

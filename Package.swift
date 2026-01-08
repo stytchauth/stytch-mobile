@@ -5,12 +5,12 @@ import PackageDescription
 let package = Package(
     name: "Stytch",
     products: [
-        .library(name: "StytchConsumer", targets: ["stytch-consumer-headless"]),
+        .library(name: "StytchConsumerSDK", targets: ["StytchConsumerTarget"]),
     ],
     targets: [
         .binaryTarget(
-            name: "stytch-consumer-headless",
-            path: "./artifacts/StytchConsumer.xcframework"
-        )
+            name: "StytchConsumerTarget",
+            path: "./artifacts/StytchConsumerSDK.xcframework",
+        ),
     ]
 )

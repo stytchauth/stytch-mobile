@@ -6,6 +6,8 @@ plugins {
     alias(libs.plugins.kotlin.serialization) apply false
     alias(libs.plugins.android.lint) apply false
     alias(libs.plugins.buildconfig) apply false
+    alias(libs.plugins.skie) apply false
 }
+
 group = "com.stytch.sdk"
 version = "0.0.1"

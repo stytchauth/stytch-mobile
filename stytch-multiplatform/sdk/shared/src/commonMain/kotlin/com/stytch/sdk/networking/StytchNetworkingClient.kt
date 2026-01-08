@@ -6,7 +6,6 @@ import com.stytch.sdk.shared.BuildConfig
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
 import io.ktor.client.HttpClient
-import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.DefaultRequest
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.UserAgent
@@ -17,7 +16,6 @@ import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
-import io.ktor.client.plugins.logging.SIMPLE
 import io.ktor.client.request.header
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
@@ -34,7 +32,7 @@ public fun getStytchNetworkingClient(
     configuration: StytchClientConfiguration,
     getSessionToken: () -> String?,
 ): HttpClient =
-    HttpClient(CIO) {
+    HttpClient {
         expectSuccess = true
         install(ContentNegotiation) {
             json(
