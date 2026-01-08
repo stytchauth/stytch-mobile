@@ -14,6 +14,9 @@ public actual class StytchClientConfiguration(
     internal val publicToken: String,
     internal val endpointOptions: EndpointOptions = EndpointOptions(),
 ) {
+    // Manual secondary constructor for iOS DX improvement
+    public constructor(publicToken: String) : this(publicToken, EndpointOptions())
+
     @OptIn(ExperimentalForeignApi::class)
     public actual fun toInternal(): StytchClientConfigurationInternal =
         StytchClientConfigurationInternal(
