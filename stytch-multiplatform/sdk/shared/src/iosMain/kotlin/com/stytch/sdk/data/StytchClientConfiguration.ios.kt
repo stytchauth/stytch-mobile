@@ -2,18 +2,21 @@ package com.stytch.sdk.data
 
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.useContents
+import kotlinx.datetime.TimeZone
 import platform.Foundation.NSBundle
 import platform.Foundation.NSProcessInfo
 import platform.UIKit.UIDevice
 import platform.UIKit.UIScreen
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
 public actual class StytchClientConfiguration(
-    public actual val publicToken: String,
+    publicToken: String,
     public actual val endpointOptions: EndpointOptions = EndpointOptions(),
 ) {
     public constructor(publicToken: String) : this(publicToken, EndpointOptions())
 
-    public actual val isTestToken: Boolean
+    public actual val tokenInfo: PublicTokenInfo = getPublicTokenInfo(publicToken)
 
     @OptIn(ExperimentalForeignApi::class)
     internal actual val deviceInfo: DeviceInfo =
@@ -26,11 +29,9 @@ public actual class StytchClientConfiguration(
             screenSize = UIScreen.mainScreen.bounds.useContents { "(${size.width},${size.height})" },
         )
 
-    init {
-        val matches = PUBLIC_TOKEN_REGEX.find(publicToken)
-        require(matches != null) { "Invalid public token provided: $publicToken" }
-        isTestToken = matches.groupValues[1] == "test"
-    }
+    @OptIn(ExperimentalUuidApi::class)
+    internal actual val appSessionId: String = Uuid.generateV4().toString()
+    internal actual val timezone: String = TimeZone.currentSystemDefault().id
 }
 
 private fun NSBundle.getVersion(): String =

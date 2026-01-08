@@ -2,20 +2,21 @@ package com.stytch.sdk.data
 
 import android.content.Context
 import android.os.Build
+import kotlinx.datetime.TimeZone
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
 public actual class StytchClientConfiguration(
     internal val context: Context,
-    public actual val publicToken: String,
+    publicToken: String,
     public actual val endpointOptions: EndpointOptions = EndpointOptions(),
 ) {
-    public actual val isTestToken: Boolean
+    public actual val tokenInfo: PublicTokenInfo = getPublicTokenInfo(publicToken)
     internal actual val deviceInfo: DeviceInfo = context.getDeviceInfo()
 
-    init {
-        val matches = PUBLIC_TOKEN_REGEX.find(publicToken)
-        require(matches != null) { "Invalid public token provided: $publicToken" }
-        isTestToken = matches.groupValues[1] == "test"
-    }
+    @OptIn(ExperimentalUuidApi::class)
+    internal actual val appSessionId: String = Uuid.generateV4().toString()
+    internal actual val timezone: String = TimeZone.currentSystemDefault().id
 }
 
 private fun Context.getDeviceInfo(): DeviceInfo {

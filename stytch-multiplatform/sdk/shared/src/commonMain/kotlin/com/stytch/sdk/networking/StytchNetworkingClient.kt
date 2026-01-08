@@ -1,6 +1,5 @@
 package com.stytch.sdk.networking
 
-import com.stytch.sdk.data.DeviceInfo
 import com.stytch.sdk.data.StytchClientConfiguration
 import com.stytch.sdk.shared.BuildConfig
 import io.github.aakira.napier.DebugAntilog
@@ -23,6 +22,8 @@ import io.ktor.http.HttpMessageBuilder
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.util.encodeBase64
 import kotlinx.serialization.json.Json
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
 private const val THIRTY_SECONDS_IN_MS = 30_000L
 private const val TEN_SECONDS_IN_MS = 10_000L
@@ -52,7 +53,7 @@ public fun getStytchNetworkingClient(
         }
         install(DefaultRequest) {
             header(HttpHeaders.ContentType, ContentType.Application.Json)
-            configuration.deviceInfo.asHeader(this)
+            configuration.asSdkHeader(this)
         }
         install(Auth) {
             basic {
@@ -61,7 +62,7 @@ public fun getStytchNetworkingClient(
                      * basic auth, where the username is the project's public token and the password is either
                      * the session token (for authenticated users) or the public token (for unauthenticated users)
                      */
-                    val username = configuration.publicToken
+                    val username = configuration.tokenInfo.publicToken
                     val password = getSessionToken() ?: username
                     BasicAuthCredentials(username, password)
                 }
@@ -80,28 +81,36 @@ public fun getStytchNetworkingClient(
         }.also { Napier.base(DebugAntilog()) }
     }
 
-private fun DeviceInfo.asHeader(context: HttpMessageBuilder): HttpMessageBuilder {
+@OptIn(ExperimentalUuidApi::class)
+private fun StytchClientConfiguration.asSdkHeader(context: HttpMessageBuilder): HttpMessageBuilder {
+    val eventId: String = Uuid.generateV4().toString()
+    // I've NEVER understood what this was, but maintaining parity...
+    val persistentId: String = Uuid.generateV4().toString()
     val x =
         context.apply {
             header(
                 X_SDK_CLIENT_HEADER,
                 """
                 {
+                  "app_session_id": "$appSessionId",
+                  "timezone": "$timezone",
+                  "event_id": "event-id-$eventId",
+                  "persistent_id": "persistent-id-$persistentId",
                   "sdk": {
                        "identifier": "${BuildConfig.SDK_NAME}",
                        "version": "${BuildConfig.SDK_VERSION}"
                   },
                   "app": {
-                       "identifier": "$applicationPackageName",
-                       "version": "$applicationVersion"
+                       "identifier": "${deviceInfo.applicationPackageName}",
+                       "version": "${deviceInfo.applicationVersion}"
                   },
                   "os":  {
-                       "identifier": "$osName",
-                       "version": "$osVersion"
+                       "identifier": "${deviceInfo.osName}",
+                       "version": "${deviceInfo.osVersion}"
                   },
                   "device":  {
-                       "model": "$deviceName",
-                       "screen_size": "$screenSize"
+                       "model": "${deviceInfo.deviceName}",
+                       "screen_size": "${deviceInfo.screenSize}"
                   }
                 }
                 """.trimIndent().encodeBase64(),

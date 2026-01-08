@@ -13,7 +13,7 @@ internal class NetworkingClient(
 
     init {
         val endpointOptions = configuration.endpointOptions
-        val domain = if (configuration.isTestToken) endpointOptions.testDomain else endpointOptions.liveDomain
+        val domain = if (configuration.tokenInfo.isTestToken) endpointOptions.testDomain else endpointOptions.liveDomain
         val ktorfit =
             Ktorfit
                 .Builder()
