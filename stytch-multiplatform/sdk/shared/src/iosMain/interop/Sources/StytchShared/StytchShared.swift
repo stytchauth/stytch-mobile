@@ -6,11 +6,17 @@ public actor StytchEncryptionManagerSwift: NSObject {
     @objc public static let shared = StytchEncryptionManagerSwift()
 
     @objc public func getEncryptionKey(name: String) async throws -> Data {
-        guard let existingKeyData = getKeyFromKeychain(name: name) else {
-            return SymmetricKey(size: .bits256).withUnsafeBytes {
+        let existingKeyData = getKeyDataFromKeychain(name: name)
+        print("JORDAN >> whaddya got? \(String(describing: existingKeyData))")
+        guard let existingKeyData = existingKeyData else {
+            print("JORDAN > Creating new key")
+            let newKeyData = SymmetricKey(size: .bits256).withUnsafeBytes {
                 Data(Array($0))
             }
+            persistNewKeyDataToKeychain(name: name, newKeyData: newKeyData)
+            return newKeyData
         }
+        print("JORDAN > Reusing old key")
         return existingKeyData
     }
 
@@ -26,25 +32,51 @@ public actor StytchEncryptionManagerSwift: NSObject {
         return try AES.GCM.open(sealedBox, using: encryptionKey)
     }
 
-    private func getKeyFromKeychain(name: String) -> Data? {
-        var query: [CFString: Any] {
+    private func getKeyDataFromKeychain(name: String) -> Data? {
+        let query = baseKeyQuery(name: name).merging(
             [
-                kSecClass: kSecClassGenericPassword,
-                kSecAttrService: name,
-                kSecUseDataProtectionKeychain: true,
                 kSecReturnData: true,
                 kSecReturnAttributes: true,
                 kSecMatchLimit: kSecMatchLimitAll,
                 kSecAttrSynchronizable: kSecAttrSynchronizableAny,
                 kSecUseAuthenticationUI: kSecUseAuthenticationUISkip,
             ]
-        }
-        var result: CFTypeRef?
+        ) { $1 } as CFDictionary
+        var ref: CFTypeRef?
         let status = SecItemCopyMatching(query as CFDictionary, &result)
         return if status == errSecSuccess, let result = result as? Data {
             result
         } else {
             nil
         }
+    }
+
+    private func persistNewKeyDataToKeychain(name: String, newKeyData: Data) {
+        let query = baseKeyQuery(name: name).merging(
+            [
+                kSecValueData: newKeyData,
+                kSecAttrAccessible: kSecAttrAccessibleAfterFirstUnlock,
+            ]
+        ) { $1 } as CFDictionary
+        print("SAVE QUERY: \(query)")
+        let status = SecItemAdd(query, nil)
+        print("JORDAN > Result of save: \(status)")
+        if status != errSecSuccess {
+            print("JORDAN >>>> SAVE FAILED. DELETE AND TRY AGAIN?")
+            let deleteStatus = SecItemDelete(query)
+            print("JORDAN > Result of delete: \(deleteStatus)")
+        }
+    }
+
+    private func baseKeyQuery(name: String) -> [CFString: Any] {
+        var query: [CFString: Any] {
+            [
+                kSecAttrAccount: name,
+                kSecClass: kSecClassGenericPassword,
+                kSecAttrService: name,
+                kSecUseDataProtectionKeychain: true,
+            ]
+        }
+        return query
     }
 }

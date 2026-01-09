@@ -1,4 +1,8 @@
 cd stytch-multiplatform/sdk/shared/src/iosMain/interop
+
+# clear out any old stuff
+rm -rf iOS.xcarchive libStytch* Simulator.xcarchive StytchShared
+
 # create header file (for cinterop generation)
 sudo swiftc -emit-objc-header Sources/StytchShared/StytchShared.swift
 

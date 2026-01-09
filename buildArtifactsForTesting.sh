@@ -5,6 +5,8 @@ mkdir -p artifacts
 
 # get into work directory
 cd stytch-multiplatform
+./gradlew clean
+
 # Publish Android Artifact
 echo "Building android artifact..."
 ./gradlew :sdk:consumer-headless:publishAllPublicationsToTESTINGRepository :sdk:shared:publishAllPublicationsToTESTINGRepository

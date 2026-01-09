@@ -10,3 +10,4 @@ xcuserdata
 *.xcarchive
 *.a
 .build/
+stytch-multiplatform/sdk/shared/src/iosMain/interop/StytchShared
