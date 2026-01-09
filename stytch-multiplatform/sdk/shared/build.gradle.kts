@@ -1,5 +1,6 @@
 import com.android.build.api.dsl.androidLibrary
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -19,8 +20,6 @@ kotlin {
     compilerOptions {
         optIn.add("kotlin.js.ExperimentalJsExport")
         freeCompilerArgs.addAll("-Xenable-suspend-function-exporting", "-Xexpect-actual-classes")
-        // languageVersion.set(KotlinVersion.KOTLIN_2_0)
-        // apiVersion.set(KotlinVersion.KOTLIN_2_0)
     }
 
     androidLibrary {
@@ -41,16 +40,16 @@ kotlin {
         }
     }
 
+    val interopDirectory = project.layout.projectDirectory.dir("src/iosMain/interop/")
     listOf(
-        iosX64(),
         iosArm64(),
         iosSimulatorArm64(),
     ).forEach { target ->
         target.compilations["main"].cinterops {
-            val StytchEncryptionManagerSwift by creating {
-                definitionFile.set(project.layout.projectDirectory.file("src/iosMain/interop/StytchEncryptionManagerSwift.def"))
-                headers(project.layout.projectDirectory.file("src/iosMain/interop/StytchEncryptionManagerSwift.h"))
-                packageName("com.stytch.sdk.encryption")
+            val stytchEncryptionManagerSwift by creating {
+                definitionFile.set(interopDirectory.file("StytchShared.def"))
+                headers(interopDirectory.file("StytchShared.h"))
+                packageName("com.stytch.sdk")
             }
         }
     }

@@ -1,5 +1,6 @@
 package com.stytch.sdk.encryption
 
+import com.stytch.sdk.StytchEncryptionManagerSwift
 import kotlinx.cinterop.BetaInteropApi
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.addressOf
