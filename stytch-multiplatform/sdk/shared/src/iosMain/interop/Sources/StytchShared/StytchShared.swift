@@ -7,16 +7,13 @@ public actor StytchEncryptionManagerSwift: NSObject {
 
     @objc public func getEncryptionKey(name: String) async throws -> Data {
         let existingKeyData = getKeyDataFromKeychain(name: name)
-        print("JORDAN >> whaddya got? \(String(describing: existingKeyData))")
         guard let existingKeyData = existingKeyData else {
-            print("JORDAN > Creating new key")
             let newKeyData = SymmetricKey(size: .bits256).withUnsafeBytes {
                 Data(Array($0))
             }
             persistNewKeyDataToKeychain(name: name, newKeyData: newKeyData)
             return newKeyData
         }
-        print("JORDAN > Reusing old key")
         return existingKeyData
     }
 
@@ -37,15 +34,15 @@ public actor StytchEncryptionManagerSwift: NSObject {
             [
                 kSecReturnData: true,
                 kSecReturnAttributes: true,
-                kSecMatchLimit: kSecMatchLimitAll,
+                kSecMatchLimit: kSecMatchLimitOne,
                 kSecAttrSynchronizable: kSecAttrSynchronizableAny,
                 kSecUseAuthenticationUI: kSecUseAuthenticationUISkip,
             ]
         ) { $1 } as CFDictionary
         var ref: CFTypeRef?
-        let status = SecItemCopyMatching(query as CFDictionary, &result)
-        return if status == errSecSuccess, let result = result as? Data {
-            result
+        let status = SecItemCopyMatching(query as CFDictionary, &ref)
+        return if status == errSecSuccess, let result = ref, CFGetTypeID(result) == CFDictionaryGetTypeID() {
+            result[kSecValueData] as? Data
         } else {
             nil
         }
@@ -58,14 +55,8 @@ public actor StytchEncryptionManagerSwift: NSObject {
                 kSecAttrAccessible: kSecAttrAccessibleAfterFirstUnlock,
             ]
         ) { $1 } as CFDictionary
-        print("SAVE QUERY: \(query)")
         let status = SecItemAdd(query, nil)
-        print("JORDAN > Result of save: \(status)")
-        if status != errSecSuccess {
-            print("JORDAN >>>> SAVE FAILED. DELETE AND TRY AGAIN?")
-            let deleteStatus = SecItemDelete(query)
-            print("JORDAN > Result of delete: \(deleteStatus)")
-        }
+        // TODO: validate status, handle failures
     }
 
     private func baseKeyQuery(name: String) -> [CFString: Any] {
