@@ -12,6 +12,7 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 import platform.Foundation.NSData
 import platform.Foundation.create
 import platform.posix.memcpy
+import kotlin.coroutines.resumeWithException
 
 @OptIn(ExperimentalForeignApi::class)
 public actual class StytchEncryptionManager {
@@ -31,11 +32,9 @@ public actual class StytchEncryptionManager {
                 return@suspendCancellableCoroutine
             }
             swiftEncryptionManager.getEncryptionKeyWithName(STYTCH_MASTER_KEY_ALIAS) { data, error ->
-                if (error != null && data != null) {
+                data?.let {
                     continuation.resume(data) { _, _, _ -> }
-                } else {
-                    throw RuntimeException(error?.localizedDescription ?: "error getting encryption key")
-                }
+                } ?: continuation.resumeWithException(RuntimeException("Error getting encryption key data"))
             }
         }.also {
             encryptionKeyData = it
@@ -44,12 +43,9 @@ public actual class StytchEncryptionManager {
     public actual suspend fun encrypt(data: ByteArray): ByteArray =
         suspendCancellableCoroutine { continuation ->
             swiftEncryptionManager.encryptDataWithPlainText(plainText = data.toNSData(), withKeyData = encryptionKeyData) { nsData, error ->
-                if (error != null && nsData != null) {
-                    println("JORDAN >>> ENCRYPTED = ${nsData.toByteArray().decodeToString()}")
+                nsData?.let {
                     continuation.resume(nsData.toByteArray()) { _, _, _ -> }
-                } else {
-                    throw RuntimeException(error?.localizedDescription ?: "error encrypting data")
-                }
+                } ?: continuation.resumeWithException(RuntimeException("Error during encryption"))
             }
         }
 
@@ -59,12 +55,9 @@ public actual class StytchEncryptionManager {
                 encryptedData = data.toNSData(),
                 withKeyData = encryptionKeyData,
             ) { nsData, error ->
-                if (error != null && nsData != null) {
-                    println("JORDAN >>> DECRYPTED = ${nsData.toByteArray().decodeToString()}")
+                nsData?.let {
                     continuation.resume(nsData.toByteArray()) { _, _, _ -> }
-                } else {
-                    throw RuntimeException(error?.localizedDescription ?: "error decrypting data")
-                }
+                } ?: continuation.resumeWithException(RuntimeException("Error during decryption"))
             }
         }
 

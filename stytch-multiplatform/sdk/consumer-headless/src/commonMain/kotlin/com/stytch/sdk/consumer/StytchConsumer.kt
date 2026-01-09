@@ -7,6 +7,8 @@ import com.stytch.sdk.consumer.otp.OtpImpl
 import com.stytch.sdk.data.StytchClientConfiguration
 import com.stytch.sdk.data.StytchClientConfigurationInternal
 import com.stytch.sdk.encryption.StytchEncryptionManager
+import io.ktor.util.decodeBase64String
+import io.ktor.util.encodeBase64
 import io.ktor.utils.io.core.toByteArray
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -47,7 +49,7 @@ private class DefaultStytchConsumer(
                 """
                 JORDAN ENCRYPTION TEST:
                 PLAINTEXT = $plaintext
-                ENCRYPTED = $encrypted
+                ENCRYPTED = ${encrypted.encodeBase64()}
                 DECRYPTED = $decrypted
                 """.trimIndent(),
             )
