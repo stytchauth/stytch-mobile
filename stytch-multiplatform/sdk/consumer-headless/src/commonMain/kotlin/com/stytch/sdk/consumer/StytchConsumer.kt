@@ -6,8 +6,7 @@ import com.stytch.sdk.consumer.otp.Otp
 import com.stytch.sdk.consumer.otp.OtpImpl
 import com.stytch.sdk.data.StytchClientConfiguration
 import com.stytch.sdk.data.StytchClientConfigurationInternal
-import com.stytch.sdk.encryption.StytchEncryptionManager
-import io.ktor.util.decodeBase64String
+import com.stytch.sdk.encryption.StytchEncryptionClient
 import io.ktor.util.encodeBase64
 import io.ktor.utils.io.core.toByteArray
 import kotlinx.coroutines.CoroutineScope
@@ -36,7 +35,7 @@ private class DefaultStytchConsumer(
             null
         }
 
-    private val encryptionManager = StytchEncryptionManager()
+    private val encryptionManager = StytchEncryptionClient()
 
     override val otp: Otp = OtpImpl(networkingClient)
 

@@ -1,6 +1,6 @@
 package com.stytch.sdk.encryption
 
-public expect class StytchEncryptionManager() {
+public expect class StytchEncryptionClient() {
     public suspend fun encrypt(data: ByteArray): ByteArray
 
     public suspend fun decrypt(data: ByteArray): ByteArray

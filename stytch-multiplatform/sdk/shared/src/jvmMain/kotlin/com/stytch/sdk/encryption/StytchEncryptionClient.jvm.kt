@@ -1,6 +1,6 @@
 package com.stytch.sdk.encryption
 
-public actual class StytchEncryptionManager {
+public actual class StytchEncryptionClient {
     public actual suspend fun encrypt(data: ByteArray): ByteArray {
         TODO("Not yet implemented")
     }

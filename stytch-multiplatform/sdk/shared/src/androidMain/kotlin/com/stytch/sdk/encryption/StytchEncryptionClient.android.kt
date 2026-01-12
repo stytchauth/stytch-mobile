@@ -9,7 +9,7 @@ import javax.crypto.KeyGenerator
 import javax.crypto.SecretKey
 import javax.crypto.spec.GCMParameterSpec
 
-public actual class StytchEncryptionManager {
+public actual class StytchEncryptionClient {
     private val secretKey: SecretKey = getOrCreateSecretKey()
 
     public actual suspend fun encrypt(data: ByteArray): ByteArray {

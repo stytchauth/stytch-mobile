@@ -15,7 +15,7 @@ import platform.posix.memcpy
 import kotlin.coroutines.resumeWithException
 
 @OptIn(ExperimentalForeignApi::class)
-public actual class StytchEncryptionManager {
+public actual class StytchEncryptionClient {
     private val swiftEncryptionManager = StytchEncryptionManagerSwift.shared()
     private lateinit var encryptionKeyData: NSData
 
