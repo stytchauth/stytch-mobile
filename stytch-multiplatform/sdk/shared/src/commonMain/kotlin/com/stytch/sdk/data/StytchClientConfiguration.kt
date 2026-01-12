@@ -1,5 +1,6 @@
 package com.stytch.sdk.data
 
+import com.stytch.sdk.persistence.StytchPlatformPersistenceClient
 import kotlinx.datetime.TimeZone
 import kotlin.js.JsExport
 import kotlin.uuid.ExperimentalUuidApi
@@ -35,4 +36,5 @@ public class StytchClientConfigurationInternal(
     @OptIn(ExperimentalUuidApi::class)
     internal val appSessionId: String = Uuid.generateV4().toString(),
     internal val timezone: String = TimeZone.currentSystemDefault().id,
+    public val platformPersistenceClient: StytchPlatformPersistenceClient,
 )

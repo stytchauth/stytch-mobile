@@ -1,5 +1,6 @@
 package com.stytch.sdk.data
 
+import com.stytch.sdk.persistence.StytchPlatformPersistenceClient
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.useContents
 import kotlinx.datetime.TimeZone
@@ -31,6 +32,7 @@ public actual class StytchClientConfiguration(
                     deviceName = UIDevice.currentDevice.model.lowercase(),
                     screenSize = UIScreen.mainScreen.bounds.useContents { "(${size.width},${size.height})" },
                 ),
+            platformPersistenceClient = StytchPlatformPersistenceClient(),
         )
 }
 

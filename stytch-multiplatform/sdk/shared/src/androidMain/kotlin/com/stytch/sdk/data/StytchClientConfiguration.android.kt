@@ -2,6 +2,7 @@ package com.stytch.sdk.data
 
 import android.content.Context
 import android.os.Build
+import com.stytch.sdk.persistence.StytchPlatformPersistenceClient
 import kotlinx.datetime.TimeZone
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
@@ -16,6 +17,7 @@ public actual class StytchClientConfiguration(
             publicToken = publicToken,
             endpointOptions = endpointOptions,
             deviceInfo = context.getDeviceInfo(),
+            platformPersistenceClient = StytchPlatformPersistenceClient(),
         )
 }
 

@@ -1,5 +1,7 @@
 package com.stytch.sdk.data
 
+import com.stytch.sdk.persistence.StytchPlatformPersistenceClient
+
 @JsExport
 @JsName("StytchClientConfiguration")
 public actual class StytchClientConfiguration(
@@ -7,10 +9,12 @@ public actual class StytchClientConfiguration(
     internal val endpointOptions: EndpointOptions = EndpointOptions(),
 ) {
     // TODO: DeviceInfo for JS
+    // TODO: PersistenceClient for JS
     public actual fun toInternal(): StytchClientConfigurationInternal =
         StytchClientConfigurationInternal(
             publicToken = publicToken,
             endpointOptions = endpointOptions,
             deviceInfo = DeviceInfo("", "", "", "", "", ""),
+            platformPersistenceClient = StytchPlatformPersistenceClient(),
         )
 }
