@@ -18,20 +18,12 @@ public class StytchPersistenceClient(
         data: T?,
     ): Unit =
         withContext(dispatcher) {
-            try {
-                data?.let { plaintext ->
-                    println("JORDAN >>> saving $key = $plaintext")
-                    val plaintextAsString = Json.encodeToString(plaintext)
-                    println("JORDAN >>> STRINGIFIED = $plaintextAsString")
-                    val encrypted = encryptionClient.encrypt(plaintextAsString.toByteArray())
-                    println("JORDAN >>> ENCRYPTED = $encrypted")
-                    val encoded = encrypted.encodeBase64()
-                    println("JORDAN >>> ENCODED = $encoded")
-                    platformPersistenceClient.save(key, encoded)
-                } ?: remove(key)
-            } catch (error: Throwable) {
-                println("JORDAN >>> ERROR: ${error.message}")
-            }
+            data?.let { plaintext ->
+                val plaintextAsString = Json.encodeToString(plaintext)
+                val encrypted = encryptionClient.encrypt(plaintextAsString.toByteArray())
+                val encoded = encrypted.encodeBase64()
+                platformPersistenceClient.save(key, encoded)
+            } ?: remove(key)
         }
 
     public suspend inline fun <reified T> get(
@@ -39,16 +31,10 @@ public class StytchPersistenceClient(
         default: T?,
     ): T? =
         withContext(dispatcher) {
-            println("JORDAN >>> GETTING $key = $default")
             return@withContext platformPersistenceClient.get(key)?.let { encoded ->
-                println("JORDAN >>> GOT ENCODED = $encoded")
                 val decoded = encoded.decodeBase64Bytes()
-                println("JORDAN >>> GOT DECODED = $decoded")
                 val decrypted = encryptionClient.decrypt(decoded).decodeToString()
-                println("JORDAN >>> GOT DECRYPTED = $decrypted")
-                val serialized = Json.decodeFromString<T>(decrypted)
-                println("JORDAN >>> GOT SERIALIZED = $serialized")
-                serialized
+                Json.decodeFromString<T>(decrypted)
             } ?: default
         }
 
