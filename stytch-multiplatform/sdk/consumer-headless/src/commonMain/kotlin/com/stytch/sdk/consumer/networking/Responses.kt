@@ -3,27 +3,63 @@ package com.stytch.sdk.consumer.networking
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlin.js.JsExport
+import kotlin.time.Instant
+
+public interface BasicResponse {
+    public val statusCode: Int
+    public val requestId: String
+}
+
+public interface AuthenticatedResponse {
+    public val sessionToken: String
+    public val sessionJwt: String
+    public val user: User
+}
 
 @JsExport
 @Serializable
 public data class OtpSmsLoginOrCreateResponse(
     @SerialName("status_code")
-    val statusCode: Int,
+    override val statusCode: Int,
     @SerialName("request_id")
-    val requestId: String,
+    override val requestId: String,
     @SerialName("method_id")
     val methodId: String,
-)
+) : BasicResponse
 
 @JsExport
 @Serializable
 public data class OtpAuthenticateResponse(
     @SerialName("status_code")
-    val statusCode: Int,
+    override val statusCode: Int,
     @SerialName("request_id")
-    val requestId: String,
+    override val requestId: String,
     @SerialName("session_token")
-    val sessionToken: String,
+    override val sessionToken: String,
     @SerialName("session_jwt")
-    val sessionJwt: String,
+    override val sessionJwt: String,
+    override val user: User,
+) : BasicResponse,
+    AuthenticatedResponse
+
+@JsExport
+@Serializable
+public data class User(
+    @SerialName("created_at")
+    val createdAt: Instant,
+    @SerialName("user_id")
+    val userId: String,
+    val status: String,
+    val name: Name,
+)
+
+@JsExport
+@Serializable
+public data class Name(
+    @SerialName("first_name")
+    val firstName: String,
+    @SerialName("middle_name")
+    val middleName: String,
+    @SerialName("last_name")
+    val lastName: String,
 )

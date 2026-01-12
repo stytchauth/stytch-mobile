@@ -33,8 +33,8 @@ internal class OtpImpl(
 
     override suspend fun authenticate(request: OtpAuthenticateRequest): StytchResult<OtpAuthenticateResponse> =
         withContext(Dispatchers.Default) {
-            stytchNetworkRequest {
-                client.api.otpAuthenticate(request)
+            client.request {
+                it.otpAuthenticate(request)
             }
         }
 }
@@ -44,8 +44,8 @@ internal class SmsOtpImpl(
 ) : SmsOtp {
     override suspend fun loginOrCreate(request: OtpSmsLoginOrCreateRequest): StytchResult<OtpSmsLoginOrCreateResponse> =
         withContext(Dispatchers.Default) {
-            stytchNetworkRequest {
-                client.api.otpSmsLoginOrCreate(request)
+            client.request {
+                it.otpSmsLoginOrCreate(request)
             }
         }
 }

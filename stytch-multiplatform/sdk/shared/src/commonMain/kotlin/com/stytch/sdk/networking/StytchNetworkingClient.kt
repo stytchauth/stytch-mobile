@@ -5,7 +5,9 @@ import com.stytch.sdk.shared.BuildConfig
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
 import io.ktor.client.HttpClient
+import io.ktor.client.call.body
 import io.ktor.client.plugins.DefaultRequest
+import io.ktor.client.plugins.HttpResponseValidator
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.UserAgent
 import io.ktor.client.plugins.auth.Auth
@@ -18,6 +20,7 @@ import io.ktor.client.request.header
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMessageBuilder
+import io.ktor.http.isSuccess
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.util.encodeBase64
 import kotlinx.serialization.json.Json
@@ -34,6 +37,7 @@ public fun getStytchNetworkingClient(
 ): HttpClient =
     HttpClient {
         expectSuccess = true
+
         install(ContentNegotiation) {
             json(
                 Json {
@@ -42,18 +46,22 @@ public fun getStytchNetworkingClient(
                 },
             )
         }
+
         install(HttpTimeout) {
             requestTimeoutMillis = THIRTY_SECONDS_IN_MS
             connectTimeoutMillis = TEN_SECONDS_IN_MS
             socketTimeoutMillis = TEN_SECONDS_IN_MS
         }
+
         install(UserAgent) {
             agent = "${BuildConfig.SDK_NAME}/${BuildConfig.SDK_VERSION}"
         }
+
         install(DefaultRequest) {
             header(HttpHeaders.ContentType, ContentType.Application.Json)
             configuration.asSdkHeader(this)
         }
+
         install(Auth) {
             providers.add(
                 StytchCredentialProvider(
@@ -65,6 +73,7 @@ public fun getStytchNetworkingClient(
                 ),
             )
         }
+
         install(Logging) {
             logger =
                 object : Logger {
