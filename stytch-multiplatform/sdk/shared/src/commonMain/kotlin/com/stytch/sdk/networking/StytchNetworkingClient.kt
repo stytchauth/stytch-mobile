@@ -10,7 +10,6 @@ import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.UserAgent
 import io.ktor.client.plugins.auth.Auth
 import io.ktor.client.plugins.auth.providers.BasicAuthCredentials
-import io.ktor.client.plugins.auth.providers.basic
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
@@ -56,19 +55,15 @@ public fun getStytchNetworkingClient(
             configuration.asSdkHeader(this)
         }
         install(Auth) {
-            basic {
-                credentials {
-                    /**
-                     * basic auth, where the username is the project's public token and the password is either
-                     * the session token (for authenticated users) or the public token (for unauthenticated users)
-                     */
-                    val username = configuration.tokenInfo.publicToken
-                    val password = getSessionToken() ?: username
-                    BasicAuthCredentials(username, password)
-                }
-                // Ensure we send the auth header on all requests, without waiting for a 401 first
-                sendWithoutRequest { _ -> true }
-            }
+            providers.add(
+                StytchCredentialProvider(
+                    credentials = {
+                        val username = configuration.tokenInfo.publicToken
+                        val password = getSessionToken() ?: username
+                        BasicAuthCredentials(username, password)
+                    },
+                ),
+            )
         }
         install(Logging) {
             logger =
