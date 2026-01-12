@@ -24,3 +24,10 @@ public data class OtpAuthenticateRequest(
     @SerialName("session_duration_minutes")
     val sessionDurationMinutes: Int,
 )
+
+@JsExport
+@Serializable
+public data class SessionsAuthenticateRequest(
+    @SerialName("session_duration_minutes")
+    val sessionDurationMinutes: Int?,
+)

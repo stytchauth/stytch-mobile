@@ -14,6 +14,7 @@ import kotlin.uuid.Uuid
 public actual class StytchClientConfiguration(
     internal val publicToken: String,
     internal val endpointOptions: EndpointOptions = EndpointOptions(),
+    internal val defaultSessionDuration: Int? = null,
 ) {
     // Manual secondary constructor for iOS DX improvement
     public constructor(publicToken: String) : this(publicToken, EndpointOptions())
@@ -23,6 +24,7 @@ public actual class StytchClientConfiguration(
         StytchClientConfigurationInternal(
             publicToken = publicToken,
             endpointOptions = endpointOptions,
+            defaultSessionDuration = defaultSessionDuration,
             deviceInfo =
                 DeviceInfo(
                     applicationPackageName = NSBundle.mainBundle.bundleIdentifier ?: "unknown_bundle_id",

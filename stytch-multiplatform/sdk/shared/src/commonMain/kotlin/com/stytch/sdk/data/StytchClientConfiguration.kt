@@ -31,6 +31,7 @@ internal fun getPublicTokenInfo(publicToken: String): PublicTokenInfo {
 public class StytchClientConfigurationInternal(
     publicToken: String,
     public val endpointOptions: EndpointOptions,
+    public val defaultSessionDuration: Int?,
     internal val deviceInfo: DeviceInfo,
     public val tokenInfo: PublicTokenInfo = getPublicTokenInfo(publicToken),
     @OptIn(ExperimentalUuidApi::class)

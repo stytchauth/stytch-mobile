@@ -7,6 +7,7 @@ import com.stytch.sdk.persistence.StytchPlatformPersistenceClient
 public actual class StytchClientConfiguration(
     internal val publicToken: String,
     internal val endpointOptions: EndpointOptions = EndpointOptions(),
+    internal val defaultSessionDuration: Int? = null,
 ) {
     // TODO: DeviceInfo for JS
     // TODO: PersistenceClient for JS
@@ -14,6 +15,7 @@ public actual class StytchClientConfiguration(
         StytchClientConfigurationInternal(
             publicToken = publicToken,
             endpointOptions = endpointOptions,
+            defaultSessionDuration = defaultSessionDuration,
             deviceInfo = DeviceInfo("", "", "", "", "", ""),
             platformPersistenceClient = StytchPlatformPersistenceClient(),
         )

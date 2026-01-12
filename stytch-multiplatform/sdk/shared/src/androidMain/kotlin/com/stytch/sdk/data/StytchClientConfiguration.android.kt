@@ -11,11 +11,13 @@ public actual class StytchClientConfiguration(
     internal val context: Context,
     internal val publicToken: String,
     internal val endpointOptions: EndpointOptions = EndpointOptions(),
+    internal val defaultSessionDuration: Int? = null,
 ) {
     public actual fun toInternal(): StytchClientConfigurationInternal =
         StytchClientConfigurationInternal(
             publicToken = publicToken,
             endpointOptions = endpointOptions,
+            defaultSessionDuration = defaultSessionDuration,
             deviceInfo = context.getDeviceInfo(),
             platformPersistenceClient = StytchPlatformPersistenceClient(context),
         )

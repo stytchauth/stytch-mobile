@@ -29,11 +29,6 @@ public fun createStytchConsumer(configuration: StytchClientConfiguration): Stytc
 private class DefaultStytchConsumer(
     configuration: StytchClientConfigurationInternal,
 ) : StytchConsumer {
-    private val networkingClient =
-        NetworkingClient(configuration) {
-            // TODO: once persistence is built, this will be fetching the session token from the device
-            null
-        }
     private val dispatchers =
         StytchDispatchers(
             ioDispatcher = Dispatchers.Default,
@@ -46,6 +41,10 @@ private class DefaultStytchConsumer(
             encryptionClient = encryptionClient,
             platformPersistenceClient = configuration.platformPersistenceClient,
         )
+
+    private val sessionManager = StytchConsumerSessionManager(dispatchers, persistenceClient)
+
+    private val networkingClient = NetworkingClient(configuration, dispatchers, sessionManager)
 
     override val otp: Otp = OtpImpl(networkingClient)
 

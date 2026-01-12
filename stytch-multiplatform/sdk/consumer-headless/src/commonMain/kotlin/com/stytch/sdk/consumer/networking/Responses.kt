@@ -14,6 +14,7 @@ public interface AuthenticatedResponse {
     public val sessionToken: String
     public val sessionJwt: String
     public val user: User
+    public val session: Session
 }
 
 @JsExport
@@ -39,6 +40,7 @@ public data class OtpAuthenticateResponse(
     @SerialName("session_jwt")
     override val sessionJwt: String,
     override val user: User,
+    override val session: Session,
 ) : BasicResponse,
     AuthenticatedResponse
 
@@ -63,3 +65,34 @@ public data class Name(
     @SerialName("last_name")
     val lastName: String,
 )
+
+@JsExport
+@Serializable
+public data class Session(
+    @SerialName("expires_at")
+    val expiresAt: Instant,
+    @SerialName("last_accessed_at")
+    val lastAccessedAt: Instant,
+    @SerialName("session_id")
+    val sessionId: String,
+    @SerialName("started_at")
+    val startedAt: Instant,
+    @SerialName("user_id")
+    val userId: String,
+)
+
+@JsExport
+@Serializable
+public data class SessionsAuthenticateResponse(
+    @SerialName("status_code")
+    override val statusCode: Int,
+    @SerialName("request_id")
+    override val requestId: String,
+    @SerialName("session_token")
+    override val sessionToken: String,
+    @SerialName("session_jwt")
+    override val sessionJwt: String,
+    override val user: User,
+    override val session: Session,
+) : BasicResponse,
+    AuthenticatedResponse

@@ -33,7 +33,7 @@ private const val X_SDK_CLIENT_HEADER = "X-SDK-CLIENT"
 
 public fun getStytchNetworkingClient(
     configuration: StytchClientConfigurationInternal,
-    getSessionToken: () -> String?,
+    getSessionToken: suspend () -> String?,
 ): HttpClient =
     HttpClient {
         expectSuccess = true
