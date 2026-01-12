@@ -4,7 +4,7 @@ public actual class StytchPlatformPersistenceClient {
     public actual suspend fun save(
         key: String,
         data: String,
-    ): Boolean {
+    ) {
         TODO("Not yet implemented")
     }
 
@@ -12,7 +12,7 @@ public actual class StytchPlatformPersistenceClient {
         TODO("Not yet implemented")
     }
 
-    public actual suspend fun remove(key: String): Boolean {
+    public actual suspend fun remove(key: String) {
         TODO("Not yet implemented")
     }
 }

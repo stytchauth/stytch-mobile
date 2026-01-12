@@ -13,30 +13,46 @@ public class StytchPersistenceClient(
     public val encryptionClient: StytchEncryptionClient,
     public val platformPersistenceClient: StytchPlatformPersistenceClient,
 ) {
-    public suspend fun <T> save(
+    public suspend inline fun <reified T> save(
         key: String,
         data: T?,
-    ): Boolean =
+    ): Unit =
         withContext(dispatcher) {
-            data?.let { plaintext ->
-                val plaintextAsString = Json.encodeToString(plaintext)
-                val encrypted = encryptionClient.encrypt(plaintextAsString.toByteArray())
-                val encoded = encrypted.encodeBase64()
-                platformPersistenceClient.save(key, encoded)
-            } ?: remove(key)
-        }
-
-    public suspend inline fun <reified T> get(key: String): T? =
-        withContext(dispatcher) {
-            platformPersistenceClient.get(key)?.let { encoded ->
-                val decoded = encoded.decodeBase64Bytes()
-                val decrypted = encryptionClient.decrypt(decoded).decodeToString()
-                Json.decodeFromString<T>(decrypted)
+            try {
+                data?.let { plaintext ->
+                    println("JORDAN >>> saving $key = $plaintext")
+                    val plaintextAsString = Json.encodeToString(plaintext)
+                    println("JORDAN >>> STRINGIFIED = $plaintextAsString")
+                    val encrypted = encryptionClient.encrypt(plaintextAsString.toByteArray())
+                    println("JORDAN >>> ENCRYPTED = $encrypted")
+                    val encoded = encrypted.encodeBase64()
+                    println("JORDAN >>> ENCODED = $encoded")
+                    platformPersistenceClient.save(key, encoded)
+                } ?: remove(key)
+            } catch (error: Throwable) {
+                println("JORDAN >>> ERROR: ${error.message}")
             }
-            null
         }
 
-    public suspend fun remove(key: String): Boolean =
+    public suspend inline fun <reified T> get(
+        key: String,
+        default: T?,
+    ): T? =
+        withContext(dispatcher) {
+            println("JORDAN >>> GETTING $key = $default")
+            return@withContext platformPersistenceClient.get(key)?.let { encoded ->
+                println("JORDAN >>> GOT ENCODED = $encoded")
+                val decoded = encoded.decodeBase64Bytes()
+                println("JORDAN >>> GOT DECODED = $decoded")
+                val decrypted = encryptionClient.decrypt(decoded).decodeToString()
+                println("JORDAN >>> GOT DECRYPTED = $decrypted")
+                val serialized = Json.decodeFromString<T>(decrypted)
+                println("JORDAN >>> GOT SERIALIZED = $serialized")
+                serialized
+            } ?: default
+        }
+
+    public suspend fun remove(key: String): Unit =
         withContext(dispatcher) {
             platformPersistenceClient.remove(key)
         }

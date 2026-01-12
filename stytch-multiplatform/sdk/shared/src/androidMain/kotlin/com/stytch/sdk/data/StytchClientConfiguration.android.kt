@@ -17,7 +17,7 @@ public actual class StytchClientConfiguration(
             publicToken = publicToken,
             endpointOptions = endpointOptions,
             deviceInfo = context.getDeviceInfo(),
-            platformPersistenceClient = StytchPlatformPersistenceClient(),
+            platformPersistenceClient = StytchPlatformPersistenceClient(context),
         )
 }
 
