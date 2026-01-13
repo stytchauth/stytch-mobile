@@ -60,6 +60,7 @@ android {
 
 dependencies {
     implementation("com.stytch.sdk:consumer-headless:0.0.1")
+    implementation("com.stytch.sdk:consumer-extensions:0.0.1")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)

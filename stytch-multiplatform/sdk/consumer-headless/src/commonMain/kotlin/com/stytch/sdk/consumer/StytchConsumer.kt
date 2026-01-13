@@ -32,7 +32,7 @@ public interface StytchConsumer : StytchClient {
 @JsName("createStytchConsumer")
 public fun createStytchConsumer(configuration: StytchClientConfiguration): StytchConsumer = DefaultStytchConsumer.getInstance(configuration)
 
-private class DefaultStytchConsumer(
+internal class DefaultStytchConsumer(
     configuration: StytchClientConfigurationInternal,
 ) : StytchConsumer {
     private val dispatchers =
@@ -52,7 +52,7 @@ private class DefaultStytchConsumer(
 
     private val networkingClient = ConsumerNetworkingClient(configuration, dispatchers, sessionManager)
 
-    override val otp: OtpClient = OtpImpl(networkingClient)
+    override val otp: OtpClient = OtpImpl.create(networkingClient)
 
     override val session: SessionClient = SessionImpl(networkingClient)
 

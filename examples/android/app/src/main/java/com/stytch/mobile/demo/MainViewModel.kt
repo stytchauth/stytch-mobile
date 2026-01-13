@@ -14,7 +14,7 @@ import com.stytch.sdk.consumer.networking.OtpAuthenticateRequest
 import com.stytch.sdk.consumer.networking.OtpAuthenticateResponse
 import com.stytch.sdk.consumer.networking.OtpSmsLoginOrCreateRequest
 import com.stytch.sdk.consumer.networking.OtpSmsLoginOrCreateResponse
-import com.stytch.sdk.consumer.networking.SessionsRevokeResponse
+import com.stytch.sdk.consumer.otp.authenticate
 import com.stytch.sdk.data.StytchClientConfiguration
 import com.stytch.sdk.data.StytchResult
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -74,24 +74,24 @@ class MainViewModel(
                 methodId = methodId,
                 sessionDurationMinutes = 5,
             )
-        viewModelScope.launch {
-            when (val response = stytchConsumerClient.otp.authenticate(request)) {
+
+        // let's do this one with a callback, instead of the regular coroutine:
+        stytchConsumerClient.otp.authenticate(request) { response ->
+            when (response) {
                 is StytchResult.Error -> {
-                    _state.emit(
+                    _state.value =
                         state.value.copy(
                             rawResponse = response,
-                        ),
-                    )
+                        )
                 }
 
                 is StytchResult.Success<OtpAuthenticateResponse> -> {
                     // reset the state
-                    _state.emit(
+                    _state.value =
                         DemoAppState(
                             authenticationState = stytchConsumerClient.authenticationStateFlow.value,
                             rawResponse = response,
-                        ),
-                    )
+                        )
                 }
             }
         }

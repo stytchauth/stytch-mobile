@@ -34,3 +34,4 @@ plugins {
 
 include(":sdk:shared")
 include(":sdk:consumer-headless")
+include(":sdk:consumer-extensions")

@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		3935D1E32F0F28F10042905A /* StytchConsumerSDK in Frameworks */ = {isa = PBXBuildFile; productRef = 3935D1E22F0F28F10042905A /* StytchConsumerSDK */; };
+		3911B1BF2F16F1AF004403B9 /* StytchConsumerSDK in Frameworks */ = {isa = PBXBuildFile; productRef = 3911B1BE2F16F1AF004403B9 /* StytchConsumerSDK */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -27,7 +27,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3935D1E32F0F28F10042905A /* StytchConsumerSDK in Frameworks */,
+				3911B1BF2F16F1AF004403B9 /* StytchConsumerSDK in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -78,7 +78,7 @@
 			);
 			name = demo;
 			packageProductDependencies = (
-				3935D1E22F0F28F10042905A /* StytchConsumerSDK */,
+				3911B1BE2F16F1AF004403B9 /* StytchConsumerSDK */,
 			);
 			productName = demo;
 			productReference = 390BF9652F0F15C300B83179 /* demo.app */;
@@ -109,7 +109,7 @@
 			mainGroup = 390BF95C2F0F15C300B83179;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				3935D1E02F0F28170042905A /* XCLocalSwiftPackageReference "../../../stytch-mobile" */,
+				3911B1BD2F16F1AF004403B9 /* XCLocalSwiftPackageReference "../../../stytch-mobile" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 390BF9662F0F15C300B83179 /* Products */;
@@ -351,16 +351,15 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		3935D1E02F0F28170042905A /* XCLocalSwiftPackageReference "../../../stytch-mobile" */ = {
+		3911B1BD2F16F1AF004403B9 /* XCLocalSwiftPackageReference "../../../stytch-mobile" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = "../../../stytch-mobile";
 		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		3935D1E22F0F28F10042905A /* StytchConsumerSDK */ = {
+		3911B1BE2F16F1AF004403B9 /* StytchConsumerSDK */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 3935D1E02F0F28170042905A /* XCLocalSwiftPackageReference "../../../stytch-mobile" */;
 			productName = StytchConsumerSDK;
 		};
 /* End XCSwiftPackageProductDependency section */

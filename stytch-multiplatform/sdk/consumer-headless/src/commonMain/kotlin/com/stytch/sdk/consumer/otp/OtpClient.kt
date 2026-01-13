@@ -6,6 +6,7 @@ import com.stytch.sdk.consumer.networking.OtpAuthenticateResponse
 import com.stytch.sdk.consumer.networking.OtpSmsLoginOrCreateRequest
 import com.stytch.sdk.consumer.networking.OtpSmsLoginOrCreateResponse
 import com.stytch.sdk.data.StytchResult
+import com.stytch.sdk.networking.StytchNetworkingClient
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlin.js.JsExport
@@ -25,10 +26,10 @@ public interface SmsOtpClient {
     public suspend fun loginOrCreate(request: OtpSmsLoginOrCreateRequest): StytchResult<OtpSmsLoginOrCreateResponse>
 }
 
-internal class OtpImpl(
+public class OtpImpl private constructor(
     private val networkingClient: ConsumerNetworkingClient,
 ) : OtpClient {
-    override val sms: SmsOtpClient = SmsOtpImpl(networkingClient)
+    override val sms: SmsOtpClient = SmsOtpImpl.create(networkingClient)
 
     override suspend fun authenticate(request: OtpAuthenticateRequest): StytchResult<OtpAuthenticateResponse> =
         withContext(Dispatchers.Default) {
@@ -36,9 +37,13 @@ internal class OtpImpl(
                 networkingClient.api.otpAuthenticate(request)
             }
         }
+
+    internal companion object {
+        fun create(networkingClient: ConsumerNetworkingClient): OtpImpl = OtpImpl(networkingClient)
+    }
 }
 
-internal class SmsOtpImpl(
+public class SmsOtpImpl private constructor(
     private val networkingClient: ConsumerNetworkingClient,
 ) : SmsOtpClient {
     override suspend fun loginOrCreate(request: OtpSmsLoginOrCreateRequest): StytchResult<OtpSmsLoginOrCreateResponse> =
@@ -47,4 +52,8 @@ internal class SmsOtpImpl(
                 networkingClient.api.otpSmsLoginOrCreate(request)
             }
         }
+
+    internal companion object {
+        fun create(networkingClient: ConsumerNetworkingClient): SmsOtpImpl = SmsOtpImpl(networkingClient)
+    }
 }

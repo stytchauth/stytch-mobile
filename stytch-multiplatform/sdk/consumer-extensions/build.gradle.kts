@@ -1,12 +1,11 @@
 import com.android.build.api.dsl.androidLibrary
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
+import kotlin.collections.listOf
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.android.kotlin.multiplatform.library)
-    alias(libs.plugins.kotlin.serialization)
-    alias(libs.plugins.buildconfig)
     alias(libs.plugins.skie)
     id("maven-publish")
 }
@@ -23,7 +22,7 @@ kotlin {
     }
 
     androidLibrary {
-        namespace = "com.stytch.sdk"
+        namespace = "com.stytch.sdk.consumer"
         compileSdk =
             libs.versions.android.compileSdk
                 .get()
@@ -40,21 +39,14 @@ kotlin {
         }
     }
 
-    val xcFramework = XCFramework("StytchSharedSDK")
-    val interopDirectory = project.layout.projectDirectory.dir("src/iosMain/interop/")
+    val xcFramework = XCFramework("StytchConsumerExtensionsSDK")
+    val interopDirectory = project.layout.projectDirectory.dir("../shared/src/iosMain/interop/")
     listOf(
         iosArm64(),
         iosSimulatorArm64(),
-    ).forEach { target ->
-        target.compilations["main"].cinterops {
-            val stytchEncryptionManagerSwift by creating {
-                definitionFile.set(interopDirectory.file("StytchShared.def"))
-                headers(interopDirectory.file("StytchShared.h"))
-                packageName("com.stytch.sdk")
-            }
-        }
-        target.binaries.framework {
-            baseName = "StytchSharedSDK"
+    ).forEach {
+        it.binaries.framework {
+            baseName = "StytchConsumerExtensionsSDK"
             if (target.name == "iosArm64") {
                 linkerOpts.addAll(
                     listOf(
@@ -86,30 +78,9 @@ kotlin {
     jvm()
 
     sourceSets {
-        androidMain.dependencies {
-            implementation(libs.ktor.client.okhttp)
-        }
         commonMain.dependencies {
-            implementation(libs.kotlinx.serialization.json)
+            implementation(projects.sdk.consumerHeadless)
             implementation(libs.kotlinx.coroutines.core)
-            implementation(libs.ktor.client.auth)
-            implementation(libs.ktor.client.core)
-            implementation(libs.ktor.client.content.negotiation)
-            implementation(libs.ktor.serialization.kotlinx.json)
-            implementation(libs.kotlinx.datetime)
-            implementation(libs.ktor.client.logging)
-            implementation(libs.ktorfit.lib.light)
-            implementation(libs.napier)
-            implementation(libs.skie.configuration.annotations)
-        }
-        iosMain.dependencies {
-            implementation(libs.ktor.client.darwin)
-        }
-        jvmMain.dependencies {
-            implementation(libs.ktor.client.okhttp)
-        }
-        jsMain.dependencies {
-            implementation(libs.ktor.client.js)
         }
     }
 }
@@ -121,12 +92,6 @@ publishing {
             url = uri(layout.buildDirectory.dir("../../../../artifacts"))
         }
     }
-}
-
-buildConfig {
-    useKotlinOutput()
-    buildConfigField("SDK_NAME", "stytch-multiplatform")
-    buildConfigField("SDK_VERSION", version.toString())
 }
 
 skie {

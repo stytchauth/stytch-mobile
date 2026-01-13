@@ -9,11 +9,11 @@ cd stytch-multiplatform
 
 # Publish Android Artifact
 echo "Building android artifact..."
-./gradlew :sdk:consumer-headless:publishAllPublicationsToTESTINGRepository :sdk:shared:publishAllPublicationsToTESTINGRepository
+./gradlew :sdk:consumer-headless:publishAllPublicationsToTESTINGRepository :sdk:consumer-extensions:publishAllPublicationsToTESTINGRepository :sdk:shared:publishAllPublicationsToTESTINGRepository
 
 # Build iOS Artifact
 echo "Building iOS artifact..."
-./gradlew assembleStytchConsumerSDKXCFramework
+./gradlew assembleStytchConsumerSDKXCFramework assembleStytchConsumerExtensionsSDKXCFramework assembleStytchSharedSDKXCFramework
 
 # Build JS Artifact
 echo "Building JS artifact..."
@@ -22,7 +22,10 @@ echo "Building JS artifact..."
 # Copy artifacts
 echo "Copying build artifacts to folder..."
 cd ..
+cp -r stytch-multiplatform/sdk/shared/build/XCFrameworks/release/StytchSharedSDK.xcframework artifacts
 cp -r stytch-multiplatform/sdk/consumer-headless/build/XCFrameworks/release/StytchConsumerSDK.xcframework artifacts
-cp -r stytch-multiplatform/sdk/consumer-headless/build/dist/js/productionLibrary artifacts
+cp -r stytch-multiplatform/sdk/consumer-extensions/build/XCFrameworks/release/StytchConsumerExtensionsSDK.xcframework artifacts
+
+# cp -r stytch-multiplatform/sdk/consumer-headless/build/dist/js/productionLibrary artifacts
 
 echo "Done."
