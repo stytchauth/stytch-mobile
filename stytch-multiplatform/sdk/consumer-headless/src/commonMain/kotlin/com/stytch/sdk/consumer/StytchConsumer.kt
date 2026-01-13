@@ -1,9 +1,12 @@
 package com.stytch.sdk.consumer
 
 import com.stytch.sdk.StytchClient
+import com.stytch.sdk.consumer.data.ConsumerAuthenticationState
 import com.stytch.sdk.consumer.networking.ConsumerNetworkingClient
-import com.stytch.sdk.consumer.otp.Otp
+import com.stytch.sdk.consumer.otp.OtpClient
 import com.stytch.sdk.consumer.otp.OtpImpl
+import com.stytch.sdk.consumer.session.SessionClient
+import com.stytch.sdk.consumer.session.SessionImpl
 import com.stytch.sdk.data.StytchClientConfiguration
 import com.stytch.sdk.data.StytchClientConfigurationInternal
 import com.stytch.sdk.data.StytchDispatchers
@@ -11,6 +14,7 @@ import com.stytch.sdk.encryption.StytchEncryptionClient
 import com.stytch.sdk.persistence.StytchPersistenceClient
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlin.concurrent.Volatile
 import kotlin.js.JsExport
@@ -19,7 +23,9 @@ import kotlin.js.JsName
 @JsExport
 @JsName("StytchConsumer")
 public interface StytchConsumer : StytchClient {
-    public val otp: Otp
+    public val otp: OtpClient
+    public val session: SessionClient
+    public val authenticationStateFlow: StateFlow<ConsumerAuthenticationState>
 }
 
 @JsExport
@@ -42,11 +48,15 @@ private class DefaultStytchConsumer(
             platformPersistenceClient = configuration.platformPersistenceClient,
         )
 
-    private val sessionManager = StytchConsumerSessionManager(dispatchers, persistenceClient)
+    private val sessionManager = StytchConsumerAuthenticationStateManager(dispatchers, persistenceClient)
 
     private val networkingClient = ConsumerNetworkingClient(configuration, dispatchers, sessionManager)
 
-    override val otp: Otp = OtpImpl(networkingClient)
+    override val otp: OtpClient = OtpImpl(networkingClient)
+
+    override val session: SessionClient = SessionImpl(networkingClient)
+
+    override val authenticationStateFlow: StateFlow<ConsumerAuthenticationState> = sessionManager.authenticationStateFlow
 
     init {
         CoroutineScope(Dispatchers.Default).launch {

@@ -37,12 +37,10 @@ public suspend fun <T> stytchNetworkRequestWithRetryAndBackoff(
     initialDelay: Long = 100,
     maxDelay: Long = 1000,
     factor: Double = 2.0,
-    block: suspend () -> StytchDataResponse<T>,
-    onSuccess: suspend (T) -> Unit,
-): Unit =
+    block: suspend () -> T,
+): T =
     try {
-        val response = block()
-        onSuccess(response.data)
+        block()
     } catch (e: Exception) {
         if (maxRetries <= 0) throw e
         delay(initialDelay)
@@ -52,6 +50,5 @@ public suspend fun <T> stytchNetworkRequestWithRetryAndBackoff(
             maxDelay = maxDelay,
             factor = factor,
             block = block,
-            onSuccess = onSuccess,
         )
     }

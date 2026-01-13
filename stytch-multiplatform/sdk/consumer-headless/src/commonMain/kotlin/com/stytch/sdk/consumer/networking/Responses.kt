@@ -96,3 +96,12 @@ public data class SessionsAuthenticateResponse(
     override val session: Session,
 ) : BasicResponse,
     AuthenticatedResponse
+
+@JsExport
+@Serializable
+public data class SessionsRevokeResponse(
+    @SerialName("status_code")
+    override val statusCode: Int,
+    @SerialName("request_id")
+    override val requestId: String,
+) : BasicResponse

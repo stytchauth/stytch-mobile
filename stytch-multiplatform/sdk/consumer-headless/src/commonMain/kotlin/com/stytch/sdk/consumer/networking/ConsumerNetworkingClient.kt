@@ -1,6 +1,6 @@
 package com.stytch.sdk.consumer.networking
 
-import com.stytch.sdk.consumer.StytchConsumerSessionManager
+import com.stytch.sdk.consumer.StytchConsumerAuthenticationStateManager
 import com.stytch.sdk.data.StytchAPIError
 import com.stytch.sdk.data.StytchClientConfigurationInternal
 import com.stytch.sdk.data.StytchDispatchers
@@ -14,38 +14,41 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import kotlin.time.Clock
+import kotlin.time.Instant
 
 internal class ConsumerNetworkingClient(
     private val configuration: StytchClientConfigurationInternal,
     private val dispatchers: StytchDispatchers,
-    private val sessionManager: StytchConsumerSessionManager,
+    private val sessionManager: StytchConsumerAuthenticationStateManager,
 ) : StytchNetworkingClient(configuration, dispatchers, sessionManager) {
     internal val api: API = ktorfit.createAPI()
 
     init {
         CoroutineScope(dispatchers.ioDispatcher).launch {
             // Collect the first non-null session emission (on start) and revoke or refresh as necessary
-            sessionManager.session.firstOrNull { it != null }?.let { session ->
-                println("JORDAN >>> Got a session from the manager, do something with it")
+            sessionManager.sessionFlow.firstOrNull { it != null }?.let { session ->
                 if (session.expiresAt < Clock.System.now()) {
-                    println("JORDAN >>> Expired, revoke it")
                     sessionManager.revoke()
                 } else {
-                    println("JORDAN >>> valid, refresh it")
-                    sessionUpdater<SessionsAuthenticateResponse>()
+                    startSessionUpdateJob()
                 }
             }
         }
     }
 
-    override suspend fun <T> sessionUpdater() = api.sessionsAuthenticate(SessionsAuthenticateRequest(configuration.defaultSessionDuration))
+    override suspend fun updateSessionAndReturnExpiration(): Instant {
+        val response = api.sessionsAuthenticate(SessionsAuthenticateRequest(configuration.defaultSessionDuration))
+        return response.data.session.expiresAt
+    }
 
     override val middleware: StytchNetworkResponseMiddleware =
         object : StytchNetworkResponseMiddleware {
             override suspend fun <T> onSuccess(data: T) {
                 if (data is AuthenticatedResponse) {
                     sessionManager.update(data)
-                    startSessionUpdateJob<SessionsAuthenticateResponse>()
+                    startSessionUpdateJob()
+                } else if (data is SessionsRevokeResponse) {
+                    sessionManager.revoke()
                 }
             }
 

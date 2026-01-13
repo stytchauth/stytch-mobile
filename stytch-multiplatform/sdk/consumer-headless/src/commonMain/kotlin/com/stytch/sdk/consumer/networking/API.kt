@@ -11,6 +11,9 @@ internal interface API {
         @Body body: SessionsAuthenticateRequest,
     ): StytchDataResponse<SessionsAuthenticateResponse>
 
+    @POST("sessions/revoke")
+    suspend fun sessionsRevoke(): StytchDataResponse<SessionsRevokeResponse>
+
     // endregion Sessions
 
     // region OTP

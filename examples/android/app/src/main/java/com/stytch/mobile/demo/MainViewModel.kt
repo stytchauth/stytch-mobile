@@ -9,10 +9,12 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
 import com.stytch.sdk.consumer.StytchConsumer
 import com.stytch.sdk.consumer.createStytchConsumer
+import com.stytch.sdk.consumer.data.ConsumerAuthenticationState
 import com.stytch.sdk.consumer.networking.OtpAuthenticateRequest
 import com.stytch.sdk.consumer.networking.OtpAuthenticateResponse
 import com.stytch.sdk.consumer.networking.OtpSmsLoginOrCreateRequest
 import com.stytch.sdk.consumer.networking.OtpSmsLoginOrCreateResponse
+import com.stytch.sdk.consumer.networking.SessionsRevokeResponse
 import com.stytch.sdk.data.StytchClientConfiguration
 import com.stytch.sdk.data.StytchResult
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,6 +27,14 @@ class MainViewModel(
 ) : ViewModel() {
     private val _state = MutableStateFlow(DemoAppState())
     val state = _state.asStateFlow()
+
+    init {
+        viewModelScope.launch {
+            stytchConsumerClient.authenticationStateFlow.collect { authenticationState ->
+                _state.value = _state.value.copy(authenticationState = authenticationState)
+            }
+        }
+    }
 
     fun sendSms(phoneNumber: String) {
         val request =
@@ -62,7 +72,7 @@ class MainViewModel(
             OtpAuthenticateRequest(
                 token = token,
                 methodId = methodId,
-                sessionDurationMinutes = 30,
+                sessionDurationMinutes = 5,
             )
         viewModelScope.launch {
             when (val response = stytchConsumerClient.otp.authenticate(request)) {
@@ -75,14 +85,26 @@ class MainViewModel(
                 }
 
                 is StytchResult.Success<OtpAuthenticateResponse> -> {
+                    // reset the state
                     _state.emit(
-                        state.value.copy(
-                            step = Step.AUTHENTICATED,
+                        DemoAppState(
+                            authenticationState = stytchConsumerClient.authenticationStateFlow.value,
                             rawResponse = response,
                         ),
                     )
                 }
             }
+        }
+    }
+
+    fun logout() {
+        viewModelScope.launch {
+            val response = stytchConsumerClient.session.revoke()
+            _state.emit(
+                state.value.copy(
+                    rawResponse = response,
+                ),
+            )
         }
     }
 
@@ -110,6 +132,7 @@ class MainViewModel(
 }
 
 data class DemoAppState(
+    val authenticationState: ConsumerAuthenticationState = ConsumerAuthenticationState.Loading,
     val methodId: String? = null,
     val step: Step = Step.SUBMIT_PHONE_NUMBER,
     val rawResponse: StytchResult<Any>? = null,
@@ -118,5 +141,4 @@ data class DemoAppState(
 enum class Step {
     SUBMIT_PHONE_NUMBER,
     SUBMIT_TOKEN,
-    AUTHENTICATED,
 }

@@ -12,23 +12,23 @@ import kotlin.js.JsExport
 import kotlin.js.JsName
 
 @JsExport
-@JsName("Otp")
-public interface Otp {
-    public val sms: SmsOtp
+@JsName("OtpClient")
+public interface OtpClient {
+    public val sms: SmsOtpClient
 
     public suspend fun authenticate(request: OtpAuthenticateRequest): StytchResult<OtpAuthenticateResponse>
 }
 
 @JsExport
-@JsName("SmsOtp")
-public interface SmsOtp {
+@JsName("SmsOtpClient")
+public interface SmsOtpClient {
     public suspend fun loginOrCreate(request: OtpSmsLoginOrCreateRequest): StytchResult<OtpSmsLoginOrCreateResponse>
 }
 
 internal class OtpImpl(
     private val networkingClient: ConsumerNetworkingClient,
-) : Otp {
-    override val sms: SmsOtp = SmsOtpImpl(networkingClient)
+) : OtpClient {
+    override val sms: SmsOtpClient = SmsOtpImpl(networkingClient)
 
     override suspend fun authenticate(request: OtpAuthenticateRequest): StytchResult<OtpAuthenticateResponse> =
         withContext(Dispatchers.Default) {
@@ -40,7 +40,7 @@ internal class OtpImpl(
 
 internal class SmsOtpImpl(
     private val networkingClient: ConsumerNetworkingClient,
-) : SmsOtp {
+) : SmsOtpClient {
     override suspend fun loginOrCreate(request: OtpSmsLoginOrCreateRequest): StytchResult<OtpSmsLoginOrCreateResponse> =
         withContext(Dispatchers.Default) {
             networkingClient.request {
