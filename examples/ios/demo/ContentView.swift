@@ -10,35 +10,24 @@ import StytchConsumerSDK
 
 struct ContentView: View {
     @State private var viewModel = ViewModel()
-    @State private var input: String = ""
-    @State private var inputLabel: String = "Phone Number"
-
-    private func submit() {
-        Task {
-            switch viewModel.state.step {
-            case .phoneNumber:
-                await viewModel.sendSms(phoneNumber: input)
-            case .token:
-                await viewModel.authSms(token: input)
-            case .authenticated:
-                return
-            }
-        }
-    }
 
     var body: some View {
         VStack {
-            Text("Testing SMS OTP...")
-            if viewModel.state.step != .authenticated {
-                HStack {
-                    TextField(inputLabel, text: $input)
-                        .padding()
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
-
-                    Button("Submit", systemImage: "paperplane") {
-                        submit()
+            switch onEnum(of: viewModel.state.authenticationState) {
+            case .loading:
+                Text("Loading...")
+            case .unauthenticated:
+                UnauthenticatedStateView(
+                    step: viewModel.state.step,
+                    sendSms: viewModel.sendSms(phoneNumber:),
+                    authSms: viewModel.authSms(token:)
+                )
+            case .authenticated:
+                Text("Authenticated!")
+                Button("Logout") {
+                    Task {
+                        await viewModel.logout()
                     }
-                    .labelStyle(.iconOnly)
                 }
             }
             if let response = viewModel.state.rawResponse {
@@ -48,15 +37,45 @@ struct ContentView: View {
         }
         .frame(maxHeight: .infinity, alignment: .top)
         .padding()
-        .onChange(of: viewModel.state.step) { oldValue, newValue in
-            self.input = ""
-            switch newValue {
+    }
+}
+
+struct UnauthenticatedStateView: View {
+    var step: Step
+    @State private var input: String = ""
+    @State private var inputLabel: String = "Phone Number"
+    var sendSms: (String) async -> Void
+    var authSms: (String) async -> Void
+
+    private func submit() {
+        Task {
+            switch step {
             case .phoneNumber:
-                self.inputLabel = "Phone Number"
+                await sendSms(input)
             case .token:
-                self.inputLabel = "Code"
-            case .authenticated:
-                return
+                await authSms(input)
+            }
+        }
+    }
+    var body: some View {
+        VStack {
+            Text("Testing SMS OTP...")
+            HStack {
+                TextField(inputLabel, text: $input)
+                    .padding()
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                Button("Submit", systemImage: "paperplane") {
+                    submit()
+                }
+                .labelStyle(.iconOnly)
+            }.onChange(of: step) { oldValue, newValue in
+                self.input = ""
+                switch newValue {
+                case .phoneNumber:
+                    self.inputLabel = "Phone Number"
+                case .token:
+                    self.inputLabel = "Code"
+                }
             }
         }
     }
@@ -71,6 +90,11 @@ extension ContentView {
 
         init() {
             consumerClient = createStytchConsumer(configuration: config)
+            Task {
+                for await authenticationState in consumerClient.authenticationStateFlow {
+                    state.authenticationState = authenticationState
+                }
+            }
         }
         
         func sendSms(phoneNumber: String) async {
@@ -95,12 +119,12 @@ extension ContentView {
                 guard let methodId = state.methodId else {
                     return
                 }
-                let request: OtpAuthenticateRequest = .init(token: token, methodId: methodId, sessionDurationMinutes: 30)
+                let request: OtpAuthenticateRequest = .init(token: token, methodId: methodId, sessionDurationMinutes: 5)
                 let response = try await consumerClient.otp.authenticate(request: request)
                 switch onEnum(of: response) {
                 case .success:
                     state.methodId = nil
-                    state.step = .authenticated
+                    state.step = .phoneNumber
                 case .error:
                     state.methodId = nil
                     state.step = .token
@@ -109,11 +133,20 @@ extension ContentView {
             } catch  {
             }
         }
+
+        func logout() async {
+            do {
+                let response = try await consumerClient.session.revoke()
+                state.rawResponse = response as? SharedStytchResult<AnyObject>
+            } catch {
+            }
+        }
     }
 }
 
 
 struct ContentViewState {
+    var authenticationState: ConsumerAuthenticationState = .Loading()
     var methodId: String? = nil
     var step: Step = .phoneNumber
     var rawResponse: SharedStytchResult<AnyObject>? = nil
@@ -122,7 +155,6 @@ struct ContentViewState {
 enum Step {
     case phoneNumber
     case token
-    case authenticated
 }
 
 private extension SharedStytchResult<AnyObject> {
@@ -156,7 +188,7 @@ private extension SharedStytchResult<AnyObject> {
                 \(res.sessionToken)
                 """.trimmingCharacters(in: .whitespaces)
             } else {
-                "This will never be displayed!"
+                "This is a different type of response that I haven't mapped (yet)!"
             }
         case .error(let error):
             """
