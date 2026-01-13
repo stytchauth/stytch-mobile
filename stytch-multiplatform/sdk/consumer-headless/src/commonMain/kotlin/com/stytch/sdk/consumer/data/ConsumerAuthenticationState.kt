@@ -9,10 +9,10 @@ public sealed class ConsumerAuthenticationState : AuthenticationState {
 
     public data object Unauthenticated : ConsumerAuthenticationState()
 
-    public data class Authenticated(
-        val user: User,
-        val session: Session,
-        val sessionToken: String,
-        val sessionJwt: String,
+    public class Authenticated(
+        public val user: User,
+        public val session: Session,
+        public val sessionToken: String,
+        public val sessionJwt: String,
     ) : ConsumerAuthenticationState()
 }

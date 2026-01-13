@@ -6,28 +6,28 @@ import kotlin.js.JsExport
 
 @JsExport
 @Serializable
-public data class OtpSmsLoginOrCreateRequest(
+public class OtpSmsLoginOrCreateRequest(
     @SerialName("phone_number")
-    val phoneNumber: String,
+    public val phoneNumber: String,
     @SerialName("expiration_minutes")
-    val expirationMinutes: Int?,
+    public val expirationMinutes: Int?,
     @SerialName("enable_autofill")
-    val enableAutofill: Boolean = false,
+    public val enableAutofill: Boolean = false,
 )
 
 @JsExport
 @Serializable
-public data class OtpAuthenticateRequest(
-    val token: String,
+public class OtpAuthenticateRequest(
+    public val token: String,
     @SerialName("method_id")
-    val methodId: String,
+    public val methodId: String,
     @SerialName("session_duration_minutes")
-    val sessionDurationMinutes: Int,
+    public val sessionDurationMinutes: Int,
 )
 
 @JsExport
 @Serializable
-public data class SessionsAuthenticateRequest(
+public class SessionsAuthenticateRequest(
     @SerialName("session_duration_minutes")
-    val sessionDurationMinutes: Int?,
+    public val sessionDurationMinutes: Int?,
 )

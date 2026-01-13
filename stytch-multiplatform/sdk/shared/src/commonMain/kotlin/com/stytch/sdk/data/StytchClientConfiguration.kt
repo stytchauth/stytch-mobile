@@ -11,9 +11,9 @@ public expect class StytchClientConfiguration {
 }
 
 @JsExport
-public data class PublicTokenInfo(
-    val publicToken: String,
-    val isTestToken: Boolean,
+public class PublicTokenInfo(
+    public val publicToken: String,
+    public val isTestToken: Boolean,
 )
 
 private val PUBLIC_TOKEN_REGEX = Regex("^public-token-(test|live)-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$")

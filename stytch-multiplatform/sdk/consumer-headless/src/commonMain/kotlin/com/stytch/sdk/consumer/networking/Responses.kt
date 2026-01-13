@@ -19,89 +19,89 @@ public interface AuthenticatedResponse {
 
 @JsExport
 @Serializable
-public data class OtpSmsLoginOrCreateResponse(
+public class OtpSmsLoginOrCreateResponse(
     @SerialName("status_code")
-    override val statusCode: Int,
+    public override val statusCode: Int,
     @SerialName("request_id")
-    override val requestId: String,
+    public override val requestId: String,
     @SerialName("method_id")
-    val methodId: String,
+    public val methodId: String,
 ) : BasicResponse
 
 @JsExport
 @Serializable
-public data class OtpAuthenticateResponse(
+public class OtpAuthenticateResponse(
     @SerialName("status_code")
-    override val statusCode: Int,
+    public override val statusCode: Int,
     @SerialName("request_id")
-    override val requestId: String,
+    public override val requestId: String,
     @SerialName("session_token")
-    override val sessionToken: String,
+    public override val sessionToken: String,
     @SerialName("session_jwt")
-    override val sessionJwt: String,
-    override val user: User,
-    override val session: Session,
+    public override val sessionJwt: String,
+    public override val user: User,
+    public override val session: Session,
 ) : BasicResponse,
     AuthenticatedResponse
 
 @JsExport
 @Serializable
-public data class User(
+public class User(
     @SerialName("created_at")
-    val createdAt: Instant,
+    public val createdAt: Instant,
     @SerialName("user_id")
-    val userId: String,
-    val status: String,
-    val name: Name,
+    public val userId: String,
+    public val status: String,
+    public val name: Name,
 )
 
 @JsExport
 @Serializable
-public data class Name(
+public class Name(
     @SerialName("first_name")
-    val firstName: String,
+    public val firstName: String,
     @SerialName("middle_name")
-    val middleName: String,
+    public val middleName: String,
     @SerialName("last_name")
-    val lastName: String,
+    public val lastName: String,
 )
 
 @JsExport
 @Serializable
-public data class Session(
+public class Session(
     @SerialName("expires_at")
-    val expiresAt: Instant,
+    public val expiresAt: Instant,
     @SerialName("last_accessed_at")
-    val lastAccessedAt: Instant,
+    public val lastAccessedAt: Instant,
     @SerialName("session_id")
-    val sessionId: String,
+    public val sessionId: String,
     @SerialName("started_at")
-    val startedAt: Instant,
+    public val startedAt: Instant,
     @SerialName("user_id")
-    val userId: String,
+    public val userId: String,
 )
 
 @JsExport
 @Serializable
-public data class SessionsAuthenticateResponse(
+public class SessionsAuthenticateResponse(
     @SerialName("status_code")
-    override val statusCode: Int,
+    public override val statusCode: Int,
     @SerialName("request_id")
-    override val requestId: String,
+    public override val requestId: String,
     @SerialName("session_token")
-    override val sessionToken: String,
+    public override val sessionToken: String,
     @SerialName("session_jwt")
-    override val sessionJwt: String,
-    override val user: User,
-    override val session: Session,
+    public override val sessionJwt: String,
+    public override val user: User,
+    public override val session: Session,
 ) : BasicResponse,
     AuthenticatedResponse
 
 @JsExport
 @Serializable
-public data class SessionsRevokeResponse(
+public class SessionsRevokeResponse(
     @SerialName("status_code")
-    override val statusCode: Int,
+    public override val statusCode: Int,
     @SerialName("request_id")
-    override val requestId: String,
+    public override val requestId: String,
 ) : BasicResponse

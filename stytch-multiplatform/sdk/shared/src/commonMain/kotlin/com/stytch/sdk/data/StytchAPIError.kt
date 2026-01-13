@@ -4,13 +4,13 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-public data class StytchAPIError(
+public class StytchAPIError(
     @SerialName("error_message")
-    val errorMessage: String,
+    public val errorMessage: String,
     @SerialName("error_type")
-    val errorType: String,
+    public val errorType: String,
     @SerialName("error_url")
-    val errorUrl: String,
+    public val errorUrl: String,
 ) : Exception(errorMessage) {
     public fun isUnrecoverableError(): Boolean =
         errorType in

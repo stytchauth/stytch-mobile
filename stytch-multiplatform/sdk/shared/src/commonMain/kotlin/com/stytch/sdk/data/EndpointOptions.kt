@@ -11,8 +11,8 @@ public const val SDK_URL_PATH: String = "sdk/v1/"
 
 @JsExport
 @JsName("EndpointOptions")
-public data class EndpointOptions(
-    val testDomain: String = TEST_BASE_DOMAIN,
-    val liveDomain: String = LIVE_BASE_DOMAIN,
-    val dfppaDomain: String = DEFAULT_DFPPA_DOMAIN,
+public class EndpointOptions(
+    public val testDomain: String = TEST_BASE_DOMAIN,
+    public val liveDomain: String = LIVE_BASE_DOMAIN,
+    public val dfppaDomain: String = DEFAULT_DFPPA_DOMAIN,
 )
