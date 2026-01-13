@@ -22,7 +22,7 @@ public suspend fun <T> stytchNetworkRequest(
         val exception =
             when (e) {
                 is ResponseException -> {
-                    middleware.onError(e.response)
+                    middleware.onError(e)
                 }
 
                 else -> {

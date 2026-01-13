@@ -16,7 +16,7 @@ internal class StytchConsumerSessionManager(
     private val dispatchers: StytchDispatchers,
     private val persistenceClient: StytchPersistenceClient,
 ) : StytchSessionManager {
-    internal var session: MutableStateFlow<Session?> = MutableStateFlow(null)
+    internal val session: MutableStateFlow<Session?> = MutableStateFlow(null)
     internal var sessionToken: String? = null
 
     override suspend fun getCurrentSessionToken(): String? = sessionToken
@@ -38,6 +38,7 @@ internal class StytchConsumerSessionManager(
         sessionToken = null
         session.value = null
         persistenceClient.remove(SESSION_IDENTIFIER)
+        persistenceClient.remove(SESSION_TOKEN_IDENTIFIER)
     }
 
     init {

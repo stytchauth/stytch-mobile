@@ -1,7 +1,7 @@
 package com.stytch.sdk.consumer
 
 import com.stytch.sdk.StytchClient
-import com.stytch.sdk.consumer.networking.NetworkingClient
+import com.stytch.sdk.consumer.networking.ConsumerNetworkingClient
 import com.stytch.sdk.consumer.otp.Otp
 import com.stytch.sdk.consumer.otp.OtpImpl
 import com.stytch.sdk.data.StytchClientConfiguration
@@ -44,7 +44,7 @@ private class DefaultStytchConsumer(
 
     private val sessionManager = StytchConsumerSessionManager(dispatchers, persistenceClient)
 
-    private val networkingClient = NetworkingClient(configuration, dispatchers, sessionManager)
+    private val networkingClient = ConsumerNetworkingClient(configuration, dispatchers, sessionManager)
 
     override val otp: Otp = OtpImpl(networkingClient)
 

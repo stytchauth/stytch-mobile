@@ -1,124 +1,72 @@
 package com.stytch.sdk.networking
 
+import com.stytch.sdk.StytchSessionManager
+import com.stytch.sdk.data.SDK_URL_PATH
+import com.stytch.sdk.data.StytchAPIError
 import com.stytch.sdk.data.StytchClientConfigurationInternal
-import com.stytch.sdk.shared.BuildConfig
-import io.github.aakira.napier.DebugAntilog
-import io.github.aakira.napier.Napier
-import io.ktor.client.HttpClient
+import com.stytch.sdk.data.StytchDataResponse
+import com.stytch.sdk.data.StytchDispatchers
+import com.stytch.sdk.data.StytchResult
+import de.jensklingenberg.ktorfit.Ktorfit
 import io.ktor.client.call.body
-import io.ktor.client.plugins.DefaultRequest
-import io.ktor.client.plugins.HttpResponseValidator
-import io.ktor.client.plugins.HttpTimeout
-import io.ktor.client.plugins.UserAgent
-import io.ktor.client.plugins.auth.Auth
-import io.ktor.client.plugins.auth.providers.BasicAuthCredentials
-import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.client.plugins.logging.LogLevel
-import io.ktor.client.plugins.logging.Logger
-import io.ktor.client.plugins.logging.Logging
-import io.ktor.client.request.header
-import io.ktor.http.ContentType
-import io.ktor.http.HttpHeaders
-import io.ktor.http.HttpMessageBuilder
-import io.ktor.http.isSuccess
-import io.ktor.serialization.kotlinx.json.json
-import io.ktor.util.encodeBase64
-import kotlinx.serialization.json.Json
-import kotlin.uuid.ExperimentalUuidApi
-import kotlin.uuid.Uuid
+import io.ktor.client.plugins.ResponseException
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
-private const val THIRTY_SECONDS_IN_MS = 30_000L
-private const val TEN_SECONDS_IN_MS = 10_000L
-private const val X_SDK_CLIENT_HEADER = "X-SDK-CLIENT"
-
-public fun getStytchNetworkingClient(
+public abstract class StytchNetworkingClient(
     configuration: StytchClientConfigurationInternal,
-    getSessionToken: suspend () -> String?,
-): HttpClient =
-    HttpClient {
-        expectSuccess = true
+    private val dispatchers: StytchDispatchers,
+    private val sessionManager: StytchSessionManager,
+) {
+    public abstract val middleware: StytchNetworkResponseMiddleware
 
-        install(ContentNegotiation) {
-            json(
-                Json {
-                    isLenient = true
-                    ignoreUnknownKeys = true
-                },
-            )
-        }
+    public abstract suspend fun <T> sessionUpdater(): StytchDataResponse<*>
 
-        install(HttpTimeout) {
-            requestTimeoutMillis = THIRTY_SECONDS_IN_MS
-            connectTimeoutMillis = TEN_SECONDS_IN_MS
-            socketTimeoutMillis = TEN_SECONDS_IN_MS
-        }
+    private var sessionUpdateJob: Job? = null
 
-        install(UserAgent) {
-            agent = "${BuildConfig.SDK_NAME}/${BuildConfig.SDK_VERSION}"
-        }
+    public val ktorfit: Ktorfit
 
-        install(DefaultRequest) {
-            header(HttpHeaders.ContentType, ContentType.Application.Json)
-            configuration.asSdkHeader(this)
-        }
-
-        install(Auth) {
-            providers.add(
-                StytchCredentialProvider(
-                    credentials = {
-                        val username = configuration.tokenInfo.publicToken
-                        val password = getSessionToken() ?: username
-                        BasicAuthCredentials(username, password)
-                    },
-                ),
-            )
-        }
-
-        install(Logging) {
-            logger =
-                object : Logger {
-                    override fun log(message: String) {
-                        Napier.v(message, null, "StytchNetworkingClient")
+    public fun <T> startSessionUpdateJob() {
+        sessionUpdateJob?.cancel()
+        sessionUpdateJob =
+            CoroutineScope(dispatchers.ioDispatcher).launch {
+                try {
+                    stytchNetworkRequestWithRetryAndBackoff(
+                        block = { sessionUpdater<T>() },
+                        onSuccess = sessionManager::update,
+                    )
+                    delay(HEARTBEAT_INTERVAL_MS)
+                    startSessionUpdateJob<T>()
+                } catch (e: Exception) {
+                    if (e is ResponseException) {
+                        if (e.response.body<StytchAPIError>().isUnrecoverableError()) {
+                            sessionManager.revoke()
+                        }
                     }
+                    // TODO: else, something went wrong
                 }
-            level = LogLevel.ALL
-        }.also { Napier.base(DebugAntilog()) }
+            }
     }
 
-@OptIn(ExperimentalUuidApi::class)
-private fun StytchClientConfigurationInternal.asSdkHeader(context: HttpMessageBuilder): HttpMessageBuilder {
-    val eventId: String = Uuid.generateV4().toString()
-    // I've NEVER understood what this was, but maintaining parity...
-    val persistentId: String = Uuid.generateV4().toString()
-    val x =
-        context.apply {
-            header(
-                X_SDK_CLIENT_HEADER,
-                """
-                {
-                  "app_session_id": "$appSessionId",
-                  "timezone": "$timezone",
-                  "event_id": "event-id-$eventId",
-                  "persistent_id": "persistent-id-$persistentId",
-                  "sdk": {
-                       "identifier": "${BuildConfig.SDK_NAME}",
-                       "version": "${BuildConfig.SDK_VERSION}"
-                  },
-                  "app": {
-                       "identifier": "${deviceInfo.applicationPackageName}",
-                       "version": "${deviceInfo.applicationVersion}"
-                  },
-                  "os":  {
-                       "identifier": "${deviceInfo.osName}",
-                       "version": "${deviceInfo.osVersion}"
-                  },
-                  "device":  {
-                       "model": "${deviceInfo.deviceName}",
-                       "screen_size": "${deviceInfo.screenSize}"
-                  }
-                }
-                """.trimIndent().encodeBase64(),
-            )
+    public suspend fun <T> request(block: suspend () -> StytchDataResponse<T>): StytchResult<T> =
+        stytchNetworkRequest(middleware) {
+            block()
         }
-    return x
+
+    init {
+        val endpointOptions = configuration.endpointOptions
+        val domain = if (configuration.tokenInfo.isTestToken) endpointOptions.testDomain else endpointOptions.liveDomain
+        ktorfit =
+            Ktorfit
+                .Builder()
+                .baseUrl("https://$domain/$SDK_URL_PATH")
+                .httpClient(getStytchHttpClient(configuration, sessionManager::getCurrentSessionToken))
+                .build()
+    }
+
+    private companion object {
+        private const val HEARTBEAT_INTERVAL_MS = 3 * 60 * 1000L // 3 minutes
+    }
 }

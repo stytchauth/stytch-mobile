@@ -77,6 +77,7 @@ kotlin {
             implementation(libs.ktor.serialization.kotlinx.json)
             implementation(libs.kotlinx.datetime)
             implementation(libs.ktor.client.logging)
+            implementation(libs.ktorfit.lib.light)
             implementation(libs.napier)
             implementation(libs.skie.configuration.annotations)
         }
