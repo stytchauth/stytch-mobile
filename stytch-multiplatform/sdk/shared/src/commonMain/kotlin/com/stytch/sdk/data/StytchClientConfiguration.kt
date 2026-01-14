@@ -10,7 +10,6 @@ public expect class StytchClientConfiguration {
     public fun toInternal(): StytchClientConfigurationInternal
 }
 
-@JsExport
 public class PublicTokenInfo(
     public val publicToken: String,
     public val isTestToken: Boolean,

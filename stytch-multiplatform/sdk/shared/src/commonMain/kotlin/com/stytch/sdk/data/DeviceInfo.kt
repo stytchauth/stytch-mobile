@@ -3,8 +3,6 @@ package com.stytch.sdk.data
 import kotlin.js.JsExport
 import kotlin.js.JsName
 
-@JsExport
-@JsName("DeviceInfo")
 public class DeviceInfo(
     public val applicationPackageName: String,
     public val applicationVersion: String,

@@ -10,7 +10,6 @@ import kotlin.js.JsExport
 import kotlin.js.JsName
 
 @JsExport
-@JsName("SessionClient")
 public interface SessionClient {
     public suspend fun authenticate(request: SessionsAuthenticateRequest): SessionsAuthenticateResponse
 

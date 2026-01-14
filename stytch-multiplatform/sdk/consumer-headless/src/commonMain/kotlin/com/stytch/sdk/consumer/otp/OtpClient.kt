@@ -12,7 +12,6 @@ import kotlin.js.JsExport
 import kotlin.js.JsName
 
 @JsExport
-@JsName("OtpClient")
 public interface OtpClient {
     public val sms: SmsOtpClient
 
@@ -20,7 +19,6 @@ public interface OtpClient {
 }
 
 @JsExport
-@JsName("SmsOtpClient")
 public interface SmsOtpClient {
     public suspend fun loginOrCreate(request: OtpSmsLoginOrCreateRequest): OtpSmsLoginOrCreateResponse
 }

@@ -5,13 +5,18 @@ import 'react-native-reanimated';
 
 import { useColorScheme } from '@/hooks/use-color-scheme';
 
+import { createStytchConsumer, StytchClientConfiguration } from "@stytch/react-native-consumer"
+
 export const unstable_settings = {
   anchor: '(tabs)',
 };
 
+const STYTCH_PUBLIC_TOKEN = process.env.EXPO_PUBLIC_STYTCH_PUBLIC_TOKEN as string;
+const stytchConfig = new StytchClientConfiguration(STYTCH_PUBLIC_TOKEN)
+const stytchConsumerClient = createStytchConsumer(stytchConfig)
+
 export default function RootLayout() {
   const colorScheme = useColorScheme();
-
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <Stack>

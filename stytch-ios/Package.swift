@@ -10,7 +10,7 @@ let package = Package(
     targets: [
         .binaryTarget(
             name: "StytchConsumerTarget",
-            path: "./artifacts/StytchConsumerSDK.xcframework",
+            path: "./StytchConsumerSDK.xcframework",
         ),
     ]
 )

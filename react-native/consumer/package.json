@@ -1,0 +1,49 @@
+{
+  "name": "@stytch/react-native-consumer",
+  "version": "0.0.1",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "lib",
+    "android",
+    "ios"
+  ],
+  "license": "MIT",
+  "homepage": "https://stytch.com/docs/sdks/react-native-sdk",
+  "author": {
+    "name": "Stytch",
+    "url": "https://github.com/stytchauth"
+  },
+  "scripts": {
+    "build": "rm -rf dist && tsc && swc src -d dist --copy-files --strip-leading-paths"
+  },
+  "dependencies": {
+    "@stytch/react-native-inappbrowser-reborn": "^3.7.2"
+  },
+  "devDependencies": {
+    "@react-native/babel-preset": "0.81.1",
+    "@react-native/codegen": "0.81.1",
+    "@swc/cli": "^0.7.10",
+    "@swc/core": "^1.15.8",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "react-native": "0.81.4",
+    "tsc": "^2.0.4",
+    "typescript": "5.9.2"
+  },
+  "peerDependencies": {
+    "react": ">= 17.0.2",
+    "react-dom": ">= 17.0.2",
+    "react-native": ">= 0.73.x"
+  },
+  "codegenConfig": {
+    "name": "StytchReactNativeModule",
+    "type": "modules",
+    "jsSrcsDir": "./src/native-module",
+    "android": {
+      "javaPackageName": "com.stytch.reactnativemodules"
+    }
+  }
+}
