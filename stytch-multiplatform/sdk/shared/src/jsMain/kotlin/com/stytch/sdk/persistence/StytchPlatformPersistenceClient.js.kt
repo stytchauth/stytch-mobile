@@ -1,5 +1,6 @@
 package com.stytch.sdk.persistence
 
+@JsExport
 public actual class StytchPlatformPersistenceClient {
     public actual suspend fun save(
         key: String,

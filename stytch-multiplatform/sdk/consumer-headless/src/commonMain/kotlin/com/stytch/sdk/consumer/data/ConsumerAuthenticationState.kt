@@ -3,7 +3,11 @@ package com.stytch.sdk.consumer.data
 import com.stytch.sdk.consumer.networking.Session
 import com.stytch.sdk.consumer.networking.User
 import com.stytch.sdk.data.AuthenticationState
+import kotlin.js.JsExport
+import kotlin.js.JsName
 
+@JsExport
+@JsName("ConsumerAuthenticationState")
 public sealed class ConsumerAuthenticationState : AuthenticationState {
     public data object Loading : ConsumerAuthenticationState()
 

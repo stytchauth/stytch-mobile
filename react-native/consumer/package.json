@@ -27,6 +27,7 @@
     "@react-native/codegen": "0.81.1",
     "@swc/cli": "^0.7.10",
     "@swc/core": "^1.15.8",
+    "@types/react": "^19.2.8",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-native": "0.81.4",

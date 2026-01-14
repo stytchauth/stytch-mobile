@@ -7,6 +7,7 @@ import com.stytch.sdk.consumer.otp.OtpClient
 import com.stytch.sdk.consumer.otp.OtpImpl
 import com.stytch.sdk.consumer.session.SessionClient
 import com.stytch.sdk.consumer.session.SessionImpl
+import com.stytch.sdk.data.JsCleanup
 import com.stytch.sdk.data.StytchClientConfiguration
 import com.stytch.sdk.data.StytchClientConfigurationInternal
 import com.stytch.sdk.data.StytchDispatchers
@@ -26,6 +27,9 @@ public interface StytchConsumer : StytchClient {
     public val otp: OtpClient
     public val session: SessionClient
     public val authenticationStateFlow: StateFlow<ConsumerAuthenticationState>
+
+    @JsName("authenticationStateObserver")
+    public fun authenticationStateObserver(callback: (authenticatonState: ConsumerAuthenticationState) -> Unit): JsCleanup
 }
 
 @JsExport
@@ -57,6 +61,18 @@ internal class DefaultStytchConsumer(
     override val session: SessionClient = SessionImpl(networkingClient)
 
     override val authenticationStateFlow: StateFlow<ConsumerAuthenticationState> = sessionManager.authenticationStateFlow
+
+    override fun authenticationStateObserver(callback: (authenticatonState: ConsumerAuthenticationState) -> Unit): JsCleanup {
+        val job =
+            CoroutineScope(dispatchers.mainDispatcher).launch {
+                authenticationStateFlow.collect { callback(it) }
+            }
+        return object : JsCleanup {
+            override fun stop() {
+                job.cancel()
+            }
+        }
+    }
 
     init {
         CoroutineScope(Dispatchers.Default).launch {

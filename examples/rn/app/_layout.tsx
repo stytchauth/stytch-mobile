@@ -5,7 +5,7 @@ import 'react-native-reanimated';
 
 import { useColorScheme } from '@/hooks/use-color-scheme';
 
-import { createStytchConsumer, StytchClientConfiguration } from "@stytch/react-native-consumer"
+import { createStytchConsumer, StytchClientConfiguration, StytchProvider } from "@stytch/react-native-consumer"
 
 export const unstable_settings = {
   anchor: '(tabs)',
@@ -18,12 +18,14 @@ const stytchConsumerClient = createStytchConsumer(stytchConfig)
 export default function RootLayout() {
   const colorScheme = useColorScheme();
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+    <StytchProvider stytch={stytchConsumerClient}>
+      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+        <Stack>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
+        </Stack>
+        <StatusBar style="auto" />
+      </ThemeProvider>
+    </StytchProvider>
   );
 }
