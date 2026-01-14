@@ -84,7 +84,7 @@ struct UnauthenticatedStateView: View {
 extension ContentView {
     @Observable
     class ViewModel {
-        private let config: SharedStytchClientConfiguration = .init(publicToken: ProcessInfo.processInfo.environment["STYTCH_PUBLIC_TOKEN"] ?? "")
+        private let config: StytchClientConfiguration = .init(publicToken: ProcessInfo.processInfo.environment["STYTCH_PUBLIC_TOKEN"] ?? "")
         private let consumerClient: StytchConsumer
         var state: ContentViewState = .init()
 
@@ -107,7 +107,7 @@ extension ContentView {
             } catch(let error)  {
                 state.methodId = nil
                 state.step = .phoneNumber
-                print(error)
+                state.error = error as? StytchError
             }
         }
 
@@ -124,7 +124,7 @@ extension ContentView {
             } catch (let error)  {
                 state.methodId = nil
                 state.step = .token
-                print(error)
+                state.error = error as? StytchError
             }
         }
 
@@ -133,7 +133,7 @@ extension ContentView {
                 let response = try await consumerClient.session.revoke()
                 state.rawResponse = response
             } catch (let error) {
-                print(error)
+                state.error = error as? StytchError
             }
         }
     }
@@ -144,7 +144,8 @@ struct ContentViewState {
     var authenticationState: ConsumerAuthenticationState = .Loading()
     var methodId: String? = nil
     var step: Step = .phoneNumber
-    var rawResponse: SharedStytchAPIResponse? = nil
+    var rawResponse: StytchAPIResponse? = nil
+    var error: StytchError? = nil
 }
 
 enum Step {
@@ -152,7 +153,7 @@ enum Step {
     case token
 }
 
-private extension SharedStytchAPIResponse {
+private extension StytchAPIResponse {
     func toFriendlyDisplay() -> String {
         var display = if self is OtpSmsLoginOrCreateResponse {
             "Code Sent\n"
@@ -163,7 +164,7 @@ private extension SharedStytchAPIResponse {
         } else {
             "Received Response\n"
         }
-        if let response = self as? SharedBasicResponse {
+        if let response = self as? BasicResponse {
             display += """
                 status_code:
                 \(response.statusCode)

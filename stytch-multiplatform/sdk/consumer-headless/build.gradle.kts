@@ -45,30 +45,21 @@ kotlin {
     }
 
     val xcFramework = XCFramework("StytchConsumerSDK")
-    val interopDirectory = project.layout.projectDirectory.dir("../shared/src/iosMain/interop/")
     listOf(
         iosArm64(),
         iosSimulatorArm64(),
     ).forEach {
         it.binaries.framework {
             baseName = "StytchConsumerSDK"
+            xcFramework.add(this)
+            linkerOpts.add("-L${project(":sdk:shared").projectDir}/src/iosMain/interop")
             if (target.name == "iosArm64") {
-                linkerOpts.addAll(
-                    listOf(
-                        "-L$interopDirectory",
-                        "-lStytchIos",
-                    ),
-                )
+                linkerOpts.add("-lStytchIos")
             }
             if (target.name == "iosSimulatorArm64") {
-                linkerOpts.addAll(
-                    listOf(
-                        "-L$interopDirectory",
-                        "-lStytchSimulator",
-                    ),
-                )
+                linkerOpts.add("-lStytchSimulator")
             }
-            xcFramework.add(this)
+            export(projects.sdk.shared)
         }
     }
 
