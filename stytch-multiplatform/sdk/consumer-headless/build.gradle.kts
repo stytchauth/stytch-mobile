@@ -65,10 +65,11 @@ kotlin {
 
     js {
         browser()
-        outputModuleName = "@stytch/react-native"
+        outputModuleName = "react-native-consumer"
         binaries.library()
         generateTypeScriptDefinitions()
         compilerOptions { target = "es2015" }
+        useEsModules()
     }
 
     jvm()

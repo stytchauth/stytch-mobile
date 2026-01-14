@@ -1,8 +1,9 @@
 #!/bin/sh
 PLATFORM=$1
 ROOT_DIR=`pwd`
-rm -rf artifacts
-mkdir -p artifacts
+ARTIFACT_DIR=$ROOT_DIR/artifacts
+rm -rf $ARTIFACT_DIR
+mkdir $ARTIFACT_DIR
 cd $ROOT_DIR/stytch-multiplatform
 ./gradlew clean
 
@@ -36,14 +37,14 @@ buildAndCopyIos() {
  
     echo "Building iOS artifact..."
     ./gradlew assembleStytchConsumerSDKXCFramework assembleStytchConsumerExtensionsSDKXCFramework assembleStytchSharedSDKXCFramework
-    cp -r sdk/consumer-headless/build/XCFrameworks/release/StytchConsumerSDK.xcframework artifacts
+    cp -r sdk/consumer-headless/build/XCFrameworks/release/StytchConsumerSDK.xcframework $ARTIFACT_DIR
 }
 
 buildAndCopyRn() {
     cd $ROOT_DIR/stytch-multiplatform
     echo "Building RN artifacts..."
     ./gradlew :sdk:consumer-headless:jsBrowserProductionLibraryDistribution
-    cp -r sdk/consumer-headless/build/dist/js/productionLibrary artifacts
+    cp -r sdk/consumer-headless/build/dist/js/productionLibrary $ARTIFACT_DIR/react-native-consumer
 }
 
 

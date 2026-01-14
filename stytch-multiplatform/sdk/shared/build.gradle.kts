@@ -77,8 +77,6 @@ kotlin {
 
     js {
         browser()
-        outputModuleName = "@stytch/react-native"
-        binaries.library()
         generateTypeScriptDefinitions()
         compilerOptions { target = "es2015" }
     }
