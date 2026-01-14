@@ -20,6 +20,7 @@ public actual class StytchClientConfiguration(
             defaultSessionDuration = defaultSessionDuration,
             deviceInfo = context.getDeviceInfo(),
             platformPersistenceClient = StytchPlatformPersistenceClient(context),
+            platform = KMPPlatformType.ANDROID,
         )
 }
 

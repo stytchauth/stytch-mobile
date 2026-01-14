@@ -18,5 +18,6 @@ public actual class StytchClientConfiguration(
             defaultSessionDuration = defaultSessionDuration,
             deviceInfo = DeviceInfo("", "", "", "", "", ""),
             platformPersistenceClient = StytchPlatformPersistenceClient(),
+            platform = KMPPlatformType.REACTNATIVE,
         )
 }

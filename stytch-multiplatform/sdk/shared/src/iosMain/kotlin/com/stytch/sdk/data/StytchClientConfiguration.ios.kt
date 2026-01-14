@@ -35,6 +35,7 @@ public actual class StytchClientConfiguration(
                     screenSize = UIScreen.mainScreen.bounds.useContents { "(${size.width},${size.height})" },
                 ),
             platformPersistenceClient = StytchPlatformPersistenceClient(),
+            platform = KMPPlatformType.IOS,
         )
 }
 

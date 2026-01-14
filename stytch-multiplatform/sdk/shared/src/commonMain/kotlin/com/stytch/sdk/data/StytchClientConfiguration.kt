@@ -37,4 +37,12 @@ public class StytchClientConfigurationInternal(
     internal val appSessionId: String = Uuid.generateV4().toString(),
     internal val timezone: String = TimeZone.currentSystemDefault().id,
     public val platformPersistenceClient: StytchPlatformPersistenceClient,
+    internal val platform: KMPPlatformType,
 )
+
+public enum class KMPPlatformType {
+    ANDROID,
+    IOS,
+    REACTNATIVE,
+    JVM,
+}
