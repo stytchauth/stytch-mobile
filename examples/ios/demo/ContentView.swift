@@ -101,16 +101,13 @@ extension ContentView {
             do {
                 let request = OtpSmsLoginOrCreateRequest(phoneNumber: phoneNumber, expirationMinutes: 5, enableAutofill: false)
                 let response = try await consumerClient.otp.sms.loginOrCreate(request: request)
-                switch onEnum(of: response) {
-                case .success(let data):
-                    state.methodId = data.data?.methodId
-                    state.step = .token
-                case .error:
-                    state.methodId = nil
-                    state.step = .phoneNumber
-                }
-                state.rawResponse = response as? SharedStytchResult<AnyObject>
-            } catch  {
+                state.methodId = response.methodId
+                state.step = .token
+                state.rawResponse = response
+            } catch(let error)  {
+                state.methodId = nil
+                state.step = .phoneNumber
+                print(error)
             }
         }
 
@@ -121,24 +118,22 @@ extension ContentView {
                 }
                 let request: OtpAuthenticateRequest = .init(token: token, methodId: methodId, sessionDurationMinutes: 5)
                 let response = try await consumerClient.otp.authenticate(request: request)
-                switch onEnum(of: response) {
-                case .success:
-                    state.methodId = nil
-                    state.step = .phoneNumber
-                case .error:
-                    state.methodId = nil
-                    state.step = .token
-                }
-                state.rawResponse = response as? SharedStytchResult<AnyObject>
-            } catch  {
+                state.methodId = nil
+                state.step = .phoneNumber
+                state.rawResponse = response
+            } catch (let error)  {
+                state.methodId = nil
+                state.step = .token
+                print(error)
             }
         }
 
         func logout() async {
             do {
                 let response = try await consumerClient.session.revoke()
-                state.rawResponse = response as? SharedStytchResult<AnyObject>
-            } catch {
+                state.rawResponse = response
+            } catch (let error) {
+                print(error)
             }
         }
     }
@@ -149,7 +144,7 @@ struct ContentViewState {
     var authenticationState: ConsumerAuthenticationState = .Loading()
     var methodId: String? = nil
     var step: Step = .phoneNumber
-    var rawResponse: SharedStytchResult<AnyObject>? = nil
+    var rawResponse: SharedStytchAPIResponse? = nil
 }
 
 enum Step {
@@ -157,45 +152,41 @@ enum Step {
     case token
 }
 
-private extension SharedStytchResult<AnyObject> {
+private extension SharedStytchAPIResponse {
     func toFriendlyDisplay() -> String {
-        return switch onEnum(of: self) {
-        case .success(let payload):
-            if let res = payload.data as? OtpSmsLoginOrCreateResponse {
-                """
-                Code Sent!
-
-                request_id:
-                \(res.requestId)
-
+        var display = if self is OtpSmsLoginOrCreateResponse {
+            "Code Sent\n"
+        } else if (self is AuthenticatedResponse) {
+            "Logged In\n"
+        } else if (self is SessionsRevokeResponse) {
+            "Logged Out\n"
+        } else {
+            "Received Response\n"
+        }
+        if let response = self as? SharedBasicResponse {
+            display += """
                 status_code:
-                \(res.statusCode)
-
-                method_id:
-                \(res.methodId)
-                """.trimmingCharacters(in: .whitespaces)
-            } else if let res = payload.data as? OtpAuthenticateResponse {
-                """
-                Logged In!
-
+                \(response.statusCode)
+                
                 request_id:
-                \(res.requestId)
-
-                status_code:
-                \(res.statusCode)
-
-                session_token:
-                \(res.sessionToken)
-                """.trimmingCharacters(in: .whitespaces)
-            } else {
-                "This is a different type of response that I haven't mapped (yet)!"
-            }
-        case .error(let error):
-            """
-            Error!
-
-            \(error.description)
+                \(response.requestId)
             """.trimmingCharacters(in: .whitespaces)
         }
+        if let response = self as? OtpSmsLoginOrCreateResponse {
+            display += """
+                method_id:
+                \(response.methodId)
+            """.trimmingCharacters(in: .whitespaces)
+        }
+        if let response = self as? AuthenticatedResponse {
+            display += """
+                session_token:
+                \(response.sessionToken)
+                
+                session_jwt:
+                \(response.sessionJwt)
+            """.trimmingCharacters(in: .whitespaces)
+        }
+        return display
     }
 }

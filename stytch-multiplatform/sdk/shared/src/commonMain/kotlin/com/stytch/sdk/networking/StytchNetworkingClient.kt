@@ -6,7 +6,6 @@ import com.stytch.sdk.data.StytchAPIError
 import com.stytch.sdk.data.StytchClientConfigurationInternal
 import com.stytch.sdk.data.StytchDataResponse
 import com.stytch.sdk.data.StytchDispatchers
-import com.stytch.sdk.data.StytchResult
 import de.jensklingenberg.ktorfit.Ktorfit
 import io.ktor.client.call.body
 import io.ktor.client.plugins.ResponseException
@@ -60,7 +59,7 @@ public abstract class StytchNetworkingClient(
             }
     }
 
-    public suspend fun <T> request(block: suspend () -> StytchDataResponse<T>): StytchResult<T> =
+    public suspend fun <T> request(block: suspend () -> StytchDataResponse<T>): T =
         stytchNetworkRequest(middleware) {
             block()
         }

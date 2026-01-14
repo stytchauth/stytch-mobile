@@ -42,9 +42,11 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.stytch.mobile.demo.ui.theme.StytchMobileAndroidDemoTheme
 import com.stytch.sdk.consumer.data.ConsumerAuthenticationState
-import com.stytch.sdk.consumer.networking.OtpAuthenticateResponse
+import com.stytch.sdk.consumer.networking.AuthenticatedResponse
 import com.stytch.sdk.consumer.networking.OtpSmsLoginOrCreateResponse
-import com.stytch.sdk.data.StytchResult
+import com.stytch.sdk.consumer.networking.SessionsRevokeResponse
+import com.stytch.sdk.data.BasicResponse
+import com.stytch.sdk.data.StytchAPIResponse
 
 class MainActivity : ComponentActivity() {
     private val viewModel: MainViewModel by viewModels { MainViewModel.Factory }
@@ -160,50 +162,46 @@ fun UnauthenticatedStateView(
     }
 }
 
-private fun <T> StytchResult<T>.toFriendlyDisplay(): String =
-    when (this) {
-        is StytchResult.Success<T> -> {
-            when (val content = data) {
-                is OtpSmsLoginOrCreateResponse -> {
-                    """
-                    Code Sent!
-
-                    request_id:
-                    ${content.requestId}
-
-                    status_code:
-                    ${content.statusCode}
-
-                    method_id:
-                    ${content.methodId}
-                    """.trimIndent()
-                }
-
-                is OtpAuthenticateResponse -> {
-                    """
-                    Logged In!
-
-                    request_id:
-                    ${content.requestId}
-
-                    status_code:
-                    ${content.statusCode}
-
-                    session_token:
-                    ${content.sessionToken}
-                    """.trimIndent()
-                }
-
-                else -> {
-                    "This will never be displayed!"
-                }
-            }
+private fun StytchAPIResponse.toFriendlyDisplay(): String {
+    val response = this
+    return buildString {
+        append(
+            when (response) {
+                OtpSmsLoginOrCreateResponse -> "Code Sent\n"
+                is AuthenticatedResponse -> "Logged In\n"
+                SessionsRevokeResponse -> "Logged Out\n"
+                else -> "Got Response\n"
+            },
+        )
+        if (response is BasicResponse) {
+            append(
+                """
+                status_code:
+                ${response.statusCode}
+                
+                request_id:
+                ${response.requestId}
+                """.trimIndent(),
+            )
         }
-
-        is StytchResult.Error -> {
-            buildString {
-                append("Error!\n")
-                append(exception.localizedMessage ?: "Unknown error")
-            }
+        if (response is OtpSmsLoginOrCreateResponse) {
+            append(
+                """
+                method_id:
+                ${response.methodId}
+                """.trimIndent(),
+            )
+        }
+        if (response is AuthenticatedResponse) {
+            append(
+                """
+                session_token:
+                ${response.sessionToken}
+                
+                session_jwt:
+                ${response.sessionJwt}
+                """.trimIndent(),
+            )
         }
     }
+}

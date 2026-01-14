@@ -5,7 +5,6 @@ import com.stytch.sdk.consumer.networking.OtpAuthenticateRequest
 import com.stytch.sdk.consumer.networking.OtpAuthenticateResponse
 import com.stytch.sdk.consumer.networking.OtpSmsLoginOrCreateRequest
 import com.stytch.sdk.consumer.networking.OtpSmsLoginOrCreateResponse
-import com.stytch.sdk.data.StytchResult
 import com.stytch.sdk.networking.StytchNetworkingClient
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -17,13 +16,13 @@ import kotlin.js.JsName
 public interface OtpClient {
     public val sms: SmsOtpClient
 
-    public suspend fun authenticate(request: OtpAuthenticateRequest): StytchResult<OtpAuthenticateResponse>
+    public suspend fun authenticate(request: OtpAuthenticateRequest): OtpAuthenticateResponse
 }
 
 @JsExport
 @JsName("SmsOtpClient")
 public interface SmsOtpClient {
-    public suspend fun loginOrCreate(request: OtpSmsLoginOrCreateRequest): StytchResult<OtpSmsLoginOrCreateResponse>
+    public suspend fun loginOrCreate(request: OtpSmsLoginOrCreateRequest): OtpSmsLoginOrCreateResponse
 }
 
 public class OtpImpl private constructor(
@@ -31,7 +30,7 @@ public class OtpImpl private constructor(
 ) : OtpClient {
     override val sms: SmsOtpClient = SmsOtpImpl.create(networkingClient)
 
-    override suspend fun authenticate(request: OtpAuthenticateRequest): StytchResult<OtpAuthenticateResponse> =
+    override suspend fun authenticate(request: OtpAuthenticateRequest): OtpAuthenticateResponse =
         withContext(Dispatchers.Default) {
             networkingClient.request {
                 networkingClient.api.otpAuthenticate(request)
@@ -46,7 +45,7 @@ public class OtpImpl private constructor(
 public class SmsOtpImpl private constructor(
     private val networkingClient: ConsumerNetworkingClient,
 ) : SmsOtpClient {
-    override suspend fun loginOrCreate(request: OtpSmsLoginOrCreateRequest): StytchResult<OtpSmsLoginOrCreateResponse> =
+    override suspend fun loginOrCreate(request: OtpSmsLoginOrCreateRequest): OtpSmsLoginOrCreateResponse =
         withContext(Dispatchers.Default) {
             networkingClient.request {
                 networkingClient.api.otpSmsLoginOrCreate(request)

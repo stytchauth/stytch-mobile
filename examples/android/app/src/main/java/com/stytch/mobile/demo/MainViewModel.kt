@@ -11,12 +11,11 @@ import com.stytch.sdk.consumer.StytchConsumer
 import com.stytch.sdk.consumer.createStytchConsumer
 import com.stytch.sdk.consumer.data.ConsumerAuthenticationState
 import com.stytch.sdk.consumer.networking.OtpAuthenticateRequest
-import com.stytch.sdk.consumer.networking.OtpAuthenticateResponse
 import com.stytch.sdk.consumer.networking.OtpSmsLoginOrCreateRequest
-import com.stytch.sdk.consumer.networking.OtpSmsLoginOrCreateResponse
 import com.stytch.sdk.consumer.otp.authenticate
+import com.stytch.sdk.data.StytchAPIResponse
 import com.stytch.sdk.data.StytchClientConfiguration
-import com.stytch.sdk.data.StytchResult
+import com.stytch.sdk.data.StytchError
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -43,25 +42,23 @@ class MainViewModel(
                 expirationMinutes = 5,
             )
         viewModelScope.launch {
-            when (val response = stytchConsumerClient.otp.sms.loginOrCreate(request)) {
-                is StytchResult.Error -> {
-                    _state.emit(
-                        state.value.copy(
-                            methodId = null,
-                            rawResponse = response,
-                        ),
-                    )
-                }
-
-                is StytchResult.Success<OtpSmsLoginOrCreateResponse> -> {
-                    _state.emit(
-                        state.value.copy(
-                            methodId = response.data.methodId,
-                            step = Step.SUBMIT_TOKEN,
-                            rawResponse = response,
-                        ),
-                    )
-                }
+            try {
+                val response = stytchConsumerClient.otp.sms.loginOrCreate(request)
+                _state.emit(
+                    state.value.copy(
+                        methodId = response.methodId,
+                        step = Step.SUBMIT_TOKEN,
+                        rawResponse = response,
+                        error = null,
+                    ),
+                )
+            } catch (e: StytchError) {
+                _state.emit(
+                    state.value.copy(
+                        methodId = null,
+                        error = e,
+                    ),
+                )
             }
         }
     }
@@ -74,37 +71,35 @@ class MainViewModel(
                 methodId = methodId,
                 sessionDurationMinutes = 5,
             )
-
-        // let's do this one with a callback, instead of the regular coroutine:
-        stytchConsumerClient.otp.authenticate(request) { response ->
-            when (response) {
-                is StytchResult.Error -> {
-                    _state.value =
-                        state.value.copy(
-                            rawResponse = response,
-                        )
-                }
-
-                is StytchResult.Success<OtpAuthenticateResponse> -> {
-                    // reset the state
-                    _state.value =
-                        DemoAppState(
-                            authenticationState = stytchConsumerClient.authenticationStateFlow.value,
-                            rawResponse = response,
-                        )
-                }
+        try {
+            // let's do this one with a callback, instead of the regular coroutine:
+            stytchConsumerClient.otp.authenticate(request) { response ->
+                // reset the state
+                _state.value =
+                    DemoAppState(
+                        authenticationState = stytchConsumerClient.authenticationStateFlow.value,
+                        rawResponse = response,
+                        error = null,
+                    )
             }
+        } catch (e: StytchError) {
+            _state.value = _state.value.copy(error = e)
         }
     }
 
     fun logout() {
         viewModelScope.launch {
-            val response = stytchConsumerClient.session.revoke()
-            _state.emit(
-                state.value.copy(
-                    rawResponse = response,
-                ),
-            )
+            try {
+                val response = stytchConsumerClient.session.revoke()
+                _state.emit(
+                    _state.value.copy(
+                        rawResponse = response,
+                        error = null,
+                    ),
+                )
+            } catch (e: StytchError) {
+                _state.emit(_state.value.copy(error = e))
+            }
         }
     }
 
@@ -135,7 +130,8 @@ data class DemoAppState(
     val authenticationState: ConsumerAuthenticationState = ConsumerAuthenticationState.Loading,
     val methodId: String? = null,
     val step: Step = Step.SUBMIT_PHONE_NUMBER,
-    val rawResponse: StytchResult<Any>? = null,
+    val rawResponse: StytchAPIResponse? = null,
+    val error: StytchError? = null,
 )
 
 enum class Step {

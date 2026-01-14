@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		390899572F17FCFE0048417E /* StytchConsumerSDK in Frameworks */ = {isa = PBXBuildFile; productRef = 390899562F17FCFE0048417E /* StytchConsumerSDK */; };
+		3908995F2F17FDD80048417E /* StytchConsumerSDK in Frameworks */ = {isa = PBXBuildFile; productRef = 3908995E2F17FDD80048417E /* StytchConsumerSDK */; };
 		3911B1BF2F16F1AF004403B9 /* StytchConsumerSDK in Frameworks */ = {isa = PBXBuildFile; productRef = 3911B1BE2F16F1AF004403B9 /* StytchConsumerSDK */; };
 /* End PBXBuildFile section */
 
@@ -27,6 +29,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3908995F2F17FDD80048417E /* StytchConsumerSDK in Frameworks */,
+				390899572F17FCFE0048417E /* StytchConsumerSDK in Frameworks */,
 				3911B1BF2F16F1AF004403B9 /* StytchConsumerSDK in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -79,6 +83,8 @@
 			name = demo;
 			packageProductDependencies = (
 				3911B1BE2F16F1AF004403B9 /* StytchConsumerSDK */,
+				390899562F17FCFE0048417E /* StytchConsumerSDK */,
+				3908995E2F17FDD80048417E /* StytchConsumerSDK */,
 			);
 			productName = demo;
 			productReference = 390BF9652F0F15C300B83179 /* demo.app */;
@@ -358,6 +364,14 @@
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		390899562F17FCFE0048417E /* StytchConsumerSDK */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = StytchConsumerSDK;
+		};
+		3908995E2F17FDD80048417E /* StytchConsumerSDK */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = StytchConsumerSDK;
+		};
 		3911B1BE2F16F1AF004403B9 /* StytchConsumerSDK */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = StytchConsumerSDK;

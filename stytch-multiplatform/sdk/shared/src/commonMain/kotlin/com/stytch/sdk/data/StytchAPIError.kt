@@ -11,7 +11,7 @@ public class StytchAPIError(
     public val errorType: String,
     @SerialName("error_url")
     public val errorUrl: String,
-) : Exception(errorMessage) {
+) : StytchError() {
     public fun isUnrecoverableError(): Boolean =
         errorType in
             listOf(

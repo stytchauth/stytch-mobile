@@ -11,3 +11,8 @@ This repo publishes:
 **Known things**
 on ios, classes exported in the shared module are being prepended with "shared" (ie: StytchClientConfiguration -> SharedStytchClientConfiguration). why?
 on ios, default constructor arguments are a bear (see params in loginOrCreate()). If we're codegening, we can just codegen all of the constructors (see StytchClientConfiguration.ios.kt), I guess?
+
+**Big TODOs**
+* DFP
+* CAPTCHA
+* Bootstrapping

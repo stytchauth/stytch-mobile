@@ -56,7 +56,7 @@ public fun getStytchHttpClient(
 
         install(DefaultRequest) {
             header(HttpHeaders.ContentType, ContentType.Application.Json)
-            configuration.asSdkHeader(this)
+            sdkClientHeader(configuration)
         }
 
         install(Auth) {
@@ -83,39 +83,35 @@ public fun getStytchHttpClient(
     }
 
 @OptIn(ExperimentalUuidApi::class)
-private fun StytchClientConfigurationInternal.asSdkHeader(context: HttpMessageBuilder): HttpMessageBuilder {
+private fun HttpMessageBuilder.sdkClientHeader(config: StytchClientConfigurationInternal) {
     val eventId: String = Uuid.generateV4().toString()
     // I've NEVER understood what this was, but maintaining parity...
     val persistentId: String = Uuid.generateV4().toString()
-    val x =
-        context.apply {
-            header(
-                X_SDK_CLIENT_HEADER,
-                """
-                {
-                  "app_session_id": "$appSessionId",
-                  "timezone": "$timezone",
-                  "event_id": "event-id-$eventId",
-                  "persistent_id": "persistent-id-$persistentId",
-                  "sdk": {
-                       "identifier": "${BuildConfig.SDK_NAME}",
-                       "version": "${BuildConfig.SDK_VERSION}"
-                  },
-                  "app": {
-                       "identifier": "${deviceInfo.applicationPackageName}",
-                       "version": "${deviceInfo.applicationVersion}"
-                  },
-                  "os":  {
-                       "identifier": "${deviceInfo.osName}",
-                       "version": "${deviceInfo.osVersion}"
-                  },
-                  "device":  {
-                       "model": "${deviceInfo.deviceName}",
-                       "screen_size": "${deviceInfo.screenSize}"
-                  }
-                }
-                """.trimIndent().encodeBase64(),
-            )
+    header(
+        X_SDK_CLIENT_HEADER,
+        """
+        {
+          "app_session_id": "${config.appSessionId}",
+          "timezone": "${config.timezone}",
+          "event_id": "event-id-$eventId",
+          "persistent_id": "persistent-id-$persistentId",
+          "sdk": {
+               "identifier": "${BuildConfig.SDK_NAME}",
+               "version": "${BuildConfig.SDK_VERSION}"
+          },
+          "app": {
+               "identifier": "${config.deviceInfo.applicationPackageName}",
+               "version": "${config.deviceInfo.applicationVersion}"
+          },
+          "os":  {
+               "identifier": "${config.deviceInfo.osName}",
+               "version": "${config.deviceInfo.osVersion}"
+          },
+          "device":  {
+               "model": "${config.deviceInfo.deviceName}",
+               "screen_size": "${config.deviceInfo.screenSize}"
+          }
         }
-    return x
+        """.trimIndent().encodeBase64(),
+    )
 }

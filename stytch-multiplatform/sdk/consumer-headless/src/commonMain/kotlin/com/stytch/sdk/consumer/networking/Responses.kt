@@ -1,16 +1,15 @@
 package com.stytch.sdk.consumer.networking
 
+import com.stytch.sdk.data.BasicResponse
+import com.stytch.sdk.data.StytchAPIResponse
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlin.js.JsExport
 import kotlin.time.Instant
 
-public interface BasicResponse {
-    public val statusCode: Int
-    public val requestId: String
-}
-
-public interface AuthenticatedResponse {
+public interface AuthenticatedResponse :
+    BasicResponse,
+    StytchAPIResponse {
     public val sessionToken: String
     public val sessionJwt: String
     public val user: User
@@ -41,8 +40,7 @@ public class OtpAuthenticateResponse(
     public override val sessionJwt: String,
     public override val user: User,
     public override val session: Session,
-) : BasicResponse,
-    AuthenticatedResponse
+) : AuthenticatedResponse
 
 @JsExport
 @Serializable
@@ -94,8 +92,7 @@ public class SessionsAuthenticateResponse(
     public override val sessionJwt: String,
     public override val user: User,
     public override val session: Session,
-) : BasicResponse,
-    AuthenticatedResponse
+) : AuthenticatedResponse
 
 @JsExport
 @Serializable

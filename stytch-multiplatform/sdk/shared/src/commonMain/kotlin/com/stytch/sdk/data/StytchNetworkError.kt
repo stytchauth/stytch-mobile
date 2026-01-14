@@ -1,6 +1,6 @@
 package com.stytch.sdk.data
 
 public class StytchNetworkError(
-    override val message: String?,
-    override val cause: Throwable? = null,
-) : Exception(message ?: "Network error occurred.", cause)
+    public override val message: String?,
+    public override val cause: Throwable? = null,
+) : StytchError()
