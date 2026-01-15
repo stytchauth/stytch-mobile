@@ -1380,6 +1380,11 @@
     "@jridgewell/resolve-uri" "^3.1.0"
     "@jridgewell/sourcemap-codec" "^1.4.14"
 
+"@js-joda/core@3.2.0":
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/@js-joda/core/-/core-3.2.0.tgz#3e61e21b7b2b8a6be746df1335cf91d70db2a273"
+  integrity sha512-PMqgJ0sw5B7FKb2d5bWYIoxjri+QlW/Pys7+Rw82jSH0QN3rB05jZ/VrrsUdh1w4+i2kw9JOejXGq/KhDOX7Kg==
+
 "@napi-rs/wasm-runtime@^0.2.11":
   version "0.2.12"
   resolved "https://registry.yarnpkg.com/@napi-rs/wasm-runtime/-/wasm-runtime-0.2.12.tgz#3e78a8b96e6c33a6c517e1894efbd5385a7cb6f2"
@@ -1576,7 +1581,7 @@
 
 "@react-native/assets-registry@0.81.5":
   version "0.81.5"
-  resolved "https://registry.npmjs.org/@react-native/assets-registry/-/assets-registry-0.81.5.tgz"
+  resolved "https://registry.yarnpkg.com/@react-native/assets-registry/-/assets-registry-0.81.5.tgz#d22c924fa6f6d4a463c5af34ce91f38756c0fa7d"
   integrity sha512-705B6x/5Kxm1RKRvSv0ADYWm5JOnoiQ1ufW7h8uu2E6G9Of/eE6hP/Ivw3U5jI16ERqZxiKQwk34VJbB0niX9w==
 
 "@react-native/babel-plugin-codegen@0.81.5":
@@ -1653,7 +1658,7 @@
 
 "@react-native/community-cli-plugin@0.81.5":
   version "0.81.5"
-  resolved "https://registry.npmjs.org/@react-native/community-cli-plugin/-/community-cli-plugin-0.81.5.tgz"
+  resolved "https://registry.yarnpkg.com/@react-native/community-cli-plugin/-/community-cli-plugin-0.81.5.tgz#617789cda4da419d03dda00e2a78c36188b4391e"
   integrity sha512-yWRlmEOtcyvSZ4+OvqPabt+NS36vg0K/WADTQLhrYrm9qdZSuXmq8PmdJWz/68wAqKQ+4KTILiq2kjRQwnyhQw==
   dependencies:
     "@react-native/dev-middleware" "0.81.5"
@@ -1688,12 +1693,12 @@
 
 "@react-native/gradle-plugin@0.81.5":
   version "0.81.5"
-  resolved "https://registry.npmjs.org/@react-native/gradle-plugin/-/gradle-plugin-0.81.5.tgz"
+  resolved "https://registry.yarnpkg.com/@react-native/gradle-plugin/-/gradle-plugin-0.81.5.tgz#a58830f38789f6254b64449a17fe57455b589d00"
   integrity sha512-hORRlNBj+ReNMLo9jme3yQ6JQf4GZpVEBLxmTXGGlIL78MAezDZr5/uq9dwElSbcGmLEgeiax6e174Fie6qPLg==
 
 "@react-native/js-polyfills@0.81.5":
   version "0.81.5"
-  resolved "https://registry.npmjs.org/@react-native/js-polyfills/-/js-polyfills-0.81.5.tgz"
+  resolved "https://registry.yarnpkg.com/@react-native/js-polyfills/-/js-polyfills-0.81.5.tgz#2ca68188c8fff9b951f507b1dec7efe928848274"
   integrity sha512-fB7M1CMOCIUudTRuj7kzxIBTVw2KXnsgbQ6+4cbqSxo8NmRRhA0Ul4ZUzZj3rFd3VznTL4Brmocv1oiN0bWZ8w==
 
 "@react-native/normalize-colors@0.81.5":
@@ -1708,7 +1713,7 @@
 
 "@react-native/virtualized-lists@0.81.5":
   version "0.81.5"
-  resolved "https://registry.npmjs.org/@react-native/virtualized-lists/-/virtualized-lists-0.81.5.tgz"
+  resolved "https://registry.yarnpkg.com/@react-native/virtualized-lists/-/virtualized-lists-0.81.5.tgz#24123fded16992d7e46ecc4ccd473be939ea8c1b"
   integrity sha512-UVXgV/db25OPIvwZySeToXD/9sKKhOdkcWmmf4Jh8iBZuyfML+/5CasaZ1E7Lqg6g3uqVQq75NqIwkYmORJMPw==
   dependencies:
     invariant "^2.2.4"
@@ -1798,18 +1803,11 @@
   dependencies:
     "@sinonjs/commons" "^3.0.0"
 
-"@stytch/react-native-consumer@file:/Users/jhaven/Documents/stytch-mobile/react-native/consumer":
+"@stytch/react-native-consumer@../../react-native/consumer":
   version "0.0.1"
   dependencies:
-    "@stytch/react-native-inappbrowser-reborn" "^3.7.2"
-
-"@stytch/react-native-inappbrowser-reborn@^3.7.2":
-  version "3.7.2"
-  resolved "https://registry.yarnpkg.com/@stytch/react-native-inappbrowser-reborn/-/react-native-inappbrowser-reborn-3.7.2.tgz#bd67518de5eff31fd55a3700594659421b35e3fd"
-  integrity sha512-GKEkyBz38miB2uyTHCCgeoHhrESDnOhthvBpY2xuB+IGOTyFoF7Mnkpgj/eq0dZajKAP6q4p+v1FwDk5dUzEfw==
-  dependencies:
-    invariant "^2.2.4"
-    opencollective-postinstall "^2.0.3"
+    "@js-joda/core" "3.2.0"
+    react-native-get-random-values "^2.0.0"
 
 "@tybys/wasm-util@^0.10.0":
   version "0.10.1"
@@ -3620,6 +3618,11 @@ exponential-backoff@^3.1.1:
   resolved "https://registry.npmjs.org/exponential-backoff/-/exponential-backoff-3.1.3.tgz"
   integrity sha512-ZgEeZXj30q+I0EN+CbSSpIyPaJ5HVQD18Z1m+u1FXbAeT94mr1zw50q4q6jiiC447Nl/YTcIYSAftiGqetwXCA==
 
+fast-base64-decode@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/fast-base64-decode/-/fast-base64-decode-1.0.0.tgz#b434a0dd7d92b12b43f26819300d2dafb83ee418"
+  integrity sha512-qwaScUgUGBYeDNRnbc/KyllVU88Jk1pRHPStuF/lO7B0/RTRLj7U0lkdTAutlBblY08rwZDff6tNU9cjv6j//Q==
+
 fast-deep-equal@^3.1.1, fast-deep-equal@^3.1.3:
   version "3.1.3"
   resolved "https://registry.npmjs.org/fast-deep-equal/-/fast-deep-equal-3.1.3.tgz"
@@ -5219,11 +5222,6 @@ open@^8.0.4:
     is-docker "^2.1.1"
     is-wsl "^2.2.0"
 
-opencollective-postinstall@^2.0.3:
-  version "2.0.3"
-  resolved "https://registry.yarnpkg.com/opencollective-postinstall/-/opencollective-postinstall-2.0.3.tgz#7a0fff978f6dbfa4d006238fbac98ed4198c3259"
-  integrity sha512-8AV/sCtuzUeTo8gQK5qDZzARrulB3egtLzFgteqB2tcT4Mw7B8Kt7JcDHmltjz6FOAHsvTevk70gZEbhM4ZS9Q==
-
 optionator@^0.9.3:
   version "0.9.4"
   resolved "https://registry.npmjs.org/optionator/-/optionator-0.9.4.tgz"
@@ -5546,6 +5544,13 @@ react-native-gesture-handler@~2.28.0:
     hoist-non-react-statics "^3.3.0"
     invariant "^2.2.4"
 
+react-native-get-random-values@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/react-native-get-random-values/-/react-native-get-random-values-2.0.0.tgz#21b6e40601d297a342378792a8cb9c8f853bff66"
+  integrity sha512-wx7/aPqsUIiWsG35D+MsUJd8ij96e3JKddklSdrdZUrheTx89gPtz3Q2yl9knBArj5u26Cl23T88ai+Q0vypdQ==
+  dependencies:
+    fast-base64-decode "^1.0.0"
+
 react-native-is-edge-to-edge@^1.1.6, react-native-is-edge-to-edge@^1.2.1:
   version "1.2.1"
   resolved "https://registry.npmjs.org/react-native-is-edge-to-edge/-/react-native-is-edge-to-edge-1.2.1.tgz"
@@ -5606,7 +5611,7 @@ react-native-worklets@0.5.1:
 
 react-native@0.81.5:
   version "0.81.5"
-  resolved "https://registry.npmjs.org/react-native/-/react-native-0.81.5.tgz"
+  resolved "https://registry.yarnpkg.com/react-native/-/react-native-0.81.5.tgz#6c963f137d3979b22aef2d8482067775c8fe2fed"
   integrity sha512-1w+/oSjEXZjMqsIvmkCRsOc8UBYv163bTWKTI8+1mxztvQPhCRYGTvZ/PL1w16xXHneIj/SLGfxWg2GWN2uexw==
   dependencies:
     "@jest/create-cache-key-function" "^29.7.0"

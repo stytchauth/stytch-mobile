@@ -1,5 +1,6 @@
 package com.stytch.sdk.data
 
+import com.stytch.sdk.StytchReactNativeBridge
 import com.stytch.sdk.persistence.StytchPlatformPersistenceClient
 
 @JsExport
@@ -11,13 +12,15 @@ public actual class StytchClientConfiguration(
 ) {
     // TODO: DeviceInfo for JS
     // TODO: PersistenceClient for JS
+    private val reactNativeBridge: StytchReactNativeBridge = StytchReactNativeBridge()
+
     public actual fun toInternal(): StytchClientConfigurationInternal =
         StytchClientConfigurationInternal(
             publicToken = publicToken,
             endpointOptions = endpointOptions,
             defaultSessionDuration = defaultSessionDuration,
-            deviceInfo = DeviceInfo("", "", "", "", "", ""),
-            platformPersistenceClient = StytchPlatformPersistenceClient(),
+            deviceInfo = reactNativeBridge.deviceInfoBridge.getDeviceInfo(),
+            platformPersistenceClient = StytchPlatformPersistenceClient(reactNativeBridge),
             platform = KMPPlatformType.REACTNATIVE,
         )
 }

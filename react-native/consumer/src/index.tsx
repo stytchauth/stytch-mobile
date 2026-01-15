@@ -1,7 +1,9 @@
-import * as React from 'react';
-import { AppState, AppStateStatus } from 'react-native';
-import { StytchConsumer, User, Session, SessionsAuthenticateRequest, ConsumerAuthenticationState } from '../lib/@stytch/react-native-consumer.mjs'
+import React, { useState, useEffect } from 'react';
+import { AppState, AppStateStatus, View } from 'react-native';
+import "react-native-get-random-values";
+import { StytchConsumer, User, Session, SessionsAuthenticateRequest, ConsumerAuthenticationState, DeviceInfo } from '../lib/@stytch/react-native-consumer.mjs'
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const deepEqual = (a: any, b: any): boolean => {
     // Ensures type is the same
     if (typeof a !== typeof b) return false;
@@ -86,12 +88,12 @@ export const StytchProvider = ({
   stytch,
   children,
 }: StytchProviderProps): React.JSX.Element => {
-  const [{ user, session }, setClientState] = React.useState<{ user: User | undefined, session: Session | undefined}>({
+  const [{ user, session }, setClientState] = useState<{ user: User | undefined, session: Session | undefined}>({
     session: undefined,
     user: undefined,
   });
 
-  React.useEffect(() => {
+  useEffect(() => {
     const handleAppStateChange = async (appState: AppStateStatus) => {
       if (appState === 'active') {
         tryAuthenticate();
@@ -113,17 +115,18 @@ export const StytchProvider = ({
     return () => {
       appStateSubscription.remove();
     };
-  }, [stytch.session]);
+  }, [stytch]);
 
-  React.useEffect(
+  useEffect(
     () => {
       const observationJob = stytch.authenticationStateObserver((state: ConsumerAuthenticationState) => {
-        var newUser: User | undefined = undefined
-        var newSession: Session | undefined = undefined
+        let newUser: User | undefined = undefined
+        let newSession: Session | undefined = undefined
         if (state == ConsumerAuthenticationState.Authenticated) {
           newUser = (state as ConsumerAuthenticationState.Authenticated).user
           newSession = (state as ConsumerAuthenticationState.Authenticated).session
         }
+        console.log("OBESERVER FIRED?")
         setClientState((oldState) => {
           const newState = { user: newUser, session: newSession };
           return mergeWithStableProps(oldState, newState);
@@ -143,6 +146,79 @@ export const StytchProvider = ({
   );
 };
 
+
+
+/**
+ * DO AS I SAY NOT AS I DO
+ * SETTING GLOBALS LIKE THIS IS NOT RECOMMENDED
+ */
+type StytchReactNativeBridgeType = {
+  deviceInfoBridge: DeviceInfoBridgeType;
+  persistenceBridge: PersistenceBridgeType;
+}
+
+type DeviceInfoBridgeType = {
+  getDeviceInfo(): DeviceInfo;
+}
+
+type PersistenceBridgeType = {
+  saveData(key: string, data: string): Promise<void>;
+  getData(key: string): Promise<string|undefined>;
+  removeData(key: string): Promise<void>;
+}
+
+class StytchReactNativeBridgeImpl implements StytchReactNativeBridgeType {
+  deviceInfoBridge: DeviceInfoBridgeType;
+  persistenceBridge: PersistenceBridgeType;
+
+  constructor() {
+    this.deviceInfoBridge = new DeviceInfoBridgeImpl();
+    this.persistenceBridge = new PersistenceBridgeImpl();
+  }
+}
+
+class DeviceInfoBridgeImpl implements DeviceInfoBridgeType {
+  getDeviceInfo(): DeviceInfo {
+    return {
+      applicationPackageName: '',
+      applicationVersion: '',
+      osName: '',
+      osVersion: '',
+      deviceName: '',
+      screenSize: ''
+    }
+  }
+
+}
+
+class PersistenceBridgeImpl implements PersistenceBridgeType {
+  saveData(key: string, data: string): Promise<void> {
+    console.log(`Saving ${key} = ${data}`)
+    return Promise.resolve();
+    throw new Error('Method not implemented.');
+  }
+  getData(key: string): Promise<string | undefined> {
+    console.log(`Retrieving ${key}`)
+    return Promise.resolve(undefined);
+    throw new Error('Method not implemented.');
+  }
+  removeData(key: string): Promise<void> {
+    console.log(`Removing ${key}`)
+    return Promise.resolve();
+    throw new Error('Method not implemented.');
+  }
+
+}
+
+declare global {
+  var StytchReactNativeBridge: object;
+}
+
+global.StytchReactNativeBridge = StytchReactNativeBridgeImpl;
+
+/**
+ * END DANGEROUS GLOBALS
+ * */
 
 // export everything from the KMP library for consumption in the client
 export * from '../lib/@stytch/react-native-consumer.mjs';
