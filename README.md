@@ -1,5 +1,5 @@
 **While testing**
-* Run `./build.sh [platform]`, this will build the specified (or all) platforms and copy the artifacts to the `artifacts/` directory, which the apps in `examples/` consume
+* Run `./build [platform]`, this will build the specified (or all) platforms and copy the artifacts to the `artifacts/` directory, which the apps in `examples/` consume
 * Run the apps in the `examples/` directory as appropriate to test things
 
 **Known things**

@@ -24,7 +24,7 @@ public actual class StytchClientConfiguration(
         )
 }
 
-private fun Context.getDeviceInfo(): DeviceInfo {
+public fun Context.getDeviceInfo(): DeviceInfo {
     val applicationPackageName = applicationContext.packageName.toString()
     val applicationVersion =
         try {

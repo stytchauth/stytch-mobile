@@ -14,4 +14,10 @@ public external object StytchBridge {
     public fun getData(key: String): Promise<String?>
 
     public fun removeData(key: String): Promise<Unit>
+
+    public fun encryptData(data: String): Promise<String>
+
+    public fun decryptData(data: String): Promise<String>
+
+    public fun deleteKey(): Promise<Unit>
 }

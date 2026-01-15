@@ -45,6 +45,18 @@
         {
           "launchMode": "most-recent"
         }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "extraMavenRepos": [
+              {
+                "url": "/Users/jhaven/.m2/repository"
+              }
+            ]
+          }
+        }
       ]
     ],
     "experiments": {

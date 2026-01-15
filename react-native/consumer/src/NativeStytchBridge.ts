@@ -6,6 +6,9 @@ export interface Spec extends TurboModule {
   saveData(key: string, data: string): Promise<void>;
   getData(key: string): Promise<string|undefined>;
   removeData(key: string): Promise<void>;
+  encryptData(data: string): Promise<string>;
+  decryptData(data: string): Promise<string>;
+  deleteKey(): Promise<void>;
 };
 
 // create an instance of the module
