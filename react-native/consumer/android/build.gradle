@@ -2,6 +2,7 @@ buildscript {
   repositories {
     google()
     mavenCentral()
+    maven { setUrl("/Users/jhaven/Documents/stytch-mobile/artifacts") } // TODO: remove when productionizing
   }
 
   dependencies {
@@ -58,7 +59,7 @@ android {
 repositories {
   mavenCentral()
   google()
-  maven { setUrl("../../../artifacts") } // TODO: remove when productionizing
+  maven { setUrl("/Users/jhaven/Documents/stytch-mobile/artifacts") } // TODO: remove when productionizing
 }
 
 dependencies {

@@ -11,7 +11,7 @@ class StytchBridgeModule(reactContext: ReactApplicationContext) :
     return NAME
   }
 
-  
+
   companion object {
     const val NAME = "StytchBridge"
   }
