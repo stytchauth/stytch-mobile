@@ -1,22 +1,22 @@
 package com.stytch.sdk.persistence
 
-import com.stytch.sdk.StytchReactNativeBridge
+import com.stytch.sdk.StytchBridge
 import kotlinx.coroutines.await
 
 @JsExport
 public actual class StytchPlatformPersistenceClient(
-    private val bridge: StytchReactNativeBridge,
+    private val bridge: StytchBridge,
 ) {
     public actual suspend fun save(
         key: String,
         data: String,
     ) {
-        bridge.persistenceBridge.saveData(key, data).await()
+        bridge.persistence.saveData(key, data).await()
     }
 
-    public actual suspend fun get(key: String): String? = bridge.persistenceBridge.getData(key).await()
+    public actual suspend fun get(key: String): String? = bridge.persistence.getData(key).await()
 
     public actual suspend fun remove(key: String) {
-        bridge.persistenceBridge.removeData(key).await()
+        bridge.persistence.removeData(key).await()
     }
 }

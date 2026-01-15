@@ -4,11 +4,21 @@
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "source": "./src/index.tsx",
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
   "files": [
     "dist",
     "lib",
     "android",
-    "ios"
+    "ios",
+    "src/NativeStytchBridge.ts",
+    "*.podspec"
   ],
   "license": "MIT",
   "homepage": "https://stytch.com/docs/sdks/react-native-sdk",
@@ -49,11 +59,11 @@
     "react-native": ">= 0.73.x"
   },
   "codegenConfig": {
-    "name": "StytchReactNativeModule",
+    "name": "StytchBridge",
     "type": "modules",
-    "jsSrcsDir": "./src/native-module",
+    "jsSrcsDir": "./src",
     "android": {
-      "javaPackageName": "com.stytch.reactnativemodules"
+      "javaPackageName": "com.stytch.mobile.bridge"
     }
   }
 }

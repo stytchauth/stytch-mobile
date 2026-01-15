@@ -35,6 +35,7 @@ buildAndCopyIos() {
     echo "Building iOS artifact..."
     ./gradlew assembleStytchConsumerSDKXCFramework assembleStytchConsumerExtensionsSDKXCFramework assembleStytchSharedSDKXCFramework
     cp -r sdk/consumer-headless/build/XCFrameworks/release/StytchConsumerSDK.xcframework $ROOT_DIR/stytch-ios
+    cp $ROOT_DIR/stytch-ios/StytchConsumerSDK.xcframework $ROOT_DIR/react-native/consumer/ios
 }
 
 buildAndCopyRn() {

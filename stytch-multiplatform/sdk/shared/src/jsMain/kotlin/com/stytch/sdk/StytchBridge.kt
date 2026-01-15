@@ -3,14 +3,14 @@ package com.stytch.sdk
 import com.stytch.sdk.data.DeviceInfo
 import kotlin.js.Promise
 
-public external class StytchReactNativeBridge {
-    public val deviceInfoBridge: DeviceInfoBridge
+public external object StytchBridge {
+    public val device: DeviceInfoBridge
 
-    public val persistenceBridge: PersistenceBridge
+    public val persistence: PersistenceBridge
 }
 
 public external interface DeviceInfoBridge {
-    public fun getDeviceInfo(): DeviceInfo
+    public fun getInfo(): DeviceInfo
 }
 
 public external interface PersistenceBridge {
