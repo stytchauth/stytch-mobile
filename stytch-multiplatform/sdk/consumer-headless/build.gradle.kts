@@ -1,5 +1,6 @@
 import com.android.build.api.dsl.androidLibrary
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
 import kotlin.collections.listOf
 
@@ -21,9 +22,10 @@ kotlin {
 
     compilerOptions {
         optIn.add("kotlin.js.ExperimentalJsExport")
+        optIn.add("kotlin.time.ExperimentalTime")
         freeCompilerArgs.addAll("-Xenable-suspend-function-exporting", "-Xexpect-actual-classes")
-        // languageVersion.set(KotlinVersion.KOTLIN_2_0)
-        // apiVersion.set(KotlinVersion.KOTLIN_2_0)
+        languageVersion.set(KotlinVersion.KOTLIN_2_0)
+        apiVersion.set(KotlinVersion.KOTLIN_2_0)
     }
 
     androidLibrary {

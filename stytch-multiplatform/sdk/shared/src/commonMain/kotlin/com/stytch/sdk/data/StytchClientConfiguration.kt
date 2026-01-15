@@ -35,7 +35,7 @@ public class StytchClientConfigurationInternal(
     internal val deviceInfo: DeviceInfo,
     public val tokenInfo: PublicTokenInfo = getPublicTokenInfo(publicToken),
     @OptIn(ExperimentalUuidApi::class)
-    internal val appSessionId: String = Uuid.generateV4().toString(),
+    internal val appSessionId: String = Uuid.random().toString(),
     internal val timezone: String = TimeZone.currentSystemDefault().id,
     public val platformPersistenceClient: StytchPlatformPersistenceClient,
     internal val platform: KMPPlatformType,

@@ -15,7 +15,7 @@
     "@react-navigation/bottom-tabs": "^7.4.0",
     "@react-navigation/elements": "^2.6.3",
     "@react-navigation/native": "^7.1.8",
-    "@stytch/react-native-consumer": "file:../../react-native/consumer",
+    "@stytch/react-native-consumer": "file:/Users/jhaven/Documents/stytch-mobile/react-native/consumer",
     "expo": "~54.0.31",
     "expo-build-properties": "~1.0.10",
     "expo-constants": "~18.0.13",

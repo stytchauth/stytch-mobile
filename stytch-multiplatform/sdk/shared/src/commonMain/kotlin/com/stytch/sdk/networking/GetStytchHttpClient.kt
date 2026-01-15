@@ -84,9 +84,9 @@ public fun getStytchHttpClient(
 
 @OptIn(ExperimentalUuidApi::class)
 private fun HttpMessageBuilder.sdkClientHeader(config: StytchClientConfigurationInternal) {
-    val eventId: String = Uuid.generateV4().toString()
+    val eventId: String = Uuid.random().toString()
     // I've NEVER understood what this was, but maintaining parity...
-    val persistentId: String = Uuid.generateV4().toString()
+    val persistentId: String = Uuid.random().toString()
     header(
         X_SDK_CLIENT_HEADER,
         """
