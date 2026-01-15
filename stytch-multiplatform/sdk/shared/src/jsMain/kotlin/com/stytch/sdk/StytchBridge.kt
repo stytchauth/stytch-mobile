@@ -4,16 +4,8 @@ import com.stytch.sdk.data.DeviceInfo
 import kotlin.js.Promise
 
 public external object StytchBridge {
-    public val device: DeviceInfoBridge
+    public fun getDeviceInfo(): DeviceInfo
 
-    public val persistence: PersistenceBridge
-}
-
-public external interface DeviceInfoBridge {
-    public fun getInfo(): DeviceInfo
-}
-
-public external interface PersistenceBridge {
     public fun saveData(
         key: String,
         data: String,

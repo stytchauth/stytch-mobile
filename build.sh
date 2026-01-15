@@ -2,12 +2,12 @@
 PLATFORM=$1
 ROOT_DIR=`pwd`
 WORKING_DIR=$ROOT_DIR/stytch-multiplatform
-mkdir -p artifacts
 
 buildAndCopyAndroid() {
     cd $WORKING_DIR
     echo "Building android artifact..."
-    ./gradlew :sdk:consumer-headless:publishAllPublicationsToTESTINGRepository :sdk:consumer-extensions:publishAllPublicationsToTESTINGRepository :sdk:shared:publishAllPublicationsToTESTINGRepository
+    #./gradlew :sdk:consumer-headless:publishAllPublicationsToTESTINGRepository :sdk:consumer-extensions:publishAllPublicationsToTESTINGRepository :sdk:shared:publishAllPublicationsToTESTINGRepository
+    ./gradlew :sdk:consumer-headless:publishToMavenLocal :sdk:consumer-extensions:publishToMavenLocal :sdk:shared:publishToMavenLocal
 }
 
 buildAndCopyIos() {

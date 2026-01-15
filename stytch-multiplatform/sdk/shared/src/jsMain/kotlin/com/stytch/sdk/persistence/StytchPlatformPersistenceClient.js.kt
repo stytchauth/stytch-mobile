@@ -11,12 +11,12 @@ public actual class StytchPlatformPersistenceClient(
         key: String,
         data: String,
     ) {
-        bridge.persistence.saveData(key, data).await()
+        bridge.saveData(key, data).await()
     }
 
-    public actual suspend fun get(key: String): String? = bridge.persistence.getData(key).await()
+    public actual suspend fun get(key: String): String? = bridge.getData(key).await()
 
     public actual suspend fun remove(key: String) {
-        bridge.persistence.removeData(key).await()
+        bridge.removeData(key).await()
     }
 }

@@ -15,7 +15,7 @@ public actual class StytchClientConfiguration(
             publicToken = publicToken,
             endpointOptions = endpointOptions,
             defaultSessionDuration = defaultSessionDuration,
-            deviceInfo = StytchBridge.device.getInfo(),
+            deviceInfo = StytchBridge.getDeviceInfo(),
             platformPersistenceClient = StytchPlatformPersistenceClient(StytchBridge),
             platform = KMPPlatformType.REACTNATIVE,
         )

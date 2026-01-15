@@ -68,15 +68,6 @@ kotlin {
     }
 }
 
-publishing {
-    repositories {
-        maven {
-            name = "TESTING"
-            url = uri(layout.buildDirectory.dir("../../../../artifacts"))
-        }
-    }
-}
-
 skie {
     isEnabled = true
 }

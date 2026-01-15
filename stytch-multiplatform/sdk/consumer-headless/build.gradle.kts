@@ -93,15 +93,6 @@ ktorfit {
     compilerPluginVersion.set("2.3.3")
 }
 
-publishing {
-    repositories {
-        maven {
-            name = "TESTING"
-            url = uri(layout.buildDirectory.dir("../../../../artifacts"))
-        }
-    }
-}
-
 tasks.named("sourcesJar").configure {
     setDependsOn(listOf("kspCommonMainKotlinMetadata"))
 }

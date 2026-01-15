@@ -112,15 +112,6 @@ kotlin {
     }
 }
 
-publishing {
-    repositories {
-        maven {
-            name = "TESTING"
-            url = uri(layout.buildDirectory.dir("../../../../artifacts"))
-        }
-    }
-}
-
 buildConfig {
     useKotlinOutput()
     buildConfigField("SDK_NAME", "stytch-multiplatform")
