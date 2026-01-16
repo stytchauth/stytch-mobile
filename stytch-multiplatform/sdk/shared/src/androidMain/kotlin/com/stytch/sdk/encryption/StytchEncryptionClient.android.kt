@@ -12,7 +12,7 @@ import javax.crypto.spec.GCMParameterSpec
 public actual class StytchEncryptionClient {
     private val secretKey: SecretKey = getOrCreateSecretKey()
 
-    public actual suspend fun encrypt(data: ByteArray): ByteArray {
+    public actual fun encrypt(data: ByteArray): ByteArray {
         val cipher =
             Cipher.getInstance(CIPHER_TRANSFORMATION).apply {
                 init(Cipher.ENCRYPT_MODE, secretKey)
@@ -22,7 +22,7 @@ public actual class StytchEncryptionClient {
         return iv + ciphertext
     }
 
-    public actual suspend fun decrypt(data: ByteArray): ByteArray {
+    public actual fun decrypt(data: ByteArray): ByteArray {
         val iv = data.sliceArray(0 until GCM_IV_LENGTH)
         val ciphertext = data.sliceArray(GCM_IV_LENGTH until data.size)
         val spec = GCMParameterSpec(GCM_TAG_LENGTH, iv)
@@ -33,7 +33,7 @@ public actual class StytchEncryptionClient {
         return cipher.doFinal(ciphertext)
     }
 
-    public actual suspend fun deleteKey() {
+    public actual fun deleteKey() {
         try {
             val keyStore = KeyStore.getInstance(ANDROID_KEYSTORE).apply { load(null) }
             if (keyStore.containsAlias(STYTCH_MASTER_KEY_ALIAS)) {

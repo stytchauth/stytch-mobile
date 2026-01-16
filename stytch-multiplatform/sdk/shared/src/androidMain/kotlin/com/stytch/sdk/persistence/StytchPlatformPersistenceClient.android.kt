@@ -8,7 +8,7 @@ public actual class StytchPlatformPersistenceClient(
 ) {
     private val sharedPreferences: SharedPreferences = context.getSharedPreferences(STYTCH_PERSISTENCE_FILE_NAME, Context.MODE_PRIVATE)
 
-    public actual suspend fun save(
+    public actual fun save(
         key: String,
         data: String,
     ) {
@@ -18,9 +18,9 @@ public actual class StytchPlatformPersistenceClient(
         }
     }
 
-    public actual suspend fun get(key: String): String? = sharedPreferences.getString(key, null)
+    public actual fun get(key: String): String? = sharedPreferences.getString(key, null)
 
-    public actual suspend fun remove(key: String) {
+    public actual fun remove(key: String) {
         with(sharedPreferences.edit()) {
             remove(key)
             apply()

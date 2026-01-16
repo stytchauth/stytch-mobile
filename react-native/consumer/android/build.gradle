@@ -6,7 +6,6 @@ buildscript {
   }
 
   dependencies {
-    classpath "com.android.tools.build:gradle:8.7.2"
     classpath "com.facebook.react:react-native-gradle-plugin"
     classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:2.3.0"
   }
@@ -64,6 +63,5 @@ repositories {
 
 dependencies {
   implementation "com.facebook.react:react-android"
-  implementation "org.jetbrains.kotlin:kotlin-stdlib:2.3.0"
   implementation "com.stytch.sdk:consumer-headless:0.0.1"
 }

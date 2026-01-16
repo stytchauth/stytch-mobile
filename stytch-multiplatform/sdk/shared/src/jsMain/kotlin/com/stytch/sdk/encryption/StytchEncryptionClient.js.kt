@@ -8,17 +8,17 @@ import kotlinx.coroutines.await
 public actual class StytchEncryptionClient {
     // RN doesn't allow passing ByteArray (Uint8Array in JS) across the bridge, so we need to encode/decode to string
     // This feels... fragile. I know I'm gonna get confused about bytes/strings and where at some point 🙃
-    public actual suspend fun encrypt(data: ByteArray): ByteArray {
-        val result = StytchBridge.encryptData(data.encodeBase64()).await()
+    public actual fun encrypt(data: ByteArray): ByteArray {
+        val result = StytchBridge.encryptData(data.encodeBase64())
         return result.decodeBase64Bytes()
     }
 
-    public actual suspend fun decrypt(data: ByteArray): ByteArray {
-        val result = StytchBridge.decryptData(data.encodeBase64()).await()
+    public actual fun decrypt(data: ByteArray): ByteArray {
+        val result = StytchBridge.decryptData(data.encodeBase64())
         return result.decodeBase64Bytes()
     }
 
-    public actual suspend fun deleteKey() {
-        StytchBridge.deleteKey().await()
+    public actual fun deleteKey() {
+        StytchBridge.deleteKey()
     }
 }

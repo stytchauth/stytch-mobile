@@ -9,15 +9,15 @@ public external object StytchBridge {
     public fun saveData(
         key: String,
         data: String,
-    ): Promise<Unit>
+    ): Unit
 
-    public fun getData(key: String): Promise<String?>
+    public fun getData(key: String): String?
 
-    public fun removeData(key: String): Promise<Unit>
+    public fun removeData(key: String): Unit
 
-    public fun encryptData(data: String): Promise<String>
+    public fun encryptData(data: String): String
 
-    public fun decryptData(data: String): Promise<String>
+    public fun decryptData(data: String): String
 
-    public fun deleteKey(): Promise<Unit>
+    public fun deleteKey(): Unit
 }

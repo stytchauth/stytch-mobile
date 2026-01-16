@@ -308,9 +308,9 @@ SWIFT_CLASS_NAMED("StytchEncryptionManagerSwift")
 @interface StytchEncryptionManagerSwift : NSObject
 SWIFT_CLASS_PROPERTY(@property (nonatomic, class, readonly, strong) StytchEncryptionManagerSwift * _Nonnull shared;)
 + (StytchEncryptionManagerSwift * _Nonnull)shared SWIFT_WARN_UNUSED_RESULT;
-- (void)getEncryptionKeyWithName:(NSString * _Nonnull)name completionHandler:(void (^ _Nonnull)(NSData * _Nullable, NSError * _Nullable))completionHandler;
-- (void)encryptDataWithPlainText:(NSData * _Nonnull)plainText withKeyData:(NSData * _Nonnull)withKeyData completionHandler:(void (^ _Nonnull)(NSData * _Nullable, NSError * _Nullable))completionHandler;
-- (void)decryptDataWithEncryptedData:(NSData * _Nonnull)encryptedData withKeyData:(NSData * _Nonnull)withKeyData completionHandler:(void (^ _Nonnull)(NSData * _Nullable, NSError * _Nullable))completionHandler;
+- (NSData * _Nonnull)getEncryptionKeyWithName:(NSString * _Nonnull)name SWIFT_WARN_UNUSED_RESULT;
+- (NSData * _Nullable)encryptDataWithPlainText:(NSData * _Nonnull)plainText withKeyData:(NSData * _Nonnull)withKeyData SWIFT_WARN_UNUSED_RESULT;
+- (NSData * _Nullable)decryptDataWithEncryptedData:(NSData * _Nonnull)encryptedData withKeyData:(NSData * _Nonnull)withKeyData SWIFT_WARN_UNUSED_RESULT;
 - (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
 @end
 

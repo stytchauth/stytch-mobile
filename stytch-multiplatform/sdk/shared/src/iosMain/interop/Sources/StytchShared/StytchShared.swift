@@ -2,10 +2,10 @@ import CryptoKit
 import Foundation
 
 @objc(StytchEncryptionManagerSwift)
-public actor StytchEncryptionManagerSwift: NSObject {
-    @objc public static let shared = StytchEncryptionManagerSwift()
+public class StytchEncryptionManagerSwift: NSObject {
+    @MainActor @objc public static let shared = StytchEncryptionManagerSwift()
 
-    @objc public func getEncryptionKey(name: String) async throws -> Data {
+    @objc public func getEncryptionKey(name: String) -> Data {
         let existingKeyData = getKeyDataFromKeychain(name: name)
         guard let existingKeyData = existingKeyData else {
             let newKeyData = SymmetricKey(size: .bits256).withUnsafeBytes {
@@ -17,16 +17,24 @@ public actor StytchEncryptionManagerSwift: NSObject {
         return existingKeyData
     }
 
-    @objc public func encryptData(plainText: Data, withKeyData: Data) async throws -> Data? {
-        let encryptionKey = SymmetricKey(data: withKeyData)
-        let sealedBox = try AES.GCM.seal(plainText, using: encryptionKey)
-        return sealedBox.combined
+    @objc public func encryptData(plainText: Data, withKeyData: Data) -> Data? {
+        do {
+            let encryptionKey = SymmetricKey(data: withKeyData)
+            let sealedBox = try AES.GCM.seal(plainText, using: encryptionKey)
+            return sealedBox.combined
+        } catch {
+            return nil
+        }
     }
 
-    @objc public func decryptData(encryptedData: Data, withKeyData: Data) async throws -> Data? {
-        let encryptionKey = SymmetricKey(data: withKeyData)
-        let sealedBox = try AES.GCM.SealedBox(combined: encryptedData)
-        return try AES.GCM.open(sealedBox, using: encryptionKey)
+    @objc public func decryptData(encryptedData: Data, withKeyData: Data) -> Data? {
+        do {
+            let encryptionKey = SymmetricKey(data: withKeyData)
+            let sealedBox = try AES.GCM.SealedBox(combined: encryptedData)
+            return try AES.GCM.open(sealedBox, using: encryptionKey)
+        } catch {
+            return nil
+        }
     }
 
     private func getKeyDataFromKeychain(name: String) -> Data? {
