@@ -1,14 +1,14 @@
 import { TurboModule, TurboModuleRegistry } from 'react-native';
-import { DeviceInfo } from '../lib/@stytch/react-native-consumer.mjs'
 
+// RN ain't so great with "complex" data types across the bridge, so we're always encoding/decoding to strings when going back and forth :/
 export interface Spec extends TurboModule {
-  getDeviceInfo(): Promise<DeviceInfo>;
-  saveData(key: string, data: string): Promise<void>;
-  getData(key: string): Promise<string|undefined>;
-  removeData(key: string): Promise<void>;
-  encryptData(data: string): Promise<string>;
-  decryptData(data: string): Promise<string>;
-  deleteKey(): Promise<void>;
+  getDeviceInfo(): string;
+  saveData(key: string, data: string): void;
+  getData(key: string): string|undefined;
+  removeData(key: string): void;
+  encryptData(data: string): string;
+  decryptData(data: string): string;
+  deleteKey(): void;
 };
 
 // create an instance of the module

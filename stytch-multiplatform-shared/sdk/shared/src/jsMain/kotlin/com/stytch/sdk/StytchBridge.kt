@@ -1,10 +1,7 @@
 package com.stytch.sdk
 
-import com.stytch.sdk.data.DeviceInfo
-import kotlin.js.Promise
-
 public external object StytchBridge {
-    public fun getDeviceInfo(): DeviceInfo
+    public fun getDeviceInfo(): String
 
     public fun saveData(
         key: String,

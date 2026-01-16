@@ -2,6 +2,7 @@ package com.stytch.sdk.data
 
 import com.stytch.sdk.StytchBridge
 import com.stytch.sdk.persistence.StytchPlatformPersistenceClient
+import kotlinx.serialization.json.Json
 
 @JsExport
 @JsName("StytchClientConfiguration")
@@ -15,7 +16,7 @@ public actual class StytchClientConfiguration(
             publicToken = publicToken,
             endpointOptions = endpointOptions,
             defaultSessionDuration = defaultSessionDuration,
-            deviceInfo = StytchBridge.getDeviceInfo(),
+            deviceInfo = Json.decodeFromString<DeviceInfo>(StytchBridge.getDeviceInfo()),
             platformPersistenceClient = StytchPlatformPersistenceClient(StytchBridge),
             platform = KMPPlatformType.REACTNATIVE,
         )

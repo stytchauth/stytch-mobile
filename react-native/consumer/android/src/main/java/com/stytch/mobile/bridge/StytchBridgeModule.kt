@@ -1,6 +1,5 @@
 package com.stytch.mobile.bridge
 
-import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReadableArray
 import com.facebook.react.module.annotations.ReactModule
@@ -15,12 +14,14 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import okio.ByteString.Companion.decodeBase64
+import kotlinx.serialization.json.Json
 
 /**
  * This bridge module is just an RN-accessible, well, bridge, to the existing code in the "real" Stytch SDK,
  * which is a dependency of this React Native SDK.
  */
 @ReactModule(name = StytchBridgeModule.NAME)
+
 class StytchBridgeModule(reactContext: ReactApplicationContext) :
   NativeStytchBridgeSpec(reactContext) {
   private val encryptionClient: StytchEncryptionClient = StytchEncryptionClient()
@@ -31,58 +32,32 @@ class StytchBridgeModule(reactContext: ReactApplicationContext) :
     return NAME
   }
 
-  override fun getDeviceInfo(promise: Promise) {
-    promise.resolve(deviceInfo)
+  override fun getDeviceInfo(): String {
+    return Json.encodeToString(deviceInfo)
   }
 
-  override fun saveData(key: String, data: String, promise: Promise) {
-    try {
-      promise.resolve(platformPersistenceClient.saveData(key, data))
-    } catch (e: Exception) {
-      promise.reject(e)
-    }
+  override fun saveData(key: String, data: String) {
+    platformPersistenceClient.saveData(key, data)
   }
 
-  override fun getData(key: String, promise: Promise) {
-    try {
-      promise.resolve(platformPersistenceClient.getData(key))
-    } catch (e: Exception) {
-      promise.reject(e)
-    }
+  override fun getData(key: String): String? = platformPersistenceClient.getData(key)
+
+  override fun removeData(key: String) {
+    platformPersistenceClient.removeData(key)
   }
 
-  override fun removeData(key: String, promise: Promise) {
-    try {
-      promise.resolve(platformPersistenceClient.removeData(key))
-    } catch (e: Exception) {
-      promise.reject(e)
-    }
+  override fun encryptData(data: String): String {
+    val encrypted = encryptionClient.encrypt(data.decodeBase64Bytes())
+    return encrypted.encodeBase64()
   }
 
-  override fun encryptData(data: String, promise: Promise) {
-    try {
-      val encrypted = encryptionClient.encrypt(data.decodeBase64Bytes())
-      promise.resolve(encrypted.encodeBase64())
-    } catch (e: Exception) {
-      promise.reject(e)
-    }
+  override fun decryptData(data: String): String {
+    val decrypted = encryptionClient.decrypt(data.decodeBase64Bytes())
+    return decrypted.encodeBase64()
   }
 
-  override fun decryptData(data: String, promise: Promise) {
-    try {
-      val decrypted = encryptionClient.decrypt(data.decodeBase64Bytes())
-      promise.resolve(decrypted.encodeBase64())
-    } catch (e: Exception) {
-      promise.reject(e)
-    }
-  }
-
-  override fun deleteKey(promise: Promise) {
-    try {
-      promise.resolve(encryptionClient.deleteKey())
-    } catch (e: Exception) {
-      promise.reject(e)
-    }
+  override fun deleteKey() {
+   encryptionClient.deleteKey()
   }
 
 
