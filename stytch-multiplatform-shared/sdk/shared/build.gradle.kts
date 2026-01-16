@@ -21,7 +21,7 @@ kotlin {
     compilerOptions {
         optIn.add("kotlin.js.ExperimentalJsExport")
         optIn.add("kotlin.time.ExperimentalTime")
-        freeCompilerArgs.addAll("-Xenable-suspend-function-exporting", "-Xexpect-actual-classes")
+        freeCompilerArgs.addAll("-Xexpect-actual-classes")
     }
 
     androidLibrary {

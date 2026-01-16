@@ -25,7 +25,6 @@ dependencyResolutionManagement {
             }
         }
         mavenCentral()
-        mavenLocal()
     }
 }
 
@@ -33,5 +32,4 @@ plugins {
     id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
 }
 
-include(":sdk:consumer-headless")
-include(":sdk:consumer-extensions")
+include(":sdk:shared")

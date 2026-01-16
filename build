@@ -1,17 +1,15 @@
 #!/bin/sh
+set -e
+
 PLATFORM=$1
 ROOT_DIR=`pwd`
-WORKING_DIR=$ROOT_DIR/stytch-multiplatform
+MAIN_WORKING_DIR=$ROOT_DIR/stytch-multiplatform
+SHARED_WORKING_DIR=$ROOT_DIR/stytch-multiplatform-shared
 
-buildAndCopyAndroid() {
-    cd $WORKING_DIR
-    echo "Building android artifact..."
-    #./gradlew :sdk:consumer-headless:publishAllPublicationsToTESTINGRepository :sdk:consumer-extensions:publishAllPublicationsToTESTINGRepository :sdk:shared:publishAllPublicationsToTESTINGRepository
-    ./gradlew :sdk:consumer-headless:publishToMavenLocal :sdk:consumer-extensions:publishToMavenLocal :sdk:shared:publishToMavenLocal
-}
-
-buildAndCopyIos() {
-    cd $WORKING_DIR
+buildAndPublishSharedSdkFirst() {
+    cd $SHARED_WORKING_DIR
+    echo "Building shared stuff first..."
+    
     echo "Building iOS library..."
     cd sdk/shared/src/iosMain/interop
 
@@ -29,22 +27,32 @@ buildAndCopyIos() {
     ar -crs libStytchIos.a ./iOS.xcarchive/Products/Users/jhaven/Objects/StytchShared.o && 
     ar -crs libStytchSimulator.a ./Simulator.xcarchive/Products/Users/jhaven/Objects/StytchShared.o
 
-    # back to stytch-multiplatform
-    cd $WORKING_DIR
- 
+    cd $SHARED_WORKING_DIR
+    ./gradlew :sdk:shared:publishToMavenLocal
+}
+
+buildAndCopyAndroid() {
+    cd $MAIN_WORKING_DIR
+    echo "Building android artifact..."
+    ./gradlew :sdk:consumer-headless:publishToMavenLocal :sdk:consumer-extensions:publishToMavenLocal
+}
+
+buildAndCopyIos() {
+    cd $MAIN_WORKING_DIR
     echo "Building iOS artifact..."
-    ./gradlew assembleStytchConsumerSDKXCFramework assembleStytchConsumerExtensionsSDKXCFramework assembleStytchSharedSDKXCFramework
+    ./gradlew assembleStytchConsumerSDKXCFramework assembleStytchConsumerExtensionsSDKXCFramework
     cp -r sdk/consumer-headless/build/XCFrameworks/release/StytchConsumerSDK.xcframework $ROOT_DIR/stytch-ios
     cp -r sdk/consumer-headless/build/XCFrameworks/release/StytchConsumerSDK.xcframework $ROOT_DIR/react-native/consumer/ios
 }
 
 buildAndCopyRn() {
-    cd $WORKING_DIR
+    cd $MAIN_WORKING_DIR
     echo "Building RN artifacts..."
     ./gradlew kotlinUpgradeYarnLock :sdk:consumer-headless:jsBrowserProductionLibraryDistribution
     cp -r sdk/consumer-headless/build/dist/js/productionLibrary/ $ROOT_DIR/react-native/consumer/lib
     cd $ROOT_DIR/react-native/consumer
     yarn build
+    updateRnDemoApp
 }
 
 updateRnDemoApp() {
@@ -54,6 +62,7 @@ updateRnDemoApp() {
 }
 
 main() {
+    buildAndPublishSharedSdkFirst
     if [ -z "$PLATFORM" ]; then
         echo "Building for all platforms"
         buildAndCopyAndroid
@@ -65,7 +74,6 @@ main() {
         buildAndCopyIos
     elif [[ "$PLATFORM" == "rn" ]]; then
         buildAndCopyRn
-        updateRnDemoApp
     fi
     cd $ROOT_DIR
     echo "Done."

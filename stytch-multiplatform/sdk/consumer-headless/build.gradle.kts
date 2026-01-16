@@ -52,14 +52,14 @@ kotlin {
         it.binaries.framework {
             baseName = "StytchConsumerSDK"
             xcFramework.add(this)
-            linkerOpts.add("-L${project(":sdk:shared").projectDir}/src/iosMain/interop")
+            linkerOpts.add("-L${rootProject.rootDir.parent}/stytch-multiplatform-shared/sdk/shared/src/iosMain/interop")
             if (target.name == "iosArm64") {
                 linkerOpts.add("-lStytchIos")
             }
             if (target.name == "iosSimulatorArm64") {
                 linkerOpts.add("-lStytchSimulator")
             }
-            export(projects.sdk.shared)
+            export("com.stytch.sdk:shared:$version")
         }
     }
 
@@ -79,7 +79,7 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            api(projects.sdk.shared)
+            api("com.stytch.sdk:shared:$version")
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.kotlinx.datetime)
             implementation(libs.ktorfit.lib.light)
