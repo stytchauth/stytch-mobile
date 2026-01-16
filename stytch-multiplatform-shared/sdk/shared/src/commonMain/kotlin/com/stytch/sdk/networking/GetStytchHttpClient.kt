@@ -51,7 +51,7 @@ public fun getStytchHttpClient(
         }
 
         install(UserAgent) {
-            agent = "${BuildConfig.SDK_NAME}/${BuildConfig.SDK_VERSION} (${configuration.platform})"
+            agent = "${BuildConfig.SDK_NAME}/${BuildConfig.SDK_VERSION}_${configuration.platform.name.lowercase()}"
         }
 
         install(DefaultRequest) {
