@@ -17,7 +17,7 @@ apply plugin: "kotlin-android"
 apply plugin: "com.facebook.react"
 
 android {
-  namespace "com.stych.mobile.bridge"
+  namespace "com.stytch.mobile.bridge"
 
   compileSdkVersion 35
 
@@ -63,5 +63,6 @@ repositories {
 
 dependencies {
   implementation "com.facebook.react:react-android"
-  implementation "com.stytch.sdk:consumer-headless:0.0.1"
+  implementation "com.stytch.sdk:shared:0.0.1"
+  implementation "io.ktor:ktor-client-core:3.3.3"
 }

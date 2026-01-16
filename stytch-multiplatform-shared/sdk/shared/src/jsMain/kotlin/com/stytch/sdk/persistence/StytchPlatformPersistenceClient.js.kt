@@ -7,16 +7,16 @@ import kotlinx.coroutines.await
 public actual class StytchPlatformPersistenceClient(
     private val bridge: StytchBridge,
 ) {
-    public actual fun save(
+    public actual fun saveData(
         key: String,
         data: String,
     ) {
         bridge.saveData(key, data)
     }
 
-    public actual fun get(key: String): String? = bridge.getData(key)
+    public actual fun getData(key: String): String? = bridge.getData(key)
 
-    public actual fun remove(key: String) {
+    public actual fun removeData(key: String) {
         bridge.removeData(key)
     }
 }

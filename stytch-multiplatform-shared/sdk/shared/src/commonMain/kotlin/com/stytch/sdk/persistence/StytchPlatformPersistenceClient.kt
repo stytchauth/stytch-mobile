@@ -1,14 +1,14 @@
 package com.stytch.sdk.persistence
 
 public expect class StytchPlatformPersistenceClient {
-    public fun save(
+    public fun saveData(
         key: String,
         data: String,
     )
 
-    public fun get(key: String): String?
+    public fun getData(key: String): String?
 
-    public fun remove(key: String)
+    public fun removeData(key: String)
 }
 
 public const val STYTCH_PERSISTENCE_FILE_NAME: String = "STYTCH_PERSISTED_DATA"

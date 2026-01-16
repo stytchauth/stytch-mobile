@@ -22,7 +22,7 @@ public class StytchPersistenceClient(
                 val plaintextAsString = Json.encodeToString(plaintext)
                 val encrypted = encryptionClient.encrypt(plaintextAsString.toByteArray())
                 val encoded = encrypted.encodeBase64()
-                platformPersistenceClient.save(key, encoded)
+                platformPersistenceClient.saveData(key, encoded)
             } ?: remove(key)
         }
 
@@ -31,7 +31,7 @@ public class StytchPersistenceClient(
         default: T?,
     ): T? =
         withContext(dispatcher) {
-            return@withContext platformPersistenceClient.get(key)?.let { encoded ->
+            return@withContext platformPersistenceClient.getData(key)?.let { encoded ->
                 val decoded = encoded.decodeBase64Bytes()
                 val decrypted = encryptionClient.decrypt(decoded).decodeToString()
                 Json.decodeFromString<T>(decrypted)
@@ -40,6 +40,6 @@ public class StytchPersistenceClient(
 
     public suspend fun remove(key: String): Unit =
         withContext(dispatcher) {
-            platformPersistenceClient.remove(key)
+            platformPersistenceClient.removeData(key)
         }
 }

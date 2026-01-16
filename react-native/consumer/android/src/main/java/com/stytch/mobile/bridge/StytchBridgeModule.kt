@@ -36,53 +36,55 @@ class StytchBridgeModule(reactContext: ReactApplicationContext) :
   }
 
   override fun saveData(key: String, data: String, promise: Promise) {
-    performSuspendingTask(promise) {
-      return@performSuspendingTask platformPersistenceClient.save(key, data)
+    try {
+      promise.resolve(platformPersistenceClient.saveData(key, data))
+    } catch (e: Exception) {
+      promise.reject(e)
     }
   }
 
   override fun getData(key: String, promise: Promise) {
-    performSuspendingTask(promise) {
-      return@performSuspendingTask platformPersistenceClient.get(key)
+    try {
+      promise.resolve(platformPersistenceClient.getData(key))
+    } catch (e: Exception) {
+      promise.reject(e)
     }
   }
 
   override fun removeData(key: String, promise: Promise) {
-    performSuspendingTask(promise) {
-      return@performSuspendingTask platformPersistenceClient.remove(key)
+    try {
+      promise.resolve(platformPersistenceClient.removeData(key))
+    } catch (e: Exception) {
+      promise.reject(e)
     }
   }
 
   override fun encryptData(data: String, promise: Promise) {
-    performSuspendingTask(promise) {
+    try {
       val encrypted = encryptionClient.encrypt(data.decodeBase64Bytes())
-      return@performSuspendingTask encrypted.encodeBase64()
+      promise.resolve(encrypted.encodeBase64())
+    } catch (e: Exception) {
+      promise.reject(e)
     }
   }
 
   override fun decryptData(data: String, promise: Promise) {
-    performSuspendingTask(promise) {
+    try {
       val decrypted = encryptionClient.decrypt(data.decodeBase64Bytes())
-      return@performSuspendingTask decrypted.encodeBase64()
+      promise.resolve(decrypted.encodeBase64())
+    } catch (e: Exception) {
+      promise.reject(e)
     }
   }
 
   override fun deleteKey(promise: Promise) {
-    performSuspendingTask(promise) {
-      return@performSuspendingTask encryptionClient.deleteKey()
+    try {
+      promise.resolve(encryptionClient.deleteKey())
+    } catch (e: Exception) {
+      promise.reject(e)
     }
   }
 
-  private fun<T> performSuspendingTask(promise: Promise, block: suspend () -> T) {
-    CoroutineScope(Dispatchers.Default).launch {
-      try {
-        val result = block()
-        promise.resolve(result)
-      } catch (e: Exception) {
-        promise.reject(e)
-      }
-    }
-  }
 
   companion object {
     const val NAME = "StytchBridge"

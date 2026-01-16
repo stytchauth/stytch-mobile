@@ -1,4 +1,4 @@
-rootProject.name = "stytch-multiplatform"
+rootProject.name = "stytch-multiplatform-shared"
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {
