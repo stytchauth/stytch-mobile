@@ -5,7 +5,8 @@ package = JSON.parse(File.read(File.join(__dir__, "package.json")))
 Pod::Spec.new do |s|
   s.name         = "StytchReactNativeConsumer"
   s.version      = package["version"]
-  s.summary      = package["description"]
+  s.summary      = package['summary']
+  s.description  = package['description']
   s.homepage     = package["homepage"]
   s.license      = package["license"]
   s.authors      = package["author"]
@@ -15,10 +16,9 @@ Pod::Spec.new do |s|
 
   s.source_files = "ios/**/*.{h,m,mm,swift,cpp}"
   s.private_header_files = "ios/**/*.h"
+  s.public_header_files = "ios/**/*.h"
 
-  s.ios.vendored_frameworks = [
-    "ios/StytchConsumerSDK.xcframework"
-  ]
+  s.ios.vendored_frameworks = ["ios/StytchConsumerSDK.xcframework"]
 
   install_modules_dependencies(s)
 end

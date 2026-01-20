@@ -1,4 +1,4 @@
-#import <StytchBridgeSpec/StytchBridgeSpec.h>
+#import <StytchBridge/StytchBridge.h>
 
 @interface StytchBridge : NSObject <NativeStytchBridgeSpec>
 

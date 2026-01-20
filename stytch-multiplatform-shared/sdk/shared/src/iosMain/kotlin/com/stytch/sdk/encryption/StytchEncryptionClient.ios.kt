@@ -32,7 +32,7 @@ public actual class StytchEncryptionClient {
 }
 
 @OptIn(ExperimentalForeignApi::class)
-private fun NSData?.toByteArray(): ByteArray =
+public fun NSData?.toByteArray(): ByteArray =
     this?.let {
         ByteArray(it.length.toInt()).apply {
             usePinned {
@@ -45,7 +45,7 @@ private fun NSData?.toByteArray(): ByteArray =
     }
 
 @OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
-private fun ByteArray.toNSData(): NSData =
+public fun ByteArray.toNSData(): NSData =
     memScoped {
         NSData.create(
             bytes = allocArrayOf(this@toNSData),

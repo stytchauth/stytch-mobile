@@ -2,6 +2,8 @@
   "name": "@stytch/react-native-consumer",
   "version": "0.0.1",
   "type": "module",
+  "description": "Stytch's official React Native Library",
+  "summary": "Stytch's official React Native Library",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
@@ -18,7 +20,8 @@
     "android",
     "ios",
     "src/NativeStytchBridge.ts",
-    "*.podspec"
+    "*.podspec",
+    "package.json"
   ],
   "license": "MIT",
   "homepage": "https://stytch.com/docs/sdks/react-native-sdk",
