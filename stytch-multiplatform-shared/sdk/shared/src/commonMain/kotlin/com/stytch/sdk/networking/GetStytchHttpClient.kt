@@ -32,12 +32,13 @@ public fun getStytchHttpClient(
     configuration: StytchClientConfigurationInternal,
     getSessionToken: suspend () -> String?,
 ): HttpClient =
-    HttpClient {
+    HttpClient(StytchHttpEngine) {
         expectSuccess = true
 
         install(ContentNegotiation) {
             json(
                 Json {
+                    prettyPrint = true
                     isLenient = true
                     ignoreUnknownKeys = true
                 },
@@ -51,7 +52,7 @@ public fun getStytchHttpClient(
         }
 
         install(UserAgent) {
-            agent = "${BuildConfig.SDK_NAME}/${BuildConfig.SDK_VERSION}_${configuration.platform.name.lowercase()}"
+            agent = "${BuildConfig.SDK_NAME}/${BuildConfig.SDK_VERSION}-${configuration.platform.name.lowercase()}"
         }
 
         install(DefaultRequest) {

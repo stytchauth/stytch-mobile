@@ -2,7 +2,6 @@ import { Button, Text, TextInput, View } from 'react-native';
 import { ConsumerAuthenticationState, OtpAuthenticateRequest, OtpSmsLoginOrCreateRequest, useStytch, useStytchAuthenticationState } from "@stytch/react-native-consumer"
 import { useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useThemeColor } from '@/hooks/use-theme-color';
 
 enum Step {
   SUBMIT_PHONE_NUMBER,

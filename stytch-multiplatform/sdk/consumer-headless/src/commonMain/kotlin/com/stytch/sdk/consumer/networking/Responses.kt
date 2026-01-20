@@ -7,6 +7,7 @@ import kotlinx.serialization.Serializable
 import kotlin.js.JsExport
 import kotlin.time.Instant
 
+@JsExport
 public interface AuthenticatedResponse :
     BasicResponse,
     StytchAPIResponse {
