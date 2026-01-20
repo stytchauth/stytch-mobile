@@ -1,18 +1,20 @@
 package com.stytch.sdk.persistence
 
+import java.util.prefs.Preferences
+
 public actual class StytchPlatformPersistenceClient {
+    private val preferences = Preferences.userRoot().node(STYTCH_PERSISTENCE_FILE_NAME)
+
     public actual fun saveData(
         key: String,
         data: String,
     ) {
-        TODO("Not yet implemented")
+        preferences.put(key, data)
     }
 
-    public actual fun getData(key: String): String? {
-        TODO("Not yet implemented")
-    }
+    public actual fun getData(key: String): String? = preferences.get(key, null)
 
     public actual fun removeData(key: String) {
-        TODO("Not yet implemented")
+        preferences.remove(key)
     }
 }
