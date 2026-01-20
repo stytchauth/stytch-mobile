@@ -19,6 +19,8 @@ Pod::Spec.new do |s|
   s.public_header_files = "ios/**/*.h"
 
   s.ios.vendored_frameworks = ["ios/StytchConsumerSDK.xcframework"]
+  #s.preserve_path = "ios/StytchConsumerSDK.xcframework"
+  #s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'SWIFT_COMPILATION_MODE' => 'wholemodule', 'OTHER_LDFLAGS' => '-lObjC -lStytchConsumerSDK' }
 
   install_modules_dependencies(s)
 end

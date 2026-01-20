@@ -68,7 +68,7 @@ SCSDKStytchPlatformPersistenceClient *platformPersistenceClient = [SCSDKStytchPl
     return [decryptedNSData base64EncodedStringWithOptions:0];
 }
 
-- (void)deleteKey { 
+- (void)deleteKey {
     [encryptionClient deleteKey];
 }
 // End Encryption Stuff

@@ -46,6 +46,7 @@ kotlin {
 
     val xcFramework = XCFramework("StytchConsumerSDK")
     listOf(
+        iosX64(),
         iosArm64(),
         iosSimulatorArm64(),
     ).forEach {
@@ -56,7 +57,7 @@ kotlin {
             if (target.name == "iosArm64") {
                 linkerOpts.add("-lStytchIos")
             }
-            if (target.name == "iosSimulatorArm64") {
+            if (target.name == "iosSimulatorArm64" || target.name == "iosX64") {
                 linkerOpts.add("-lStytchSimulator")
             }
             export("com.stytch.sdk:shared:$version")
