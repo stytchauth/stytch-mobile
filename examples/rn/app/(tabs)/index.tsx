@@ -10,14 +10,15 @@ enum Step {
 
 export default function HomeScreen() {
   const authenticationState = useStytchAuthenticationState()
-  if (authenticationState == ConsumerAuthenticationState.Loading) {
+  
+  if (authenticationState instanceof ConsumerAuthenticationState.Loading) {
     return (
       <SafeAreaView>
           <Text>Loading...</Text>
       </SafeAreaView>
     )
   }
-  if (authenticationState == ConsumerAuthenticationState.Authenticated) {
+  if (authenticationState instanceof ConsumerAuthenticationState.Authenticated) {
     return <AuthenticatedView />
   }
   return <UnauthenticatedView />

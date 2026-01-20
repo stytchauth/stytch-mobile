@@ -56,7 +56,7 @@ export const StytchProvider = ({
     session: undefined,
     user: undefined,
   });
-  const [authenticationState, setAuthenticationState] = useState<ConsumerAuthenticationState>(ConsumerAuthenticationState.Loading)
+  const [authenticationState, setAuthenticationState] = useState<ConsumerAuthenticationState>(new ConsumerAuthenticationState.Loading())
 
   useEffect(() => {
     const handleAppStateChange = async (appState: AppStateStatus) => {
@@ -67,7 +67,7 @@ export const StytchProvider = ({
     const appStateSubscription = AppState.addEventListener('change', handleAppStateChange);
     const tryAuthenticate = async () => {
       const observationJob = stytch.authenticationStateObserver(async (state: ConsumerAuthenticationState) => {
-        if (state == ConsumerAuthenticationState.Authenticated) {
+        if (state instanceof ConsumerAuthenticationState.Authenticated) {
           try {
             await stytch.session.authenticate(new SessionsAuthenticateRequest(null));
           } catch {
@@ -87,7 +87,7 @@ export const StytchProvider = ({
       const observationJob = stytch.authenticationStateObserver((state: ConsumerAuthenticationState) => {
         let newUser: User | undefined = undefined
         let newSession: Session | undefined = undefined
-        if (state == ConsumerAuthenticationState.Authenticated) {
+        if (state instanceof ConsumerAuthenticationState.Authenticated) {
           newUser = (state as ConsumerAuthenticationState.Authenticated).user
           newSession = (state as ConsumerAuthenticationState.Authenticated).session
         }

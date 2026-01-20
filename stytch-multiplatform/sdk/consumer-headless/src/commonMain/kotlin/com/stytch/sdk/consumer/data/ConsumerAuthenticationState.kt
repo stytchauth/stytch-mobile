@@ -9,9 +9,9 @@ import kotlin.js.JsName
 @JsExport
 @JsName("ConsumerAuthenticationState")
 public sealed class ConsumerAuthenticationState : AuthenticationState {
-    public data object Loading : ConsumerAuthenticationState()
+    public class Loading : ConsumerAuthenticationState()
 
-    public data object Unauthenticated : ConsumerAuthenticationState()
+    public class Unauthenticated : ConsumerAuthenticationState()
 
     public class Authenticated(
         public val user: User,

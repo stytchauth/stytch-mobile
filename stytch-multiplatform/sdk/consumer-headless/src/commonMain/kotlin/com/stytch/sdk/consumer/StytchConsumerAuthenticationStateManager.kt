@@ -31,12 +31,12 @@ internal class StytchConsumerAuthenticationStateManager(
 
     override val authenticationStateFlow: StateFlow<ConsumerAuthenticationState> =
         combine(loadingStateFlow, sessionFlow, userFlow, sessionTokenFlow, sessionJwtFlow) { isLoaded, session, user, token, jwt ->
-            if (!isLoaded) return@combine ConsumerAuthenticationState.Loading
+            if (!isLoaded) return@combine ConsumerAuthenticationState.Loading()
             if (session != null && user != null && token != null && jwt != null) {
                 return@combine ConsumerAuthenticationState.Authenticated(user, session, token, jwt)
             }
-            ConsumerAuthenticationState.Unauthenticated
-        }.stateIn(CoroutineScope(dispatchers.mainDispatcher), SharingStarted.WhileSubscribed(5000L), ConsumerAuthenticationState.Loading)
+            ConsumerAuthenticationState.Unauthenticated()
+        }.stateIn(CoroutineScope(dispatchers.mainDispatcher), SharingStarted.WhileSubscribed(5000L), ConsumerAuthenticationState.Loading())
 
     override val currentSessionToken: String?
         get() = sessionTokenFlow.value
