@@ -311,6 +311,7 @@ SWIFT_CLASS_PROPERTY(@property (nonatomic, class, readonly, strong) StytchEncryp
 - (NSData * _Nonnull)getEncryptionKeyWithName:(NSString * _Nonnull)name SWIFT_WARN_UNUSED_RESULT;
 - (NSData * _Nullable)encryptDataWithPlainText:(NSData * _Nonnull)plainText withKeyData:(NSData * _Nonnull)withKeyData SWIFT_WARN_UNUSED_RESULT;
 - (NSData * _Nullable)decryptDataWithEncryptedData:(NSData * _Nonnull)encryptedData withKeyData:(NSData * _Nonnull)withKeyData SWIFT_WARN_UNUSED_RESULT;
+- (void)deleteEncryptionKeyWithName:(NSString * _Nonnull)name;
 - (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
 @end
 

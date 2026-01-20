@@ -37,6 +37,12 @@ public class StytchEncryptionManagerSwift: NSObject {
         }
     }
 
+    @objc public func deleteEncryptionKey(name: String) {
+        let query: [CFString: Any] = baseKeyQuery(name: name)
+        let status = SecItemDelete(query as CFDictionary)
+        // TODO: validate status, handle failures
+    }
+
     private func getKeyDataFromKeychain(name: String) -> Data? {
         let query = baseKeyQuery(name: name).merging(
             [

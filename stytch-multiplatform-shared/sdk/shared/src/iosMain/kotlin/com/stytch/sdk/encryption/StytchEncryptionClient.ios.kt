@@ -27,7 +27,7 @@ public actual class StytchEncryptionClient {
             ).toByteArray()
 
     public actual fun deleteKey() {
-        TODO()
+        swiftEncryptionManager.deleteEncryptionKeyWithName(STYTCH_MASTER_KEY_ALIAS)
     }
 }
 
