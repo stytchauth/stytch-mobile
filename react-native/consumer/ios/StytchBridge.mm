@@ -2,8 +2,8 @@
 #import "StytchConsumerSDK.h"
 #import "StytchConsumerSDK-Swift.h"
 
-SCSDKStytchEncryptionClient *encryptionClient = [SCSDKStytchEncryptionClient init];
-SCSDKStytchPlatformPersistenceClient *platformPersistenceClient = [SCSDKStytchPlatformPersistenceClient init];
+SCSDKStytchEncryptionClient *encryptionClient = [[SCSDKStytchEncryptionClient alloc] init];
+SCSDKStytchPlatformPersistenceClient *platformPersistenceClient = [[SCSDKStytchPlatformPersistenceClient alloc] init];
 
 @implementation StytchBridge
 
