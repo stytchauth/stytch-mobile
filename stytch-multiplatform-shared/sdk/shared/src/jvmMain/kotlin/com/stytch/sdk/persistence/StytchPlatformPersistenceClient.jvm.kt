@@ -2,8 +2,10 @@ package com.stytch.sdk.persistence
 
 import java.util.prefs.Preferences
 
-public actual class StytchPlatformPersistenceClient {
-    private val preferences = Preferences.userRoot().node(STYTCH_PERSISTENCE_FILE_NAME)
+public actual class StytchPlatformPersistenceClient(
+    applicationClass: Class<*>,
+) {
+    private val preferences = Preferences.userNodeForPackage(applicationClass).node(STYTCH_PERSISTENCE_FILE_NAME)
 
     public actual fun saveData(
         key: String,

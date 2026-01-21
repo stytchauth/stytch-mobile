@@ -1,5 +1,8 @@
 package com.stytch.sdk.encryption
 
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
 import java.security.KeyStore
 import javax.crypto.Cipher
 import javax.crypto.KeyGenerator
@@ -41,24 +44,30 @@ public actual class StytchEncryptionClient {
     }
 
     private fun getOrCreateSecretKey(): SecretKey {
-        val keyStore = KeyStore.getInstance(JAVA_KEY_STORE).apply { load(null, null) }
+        val keyStoreFile = File(KEY_STORE_PATH)
+        val keyStore = KeyStore.getInstance(JAVA_KEY_STORE)
+        val keyStoreInputStream = if (keyStoreFile.exists()) FileInputStream(keyStoreFile) else null
+        keyStore.load(keyStoreInputStream, "password".toCharArray())
         if (keyStore.containsAlias(STYTCH_MASTER_KEY_ALIAS)) {
-            println("JORDAN >>>> reusing key")
-            return keyStore.getKey(STYTCH_MASTER_KEY_ALIAS, null) as SecretKey
+            return keyStore.getKey(STYTCH_MASTER_KEY_ALIAS, "password".toCharArray()) as SecretKey
         }
-        println("JORDAN >>>> creating NEW key")
         val keyGenerator = KeyGenerator.getInstance(ALGORITHM)
-        println("JORDAN >>>> using algorithm")
-        return keyGenerator.generateKey()
+        val secretKey = keyGenerator.generateKey()
+        val secretKeyEntry = KeyStore.SecretKeyEntry(secretKey)
+        keyStore.setEntry(STYTCH_MASTER_KEY_ALIAS, secretKeyEntry, KeyStore.PasswordProtection("password".toCharArray()))
+        FileOutputStream(KEY_STORE_PATH).use { keyStoreOutputStream ->
+            keyStore.store(keyStoreOutputStream, "password".toCharArray())
+        }
+        return secretKey
     }
 
     private companion object {
+        private const val KEY_STORE_PATH = "com.stytch.mobile.keystore.p12"
         private const val JAVA_KEY_STORE = "PKCS12"
         private const val ALGORITHM = "AES"
         private const val BLOCK_MODE = "GCM"
         private const val PADDING = "NoPadding"
         private const val CIPHER_TRANSFORMATION = "$ALGORITHM/$BLOCK_MODE/$PADDING"
-        private const val KEY_SIZE = 256
         private const val GCM_TAG_LENGTH = 128
         private const val GCM_IV_LENGTH = 12
     }
