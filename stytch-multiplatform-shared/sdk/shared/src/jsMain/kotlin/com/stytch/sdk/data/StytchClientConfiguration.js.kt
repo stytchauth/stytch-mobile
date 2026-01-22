@@ -1,6 +1,7 @@
 package com.stytch.sdk.data
 
 import com.stytch.sdk.StytchBridge
+import com.stytch.sdk.encryption.StytchEncryptionClient
 import com.stytch.sdk.persistence.StytchPlatformPersistenceClient
 import kotlinx.serialization.json.Json
 
@@ -19,5 +20,6 @@ public actual class StytchClientConfiguration(
             deviceInfo = Json.decodeFromString<DeviceInfo>(StytchBridge.getDeviceInfo()),
             platformPersistenceClient = StytchPlatformPersistenceClient(StytchBridge),
             platform = KMPPlatformType.REACTNATIVE,
+            encryptionClient = StytchEncryptionClient(),
         )
 }

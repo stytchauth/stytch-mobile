@@ -1,5 +1,6 @@
 package com.stytch.sdk.data
 
+import com.stytch.sdk.encryption.StytchEncryptionClient
 import com.stytch.sdk.persistence.StytchPlatformPersistenceClient
 import java.awt.Toolkit
 
@@ -7,18 +8,28 @@ public actual class StytchClientConfiguration(
     internal val publicToken: String,
     internal val applicationClass: Class<*>,
     internal val applicationVersion: String,
+    internal val keystorePassword: String,
     internal val endpointOptions: EndpointOptions = EndpointOptions(),
     public val defaultSessionDuration: Int? = null,
 ) {
-    public actual fun toInternal(): StytchClientConfigurationInternal =
-        StytchClientConfigurationInternal(
+    public actual fun toInternal(): StytchClientConfigurationInternal {
+        // create necessary clients
+        val encryptionClient = StytchEncryptionClient(keystorePassword)
+        val platformPersistenceClient = StytchPlatformPersistenceClient(applicationClass)
+        // if it failed the first time (key corruption issues), nuke any previous preferences, because they are gone
+        if (encryptionClient.keystoreFailedOnInitialization) {
+            platformPersistenceClient.reset()
+        }
+        return StytchClientConfigurationInternal(
             publicToken = publicToken,
             endpointOptions = endpointOptions,
             defaultSessionDuration = defaultSessionDuration,
             deviceInfo = getDeviceInfo(),
-            platformPersistenceClient = StytchPlatformPersistenceClient(applicationClass),
+            platformPersistenceClient = platformPersistenceClient,
             platform = KMPPlatformType.JVM,
+            encryptionClient = encryptionClient,
         )
+    }
 
     private fun getDeviceInfo(): DeviceInfo {
         val screenSize = Toolkit.getDefaultToolkit().screenSize

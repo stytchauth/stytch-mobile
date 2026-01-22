@@ -60,6 +60,10 @@ class StytchBridgeModule(reactContext: ReactApplicationContext) :
    encryptionClient.deleteKey()
   }
 
+  override fun resetPreferences() {
+   platformPersistenceClient.reset()
+  }
+
 
   companion object {
     const val NAME = "StytchBridge"

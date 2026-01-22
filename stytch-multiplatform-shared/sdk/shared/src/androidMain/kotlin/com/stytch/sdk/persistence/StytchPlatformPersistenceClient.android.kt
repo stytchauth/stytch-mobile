@@ -26,4 +26,11 @@ public actual class StytchPlatformPersistenceClient(
             apply()
         }
     }
+
+    public actual fun reset() {
+        with(sharedPreferences.edit()) {
+            clear()
+            apply()
+        }
+    }
 }

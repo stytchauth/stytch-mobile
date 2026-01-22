@@ -127,7 +127,7 @@ class MainViewModel(
 }
 
 data class DemoAppState(
-    val authenticationState: ConsumerAuthenticationState = ConsumerAuthenticationState.Loading,
+    val authenticationState: ConsumerAuthenticationState = ConsumerAuthenticationState.Loading(),
     val methodId: String? = null,
     val step: Step = Step.SUBMIT_PHONE_NUMBER,
     val rawResponse: StytchAPIResponse? = null,

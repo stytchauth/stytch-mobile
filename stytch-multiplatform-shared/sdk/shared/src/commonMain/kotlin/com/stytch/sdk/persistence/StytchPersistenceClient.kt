@@ -32,9 +32,15 @@ public class StytchPersistenceClient(
     ): T? =
         withContext(dispatcher) {
             return@withContext platformPersistenceClient.getData(key)?.let { encoded ->
-                val decoded = encoded.decodeBase64Bytes()
-                val decrypted = encryptionClient.decrypt(decoded).decodeToString()
-                Json.decodeFromString<T>(decrypted)
+                try {
+                    val decoded = encoded.decodeBase64Bytes()
+                    val decrypted = encryptionClient.decrypt(decoded).decodeToString()
+                    Json.decodeFromString<T>(decrypted)
+                } catch (_: Exception) {
+                    // malformed data, nuke it
+                    remove(key)
+                    null
+                }
             } ?: default
         }
 

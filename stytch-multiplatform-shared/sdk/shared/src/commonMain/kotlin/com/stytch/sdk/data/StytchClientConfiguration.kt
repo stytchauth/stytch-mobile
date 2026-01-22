@@ -1,5 +1,6 @@
 package com.stytch.sdk.data
 
+import com.stytch.sdk.encryption.StytchEncryptionClient
 import com.stytch.sdk.persistence.StytchPlatformPersistenceClient
 import kotlinx.datetime.TimeZone
 import kotlin.js.JsExport
@@ -39,6 +40,7 @@ public class StytchClientConfigurationInternal(
     internal val timezone: String = TimeZone.currentSystemDefault().id,
     public val platformPersistenceClient: StytchPlatformPersistenceClient,
     internal val platform: KMPPlatformType,
+    public val encryptionClient: StytchEncryptionClient,
 )
 
 @JsExport

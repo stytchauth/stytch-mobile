@@ -2,6 +2,7 @@ package com.stytch.sdk.data
 
 import android.content.Context
 import android.os.Build
+import com.stytch.sdk.encryption.StytchEncryptionClient
 import com.stytch.sdk.persistence.StytchPlatformPersistenceClient
 import kotlinx.datetime.TimeZone
 import kotlin.uuid.ExperimentalUuidApi
@@ -21,6 +22,7 @@ public actual class StytchClientConfiguration(
             deviceInfo = context.getDeviceInfo(),
             platformPersistenceClient = StytchPlatformPersistenceClient(context),
             platform = KMPPlatformType.ANDROID,
+            encryptionClient = StytchEncryptionClient(),
         )
 }
 

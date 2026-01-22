@@ -4,13 +4,17 @@ import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.security.KeyStore
+import java.security.KeyStoreException
 import javax.crypto.Cipher
 import javax.crypto.KeyGenerator
 import javax.crypto.SecretKey
 import javax.crypto.spec.GCMParameterSpec
 
-public actual class StytchEncryptionClient {
+public actual class StytchEncryptionClient(
+    private val password: String,
+) {
     private val secretKey: SecretKey = getOrCreateSecretKey()
+    internal var keystoreFailedOnInitialization: Boolean = false
 
     public actual fun encrypt(data: ByteArray): ByteArray {
         val cipher =
@@ -44,19 +48,29 @@ public actual class StytchEncryptionClient {
     }
 
     private fun getOrCreateSecretKey(): SecretKey {
+        val keystorePassword = password.toCharArray()
         val keyStoreFile = File(KEY_STORE_PATH)
         val keyStore = KeyStore.getInstance(JAVA_KEY_STORE)
         val keyStoreInputStream = if (keyStoreFile.exists()) FileInputStream(keyStoreFile) else null
-        keyStore.load(keyStoreInputStream, "password".toCharArray())
-        if (keyStore.containsAlias(STYTCH_MASTER_KEY_ALIAS)) {
-            return keyStore.getKey(STYTCH_MASTER_KEY_ALIAS, "password".toCharArray()) as SecretKey
+        try {
+            keyStore.load(keyStoreInputStream, keystorePassword)
+            if (keyStore.containsAlias(STYTCH_MASTER_KEY_ALIAS)) {
+                return keyStore.getKey(STYTCH_MASTER_KEY_ALIAS, keystorePassword) as SecretKey
+            }
+        } catch (_: KeyStoreException) {
+            // assume key is borked and try again (only once)
+            keyStore.deleteEntry(STYTCH_MASTER_KEY_ALIAS)
+            if (!keystoreFailedOnInitialization) {
+                keystoreFailedOnInitialization = true
+                return getOrCreateSecretKey()
+            }
         }
         val keyGenerator = KeyGenerator.getInstance(ALGORITHM)
         val secretKey = keyGenerator.generateKey()
         val secretKeyEntry = KeyStore.SecretKeyEntry(secretKey)
-        keyStore.setEntry(STYTCH_MASTER_KEY_ALIAS, secretKeyEntry, KeyStore.PasswordProtection("password".toCharArray()))
+        keyStore.setEntry(STYTCH_MASTER_KEY_ALIAS, secretKeyEntry, KeyStore.PasswordProtection(keystorePassword))
         FileOutputStream(KEY_STORE_PATH).use { keyStoreOutputStream ->
-            keyStore.store(keyStoreOutputStream, "password".toCharArray())
+            keyStore.store(keyStoreOutputStream, keystorePassword)
         }
         return secretKey
     }

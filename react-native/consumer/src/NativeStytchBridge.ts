@@ -9,6 +9,7 @@ export interface Spec extends TurboModule {
   encryptData(data: string): string;
   decryptData(data: string): string;
   deleteKey(): void;
+  resetPreferences(): void;
 };
 
 // create an instance of the module

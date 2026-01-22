@@ -17,4 +17,8 @@ public actual class StytchPlatformPersistenceClient {
     public actual fun removeData(key: String) {
         userDefaults.removeObjectForKey(key)
     }
+
+    public actual fun reset() {
+        userDefaults.removePersistentDomainForName(STYTCH_PERSISTENCE_FILE_NAME)
+    }
 }

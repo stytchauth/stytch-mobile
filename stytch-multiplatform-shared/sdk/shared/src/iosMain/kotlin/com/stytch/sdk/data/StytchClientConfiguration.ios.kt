@@ -1,5 +1,6 @@
 package com.stytch.sdk.data
 
+import com.stytch.sdk.encryption.StytchEncryptionClient
 import com.stytch.sdk.persistence.StytchPlatformPersistenceClient
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.useContents
@@ -36,6 +37,7 @@ public actual class StytchClientConfiguration(
                 ),
             platformPersistenceClient = StytchPlatformPersistenceClient(),
             platform = KMPPlatformType.IOS,
+            encryptionClient = StytchEncryptionClient(),
         )
 }
 

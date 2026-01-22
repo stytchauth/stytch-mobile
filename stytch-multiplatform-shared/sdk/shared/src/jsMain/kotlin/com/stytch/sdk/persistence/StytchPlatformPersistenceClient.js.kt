@@ -19,4 +19,8 @@ public actual class StytchPlatformPersistenceClient(
     public actual fun removeData(key: String) {
         bridge.removeData(key)
     }
+
+    public actual fun reset() {
+        bridge.resetPreferences()
+    }
 }

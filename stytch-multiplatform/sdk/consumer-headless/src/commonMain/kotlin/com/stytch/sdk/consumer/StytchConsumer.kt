@@ -44,11 +44,10 @@ internal class DefaultStytchConsumer(
             ioDispatcher = Dispatchers.Default,
             mainDispatcher = Dispatchers.Main,
         )
-    private val encryptionClient = StytchEncryptionClient()
     private val persistenceClient =
         StytchPersistenceClient(
             dispatcher = dispatchers.ioDispatcher,
-            encryptionClient = encryptionClient,
+            encryptionClient = configuration.encryptionClient,
             platformPersistenceClient = configuration.platformPersistenceClient,
         )
 

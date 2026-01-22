@@ -7,6 +7,10 @@ public actual class StytchPlatformPersistenceClient(
 ) {
     private val preferences = Preferences.userNodeForPackage(applicationClass).node(STYTCH_PERSISTENCE_FILE_NAME)
 
+    public actual fun reset() {
+        preferences.clear()
+    }
+
     public actual fun saveData(
         key: String,
         data: String,

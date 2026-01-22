@@ -71,5 +71,9 @@ SCSDKStytchPlatformPersistenceClient *platformPersistenceClient = [[SCSDKStytchP
 - (void)deleteKey {
     [encryptionClient deleteKey];
 }
+
+- (void)resetPreferences {
+    [platformPersistenceClient reset];
+}
 // End Encryption Stuff
 @end

@@ -17,4 +17,6 @@ public external object StytchBridge {
     public fun decryptData(data: String): String
 
     public fun deleteKey(): Unit
+
+    public fun resetPreferences(): Unit
 }

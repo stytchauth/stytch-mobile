@@ -26,11 +26,11 @@ public class Main {
             Properties prop = new Properties();
             prop.load(input);
             SwingUtilities.invokeLater(() -> {
-                DemoApp app = new DemoApp(prop.getProperty("STYTCH_PUBLIC_TOKEN"));
+                DemoApp app = new DemoApp(prop.getProperty("STYTCH_PUBLIC_TOKEN"), prop.getProperty("STYTCH_KEYSTORE_PASSWORD"));
                 app.setVisible(true);
             });
         } catch (IOException ex) {
-            System.out.println("Create a local.properties file in the root and add your STYTCH_PUBLIC_TOKEN");
+            System.out.println("Create a local.properties file in the root and add your STYTCH_PUBLIC_TOKEN and STYTCH_KEYSTORE_PASSWORD");
         }
     }
 }
@@ -39,12 +39,12 @@ class DemoApp extends JFrame {
     private final StytchConsumer stytch;
     private String methodId;
 
-    public DemoApp(String STYTCH_PUBLIC_TOKEN) {
-        System.out.println("Using public token: " + STYTCH_PUBLIC_TOKEN);
+    public DemoApp(String STYTCH_PUBLIC_TOKEN, String STYTCH_KEYSTORE_PASSWORD) {
         StytchClientConfiguration configuration = new StytchClientConfiguration(
                 STYTCH_PUBLIC_TOKEN,
                 Main.class,
                 "0.0.1",
+                STYTCH_KEYSTORE_PASSWORD,
                 new EndpointOptions(),
                 30
         );
@@ -73,7 +73,6 @@ class DemoApp extends JFrame {
     }
 
     private void displayAuthenticatedState() {
-        removeAll();
         setLayout(new BorderLayout());
         JLabel inputLabel = new JLabel("Authenticated!");
         JButton submitButton = new JButton("Logout");
