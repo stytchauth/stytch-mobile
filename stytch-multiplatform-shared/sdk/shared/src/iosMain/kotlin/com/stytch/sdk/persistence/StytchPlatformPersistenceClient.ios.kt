@@ -19,6 +19,6 @@ public actual class StytchPlatformPersistenceClient {
     }
 
     public actual fun reset() {
-        userDefaults.removePersistentDomainForName(STYTCH_PERSISTENCE_FILE_NAME)
+        userDefaults.removeSuiteNamed(STYTCH_PERSISTENCE_FILE_NAME)
     }
 }
