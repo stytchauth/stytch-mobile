@@ -11,7 +11,6 @@ import com.stytch.sdk.data.JsCleanup
 import com.stytch.sdk.data.StytchClientConfiguration
 import com.stytch.sdk.data.StytchClientConfigurationInternal
 import com.stytch.sdk.data.StytchDispatchers
-import com.stytch.sdk.encryption.StytchEncryptionClient
 import com.stytch.sdk.persistence.StytchPersistenceClient
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -75,8 +74,7 @@ internal class DefaultStytchConsumer(
 
     init {
         CoroutineScope(Dispatchers.Default).launch {
-            // TODO: any potential init-related cleanup. Like, in stytch-android, we clean up any invalid key/data stuff
-            // Maybe this is also where we handle session hydration?
+            networkingClient.refreshBootStrapData()
         }
     }
 

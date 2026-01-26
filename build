@@ -68,6 +68,8 @@ main() {
         buildAndCopyAndroid
         buildAndCopyIos
         buildAndCopyRn
+    elif [[ "$PLATFORM" == "shared" ]]; then
+        echo "Already built"
     elif [[ "$PLATFORM" == "android" ]]; then
         buildAndCopyAndroid
     elif [[ "$PLATFORM" == "ios" ]]; then

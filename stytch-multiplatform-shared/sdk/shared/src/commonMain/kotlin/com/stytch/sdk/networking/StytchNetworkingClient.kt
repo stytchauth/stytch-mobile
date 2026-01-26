@@ -18,7 +18,7 @@ import kotlin.time.Clock
 import kotlin.time.Instant
 
 public abstract class StytchNetworkingClient(
-    configuration: StytchClientConfigurationInternal,
+    private val configuration: StytchClientConfigurationInternal,
     private val dispatchers: StytchDispatchers,
     private val sessionManager: StytchAuthenticationStateManager,
 ) {
@@ -29,6 +29,10 @@ public abstract class StytchNetworkingClient(
     private var sessionUpdateJob: Job? = null
 
     public val ktorfit: Ktorfit
+
+    internal val sharedAPI: SharedAPI
+
+    private val httpClient = getStytchHttpClient(configuration) { sessionManager.currentSessionToken }
 
     public fun startSessionUpdateJob() {
         // This is a little more complicated than the existing android/iOS logic
@@ -71,8 +75,13 @@ public abstract class StytchNetworkingClient(
             Ktorfit
                 .Builder()
                 .baseUrl("https://$domain/$SDK_URL_PATH")
-                .httpClient(getStytchHttpClient(configuration, { sessionManager.currentSessionToken }))
+                .httpClient(httpClient)
                 .build()
+        sharedAPI = ktorfit.createSharedAPI()
+    }
+
+    public suspend fun refreshBootStrapData() {
+        val bootstrapResponse = sharedAPI.getBootstrapData(configuration.tokenInfo.publicToken)
     }
 
     private companion object {

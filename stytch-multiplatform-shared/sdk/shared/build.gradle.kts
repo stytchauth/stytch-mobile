@@ -8,6 +8,8 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.buildconfig)
     alias(libs.plugins.skie)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.ktorfit)
     id("maven-publish")
 }
 
@@ -113,4 +115,12 @@ buildConfig {
 
 skie {
     isEnabled = true
+}
+
+ktorfit {
+    compilerPluginVersion.set("2.3.3")
+}
+
+tasks.named("sourcesJar").configure {
+    setDependsOn(listOf("kspCommonMainKotlinMetadata"))
 }
