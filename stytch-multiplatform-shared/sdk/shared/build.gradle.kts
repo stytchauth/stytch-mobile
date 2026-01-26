@@ -81,6 +81,8 @@ kotlin {
     sourceSets {
         androidMain.dependencies {
             implementation(libs.ktor.client.okhttp)
+            implementation(libs.dfp.android)
+            implementation(libs.recaptcha)
         }
         commonMain.dependencies {
             implementation(libs.kotlinx.serialization.json)

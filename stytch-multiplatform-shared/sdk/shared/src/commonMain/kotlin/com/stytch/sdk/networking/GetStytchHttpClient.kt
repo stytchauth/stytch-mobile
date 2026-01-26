@@ -86,6 +86,8 @@ public fun getStytchHttpClient(
 
         install(DFPPAInterceptor) {
             this.getDfpConfiguration = getDfpConfiguration
+            this.dfpProvider = configuration.dfpProvider
+            this.captchaProvider = configuration.captchaProvider
         }
     }
 

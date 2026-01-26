@@ -1,12 +1,12 @@
 package com.stytch.sdk.data
 
+import android.app.Application
 import android.content.Context
 import android.os.Build
+import com.stytch.sdk.dfp.CAPTCHAProviderImpl
+import com.stytch.sdk.dfp.DFPProviderImpl
 import com.stytch.sdk.encryption.StytchEncryptionClient
 import com.stytch.sdk.persistence.StytchPlatformPersistenceClient
-import kotlinx.datetime.TimeZone
-import kotlin.uuid.ExperimentalUuidApi
-import kotlin.uuid.Uuid
 
 public actual class StytchClientConfiguration(
     internal val context: Context,
@@ -23,6 +23,13 @@ public actual class StytchClientConfiguration(
             platformPersistenceClient = StytchPlatformPersistenceClient(context),
             platform = KMPPlatformType.ANDROID,
             encryptionClient = StytchEncryptionClient(),
+            dfpProvider =
+                DFPProviderImpl(
+                    context = context,
+                    publicToken = publicToken,
+                    dfppaDomain = endpointOptions.dfppaDomain,
+                ),
+            captchaProvider = CAPTCHAProviderImpl(context.applicationContext as Application),
         )
 }
 

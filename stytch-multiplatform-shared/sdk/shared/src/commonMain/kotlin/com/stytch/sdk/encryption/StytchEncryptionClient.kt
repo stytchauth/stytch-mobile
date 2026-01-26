@@ -1,5 +1,8 @@
 package com.stytch.sdk.encryption
 
+import kotlin.js.JsExport
+
+@JsExport
 public expect class StytchEncryptionClient {
     public fun encrypt(data: ByteArray): ByteArray
 
