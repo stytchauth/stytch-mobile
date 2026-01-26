@@ -81,6 +81,8 @@ public fun getStytchHttpClient(
                 }
             level = LogLevel.ALL
         }.also { Napier.base(DebugAntilog()) }
+
+        install(DFPPAInterceptor)
     }
 
 @OptIn(ExperimentalUuidApi::class)
