@@ -1,6 +1,7 @@
 package com.stytch.sdk.consumer.networking
 
 import com.stytch.sdk.data.StytchDataResponse
+import com.stytch.sdk.networking.DFPPAEnabled
 import de.jensklingenberg.ktorfit.http.Body
 import de.jensklingenberg.ktorfit.http.POST
 
@@ -18,11 +19,13 @@ internal interface API {
 
     // region OTP
     @POST("otps/sms/login_or_create")
+    @DFPPAEnabled
     suspend fun otpSmsLoginOrCreate(
         @Body request: OtpSmsLoginOrCreateRequest,
     ): StytchDataResponse<OtpSmsLoginOrCreateResponse>
 
     @POST("otps/authenticate")
+    @DFPPAEnabled
     suspend fun otpAuthenticate(
         @Body request: OtpAuthenticateRequest,
     ): StytchDataResponse<OtpAuthenticateResponse>

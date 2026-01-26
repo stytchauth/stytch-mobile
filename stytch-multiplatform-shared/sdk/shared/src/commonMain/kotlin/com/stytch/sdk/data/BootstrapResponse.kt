@@ -32,7 +32,7 @@ public class BootstrapResponse(
     @SerialName("dfp_protected_auth_enabled")
     public val dfpProtectedAuthEnabled: Boolean = false,
     @SerialName("dfp_protected_auth_mode")
-    public val dfpProtectedAuthMode: DFPProtectedAuthMode = DFPProtectedAuthMode.OBSERVATION,
+    public val dfpProtectedAuthMode: DFPProtectedAuthMode? = DFPProtectedAuthMode.OBSERVATION,
     @SerialName("password_config")
     public val passwordConfig: PasswordConfig? = null,
     @SerialName("rbac_policy")

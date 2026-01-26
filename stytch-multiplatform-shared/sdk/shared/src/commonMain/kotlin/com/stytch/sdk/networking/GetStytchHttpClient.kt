@@ -1,5 +1,6 @@
 package com.stytch.sdk.networking
 
+import com.stytch.sdk.data.DFPConfiguration
 import com.stytch.sdk.data.StytchClientConfigurationInternal
 import com.stytch.sdk.shared.BuildConfig
 import io.github.aakira.napier.DebugAntilog
@@ -31,6 +32,7 @@ private const val X_SDK_CLIENT_HEADER = "X-SDK-CLIENT"
 public fun getStytchHttpClient(
     configuration: StytchClientConfigurationInternal,
     getSessionToken: suspend () -> String?,
+    getDfpConfiguration: () -> DFPConfiguration,
 ): HttpClient =
     HttpClient(StytchHttpEngine) {
         expectSuccess = true
@@ -82,7 +84,9 @@ public fun getStytchHttpClient(
             level = LogLevel.ALL
         }.also { Napier.base(DebugAntilog()) }
 
-        install(DFPPAInterceptor)
+        install(DFPPAInterceptor) {
+            this.getDfpConfiguration = getDfpConfiguration
+        }
     }
 
 @OptIn(ExperimentalUuidApi::class)

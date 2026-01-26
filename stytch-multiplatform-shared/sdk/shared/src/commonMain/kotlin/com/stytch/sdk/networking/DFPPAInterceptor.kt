@@ -8,13 +8,13 @@ import io.ktor.client.request.HttpRequestBuilder
 
 internal val DFPPAInterceptor =
     createClientPlugin("DFPPAInterceptor", ::DFPPAInterceptorConfiguration) {
-        val interceptor = pluginConfig
+        val configuration = pluginConfig
         onRequest { request, content ->
-            if (request.annotations.contains(DFPPAEnabled::class)) {
-                if (!interceptor.configuration.dfpProtectedAuthEnabled) {
+            if (request.annotations.contains(DFPPAEnabled())) {
+                if (!configuration.getDfpConfiguration().dfpProtectedAuthEnabled) {
                     return@onRequest handleDFPDisabled(request, content)
                 }
-                when (interceptor.configuration.dfpProtectedAuthMode) {
+                when (configuration.getDfpConfiguration().dfpProtectedAuthMode) {
                     DFPProtectedAuthMode.OBSERVATION -> handleDFPObservationMode(request, content)
                     DFPProtectedAuthMode.DECISIONING -> handleDFPDecisioningMode(request, content)
                 }
@@ -23,7 +23,9 @@ internal val DFPPAInterceptor =
     }
 
 internal class DFPPAInterceptorConfiguration {
-    val configuration: DFPConfiguration = DFPConfiguration()
+    var getDfpConfiguration: () -> DFPConfiguration = {
+        DFPConfiguration()
+    }
     val dfpTelemetryIdKey = "dfp_telemetry_id"
     val captchaTokenKey = "captcha_token"
 }
@@ -32,6 +34,7 @@ internal fun handleDFPDisabled(
     request: HttpRequestBuilder,
     content: Any,
 ) {
+    println("JORDAN >>>>> DFPDISABLED")
     // DISABLED = if captcha client is configured, add a captcha token, else do nothing
 }
 
@@ -39,6 +42,7 @@ internal fun handleDFPObservationMode(
     request: HttpRequestBuilder,
     content: Any,
 ) {
+    println("JORDAN >>>>> DFP OBSERVATION MODE")
     // OBSERVATION = Always DFP; CAPTCHA if configured
 }
 
@@ -46,5 +50,6 @@ internal fun handleDFPDecisioningMode(
     request: HttpRequestBuilder,
     content: Any,
 ) {
+    println("JORDAN >>>>> DFP DECISIONING MODE")
     // DECISIONING = add DFP Id, proceed; if request 403s, add a captcha token
 }

@@ -1,6 +1,8 @@
 package com.stytch.sdk.networking
 
 import com.stytch.sdk.StytchAuthenticationStateManager
+import com.stytch.sdk.data.DFPConfiguration
+import com.stytch.sdk.data.DFPProtectedAuthMode
 import com.stytch.sdk.data.SDK_URL_PATH
 import com.stytch.sdk.data.StytchAPIError
 import com.stytch.sdk.data.StytchClientConfigurationInternal
@@ -9,6 +11,7 @@ import com.stytch.sdk.data.StytchDispatchers
 import de.jensklingenberg.ktorfit.Ktorfit
 import io.ktor.client.call.body
 import io.ktor.client.plugins.ResponseException
+import io.ktor.client.plugins.plugin
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -32,7 +35,10 @@ public abstract class StytchNetworkingClient(
 
     internal val sharedAPI: SharedAPI
 
-    private val httpClient = getStytchHttpClient(configuration) { sessionManager.currentSessionToken }
+    private val httpClient =
+        getStytchHttpClient(configuration, { sessionManager.currentSessionToken }, {
+            dfpConfiguration
+        })
 
     public fun startSessionUpdateJob() {
         // This is a little more complicated than the existing android/iOS logic
@@ -80,8 +86,15 @@ public abstract class StytchNetworkingClient(
         sharedAPI = ktorfit.createSharedAPI()
     }
 
+    private var dfpConfiguration: DFPConfiguration = DFPConfiguration()
+
     public suspend fun refreshBootStrapData() {
         val bootstrapResponse = sharedAPI.getBootstrapData(configuration.tokenInfo.publicToken)
+        dfpConfiguration =
+            DFPConfiguration(
+                dfpProtectedAuthEnabled = bootstrapResponse.data.dfpProtectedAuthEnabled,
+                dfpProtectedAuthMode = bootstrapResponse.data.dfpProtectedAuthMode ?: DFPProtectedAuthMode.OBSERVATION,
+            )
     }
 
     private companion object {
