@@ -5,12 +5,15 @@ import com.stytch.sdk.data.DFPProtectedAuthMode
 import com.stytch.sdk.dfp.CAPTCHAProvider
 import com.stytch.sdk.dfp.DFPProvider
 import de.jensklingenberg.ktorfit.annotations
+import io.ktor.client.plugins.ResponseException
+import io.ktor.client.plugins.api.Send
 import io.ktor.client.plugins.api.createClientPlugin
-import io.ktor.client.statement.HttpResponse
-import io.ktor.client.statement.request
+import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.content.TextContent
+import io.ktor.utils.io.InternalAPI
+import kotlinx.coroutines.CompletableJob
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.jsonObject
@@ -18,25 +21,71 @@ import kotlinx.serialization.json.jsonObject
 private const val DFP_TELEMETRY_ID_KEY = "dfp_telemetry_id"
 private const val CAPTCHA_TOKEN_KEY = "captcha_token"
 
+@OptIn(InternalAPI::class)
 internal val DFPPAInterceptor =
     createClientPlugin("DFPPAInterceptor", ::DFPPAInterceptorConfiguration) {
         val configuration = pluginConfig
 
-        transformRequestBody { request, body, _ ->
-            return@transformRequestBody if (request.annotations.contains(DFPPAEnabled()) && body is TextContent) {
-                if (!configuration.getDfpConfiguration().dfpProtectedAuthEnabled) {
-                    // If DFP is disabled, ONLY add a captcha token (if it's configured)
-                    return@transformRequestBody body.setCAPTCHAToken(configuration.captchaProvider)
+        fun prepareRequest(request: HttpRequestBuilder): HttpRequestBuilder {
+            val subRequest = HttpRequestBuilder().takeFrom(request)
+            request.executionContext.invokeOnCompletion { cause ->
+                val subRequestJob = subRequest.executionContext as CompletableJob
+                if (cause == null) {
+                    subRequestJob.complete()
+                } else {
+                    subRequestJob.completeExceptionally(cause)
                 }
-                // If DFP is enabled, add a telemetry ID
-                var updatedBody = body.setTelemetryID(configuration.dfpProvider)
-                // If it's observation mode, also add a captcha token (if it's configured)
-                if (configuration.getDfpConfiguration().dfpProtectedAuthMode == DFPProtectedAuthMode.OBSERVATION) {
-                    updatedBody = updatedBody.setCAPTCHAToken(configuration.captchaProvider)
+            }
+            return subRequest
+        }
+
+        on(Send) { request ->
+            if (!request.annotations.contains(DFPPAEnabled())) {
+                // Not a DFPPA endpoint; do nothing
+                return@on proceed(request)
+            }
+            // create a new request to operate on
+            val newRequest = prepareRequest(request)
+            // If, for some reason, the body isn't modifiable, return early
+            var body = newRequest.body as? TextContent ?: return@on proceed(newRequest)
+
+            // If DFP is disabled, add a CAPTCHA token (if configured), and carry on
+            if (!configuration.getDfpConfiguration().dfpProtectedAuthEnabled) {
+                newRequest.body = body.setCAPTCHAToken(configuration.captchaProvider)
+                return@on proceed(newRequest)
+            }
+
+            // DFP is enabled.
+            when (configuration.getDfpConfiguration().dfpProtectedAuthMode) {
+                // In OBSERVATION mode, add a telemetry ID and a CAPTCHA token (if configured), and ignore the response
+                DFPProtectedAuthMode.OBSERVATION -> {
+                    newRequest.body =
+                        body
+                            .setTelemetryID(configuration.dfpProvider)
+                            .setCAPTCHAToken(configuration.captchaProvider)
+                    proceed(newRequest)
                 }
-                updatedBody
-            } else {
-                null
+
+                // In DECISIONING mode, add a telemetry ID, try the request, and retry with CAPTCHA if it 403s
+                DFPProtectedAuthMode.DECISIONING -> {
+                    try {
+                        newRequest.body = body.setTelemetryID(configuration.dfpProvider)
+                        proceed(newRequest)
+                    } catch (cause: Throwable) {
+                        if (cause !is ResponseException || cause.response.status != HttpStatusCode.Forbidden) {
+                            throw cause
+                        }
+                        // create a retry request
+                        val retryRequest = prepareRequest(newRequest)
+                        // add new tokens
+                        retryRequest.body =
+                            body
+                                .setTelemetryID(configuration.dfpProvider)
+                                .setCAPTCHAToken(configuration.captchaProvider)
+                        // fire it off
+                        proceed(retryRequest)
+                    }
+                }
             }
         }
     }
@@ -75,6 +124,3 @@ private fun TextContent.addProperties(properties: Map<String, String?>): TextCon
     } else {
         this
     }
-
-private fun HttpResponse.isRetriableDFPPARequest(authMode: DFPProtectedAuthMode): Boolean =
-    request.annotations.contains(DFPPAEnabled()) && status == HttpStatusCode.Forbidden && authMode == DFPProtectedAuthMode.DECISIONING

@@ -90,16 +90,22 @@ public abstract class StytchNetworkingClient(
     private var dfpConfiguration: DFPConfiguration = DFPConfiguration()
 
     public suspend fun refreshBootStrapData() {
-        val bootstrapResponse = sharedAPI.getBootstrapData(configuration.tokenInfo.publicToken)
-        dfpConfiguration =
-            DFPConfiguration(
-                dfpProtectedAuthEnabled = bootstrapResponse.data.dfpProtectedAuthEnabled,
-                dfpProtectedAuthMode = bootstrapResponse.data.dfpProtectedAuthMode ?: DFPProtectedAuthMode.OBSERVATION,
-            )
-        bootstrapResponse.data.captchaSettings.siteKey.let { siteKey ->
-            if (siteKey.isNotBlank()) {
-                configuration.captchaProvider?.initialize(siteKey)
+        try {
+            val bootstrapResponse = sharedAPI.getBootstrapData(configuration.tokenInfo.publicToken)
+            dfpConfiguration =
+                DFPConfiguration(
+                    dfpProtectedAuthEnabled = bootstrapResponse.data.dfpProtectedAuthEnabled,
+                    dfpProtectedAuthMode =
+                        bootstrapResponse.data.dfpProtectedAuthMode
+                            ?: DFPProtectedAuthMode.OBSERVATION,
+                )
+            bootstrapResponse.data.captchaSettings.siteKey.let { siteKey ->
+                if (siteKey.isNotBlank()) {
+                    configuration.captchaProvider?.initialize(siteKey)
+                }
             }
+        } catch (e: Exception) {
+            // TODO: Logging for failed bootstrap response
         }
     }
 
