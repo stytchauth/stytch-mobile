@@ -16,12 +16,12 @@ buildAndPublishSharedSdkFirst() {
     # clear out any old stuff
     rm -rf iOS.xcarchive libStytch* Simulator.xcarchive StytchShared
 
-    # create header file (for cinterop generation)
-    sudo swiftc -emit-objc-header Sources/StytchShared/StytchShared.swift
-
     # build xcarchives for platforms
     xcodebuild archive -scheme StytchShared -configuration Release -destination 'generic/platform=iOS' -archivePath "./iOS" SKIP_INSTALL=NO BUILD_LIBRARIES_FOR_DISTRIBUTION=YES ONLY_ACTIVE_ARCH=NO &&
     xcodebuild archive -scheme StytchShared -configuration Release -destination 'generic/platform=iOS Simulator' -archivePath "./Simulator" SKIP_INSTALL=NO BUILD_LIBRARIES_FOR_DISTRIBUTION=YES ONLY_ACTIVE_ARCH=NO
+
+    # create header file (for cinterop generation)
+    swiftc -F ./Sources/RecaptchaEnterprise.xcframework/ios-arm64  -F ./Sources/RecaptchaEnterprise.xcframework/ios-arm64_x86_64-simulator -F ./Sources/StytchDFP.xcframework/ios-arm64 -F ./Sources/StytchDFP.xcframework/ios-arm64_x86_64-simulator -target arm64-apple-ios15.0 -sdk $(xcrun --sdk iphoneos --show-sdk-path) -emit-objc-header Sources/StytchShared/StytchShared.swift
 
     # convert the objects into libraries
     ar -crs libStytchIos.a ./iOS.xcarchive/Products/Users/jhaven/Objects/StytchShared.o && 

@@ -54,6 +54,7 @@ kotlin {
             baseName = "StytchConsumerSDK"
             xcFramework.add(this)
             linkerOpts.add("-L${rootProject.rootDir.parent}/stytch-multiplatform-shared/sdk/shared/src/iosMain/interop")
+            isStatic = true
             if (target.name == "iosArm64") {
                 linkerOpts.add("-lStytchIos")
             }

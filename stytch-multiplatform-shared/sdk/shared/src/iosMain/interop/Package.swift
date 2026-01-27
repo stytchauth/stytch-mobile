@@ -4,16 +4,21 @@ import PackageDescription
 let package = Package(
     name: "StytchShared",
     platforms: [
-        .iOS(.v13),
+        .iOS(.v15),
     ],
     products: [
         .library(
             name: "StytchShared",
             type: .static,
-            targets: ["StytchShared"]
+            targets: ["StytchShared"],
         )
     ],
     targets: [
-        .target(name: "StytchShared")
+        .target(
+            name: "StytchShared",
+            dependencies: ["RecaptchaEnterprise", "StytchDFP"]
+        ),
+        .binaryTarget(name: "RecaptchaEnterprise", path: "./Sources/RecaptchaEnterprise.xcframework"),
+        .binaryTarget(name: "StytchDFP", path: "./Sources/StytchDFP.xcframework")
     ]
 )

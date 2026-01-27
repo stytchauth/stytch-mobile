@@ -9,6 +9,8 @@ artifacts/
 xcuserdata
 *.xcarchive
 *.xcframework
+!RecaptchaEnterprise.xcframework
+!StytchDFP.xcframework
 *.a
 .build/
 stytch-multiplatform/sdk/shared/src/iosMain/interop/StytchShared

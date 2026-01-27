@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.android.lint) apply false
     alias(libs.plugins.buildconfig) apply false
     alias(libs.plugins.skie) apply false
+    alias(libs.plugins.kotlinCocoapods) apply false
 }
 
 group = "com.stytch.sdk"

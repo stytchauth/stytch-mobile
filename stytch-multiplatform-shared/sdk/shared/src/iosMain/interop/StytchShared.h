@@ -303,6 +303,25 @@ typedef unsigned int swift_uint4  __attribute__((__ext_vector_type__(4)));
 #if defined(__OBJC__)
 
 @class NSString;
+SWIFT_CLASS_NAMED("StytchCAPTCHAProvider")
+@interface StytchCAPTCHAProvider : NSObject
+SWIFT_CLASS_PROPERTY(@property (nonatomic, class, readonly, strong) StytchCAPTCHAProvider * _Nonnull shared;)
++ (StytchCAPTCHAProvider * _Nonnull)shared SWIFT_WARN_UNUSED_RESULT;
+- (BOOL)isConfigured SWIFT_WARN_UNUSED_RESULT;
+- (void)executeRecaptchaWithCompletionHandler:(void (^ _Nonnull)(NSString * _Nonnull))completionHandler;
+- (void)setCaptchaClientWithSiteKey:(NSString * _Nonnull)siteKey completionHandler:(void (^ _Nonnull)(void))completionHandler;
+- (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
+@end
+
+SWIFT_CLASS_NAMED("StytchDFPProvider")
+@interface StytchDFPProvider : NSObject
+SWIFT_CLASS_PROPERTY(@property (nonatomic, class, readonly, strong) StytchDFPProvider * _Nonnull shared;)
++ (StytchDFPProvider * _Nonnull)shared SWIFT_WARN_UNUSED_RESULT;
+- (void)configureWithPublicToken:(NSString * _Nonnull)publicToken dfppaDomain:(NSString * _Nullable)dfppaDomain;
+- (void)getTelemetryIdWithCompletionHandler:(void (^ _Nonnull)(NSString * _Nonnull))completionHandler;
+- (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
+@end
+
 @class NSData;
 SWIFT_CLASS_NAMED("StytchEncryptionManagerSwift")
 @interface StytchEncryptionManagerSwift : NSObject

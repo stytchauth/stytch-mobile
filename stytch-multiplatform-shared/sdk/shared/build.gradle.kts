@@ -60,6 +60,7 @@ kotlin {
         target.binaries.framework {
             baseName = "StytchSharedSDK"
             linkerOpts.add("-L$interopDirectory")
+            isStatic = true
             if (target.name == "iosArm64") {
                 linkerOpts.add("-lStytchIos")
             }
