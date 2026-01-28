@@ -1,7 +1,17 @@
+@file:OptIn(ExperimentalKotlinGradlePluginApi::class)
+
 import com.android.build.api.dsl.androidLibrary
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
+import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
+import org.jetbrains.kotlin.gradle.plugin.mpp.StaticLibrary
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
+import org.jetbrains.kotlin.gradle.tasks.FatFrameworkTask
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import kotlin.collections.listOf
 
 plugins {
@@ -53,14 +63,7 @@ kotlin {
         it.binaries.framework {
             baseName = "StytchConsumerSDK"
             xcFramework.add(this)
-            linkerOpts.add("-L${rootProject.rootDir.parent}/stytch-multiplatform-shared/sdk/shared/src/iosMain/interop")
             isStatic = true
-            if (target.name == "iosArm64") {
-                linkerOpts.add("-lStytchIos")
-            }
-            if (target.name == "iosSimulatorArm64" || target.name == "iosX64") {
-                linkerOpts.add("-lStytchSimulator")
-            }
             export("com.stytch.sdk:shared:$version")
         }
     }

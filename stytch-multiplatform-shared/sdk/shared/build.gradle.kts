@@ -22,7 +22,7 @@ kotlin {
     compilerOptions {
         optIn.add("kotlin.js.ExperimentalJsExport")
         optIn.add("kotlin.time.ExperimentalTime")
-        freeCompilerArgs.addAll("-Xexpect-actual-classes")
+        freeCompilerArgs.addAll("-Xexpect-actual-classes", "-Xbinary=bundleId=$group")
     }
 
     androidLibrary {
@@ -51,7 +51,7 @@ kotlin {
         iosSimulatorArm64(),
     ).forEach { target ->
         target.compilations["main"].cinterops {
-            val stytchEncryptionManagerSwift by creating {
+            val stytchSharedLibs by creating {
                 definitionFile.set(interopDirectory.file("StytchShared.def"))
                 headers(interopDirectory.file("StytchShared.h"))
                 packageName("com.stytch.sdk")
