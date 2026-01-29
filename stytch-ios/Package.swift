@@ -4,13 +4,33 @@ import PackageDescription
 
 let package = Package(
     name: "Stytch",
+    platforms: [
+        .iOS("15.0")
+      ],
     products: [
         .library(name: "StytchConsumerSDK", targets: ["StytchConsumerTarget"]),
     ],
+    dependencies: [
+        .package(url: "https://github.com/GoogleCloudPlatform/recaptcha-enterprise-mobile-sdk", from: "18.8.1"),
+        .package(url: "https://github.com/stytchauth/stytch-ios-dfp.git", from: "1.0.5"),
+    ],
     targets: [
         .binaryTarget(
+            name: "StytchConsumerFramework",
+            path: "StytchConsumerSDK.xcframework",
+        ),
+        .binaryTarget(
+            name: "StytchSwiftUtilsFramework",
+            path: "StytchSwiftUtils.xcframework",
+        ),
+        .target(
             name: "StytchConsumerTarget",
-            path: "./StytchConsumerSDK.xcframework",
+            dependencies: [
+                "StytchConsumerFramework",
+                "StytchSwiftUtilsFramework",
+                .product(name: "RecaptchaEnterprise", package: "recaptcha-enterprise-mobile-sdk", condition: .when(platforms: [.iOS])),
+                .product(name: "StytchDFP", package: "stytch-ios-dfp", condition: .when(platforms: [.iOS]))
+            ]
         ),
     ]
 )

@@ -6,41 +6,52 @@ ROOT_DIR=`pwd`
 MAIN_WORKING_DIR=$ROOT_DIR/stytch-multiplatform
 SHARED_WORKING_DIR=$ROOT_DIR/stytch-multiplatform-shared
 
-buildAndPublishSharedSdkFirst() {
-    cd $SHARED_WORKING_DIR
-    echo "Building shared stuff first..."
-    
-    echo "Building iOS library..."
-    cd sdk/shared/src/iosMain/interop
-
+buildAndPublishSwiftUtils() {
+    cd StytchSwiftUtils
     # clear out any old stuff
-    rm -rf iOS.xcarchive libStytch* Simulator.xcarchive StytchShared
+    rm -rf derived archives StytchSwiftUtils.xcframework StytchSwiftUtils-Swift.h
+    
+    # build (to get the header file)
+    xcodebuild -project StytchSwiftUtils.xcodeproj -scheme StytchSwiftUtils -configuration Release -destination 'generic/platform=iOS' -derivedDataPath ./derived IPHONEOS_DEPLOYMENT_TARGET=15.0 SKIP_INSTALL=NO BUILD_LIBRARIES_FOR_DISTRIBUTION=YES ONLY_ACTIVE_ARCH=NO build
+    xcodebuild -project StytchSwiftUtils.xcodeproj -scheme StytchSwiftUtils -configuration Release -destination 'generic/platform=iOS Simulator' -derivedDataPath ./derived IPHONEOS_DEPLOYMENT_TARGET=15.0 SKIP_INSTALL=NO BUILD_LIBRARIES_FOR_DISTRIBUTION=YES ONLY_ACTIVE_ARCH=NO build
+    
+    # archive project
+    xcodebuild -project StytchSwiftUtils.xcodeproj -scheme StytchSwiftUtils -configuration Release -archivePath "./archives/iOS" -destination 'generic/platform=iOS' -derivedDataPath ./derived IPHONEOS_DEPLOYMENT_TARGET=15.0 SKIP_INSTALL=NO BUILD_LIBRARIES_FOR_DISTRIBUTION=YES ONLY_ACTIVE_ARCH=NO archive
+    xcodebuild -project StytchSwiftUtils.xcodeproj -scheme StytchSwiftUtils -configuration Release -archivePath "./archives/Simulator" -destination 'generic/platform=iOS Simulator' -derivedDataPath ./derived IPHONEOS_DEPLOYMENT_TARGET=15.0 SKIP_INSTALL=NO BUILD_LIBRARIES_FOR_DISTRIBUTION=YES ONLY_ACTIVE_ARCH=NO archive
+    
+    # create xcframework
+    xcodebuild -create-xcframework \
+        -framework archives/iOS.xcarchive/Products/Library/Frameworks/StytchSwiftUtils.framework \
+        -framework archives/Simulator.xcarchive/Products/Library/Frameworks/StytchSwiftUtils.framework \
+        -output StytchSwiftUtils.xcframework
 
-    # build xcarchives for platforms
-    xcodebuild archive -scheme StytchShared -configuration Release -destination 'generic/platform=iOS' -archivePath "./iOS" SKIP_INSTALL=NO BUILD_LIBRARIES_FOR_DISTRIBUTION=YES ONLY_ACTIVE_ARCH=NO &&
-    xcodebuild archive -scheme StytchShared -configuration Release -destination 'generic/platform=iOS Simulator' -archivePath "./Simulator" SKIP_INSTALL=NO BUILD_LIBRARIES_FOR_DISTRIBUTION=YES ONLY_ACTIVE_ARCH=NO
+    # copy header file to usable location (for cinterop generation)
+    cp ./derived/Build/Intermediates.noindex/StytchSwiftUtils.build/Release-iphoneos/StytchSwiftUtils.build/DerivedSources/StytchSwiftUtils-Swift.h ../stytch-multiplatform-shared/sdk/shared/src/iosMain/interop/StytchSwiftUtils-device.h
+    cp ./derived/Build/Intermediates.noindex/StytchSwiftUtils.build/Release-iphonesimulator/StytchSwiftUtils.build/DerivedSources/StytchSwiftUtils-Swift.h ../stytch-multiplatform-shared/sdk/shared/src/iosMain/interop/StytchSwiftUtils-simulator.h
 
-    # create header file (for cinterop generation)
-    swiftc -F ./Sources/RecaptchaEnterprise.xcframework/ios-arm64  -F ./Sources/RecaptchaEnterprise.xcframework/ios-arm64_x86_64-simulator -F ./Sources/StytchDFP.xcframework/ios-arm64 -F ./Sources/StytchDFP.xcframework/ios-arm64_x86_64-simulator -target arm64-apple-ios15.0 -sdk $(xcrun --sdk iphoneos --show-sdk-path) -emit-objc-header Sources/StytchShared/StytchShared.swift
+    # copy xcframework to usable locations
+    cp -r ./StytchSwiftUtils.xcframework ../stytch-multiplatform-shared/sdk/shared/src/iosMain/interop/
+    cp -r ./StytchSwiftUtils.xcframework ../stytch-ios
+}
 
-    # convert the objects into libraries
-    ar -crs libStytchIos.a ./iOS.xcarchive/Products/Users/jhaven/Objects/StytchShared.o && 
-    ar -crs libStytchSimulator.a ./Simulator.xcarchive/Products/Users/jhaven/Objects/StytchShared.o
+buildAndPublishSharedSdkFirst() {
+    echo "Building shared stuff first..."
+    buildAndPublishSwiftUtils
 
     cd $SHARED_WORKING_DIR
-    ./gradlew :sdk:shared:publishToMavenLocal
+    ./gradlew clean :sdk:shared:assembleStytchSharedSDKXCFramework :sdk:shared:publishToMavenLocal
 }
 
 buildAndCopyAndroid() {
     cd $MAIN_WORKING_DIR
     echo "Building android artifact..."
-    ./gradlew :sdk:consumer-headless:publishToMavenLocal :sdk:consumer-extensions:publishToMavenLocal
+    ./gradlew clean :sdk:consumer-headless:publishToMavenLocal :sdk:consumer-extensions:publishToMavenLocal
 }
 
 buildAndCopyIos() {
+    echo "Building iOS artifacts..."
     cd $MAIN_WORKING_DIR
-    echo "Building iOS artifact..."
-    ./gradlew assembleStytchConsumerSDKXCFramework assembleStytchConsumerExtensionsSDKXCFramework
+    ./gradlew clean assembleStytchConsumerSDKXCFramework
     cp -r sdk/consumer-headless/build/XCFrameworks/release/StytchConsumerSDK.xcframework $ROOT_DIR/stytch-ios
     cp -r sdk/consumer-headless/build/XCFrameworks/release/StytchConsumerSDK.xcframework $ROOT_DIR/react-native/consumer/ios
 }

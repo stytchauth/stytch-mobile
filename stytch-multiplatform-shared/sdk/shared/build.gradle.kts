@@ -10,6 +10,7 @@ plugins {
     alias(libs.plugins.skie)
     alias(libs.plugins.ksp)
     alias(libs.plugins.ktorfit)
+    alias(libs.plugins.kotlinCocoapods)
     id("maven-publish")
 }
 
@@ -44,30 +45,35 @@ kotlin {
     }
 
     val xcFramework = XCFramework("StytchSharedSDK")
-    val interopDirectory = project.layout.projectDirectory.dir("src/iosMain/interop/")
+    val interopDirectory = project.layout.projectDirectory.dir("src/iosMain/interop")
     listOf(
         iosX64(),
         iosArm64(),
         iosSimulatorArm64(),
     ).forEach { target ->
         target.compilations["main"].cinterops {
-            val stytchSharedLibs by creating {
-                definitionFile.set(interopDirectory.file("StytchShared.def"))
-                headers(interopDirectory.file("StytchShared.h"))
+            val StytchSwiftUtils by creating {
+                definitionFile.set(interopDirectory.file("StytchSwiftUtils.def"))
+                if (target.name == "iosArm64") {
+                    headers(interopDirectory.file("StytchSwiftUtils-device.h"))
+                }
+                if (target.name == "iosX64" || target.name == "iosSimulatorArm64") {
+                    headers(interopDirectory.file("StytchSwiftUtils-simulator.h"))
+                }
                 packageName("com.stytch.sdk")
             }
         }
         target.binaries.framework {
             baseName = "StytchSharedSDK"
-            linkerOpts.add("-L$interopDirectory")
+            xcFramework.add(this)
             isStatic = true
             if (target.name == "iosArm64") {
-                linkerOpts.add("-lStytchIos")
+                linkerOpts("-F$interopDirectory/StytchSwiftUtils.xcframework/ios-arm64")
             }
-            if (target.name == "iosSimulatorArm64" || target.name == "iosX64") {
-                linkerOpts.add("-lStytchSimulator")
+            if (target.name == "iosX64" || target.name == "iosSimulatorArm64") {
+                linkerOpts("-F$interopDirectory/StytchSwiftUtils.xcframework/ios-arm64_x86_64-simulator")
             }
-            xcFramework.add(this)
+            linkerOpts("-framework", "StytchSwiftUtils")
         }
     }
 
