@@ -5,3 +5,15 @@ build/
 .gradle
 .DS_Store
 local.properties
+artifacts/
+xcuserdata
+*.xcarchive
+*.xcframework
+*.a
+.build/
+stytch-multiplatform/sdk/shared/src/iosMain/interop/StytchShared
+node_modules
+.env
+dist/
+lib/
+*.p12
