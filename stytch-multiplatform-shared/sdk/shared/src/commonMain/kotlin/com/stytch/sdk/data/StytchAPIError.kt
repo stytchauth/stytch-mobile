@@ -5,6 +5,10 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 public class StytchAPIError(
+    @SerialName("status_code")
+    public val statusCode: Int,
+    @SerialName("request_id")
+    public val requestId: String,
     @SerialName("error_message")
     public val errorMessage: String,
     @SerialName("error_type")

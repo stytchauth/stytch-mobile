@@ -64,7 +64,7 @@ kotlin {
             baseName = "StytchConsumerSDK"
             xcFramework.add(this)
             isStatic = true
-            val sharedIosProjectDirectory = "/Users/jhaven/Documents/stytch-mobile/stytch-multiplatform-shared/sdk/shared"
+            val sharedIosProjectDirectory = "../../../stytch-multiplatform-shared/sdk/shared"
             if (target.name == "iosArm64") {
                 linkerOpts("-F$sharedIosProjectDirectory/build/XCFrameworks/release/StytchSharedSDK.xcframework/ios-arm64")
             }

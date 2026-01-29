@@ -1,5 +1,7 @@
 package com.stytch.sdk.data
 
+import com.stytch.sdk.dfp.CAPTCHAProviderImpl
+import com.stytch.sdk.dfp.DFPProviderImpl
 import com.stytch.sdk.encryption.StytchEncryptionClient
 import com.stytch.sdk.persistence.StytchPlatformPersistenceClient
 import kotlinx.cinterop.ExperimentalForeignApi
@@ -38,6 +40,8 @@ public actual class StytchClientConfiguration(
             platformPersistenceClient = StytchPlatformPersistenceClient(),
             platform = KMPPlatformType.IOS,
             encryptionClient = StytchEncryptionClient(),
+            dfpProvider = DFPProviderImpl(publicToken = publicToken, dfppaDomain = endpointOptions.dfppaDomain),
+            captchaProvider = CAPTCHAProviderImpl(),
         )
 }
 
