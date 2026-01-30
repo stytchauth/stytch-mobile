@@ -59,6 +59,9 @@
                 "url": "/Users/jhaven/.m2/repository"
               }
             ]
+          },
+          "ios": {
+            "useFrameworks": "dynamic"
           }
         }
       ]
