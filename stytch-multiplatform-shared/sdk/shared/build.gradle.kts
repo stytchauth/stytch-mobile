@@ -10,7 +10,6 @@ plugins {
     alias(libs.plugins.skie)
     alias(libs.plugins.ksp)
     alias(libs.plugins.ktorfit)
-    alias(libs.plugins.kotlinCocoapods)
     id("maven-publish")
 }
 

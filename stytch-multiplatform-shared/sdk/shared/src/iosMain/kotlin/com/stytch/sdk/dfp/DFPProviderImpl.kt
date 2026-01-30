@@ -2,11 +2,13 @@ package com.stytch.sdk.dfp
 
 import com.stytch.sdk.StytchDFPProvider
 import kotlinx.cinterop.ExperimentalForeignApi
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.withContext
 import kotlin.coroutines.resume
 
 @OptIn(ExperimentalForeignApi::class)
-internal class DFPProviderImpl(
+public class DFPProviderImpl(
     publicToken: String,
     dfppaDomain: String,
 ) : DFPProvider {
@@ -17,9 +19,11 @@ internal class DFPProviderImpl(
     }
 
     override suspend fun getTelemetryId(): String =
-        suspendCancellableCoroutine { continuation ->
-            provider.getTelemetryIdWithCompletionHandler {
-                continuation.resume(it ?: STATIC_UNABLE_TO_LOAD_BINARY)
+        withContext(Dispatchers.Main) {
+            suspendCancellableCoroutine { continuation ->
+                provider.getTelemetryIdWithCompletionHandler {
+                    continuation.resume(it ?: STATIC_UNABLE_TO_LOAD_BINARY)
+                }
             }
         }
 

@@ -54,7 +54,6 @@ buildAndCopyIos() {
     cd $MAIN_WORKING_DIR
     ./gradlew clean assembleStytchConsumerSDKXCFramework
     cp -r sdk/consumer-headless/build/XCFrameworks/release/StytchConsumerSDK.xcframework $ROOT_DIR/stytch-ios
-    cp -r sdk/consumer-headless/build/XCFrameworks/release/StytchConsumerSDK.xcframework $ROOT_DIR/react-native/consumer/ios
 }
 
 buildAndCopyRn() {

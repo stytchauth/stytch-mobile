@@ -18,7 +18,13 @@ Pod::Spec.new do |s|
   s.private_header_files = "ios/**/*.h"
   s.public_header_files = "ios/**/*.h"
 
-  s.ios.vendored_frameworks = ["ios/StytchConsumerSDK.xcframework"]
+  spm_dependency(s,
+    url: File.dirname('/Users/jhaven/Documents/stytch-mobile/stytch-ios/Package.swift'), # this obviously needs to point to the git repo when we actually publish
+    requirement: {},
+    products: ['StytchConsumerSDK']
+  )
+
+  #s.ios.vendored_frameworks = ["ios/StytchConsumerSDK.xcframework"]
   #s.preserve_path = "ios/StytchConsumerSDK.xcframework"
   #s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'SWIFT_COMPILATION_MODE' => 'wholemodule', 'OTHER_LDFLAGS' => '-lObjC -lStytchConsumerSDK' }
 
