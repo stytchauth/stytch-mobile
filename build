@@ -40,6 +40,7 @@ buildAndPublishSharedSdkFirst() {
 
     cd $SHARED_WORKING_DIR
     ./gradlew clean :sdk:shared:assembleStytchSharedSDKXCFramework :sdk:shared:publishToMavenLocal
+    cp -r sdk/shared/build/XCFrameworks/release/StytchSharedSDK.xcframework $ROOT_DIR/stytch-ios
 }
 
 buildAndCopyAndroid() {

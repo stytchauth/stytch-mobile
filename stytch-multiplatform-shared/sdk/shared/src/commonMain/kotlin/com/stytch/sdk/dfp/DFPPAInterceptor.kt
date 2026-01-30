@@ -67,23 +67,19 @@ internal val DFPPAInterceptor =
 
                 // In DECISIONING mode, add a telemetry ID, try the request, and retry with CAPTCHA if it 403s
                 DFPProtectedAuthMode.DECISIONING -> {
-                    try {
-                        newRequest.body = body.setTelemetryID(configuration.dfpProvider)
-                        proceed(newRequest)
-                    } catch (cause: Throwable) {
-                        if (cause !is ResponseException || cause.response.status != HttpStatusCode.Forbidden) {
-                            throw cause
-                        }
-                        // create a retry request
-                        val retryRequest = prepareRequest(newRequest)
+                    newRequest.body = body.setTelemetryID(configuration.dfpProvider)
+                    var call = proceed(newRequest)
+                    if (call.response.status == HttpStatusCode.Forbidden) {
+                        val retryRequest = prepareRequest(request)
                         // add new tokens
                         retryRequest.body =
                             body
                                 .setTelemetryID(configuration.dfpProvider)
                                 .setCAPTCHAToken(configuration.captchaProvider)
                         // fire it off
-                        proceed(retryRequest)
+                        call = proceed(retryRequest)
                     }
+                    call
                 }
             }
         }
@@ -99,6 +95,7 @@ internal class DFPPAInterceptorConfiguration {
 
 private suspend fun TextContent.setCAPTCHAToken(captchaProvider: CAPTCHAProvider?): TextContent {
     val properties = mutableMapOf<String, String?>()
+    println("JORDAN >>> CAPTCHA CONFIGURED? = ${captchaProvider?.isConfigured}")
     if (captchaProvider?.isConfigured == true) {
         properties[CAPTCHA_TOKEN_KEY] = captchaProvider.getCAPTCHAToken()
     }

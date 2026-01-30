@@ -23,13 +23,18 @@ let package = Package(
             name: "StytchSwiftUtilsFramework",
             path: "StytchSwiftUtils.xcframework",
         ),
+        .binaryTarget(
+            name: "StytchSharedFramework",
+            path: "StytchSharedSDK.xcframework",
+        ),
         .target(
             name: "StytchConsumerTarget",
             dependencies: [
                 "StytchConsumerFramework",
                 "StytchSwiftUtilsFramework",
-                .product(name: "RecaptchaEnterprise", package: "recaptcha-enterprise-mobile-sdk", condition: .when(platforms: [.iOS])),
-                .product(name: "StytchDFP", package: "stytch-ios-dfp", condition: .when(platforms: [.iOS]))
+                "StytchSharedFramework",
+                .product(name: "RecaptchaEnterprise", package: "recaptcha-enterprise-mobile-sdk"),
+                .product(name: "StytchDFP", package: "stytch-ios-dfp")
             ]
         ),
     ]

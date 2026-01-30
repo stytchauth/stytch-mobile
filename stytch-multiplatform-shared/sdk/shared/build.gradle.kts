@@ -52,7 +52,7 @@ kotlin {
         iosSimulatorArm64(),
     ).forEach { target ->
         target.compilations["main"].cinterops {
-            val StytchSwiftUtils by creating {
+            val stytchSwiftUtils by creating {
                 definitionFile.set(interopDirectory.file("StytchSwiftUtils.def"))
                 if (target.name == "iosArm64") {
                     headers(interopDirectory.file("StytchSwiftUtils-device.h"))
@@ -66,7 +66,6 @@ kotlin {
         target.binaries.framework {
             baseName = "StytchSharedSDK"
             xcFramework.add(this)
-            isStatic = true
             if (target.name == "iosArm64") {
                 linkerOpts("-F$interopDirectory/StytchSwiftUtils.xcframework/ios-arm64")
             }

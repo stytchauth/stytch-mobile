@@ -63,15 +63,17 @@ kotlin {
         it.binaries.framework {
             baseName = "StytchConsumerSDK"
             xcFramework.add(this)
-            isStatic = true
-            val sharedIosProjectDirectory = "../../../stytch-multiplatform-shared/sdk/shared"
+            val sharedIosProjectDirectory = "${rootProject.layout.projectDirectory}-shared/sdk/shared"
             if (target.name == "iosArm64") {
                 linkerOpts("-F$sharedIosProjectDirectory/build/XCFrameworks/release/StytchSharedSDK.xcframework/ios-arm64")
+                linkerOpts("-F$sharedIosProjectDirectory/src/iosMain/interop/StytchSwiftUtils.xcframework/ios-arm64")
             }
             if (target.name == "iosX64" || target.name == "iosSimulatorArm64") {
                 linkerOpts("-F$sharedIosProjectDirectory/build/XCFrameworks/release/StytchSharedSDK.xcframework/ios-arm64_x86_64-simulator")
+                linkerOpts("-F$sharedIosProjectDirectory/src/iosMain/interop/StytchSwiftUtils.xcframework/ios-arm64_x86_64-simulator")
             }
             linkerOpts("-framework", "StytchSharedSDK")
+            linkerOpts("-framework", "StytchSwiftUtils")
             export("com.stytch.sdk:shared:$version")
         }
     }

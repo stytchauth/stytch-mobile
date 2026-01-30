@@ -40,11 +40,13 @@ public fun getStytchHttpClient(
 
         install(ContentNegotiation) {
             json(
-                Json {
-                    prettyPrint = true
-                    isLenient = true
-                    ignoreUnknownKeys = true
-                },
+                contentType = ContentType.Any, // the server sends errors as text/plain instead of application/json
+                json =
+                    Json {
+                        prettyPrint = true
+                        isLenient = true
+                        ignoreUnknownKeys = true
+                    },
             )
         }
 
