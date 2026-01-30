@@ -1,4 +1,4 @@
-package com.stytch.sdk.networking
+package com.stytch.sdk.dfp
 
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)

@@ -1,7 +1,7 @@
 package com.stytch.sdk.consumer.networking
 
 import com.stytch.sdk.data.StytchDataResponse
-import com.stytch.sdk.networking.DFPPAEnabled
+import com.stytch.sdk.dfp.DFPPAEnabled
 import de.jensklingenberg.ktorfit.http.Body
 import de.jensklingenberg.ktorfit.http.POST
 

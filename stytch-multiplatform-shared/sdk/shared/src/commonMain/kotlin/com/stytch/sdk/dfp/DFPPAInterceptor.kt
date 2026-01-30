@@ -1,9 +1,8 @@
-package com.stytch.sdk.networking
+package com.stytch.sdk.dfp
 
 import com.stytch.sdk.data.DFPConfiguration
 import com.stytch.sdk.data.DFPProtectedAuthMode
-import com.stytch.sdk.dfp.CAPTCHAProvider
-import com.stytch.sdk.dfp.DFPProvider
+import com.stytch.sdk.dfp.DFPPAEnabled
 import de.jensklingenberg.ktorfit.annotations
 import io.ktor.client.plugins.ResponseException
 import io.ktor.client.plugins.api.Send
