@@ -1843,7 +1843,7 @@
   dependencies:
     "@sinonjs/commons" "^3.0.0"
 
-"@stytch/react-native-consumer@file:../../react-native/consumer":
+"@stytch/react-native-consumer@file:/Users/jhaven/Documents/stytch-mobile/react-native/consumer":
   version "0.0.1"
   dependencies:
     "@js-joda/core" "3.2.0"

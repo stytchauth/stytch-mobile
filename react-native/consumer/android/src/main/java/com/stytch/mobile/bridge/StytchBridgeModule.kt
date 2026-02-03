@@ -95,6 +95,10 @@ class StytchBridgeModule(reactContext: ReactApplicationContext) :
     }
   }
 
+  override fun isCaptchaConfigured(): Boolean {
+    return captchaProvider.isConfigured
+  }
+
   companion object {
     const val NAME = "StytchBridge"
   }

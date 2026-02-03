@@ -108,5 +108,8 @@ SCSDKDFPProviderImpl *dfpClient;
         }
     }];
 }
+- (bool)isCaptchaConfigured {
+    return [captchaClient isConfigured];
+}
 // End CAPTCHA stuff
 @end

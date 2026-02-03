@@ -14,6 +14,7 @@ export interface Spec extends TurboModule {
   getTelemetryId(): Promise<string>;
   configureCaptcha(siteKey: string): void;
   getCAPTCHAToken(): Promise<string>;
+  isCaptchaConfigured(): boolean;
 };
 
 // create an instance of the module

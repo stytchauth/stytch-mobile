@@ -95,7 +95,6 @@ internal class DFPPAInterceptorConfiguration {
 
 private suspend fun TextContent.setCAPTCHAToken(captchaProvider: CAPTCHAProvider?): TextContent {
     val properties = mutableMapOf<String, String?>()
-    println("JORDAN >>> CAPTCHA CONFIGURED? = ${captchaProvider?.isConfigured}")
     if (captchaProvider?.isConfigured == true) {
         properties[CAPTCHA_TOKEN_KEY] = captchaProvider.getCAPTCHAToken()
     }

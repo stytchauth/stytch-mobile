@@ -32,4 +32,6 @@ public external object StytchBridge {
     public fun configureCaptcha(siteKey: String): Unit
 
     public fun getCAPTCHAToken(): Promise<String>
+
+    public fun isCaptchaConfigured(): Boolean
 }
