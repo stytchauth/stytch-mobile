@@ -33,7 +33,6 @@ let package = Package(
                 "StytchConsumerFramework",
                 "StytchSwiftUtilsFramework",
                 "StytchSharedFramework",
-                .product(name: "RecaptchaEnterprise", package: "recaptcha-enterprise-mobile-sdk"),
                 .product(name: "StytchDFP", package: "stytch-ios-dfp")
             ]
         ),

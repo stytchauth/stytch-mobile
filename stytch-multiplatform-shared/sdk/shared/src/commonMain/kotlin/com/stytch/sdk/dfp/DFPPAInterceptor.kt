@@ -2,8 +2,10 @@ package com.stytch.sdk.dfp
 
 import com.stytch.sdk.data.DFPConfiguration
 import com.stytch.sdk.data.DFPProtectedAuthMode
+import com.stytch.sdk.data.StytchAPIError
 import com.stytch.sdk.dfp.DFPPAEnabled
 import de.jensklingenberg.ktorfit.annotations
+import io.ktor.client.call.body
 import io.ktor.client.plugins.ResponseException
 import io.ktor.client.plugins.api.Send
 import io.ktor.client.plugins.api.createClientPlugin
@@ -69,7 +71,7 @@ internal val DFPPAInterceptor =
                 DFPProtectedAuthMode.DECISIONING -> {
                     newRequest.body = body.setTelemetryID(configuration.dfpProvider)
                     var call = proceed(newRequest)
-                    if (call.response.status == HttpStatusCode.Forbidden) {
+                    if (call.response.body<StytchAPIError>().errorType == "captcha_required") {
                         val retryRequest = prepareRequest(request)
                         // add new tokens
                         retryRequest.body =

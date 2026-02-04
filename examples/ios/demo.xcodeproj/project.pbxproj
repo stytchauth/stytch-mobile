@@ -30,6 +30,7 @@
 		390A87CF2F2975EF00989579 /* StytchConsumerSDK in Frameworks */ = {isa = PBXBuildFile; productRef = 390A87CE2F2975EF00989579 /* StytchConsumerSDK */; };
 		3948E8FC2F296133007CABD4 /* StytchConsumerSDK in Frameworks */ = {isa = PBXBuildFile; productRef = 3948E8FB2F296133007CABD4 /* StytchConsumerSDK */; };
 		394DF5A92F21ED3300F7E7EA /* StytchConsumerSDK in Frameworks */ = {isa = PBXBuildFile; productRef = 394DF5A82F21ED3300F7E7EA /* StytchConsumerSDK */; };
+		397D9A9F2F339E8200748266 /* StytchConsumerSDK in Frameworks */ = {isa = PBXBuildFile; productRef = 397D9A9E2F339E8200748266 /* StytchConsumerSDK */; };
 		39A4B0172F1A9B4B00D3262B /* StytchConsumerSDK in Frameworks */ = {isa = PBXBuildFile; productRef = 39A4B0162F1A9B4B00D3262B /* StytchConsumerSDK */; };
 		39FC5D922F181B8200B455A4 /* StytchConsumerSDK in Frameworks */ = {isa = PBXBuildFile; productRef = 39FC5D912F181B8200B455A4 /* StytchConsumerSDK */; };
 /* End PBXBuildFile section */
@@ -61,6 +62,7 @@
 				3907284E2F2BD920007A0E0B /* StytchConsumerSDK in Frameworks */,
 				39A4B0172F1A9B4B00D3262B /* StytchConsumerSDK in Frameworks */,
 				390727AD2F2AA70E007A0E0B /* StytchConsumerSDK in Frameworks */,
+				397D9A9F2F339E8200748266 /* StytchConsumerSDK in Frameworks */,
 				390727E42F2AB365007A0E0B /* StytchConsumerSDK in Frameworks */,
 				3948E8FC2F296133007CABD4 /* StytchConsumerSDK in Frameworks */,
 				39FC5D922F181B8200B455A4 /* StytchConsumerSDK in Frameworks */,
@@ -151,6 +153,7 @@
 				3907282C2F2BCA18007A0E0B /* StytchConsumerSDK */,
 				3907284D2F2BD920007A0E0B /* StytchConsumerSDK */,
 				390728502F2BD982007A0E0B /* StytchConsumerSDK */,
+				397D9A9E2F339E8200748266 /* StytchConsumerSDK */,
 			);
 			productName = demo;
 			productReference = 390BF9652F0F15C300B83179 /* demo.app */;
@@ -181,7 +184,7 @@
 			mainGroup = 390BF95C2F0F15C300B83179;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				3907284F2F2BD982007A0E0B /* XCLocalSwiftPackageReference "../../stytch-ios" */,
+				397D9A9D2F339E8200748266 /* XCLocalSwiftPackageReference "../../stytch-ios" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 390BF9662F0F15C300B83179 /* Products */;
@@ -437,7 +440,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		3907284F2F2BD982007A0E0B /* XCLocalSwiftPackageReference "../../stytch-ios" */ = {
+		397D9A9D2F339E8200748266 /* XCLocalSwiftPackageReference "../../stytch-ios" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = "../../stytch-ios";
 		};
@@ -533,6 +536,10 @@
 			productName = StytchConsumerSDK;
 		};
 		394DF5A82F21ED3300F7E7EA /* StytchConsumerSDK */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = StytchConsumerSDK;
+		};
+		397D9A9E2F339E8200748266 /* StytchConsumerSDK */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = StytchConsumerSDK;
 		};

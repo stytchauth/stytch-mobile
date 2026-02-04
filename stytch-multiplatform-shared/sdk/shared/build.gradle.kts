@@ -22,7 +22,7 @@ kotlin {
     compilerOptions {
         optIn.add("kotlin.js.ExperimentalJsExport")
         optIn.add("kotlin.time.ExperimentalTime")
-        freeCompilerArgs.addAll("-Xexpect-actual-classes", "-Xbinary=bundleId=$group")
+        freeCompilerArgs.addAll("-Xexpect-actual-classes", "-Xbinary=bundleId=$group.shared")
     }
 
     androidLibrary {

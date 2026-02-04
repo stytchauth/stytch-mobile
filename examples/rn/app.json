@@ -56,10 +56,11 @@
             ]
           },
           "ios": {
-            "useFrameworks": "dynamic"
+            "useFrameworks": "static"
           }
         }
-      ]
+      ],
+      ["./node_modules/@stytch/react-native-consumer/src/app.plugin.cjs", {}]
     ],
     "experiments": {
       "typedRoutes": true,
