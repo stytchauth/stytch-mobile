@@ -108,8 +108,9 @@ SCSDKDFPProviderImpl *dfpClient;
         }
     }];
 }
-- (bool)isCaptchaConfigured {
-    return [captchaClient isConfigured];
+- (NSNumber *)isCaptchaConfigured {
+    BOOL result = [captchaClient isConfigured];
+    return [NSNumber numberWithBool:result];
 }
 // End CAPTCHA stuff
 @end
