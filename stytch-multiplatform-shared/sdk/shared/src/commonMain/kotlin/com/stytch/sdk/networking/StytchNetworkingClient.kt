@@ -1,6 +1,8 @@
 package com.stytch.sdk.networking
 
 import com.stytch.sdk.StytchAuthenticationStateManager
+import com.stytch.sdk.data.DFPConfiguration
+import com.stytch.sdk.data.DFPProtectedAuthMode
 import com.stytch.sdk.data.SDK_URL_PATH
 import com.stytch.sdk.data.StytchAPIError
 import com.stytch.sdk.data.StytchClientConfigurationInternal
@@ -18,7 +20,7 @@ import kotlin.time.Clock
 import kotlin.time.Instant
 
 public abstract class StytchNetworkingClient(
-    configuration: StytchClientConfigurationInternal,
+    private val configuration: StytchClientConfigurationInternal,
     private val dispatchers: StytchDispatchers,
     private val sessionManager: StytchAuthenticationStateManager,
 ) {
@@ -29,6 +31,15 @@ public abstract class StytchNetworkingClient(
     private var sessionUpdateJob: Job? = null
 
     public val ktorfit: Ktorfit
+
+    internal val sharedAPI: SharedAPI
+
+    private val httpClient =
+        getStytchHttpClient(
+            configuration = configuration,
+            getSessionToken = { sessionManager.currentSessionToken },
+            getDfpConfiguration = { dfpConfiguration },
+        )
 
     public fun startSessionUpdateJob() {
         // This is a little more complicated than the existing android/iOS logic
@@ -71,8 +82,31 @@ public abstract class StytchNetworkingClient(
             Ktorfit
                 .Builder()
                 .baseUrl("https://$domain/$SDK_URL_PATH")
-                .httpClient(getStytchHttpClient(configuration, { sessionManager.currentSessionToken }))
+                .httpClient(httpClient)
                 .build()
+        sharedAPI = ktorfit.createSharedAPI()
+    }
+
+    private var dfpConfiguration: DFPConfiguration = DFPConfiguration()
+
+    public suspend fun refreshBootStrapData() {
+        try {
+            val bootstrapResponse = sharedAPI.getBootstrapData(configuration.tokenInfo.publicToken)
+            dfpConfiguration =
+                DFPConfiguration(
+                    dfpProtectedAuthEnabled = bootstrapResponse.data.dfpProtectedAuthEnabled,
+                    dfpProtectedAuthMode =
+                        bootstrapResponse.data.dfpProtectedAuthMode
+                            ?: DFPProtectedAuthMode.OBSERVATION,
+                )
+            bootstrapResponse.data.captchaSettings.siteKey.let { siteKey ->
+                if (siteKey.isNotBlank()) {
+                    configuration.captchaProvider?.initialize(siteKey)
+                }
+            }
+        } catch (e: Exception) {
+            // TODO: Logging for failed bootstrap response
+        }
     }
 
     private companion object {

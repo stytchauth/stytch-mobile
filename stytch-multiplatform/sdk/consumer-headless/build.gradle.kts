@@ -1,6 +1,8 @@
+@file:OptIn(ExperimentalKotlinGradlePluginApi::class)
+
 import com.android.build.api.dsl.androidLibrary
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
 import kotlin.collections.listOf
 
@@ -23,7 +25,7 @@ kotlin {
     compilerOptions {
         optIn.add("kotlin.js.ExperimentalJsExport")
         optIn.add("kotlin.time.ExperimentalTime")
-        freeCompilerArgs.addAll("-Xenable-suspend-function-exporting", "-Xexpect-actual-classes")
+        freeCompilerArgs.addAll("-Xenable-suspend-function-exporting", "-Xexpect-actual-classes", "-Xbinary=bundleId=$group.consumer")
     }
 
     androidLibrary {
@@ -53,13 +55,17 @@ kotlin {
         it.binaries.framework {
             baseName = "StytchConsumerSDK"
             xcFramework.add(this)
-            linkerOpts.add("-L${rootProject.rootDir.parent}/stytch-multiplatform-shared/sdk/shared/src/iosMain/interop")
+            val sharedIosProjectDirectory = "${rootProject.layout.projectDirectory}-shared/sdk/shared"
             if (target.name == "iosArm64") {
-                linkerOpts.add("-lStytchIos")
+                linkerOpts("-F$sharedIosProjectDirectory/build/XCFrameworks/release/StytchSharedSDK.xcframework/ios-arm64")
+                linkerOpts("-F$sharedIosProjectDirectory/src/iosMain/interop/StytchSwiftUtils.xcframework/ios-arm64")
             }
-            if (target.name == "iosSimulatorArm64" || target.name == "iosX64") {
-                linkerOpts.add("-lStytchSimulator")
+            if (target.name == "iosX64" || target.name == "iosSimulatorArm64") {
+                linkerOpts("-F$sharedIosProjectDirectory/build/XCFrameworks/release/StytchSharedSDK.xcframework/ios-arm64_x86_64-simulator")
+                linkerOpts("-F$sharedIosProjectDirectory/src/iosMain/interop/StytchSwiftUtils.xcframework/ios-arm64_x86_64-simulator")
             }
+            linkerOpts("-framework", "StytchSharedSDK")
+            linkerOpts("-framework", "StytchSwiftUtils")
             export("com.stytch.sdk:shared:$version")
         }
     }

@@ -10,6 +10,11 @@ export interface Spec extends TurboModule {
   decryptData(data: string): string;
   deleteKey(): void;
   resetPreferences(): void;
+  configureDfp(publicToken: string, dfppaDomain: string): void;
+  getTelemetryId(): Promise<string>;
+  configureCaptcha(siteKey: string): void;
+  getCAPTCHAToken(): Promise<string>;
+  isCaptchaConfigured(): boolean;
 };
 
 // create an instance of the module

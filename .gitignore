@@ -9,6 +9,7 @@ artifacts/
 xcuserdata
 *.xcarchive
 *.xcframework
+Package.resolved
 *.a
 .build/
 stytch-multiplatform/sdk/shared/src/iosMain/interop/StytchShared
@@ -17,3 +18,4 @@ node_modules
 dist/
 lib/
 *.p12
+derived/

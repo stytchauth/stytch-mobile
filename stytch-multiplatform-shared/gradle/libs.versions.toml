@@ -12,6 +12,8 @@ kotlinx-coroutines = "1.10.2"
 napier = "2.7.1"
 buildconfig = "6.0.7"
 skie = "0.10.9"
+stytchDfp = "1.1.2"
+recaptcha = "18.7.0"
 
 [libraries]
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization-json"}
@@ -28,6 +30,8 @@ kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
 napier = { module = "io.github.aakira:napier", version.ref = "napier" }
 skie-configuration-annotations = { module = "co.touchlab.skie:configuration-annotations", version.ref = "skie" }
+dfp-android = { module = "com.stytch.dfp:dfp", version.ref = "stytchDfp" }
+recaptcha = { module = "com.google.android.recaptcha:recaptcha", version.ref = "recaptcha" }
 
 [plugins]
 android-kotlin-multiplatform-library = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }

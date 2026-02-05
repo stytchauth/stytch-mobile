@@ -5,6 +5,7 @@ import io.ktor.util.decodeBase64Bytes
 import io.ktor.util.encodeBase64
 import kotlinx.coroutines.await
 
+@JsExport
 public actual class StytchEncryptionClient {
     // RN doesn't allow passing ByteArray (Uint8Array in JS) across the bridge, so we need to encode/decode to string
     // This feels... fragile. I know I'm gonna get confused about bytes/strings and where at some point 🙃

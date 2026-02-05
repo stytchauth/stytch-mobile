@@ -1,5 +1,7 @@
 package com.stytch.sdk.data
 
+import com.stytch.sdk.dfp.CAPTCHAProvider
+import com.stytch.sdk.dfp.DFPProvider
 import com.stytch.sdk.encryption.StytchEncryptionClient
 import com.stytch.sdk.persistence.StytchPlatformPersistenceClient
 import kotlinx.datetime.TimeZone
@@ -41,6 +43,8 @@ public class StytchClientConfigurationInternal(
     public val platformPersistenceClient: StytchPlatformPersistenceClient,
     internal val platform: KMPPlatformType,
     public val encryptionClient: StytchEncryptionClient,
+    public val dfpProvider: DFPProvider? = null,
+    public val captchaProvider: CAPTCHAProvider? = null,
 )
 
 @JsExport

@@ -8,6 +8,8 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.buildconfig)
     alias(libs.plugins.skie)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.ktorfit)
     id("maven-publish")
 }
 
@@ -20,7 +22,7 @@ kotlin {
     compilerOptions {
         optIn.add("kotlin.js.ExperimentalJsExport")
         optIn.add("kotlin.time.ExperimentalTime")
-        freeCompilerArgs.addAll("-Xexpect-actual-classes")
+        freeCompilerArgs.addAll("-Xexpect-actual-classes", "-Xbinary=bundleId=$group.shared")
     }
 
     androidLibrary {
@@ -42,29 +44,34 @@ kotlin {
     }
 
     val xcFramework = XCFramework("StytchSharedSDK")
-    val interopDirectory = project.layout.projectDirectory.dir("src/iosMain/interop/")
+    val interopDirectory = project.layout.projectDirectory.dir("src/iosMain/interop")
     listOf(
         iosX64(),
         iosArm64(),
         iosSimulatorArm64(),
     ).forEach { target ->
         target.compilations["main"].cinterops {
-            val stytchEncryptionManagerSwift by creating {
-                definitionFile.set(interopDirectory.file("StytchShared.def"))
-                headers(interopDirectory.file("StytchShared.h"))
+            val stytchSwiftUtils by creating {
+                definitionFile.set(interopDirectory.file("StytchSwiftUtils.def"))
+                if (target.name == "iosArm64") {
+                    headers(interopDirectory.file("StytchSwiftUtils-device.h"))
+                }
+                if (target.name == "iosX64" || target.name == "iosSimulatorArm64") {
+                    headers(interopDirectory.file("StytchSwiftUtils-simulator.h"))
+                }
                 packageName("com.stytch.sdk")
             }
         }
         target.binaries.framework {
             baseName = "StytchSharedSDK"
-            linkerOpts.add("-L$interopDirectory")
-            if (target.name == "iosArm64") {
-                linkerOpts.add("-lStytchIos")
-            }
-            if (target.name == "iosSimulatorArm64" || target.name == "iosX64") {
-                linkerOpts.add("-lStytchSimulator")
-            }
             xcFramework.add(this)
+            if (target.name == "iosArm64") {
+                linkerOpts("-F$interopDirectory/StytchSwiftUtils.xcframework/ios-arm64")
+            }
+            if (target.name == "iosX64" || target.name == "iosSimulatorArm64") {
+                linkerOpts("-F$interopDirectory/StytchSwiftUtils.xcframework/ios-arm64_x86_64-simulator")
+            }
+            linkerOpts("-framework", "StytchSwiftUtils")
         }
     }
 
@@ -79,6 +86,8 @@ kotlin {
     sourceSets {
         androidMain.dependencies {
             implementation(libs.ktor.client.okhttp)
+            implementation(libs.dfp.android)
+            implementation(libs.recaptcha)
         }
         commonMain.dependencies {
             implementation(libs.kotlinx.serialization.json)
@@ -113,4 +122,12 @@ buildConfig {
 
 skie {
     isEnabled = true
+}
+
+ktorfit {
+    compilerPluginVersion.set("2.3.3")
+}
+
+tasks.named("sourcesJar").configure {
+    setDependsOn(listOf("kspCommonMainKotlinMetadata"))
 }

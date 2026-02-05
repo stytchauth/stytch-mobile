@@ -1,6 +1,8 @@
 package com.stytch.sdk.networking
 
+import com.stytch.sdk.data.DFPConfiguration
 import com.stytch.sdk.data.StytchClientConfigurationInternal
+import com.stytch.sdk.dfp.DFPPAInterceptor
 import com.stytch.sdk.shared.BuildConfig
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
@@ -31,17 +33,20 @@ private const val X_SDK_CLIENT_HEADER = "X-SDK-CLIENT"
 public fun getStytchHttpClient(
     configuration: StytchClientConfigurationInternal,
     getSessionToken: suspend () -> String?,
+    getDfpConfiguration: () -> DFPConfiguration,
 ): HttpClient =
     HttpClient(StytchHttpEngine) {
         expectSuccess = true
 
         install(ContentNegotiation) {
             json(
-                Json {
-                    prettyPrint = true
-                    isLenient = true
-                    ignoreUnknownKeys = true
-                },
+                contentType = ContentType.Any, // the server sends errors as text/plain instead of application/json
+                json =
+                    Json {
+                        prettyPrint = true
+                        isLenient = true
+                        ignoreUnknownKeys = true
+                    },
             )
         }
 
@@ -81,6 +86,12 @@ public fun getStytchHttpClient(
                 }
             level = LogLevel.ALL
         }.also { Napier.base(DebugAntilog()) }
+
+        install(DFPPAInterceptor) {
+            this.getDfpConfiguration = getDfpConfiguration
+            this.dfpProvider = configuration.dfpProvider
+            this.captchaProvider = configuration.captchaProvider
+        }
     }
 
 @OptIn(ExperimentalUuidApi::class)

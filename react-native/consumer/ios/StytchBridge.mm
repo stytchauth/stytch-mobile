@@ -1,9 +1,10 @@
 #import "StytchBridge.h"
-#import "StytchConsumerSDK.h"
-#import "StytchConsumerSDK-Swift.h"
-
+#import <StytchConsumerSDK/StytchConsumerSDK.h>
+#import <StytchConsumerSDK/StytchConsumerSDK-Swift.h>
 SCSDKStytchEncryptionClient *encryptionClient = [[SCSDKStytchEncryptionClient alloc] init];
 SCSDKStytchPlatformPersistenceClient *platformPersistenceClient = [[SCSDKStytchPlatformPersistenceClient alloc] init];
+SCSDKCAPTCHAProviderImpl *captchaClient = [[SCSDKCAPTCHAProviderImpl alloc] init];
+SCSDKDFPProviderImpl *dfpClient;
 
 @implementation StytchBridge
 
@@ -47,6 +48,10 @@ SCSDKStytchPlatformPersistenceClient *platformPersistenceClient = [[SCSDKStytchP
 - (void)removeData:(nonnull NSString *)key {
     [platformPersistenceClient removeDataKey:key];
 }
+
+- (void)resetPreferences {
+    [platformPersistenceClient reset];
+}
 // End Persistence Stuff
 
 // Begin Encryption stuff
@@ -71,9 +76,41 @@ SCSDKStytchPlatformPersistenceClient *platformPersistenceClient = [[SCSDKStytchP
 - (void)deleteKey {
     [encryptionClient deleteKey];
 }
-
-- (void)resetPreferences {
-    [platformPersistenceClient reset];
-}
 // End Encryption Stuff
+
+// Begin DFP stuff
+- (void)configureDfp:(nonnull NSString *)publicToken dfppaDomain:(nonnull NSString *)dfppaDomain {
+    dfpClient = [[SCSDKDFPProviderImpl alloc] initWithPublicToken:publicToken dfppaDomain:dfppaDomain];
+}
+
+- (void)getTelemetryId:(nonnull RCTPromiseResolveBlock)resolve reject:(nonnull RCTPromiseRejectBlock)reject {
+    [dfpClient getTelemetryIdWithCompletionHandler:^(NSString * telemetryId, NSError * _Nullable error) {
+        if (error == nil) {
+            resolve(telemetryId);
+        } else {
+            reject(@"", [error description], error);
+        }
+    }];
+}
+// End DFP stuff
+
+// Begin CAPTCHA stuff
+- (void)configureCaptcha:(nonnull NSString *)siteKey {
+    [captchaClient initializeSiteKey:siteKey completionHandler:^(NSError * _Nullable error) {}];
+}
+
+- (void)getCAPTCHAToken:(nonnull RCTPromiseResolveBlock)resolve reject:(nonnull RCTPromiseRejectBlock)reject {
+    [captchaClient getCAPTCHATokenWithCompletionHandler:^(NSString * token, NSError * _Nullable error) {
+        if (error == nil) {
+            resolve(token);
+        } else {
+            reject(@"", [error description], error);
+        }
+    }];
+}
+- (NSNumber *)isCaptchaConfigured {
+    BOOL result = [captchaClient isConfigured];
+    return [NSNumber numberWithBool:result];
+}
+// End CAPTCHA stuff
 @end

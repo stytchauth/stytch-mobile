@@ -1,5 +1,7 @@
 import CryptoKit
 import Foundation
+internal import RecaptchaEnterprise
+internal import StytchDFP
 
 @objc(StytchEncryptionManagerSwift)
 public class StytchEncryptionManagerSwift: NSObject {
@@ -83,5 +85,58 @@ public class StytchEncryptionManagerSwift: NSObject {
             ]
         }
         return query
+    }
+}
+
+@objc(StytchCAPTCHAProvider)
+public class StytchCAPTCHAProvider: NSObject {
+    @MainActor @objc public static let shared = StytchCAPTCHAProvider()
+    private var recaptchaClient: RecaptchaClient?
+
+    @objc public func isConfigured() -> Bool {
+        recaptchaClient != nil
+    }
+
+    @objc public func executeRecaptcha() async -> String {
+        guard let recaptchaClient = recaptchaClient else {
+            return ""
+        }
+        do {
+            return try await recaptchaClient.execute(withAction: RecaptchaAction.login)
+        } catch let error as RecaptchaError {
+            print("RecaptchaClient execute error: \(String(describing: error.errorMessage)).")
+            return ""
+        } catch {
+            print("RecaptchaClient execute error: \(String(describing: error)).")
+            return ""
+        }
+    }
+
+    @objc public func setCaptchaClient(siteKey: String) async {
+        do {
+            recaptchaClient = try await Recaptcha.fetchClient(withSiteKey: siteKey)
+        } catch let error as RecaptchaError {
+            print("RecaptchaClient creation error: \(String(describing: error.errorMessage)).")
+        } catch {
+            print("RecaptchaClient creation error: \(String(describing: error))")
+        }
+    }
+}
+
+@objc(StytchDFPProvider)
+public class StytchDFPProvider: NSObject {
+    @MainActor @objc public static let shared = StytchDFPProvider()
+    private let stytchDFP = StytchDFP()
+
+    @objc public func configure(publicToken: String, dfppaDomain: String?) {
+        stytchDFP.configure(withPublicToken: publicToken, submitURL: dfppaDomain)
+    }
+
+    @objc public func getTelemetryId() async -> String {
+        await withCheckedContinuation { continuation in
+            stytchDFP.getTelemetryID { telemetryId in
+                continuation.resume(returning: telemetryId)
+            }
+        }
     }
 }

@@ -60,7 +60,7 @@ internal class ConsumerNetworkingClient(
                     }
                     error
                 } catch (_: Exception) {
-                    throw StytchNetworkError(exception.response.bodyAsText())
+                    StytchNetworkError(exception.response.bodyAsText())
                 }
         }
 }

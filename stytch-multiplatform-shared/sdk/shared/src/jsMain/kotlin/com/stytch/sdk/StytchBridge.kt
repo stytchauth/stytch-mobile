@@ -1,5 +1,7 @@
 package com.stytch.sdk
 
+import kotlin.js.Promise
+
 public external object StytchBridge {
     public fun getDeviceInfo(): String
 
@@ -19,4 +21,17 @@ public external object StytchBridge {
     public fun deleteKey(): Unit
 
     public fun resetPreferences(): Unit
+
+    public fun configureDfp(
+        publicToken: String,
+        dfppaDomain: String,
+    ): Unit
+
+    public fun getTelemetryId(): Promise<String>
+
+    public fun configureCaptcha(siteKey: String): Unit
+
+    public fun getCAPTCHAToken(): Promise<String>
+
+    public fun isCaptchaConfigured(): Boolean
 }

@@ -1,9 +1,13 @@
 package com.stytch.mobile.bridge
 
+import android.app.Application
+import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReadableArray
 import com.facebook.react.module.annotations.ReactModule
 import com.stytch.sdk.data.getDeviceInfo
+import com.stytch.sdk.dfp.CAPTCHAProviderImpl
+import com.stytch.sdk.dfp.DFPProviderImpl
 import com.stytch.sdk.encryption.StytchEncryptionClient
 import com.stytch.sdk.persistence.StytchPersistenceClient
 import com.stytch.sdk.persistence.StytchPlatformPersistenceClient
@@ -15,6 +19,8 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import okio.ByteString.Companion.decodeBase64
 import kotlinx.serialization.json.Json
+import kotlinx.coroutines.*
+
 
 /**
  * This bridge module is just an RN-accessible, well, bridge, to the existing code in the "real" Stytch SDK,
@@ -26,7 +32,10 @@ class StytchBridgeModule(reactContext: ReactApplicationContext) :
   NativeStytchBridgeSpec(reactContext) {
   private val encryptionClient: StytchEncryptionClient = StytchEncryptionClient()
   private val platformPersistenceClient: StytchPlatformPersistenceClient = StytchPlatformPersistenceClient(reactContext)
+  private val dfpProvider = DFPProviderImpl(reactContext)
+  private val captchaProvider = CAPTCHAProviderImpl(reactContext.applicationContext as Application)
   private val deviceInfo = reactContext.getDeviceInfo()
+  private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
   override fun getName(): String {
     return NAME
@@ -64,6 +73,31 @@ class StytchBridgeModule(reactContext: ReactApplicationContext) :
    platformPersistenceClient.reset()
   }
 
+  override fun configureDfp(publicToken: String, dfppaDomain: String) {
+    dfpProvider.configureDfp(publicToken, dfppaDomain)
+  }
+
+  override fun getTelemetryId(promise: Promise) {
+    scope.launch {
+      promise.resolve(dfpProvider.getTelemetryId())
+    }
+  }
+
+  override fun configureCaptcha(siteKey: String) {
+    scope.launch {
+      captchaProvider.initialize(siteKey)
+    }
+  }
+  
+  override fun getCAPTCHAToken(promise: Promise) {
+    scope.launch {
+      promise.resolve(captchaProvider.getCAPTCHAToken())
+    }
+  }
+
+  override fun isCaptchaConfigured(): Boolean {
+    return captchaProvider.isConfigured
+  }
 
   companion object {
     const val NAME = "StytchBridge"
