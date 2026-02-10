@@ -4,7 +4,6 @@ import com.android.build.api.dsl.androidLibrary
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
-import kotlin.collections.listOf
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -14,6 +13,7 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.skie)
     id("maven-publish")
+    alias(libs.plugins.openapi)
 }
 
 group = rootProject.group
@@ -106,4 +106,37 @@ tasks.named("sourcesJar").configure {
 
 skie {
     isEnabled = true
+}
+
+val generatedSourcesPath = "$buildDir/generated/openapi"
+val apiDescriptionFile = "$projectDir/src/commonMain/resources/openapi.yml"
+openApiGenerate {
+    verbose.set(false)
+    validateSpec.set(false)
+    generatorName.set("kotlin")
+    inputSpec.set(apiDescriptionFile)
+    outputDir.set(generatedSourcesPath)
+    apiPackage.set("com.stytch.sdk.consumer.networking.api")
+    modelPackage.set("com.stytch.sdk.consumer.networking.models")
+    templateDir.set("$projectDir/src/commonMain/resources/templates")
+    configOptions.set(
+        mapOf(
+            "library" to "jvm-retrofit2",
+            "explicitApi" to "true",
+            "sortParamsByRequiredFlag" to "true",
+        )
+    )
+    additionalProperties.set(
+        mapOf(
+            "dateLibrary" to "kotlinx-datetime",
+            "serializationLibrary" to "kotlinx_serialization",
+            "useCoroutines" to "true"
+        )
+    )
+    openapiNormalizer.set(
+        mapOf(
+            "NORMALIZER_CLASS" to "com.stytch.sdk.utils.StytchOpenAPINormalizer",
+            "FILTER" to "path:!/b2b/"
+        )
+    )
 }
