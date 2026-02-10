@@ -75,6 +75,7 @@ public interface {{classname}} {
     {{/prioritizedContentTypes}}
     {{/formParams}}
     @{{httpMethod}}("{{{path}}}")
+    {{#vendorExtensions.x-dfppa-annotation}}{{vendorExtensions.x-dfppa-annotation}}{{/vendorExtensions.x-dfppa-annotation}}
     public suspend fun {{operationId}}({{^allParams}}){{/allParams}}{{#allParams}}{{>queryParams}}{{>pathParams}}{{>headerParams}}{{>bodyParams}}{{>formParams}}{{^-last}}, {{/-last}}{{#-last}}){{/-last}}{{/allParams}}{{#returnType}}: {{/returnType}}StytchDataResponse<{{returnType}}>
 
     {{/operation}}
