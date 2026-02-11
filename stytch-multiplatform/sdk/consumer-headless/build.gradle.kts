@@ -1,9 +1,11 @@
 @file:OptIn(ExperimentalKotlinGradlePluginApi::class)
 
 import com.android.build.api.dsl.androidLibrary
+import com.google.devtools.ksp.gradle.KspAATask
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompileCommon
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -85,13 +87,16 @@ kotlin {
     jvm()
 
     sourceSets {
-        commonMain.dependencies {
-            api("com.stytch.sdk:shared:$version")
-            implementation(libs.kotlinx.coroutines.core)
-            implementation(libs.kotlinx.datetime)
-            implementation(libs.ktorfit.lib.light)
-            implementation(libs.kotlinx.serialization.json)
-            implementation(libs.skie.configuration.annotations)
+        commonMain {
+            kotlin.srcDir(layout.buildDirectory.dir("generated/openapi"))
+            dependencies {
+                api("com.stytch.sdk:shared:$version")
+                implementation(libs.kotlinx.coroutines.core)
+                implementation(libs.kotlinx.datetime)
+                implementation(libs.ktorfit.lib.light)
+                implementation(libs.kotlinx.serialization.json)
+                implementation(libs.skie.configuration.annotations)
+            }
         }
     }
 }
@@ -113,6 +118,11 @@ val apiDescriptionFile = "$projectDir/src/commonMain/resources/openapi.yml"
 openApiGenerate {
     verbose.set(false)
     validateSpec.set(false)
+    skipValidateSpec.set(true)
+    generateApiTests.set(false)
+    generateModelTests.set(false)
+    generateApiDocumentation.set(false)
+    generateModelDocumentation.set(false)
     generatorName.set("kotlin")
     inputSpec.set(apiDescriptionFile)
     outputDir.set(generatedSourcesPath)
@@ -124,6 +134,7 @@ openApiGenerate {
             "library" to "jvm-retrofit2",
             "explicitApi" to "true",
             "sortParamsByRequiredFlag" to "true",
+            "omitGradleWrapper" to "true"
         )
     )
     additionalProperties.set(
@@ -139,4 +150,23 @@ openApiGenerate {
             "FILTER" to "path:!/b2b/"
         )
     )
+    globalProperties.set(
+        mapOf(
+            "models" to "",
+            "apis" to "",
+            "supportingFiles" to ""
+        )
+    )
+}
+
+tasks.withType<KspAATask>().configureEach {
+    if (name != "openApiGenerate") {
+        dependsOn("openApiGenerate")
+    }
+}
+tasks.withType<KotlinCompileCommon>().configureEach {
+    mustRunAfter("openApiGenerate")
+}
+tasks.named("compileKotlinMetadata") {
+    dependsOn("openApiGenerate")
 }

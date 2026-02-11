@@ -3,7 +3,6 @@ package com.stytch.sdk.networking
 import com.stytch.sdk.StytchAuthenticationStateManager
 import com.stytch.sdk.data.DFPConfiguration
 import com.stytch.sdk.data.DFPProtectedAuthMode
-import com.stytch.sdk.data.SDK_URL_PATH
 import com.stytch.sdk.data.StytchAPIError
 import com.stytch.sdk.data.StytchClientConfigurationInternal
 import com.stytch.sdk.data.StytchDataResponse
@@ -81,7 +80,7 @@ public abstract class StytchNetworkingClient(
         ktorfit =
             Ktorfit
                 .Builder()
-                .baseUrl("https://$domain/$SDK_URL_PATH")
+                .baseUrl("https://$domain/")
                 .httpClient(httpClient)
                 .build()
         sharedAPI = ktorfit.createSharedAPI()
