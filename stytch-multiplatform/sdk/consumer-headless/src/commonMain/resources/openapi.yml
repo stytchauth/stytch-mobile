@@ -7679,6 +7679,7 @@ components:
           type: string
         organization:
           type: string
+          x-overridden-field: true
         manager:
           $ref: '#/components/schemas/api_b2b_scim_v1_Manager'
       required:
@@ -8206,6 +8207,7 @@ components:
       - mfa_phone_number
       - default_mfa_method
       - roles
+      x-overridden-field: true
     api_organization_v1_MemberConnectedApp:
       type: object
       properties:
@@ -8374,6 +8376,7 @@ components:
       - third_party_connected_apps_allowed_type
       - allowed_third_party_connected_apps
       - custom_roles
+      x-overridden-field: true
     api_organization_v1_OrganizationConnectedApp:
       type: object
       properties:
@@ -8667,6 +8670,7 @@ components:
       - biometric_registrations
       - is_locked
       - roles
+      x-overridden-field: true
     api_user_v1_UserConnectedApp:
       type: object
       properties:
@@ -9149,6 +9153,7 @@ components:
       - user_id
       - authentication_factors
       - roles
+      x-overridden-field: true
     api_session_v1_ShopifyOAuthFactor:
       type: object
       properties:
@@ -9578,6 +9583,7 @@ components:
           type: boolean
         organization:
           $ref: '#/components/schemas/api_organization_v1_Organization'
+          x-overridden-field: true
         membership:
           $ref: '#/components/schemas/api_discovery_v1_Membership'
         primary_required:
@@ -9595,6 +9601,7 @@ components:
           type: string
         member:
           $ref: '#/components/schemas/api_organization_v1_Member'
+          x-overridden-field: true
       required:
       - type
     api_idp_v1_ScopeResult:
@@ -9749,18 +9756,23 @@ components:
           type: string
         session_token:
           type: string
+          x-overridden-field: true
         session_jwt:
           type: string
+          x-overridden-field: true
         member:
           $ref: '#/components/schemas/api_organization_v1_Member'
+          x-overridden-field: true
         organization:
           $ref: '#/components/schemas/api_organization_v1_Organization'
+          x-overridden-field: true
         member_authenticated:
           type: boolean
         intermediate_session_token:
           type: string
         member_session:
           $ref: '#/components/schemas/api_b2b_session_v1_MemberSession'
+          x-overridden-field: true
         mfa_required:
           $ref: '#/components/schemas/api_b2b_mfa_v1_MfaRequired'
         primary_required:
@@ -9842,18 +9854,23 @@ components:
           type: string
         session_token:
           type: string
+          x-overridden-field: true
         session_jwt:
           type: string
+          x-overridden-field: true
         member:
           $ref: '#/components/schemas/api_organization_v1_Member'
+          x-overridden-field: true
         member_authenticated:
           type: boolean
         intermediate_session_token:
           type: string
         member_session:
           $ref: '#/components/schemas/api_b2b_session_v1_MemberSession'
+          x-overridden-field: true
         organization:
           $ref: '#/components/schemas/api_organization_v1_Organization'
+          x-overridden-field: true
         mfa_required:
           $ref: '#/components/schemas/api_b2b_mfa_v1_MfaRequired'
         primary_required:
@@ -10019,14 +10036,19 @@ components:
           type: string
         member:
           $ref: '#/components/schemas/api_organization_v1_Member'
+          x-overridden-field: true
         session_token:
           type: string
+          x-overridden-field: true
         session_jwt:
           type: string
+          x-overridden-field: true
         member_session:
           $ref: '#/components/schemas/api_b2b_session_v1_MemberSession'
+          x-overridden-field: true
         organization:
           $ref: '#/components/schemas/api_organization_v1_Organization'
+          x-overridden-field: true
         intermediate_session_token:
           type: string
         member_authenticated:
@@ -10104,14 +10126,19 @@ components:
           type: string
         member:
           $ref: '#/components/schemas/api_organization_v1_Member'
+          x-overridden-field: true
         session_token:
           type: string
+          x-overridden-field: true
         session_jwt:
           type: string
+          x-overridden-field: true
         member_session:
           $ref: '#/components/schemas/api_b2b_session_v1_MemberSession'
+          x-overridden-field: true
         organization:
           $ref: '#/components/schemas/api_organization_v1_Organization'
+          x-overridden-field: true
         intermediate_session_token:
           type: string
         member_authenticated:
@@ -10250,8 +10277,10 @@ components:
           type: string
         member:
           $ref: '#/components/schemas/api_organization_v1_Member'
+          x-overridden-field: true
         organization:
           $ref: '#/components/schemas/api_organization_v1_Organization'
+          x-overridden-field: true
         status_code:
           type: integer
           format: int32
@@ -10331,18 +10360,23 @@ components:
           type: string
         member_session:
           $ref: '#/components/schemas/api_b2b_session_v1_MemberSession'
+          x-overridden-field: true
         session_token:
           type: string
+          x-overridden-field: true
         session_jwt:
           type: string
+          x-overridden-field: true
         provider_values:
           $ref: '#/components/schemas/api_b2b_oauth_v1_ProviderValues'
         member:
           $ref: '#/components/schemas/api_organization_v1_Member'
+          x-overridden-field: true
         organization_id:
           type: string
         organization:
           $ref: '#/components/schemas/api_organization_v1_Organization'
+          x-overridden-field: true
         reset_sessions:
           type: boolean
         member_authenticated:
@@ -10465,14 +10499,19 @@ components:
           type: string
         member:
           $ref: '#/components/schemas/api_organization_v1_Member'
+          x-overridden-field: true
         session_token:
           type: string
+          x-overridden-field: true
         session_jwt:
           type: string
+          x-overridden-field: true
         member_session:
           $ref: '#/components/schemas/api_b2b_session_v1_MemberSession'
+          x-overridden-field: true
         organization:
           $ref: '#/components/schemas/api_organization_v1_Organization'
+          x-overridden-field: true
         intermediate_session_token:
           type: string
         member_authenticated:
@@ -10651,14 +10690,19 @@ components:
           type: string
         member:
           $ref: '#/components/schemas/api_organization_v1_Member'
+          x-overridden-field: true
         organization:
           $ref: '#/components/schemas/api_organization_v1_Organization'
+          x-overridden-field: true
         session_token:
           type: string
+          x-overridden-field: true
         session_jwt:
           type: string
+          x-overridden-field: true
         member_session:
           $ref: '#/components/schemas/api_b2b_session_v1_MemberSession'
+          x-overridden-field: true
         member_device:
           $ref: '#/components/schemas/SDKDeviceInfo'
         status_code:
@@ -10828,14 +10872,19 @@ components:
           type: string
         member:
           $ref: '#/components/schemas/api_organization_v1_Member'
+          x-overridden-field: true
         session_token:
           type: string
+          x-overridden-field: true
         session_jwt:
           type: string
+          x-overridden-field: true
         member_session:
           $ref: '#/components/schemas/api_b2b_session_v1_MemberSession'
+          x-overridden-field: true
         organization:
           $ref: '#/components/schemas/api_organization_v1_Organization'
+          x-overridden-field: true
         intermediate_session_token:
           type: string
         member_authenticated:
@@ -10943,14 +10992,19 @@ components:
           type: string
         member:
           $ref: '#/components/schemas/api_organization_v1_Member'
+          x-overridden-field: true
         session_token:
           type: string
+          x-overridden-field: true
         session_jwt:
           type: string
+          x-overridden-field: true
         member_session:
           $ref: '#/components/schemas/api_b2b_session_v1_MemberSession'
+          x-overridden-field: true
         organization:
           $ref: '#/components/schemas/api_organization_v1_Organization'
+          x-overridden-field: true
         intermediate_session_token:
           type: string
         member_authenticated:
@@ -11061,14 +11115,19 @@ components:
           type: string
         member_session:
           $ref: '#/components/schemas/api_b2b_session_v1_MemberSession'
+          x-overridden-field: true
         member:
           $ref: '#/components/schemas/api_organization_v1_Member'
+          x-overridden-field: true
         session_token:
           type: string
+          x-overridden-field: true
         session_jwt:
           type: string
+          x-overridden-field: true
         organization:
           $ref: '#/components/schemas/api_organization_v1_Organization'
+          x-overridden-field: true
         intermediate_session_token:
           type: string
         member_authenticated:
@@ -11120,14 +11179,19 @@ components:
           type: string
         member_session:
           $ref: '#/components/schemas/api_b2b_session_v1_MemberSession'
+          x-overridden-field: true
         member:
           $ref: '#/components/schemas/api_organization_v1_Member'
+          x-overridden-field: true
         organization:
           $ref: '#/components/schemas/api_organization_v1_Organization'
+          x-overridden-field: true
         session_token:
           type: string
+          x-overridden-field: true
         session_jwt:
           type: string
+          x-overridden-field: true
         intermediate_session_token:
           type: string
         member_authenticated:
@@ -11212,8 +11276,10 @@ components:
           type: string
         member:
           $ref: '#/components/schemas/api_organization_v1_Member'
+          x-overridden-field: true
         organization:
           $ref: '#/components/schemas/api_organization_v1_Organization'
+          x-overridden-field: true
         recovery_codes:
           type: array
           items:
@@ -11262,17 +11328,22 @@ components:
           type: string
         member:
           $ref: '#/components/schemas/api_organization_v1_Member'
+          x-overridden-field: true
         organization:
           $ref: '#/components/schemas/api_organization_v1_Organization'
+          x-overridden-field: true
         session_token:
           type: string
+          x-overridden-field: true
         session_jwt:
           type: string
+          x-overridden-field: true
         recovery_codes_remaining:
           type: integer
           format: int32
         member_session:
           $ref: '#/components/schemas/api_b2b_session_v1_MemberSession'
+          x-overridden-field: true
         member_device:
           $ref: '#/components/schemas/SDKDeviceInfo'
         status_code:
@@ -11309,8 +11380,10 @@ components:
           type: string
         member:
           $ref: '#/components/schemas/api_organization_v1_Member'
+          x-overridden-field: true
         organization:
           $ref: '#/components/schemas/api_organization_v1_Organization'
+          x-overridden-field: true
         recovery_codes:
           type: array
           items:
@@ -11528,14 +11601,19 @@ components:
           type: string
         member_session:
           $ref: '#/components/schemas/api_b2b_session_v1_MemberSession'
+          x-overridden-field: true
         session_token:
           type: string
+          x-overridden-field: true
         session_jwt:
           type: string
+          x-overridden-field: true
         member:
           $ref: '#/components/schemas/api_organization_v1_Member'
+          x-overridden-field: true
         organization:
           $ref: '#/components/schemas/api_organization_v1_Organization'
+          x-overridden-field: true
         status_code:
           type: integer
           format: int32
@@ -11558,6 +11636,7 @@ components:
           type: string
         token:
           type: string
+          x-overridden-field: true
         organization_id:
           type: string
         session_duration_minutes:
@@ -11576,14 +11655,19 @@ components:
           type: string
         member_session:
           $ref: '#/components/schemas/api_b2b_session_v1_MemberSession'
+          x-overridden-field: true
         session_token:
           type: string
+          x-overridden-field: true
         session_jwt:
           type: string
+          x-overridden-field: true
         member:
           $ref: '#/components/schemas/api_organization_v1_Member'
+          x-overridden-field: true
         organization:
           $ref: '#/components/schemas/api_organization_v1_Organization'
+          x-overridden-field: true
         status_code:
           type: integer
           format: int32
@@ -11613,14 +11697,19 @@ components:
           type: string
         member_session:
           $ref: '#/components/schemas/api_b2b_session_v1_MemberSession'
+          x-overridden-field: true
         session_token:
           type: string
+          x-overridden-field: true
         session_jwt:
           type: string
+          x-overridden-field: true
         member:
           $ref: '#/components/schemas/api_organization_v1_Member'
+          x-overridden-field: true
         organization:
           $ref: '#/components/schemas/api_organization_v1_Organization'
+          x-overridden-field: true
         verdict:
           $ref: '#/components/schemas/api_b2b_session_v1_AuthorizationVerdict'
         status_code:
@@ -11661,14 +11750,19 @@ components:
           type: string
         member_session:
           $ref: '#/components/schemas/api_b2b_session_v1_MemberSession'
+          x-overridden-field: true
         session_token:
           type: string
+          x-overridden-field: true
         session_jwt:
           type: string
+          x-overridden-field: true
         member:
           $ref: '#/components/schemas/api_organization_v1_Member'
+          x-overridden-field: true
         organization:
           $ref: '#/components/schemas/api_organization_v1_Organization'
+          x-overridden-field: true
         member_authenticated:
           type: boolean
         intermediate_session_token:
@@ -11765,14 +11859,19 @@ components:
           type: string
         member:
           $ref: '#/components/schemas/api_organization_v1_Member'
+          x-overridden-field: true
         organization:
           $ref: '#/components/schemas/api_organization_v1_Organization'
+          x-overridden-field: true
         session_token:
           type: string
+          x-overridden-field: true
         session_jwt:
           type: string
+          x-overridden-field: true
         member_session:
           $ref: '#/components/schemas/api_b2b_session_v1_MemberSession'
+          x-overridden-field: true
         member_device:
           $ref: '#/components/schemas/SDKDeviceInfo'
         status_code:
@@ -11830,8 +11929,10 @@ components:
             type: string
         member:
           $ref: '#/components/schemas/api_organization_v1_Member'
+          x-overridden-field: true
         organization:
           $ref: '#/components/schemas/api_organization_v1_Organization'
+          x-overridden-field: true
         status_code:
           type: integer
           format: int32
@@ -11876,12 +11977,16 @@ components:
           type: string
         session_token:
           type: string
+          x-overridden-field: true
         session:
           $ref: '#/components/schemas/api_session_v1_Session'
+          x-overridden-field: true
         session_jwt:
           type: string
+          x-overridden-field: true
         user:
           $ref: '#/components/schemas/api_user_v1_User'
+          x-overridden-field: true
         user_device:
           $ref: '#/components/schemas/SDKDeviceInfo'
         status_code:
@@ -11955,12 +12060,16 @@ components:
           type: string
         user:
           $ref: '#/components/schemas/api_user_v1_User'
+          x-overridden-field: true
         session_token:
           type: string
+          x-overridden-field: true
         session:
           $ref: '#/components/schemas/api_session_v1_Session'
+          x-overridden-field: true
         session_jwt:
           type: string
+          x-overridden-field: true
         status_code:
           type: integer
           format: int32
@@ -12059,12 +12168,16 @@ components:
           type: string
         session_token:
           type: string
+          x-overridden-field: true
         session:
           $ref: '#/components/schemas/api_session_v1_Session'
+          x-overridden-field: true
         session_jwt:
           type: string
+          x-overridden-field: true
         user:
           $ref: '#/components/schemas/api_user_v1_User'
+          x-overridden-field: true
         siwe_params:
           $ref: '#/components/schemas/api_crypto_wallet_v1_SIWEParamsResponse'
         user_device:
@@ -12164,6 +12277,7 @@ components:
           type: string
         user:
           $ref: '#/components/schemas/api_user_v1_User'
+          x-overridden-field: true
         client:
           $ref: '#/components/schemas/api_connectedapps_v1_ConnectedAppPublic'
         consent_required:
@@ -12256,12 +12370,16 @@ components:
           type: string
         user:
           $ref: '#/components/schemas/api_user_v1_User'
+          x-overridden-field: true
         session_token:
           type: string
+          x-overridden-field: true
         session_jwt:
           type: string
+          x-overridden-field: true
         session:
           $ref: '#/components/schemas/api_session_v1_Session'
+          x-overridden-field: true
         status_code:
           type: integer
           format: int32
@@ -12281,6 +12399,7 @@ components:
       properties:
         token:
           type: string
+          x-overridden-field: true
         session_duration_minutes:
           type: integer
           format: int32
@@ -12301,12 +12420,16 @@ components:
           type: string
         session_token:
           type: string
+          x-overridden-field: true
         session:
           $ref: '#/components/schemas/api_session_v1_Session'
+          x-overridden-field: true
         session_jwt:
           type: string
+          x-overridden-field: true
         user:
           $ref: '#/components/schemas/api_user_v1_User'
+          x-overridden-field: true
         reset_sessions:
           type: boolean
         status_code:
@@ -12455,6 +12578,7 @@ components:
       properties:
         token:
           type: string
+          x-overridden-field: true
         session_duration_minutes:
           type: integer
           format: int32
@@ -12477,16 +12601,20 @@ components:
           type: string
         session:
           $ref: '#/components/schemas/api_session_v1_Session'
+          x-overridden-field: true
         user_session:
           $ref: '#/components/schemas/api_session_v1_Session'
         session_token:
           type: string
+          x-overridden-field: true
         session_jwt:
           type: string
+          x-overridden-field: true
         provider_values:
           $ref: '#/components/schemas/api_oauth_v1_ProviderValues'
         user:
           $ref: '#/components/schemas/api_user_v1_User'
+          x-overridden-field: true
         reset_sessions:
           type: boolean
         oauth_user_registration_id:
@@ -12538,12 +12666,16 @@ components:
           type: string
         session:
           $ref: '#/components/schemas/api_session_v1_Session'
+          x-overridden-field: true
         session_token:
           type: string
+          x-overridden-field: true
         session_jwt:
           type: string
+          x-overridden-field: true
         user:
           $ref: '#/components/schemas/api_user_v1_User'
+          x-overridden-field: true
         reset_sessions:
           type: boolean
         user_created:
@@ -12576,6 +12708,7 @@ components:
           type: string
         member:
           $ref: '#/components/schemas/api_organization_v1_Member'
+          x-overridden-field: true
         status_code:
           type: integer
           format: int32
@@ -12610,6 +12743,7 @@ components:
           type: string
         organization:
           $ref: '#/components/schemas/api_organization_v1_Organization'
+          x-overridden-field: true
         status_code:
           type: integer
           format: int32
@@ -12687,6 +12821,7 @@ components:
           type: string
         organization:
           $ref: '#/components/schemas/api_organization_v1_Organization'
+          x-overridden-field: true
         status_code:
           type: integer
           format: int32
@@ -12704,8 +12839,10 @@ components:
           type: string
         member:
           $ref: '#/components/schemas/api_organization_v1_Member'
+          x-overridden-field: true
         organization:
           $ref: '#/components/schemas/api_organization_v1_Organization'
+          x-overridden-field: true
         status_code:
           type: integer
           format: int32
@@ -12725,8 +12862,10 @@ components:
           type: string
         member:
           $ref: '#/components/schemas/api_organization_v1_Member'
+          x-overridden-field: true
         organization:
           $ref: '#/components/schemas/api_organization_v1_Organization'
+          x-overridden-field: true
         status_code:
           type: integer
           format: int32
@@ -12746,8 +12885,10 @@ components:
           type: string
         member:
           $ref: '#/components/schemas/api_organization_v1_Member'
+          x-overridden-field: true
         organization:
           $ref: '#/components/schemas/api_organization_v1_Organization'
+          x-overridden-field: true
         status_code:
           type: integer
           format: int32
@@ -12807,8 +12948,10 @@ components:
           type: string
         member:
           $ref: '#/components/schemas/api_organization_v1_Member'
+          x-overridden-field: true
         organization:
           $ref: '#/components/schemas/api_organization_v1_Organization'
+          x-overridden-field: true
         status_code:
           type: integer
           format: int32
@@ -12860,8 +13003,10 @@ components:
           type: string
         member:
           $ref: '#/components/schemas/api_organization_v1_Member'
+          x-overridden-field: true
         organization:
           $ref: '#/components/schemas/api_organization_v1_Organization'
+          x-overridden-field: true
         status_code:
           type: integer
           format: int32
@@ -12889,8 +13034,10 @@ components:
           type: string
         member:
           $ref: '#/components/schemas/api_organization_v1_Member'
+          x-overridden-field: true
         organization:
           $ref: '#/components/schemas/api_organization_v1_Organization'
+          x-overridden-field: true
         status_code:
           type: integer
           format: int32
@@ -12938,8 +13085,10 @@ components:
           type: string
         member:
           $ref: '#/components/schemas/api_organization_v1_Member'
+          x-overridden-field: true
         organization:
           $ref: '#/components/schemas/api_organization_v1_Organization'
+          x-overridden-field: true
         status_code:
           type: integer
           format: int32
@@ -13042,8 +13191,10 @@ components:
           type: string
         member:
           $ref: '#/components/schemas/api_organization_v1_Member'
+          x-overridden-field: true
         organization:
           $ref: '#/components/schemas/api_organization_v1_Organization'
+          x-overridden-field: true
         status_code:
           type: integer
           format: int32
@@ -13063,8 +13214,10 @@ components:
           type: string
         member:
           $ref: '#/components/schemas/api_organization_v1_Member'
+          x-overridden-field: true
         organization:
           $ref: '#/components/schemas/api_organization_v1_Organization'
+          x-overridden-field: true
         status_code:
           type: integer
           format: int32
@@ -13084,8 +13237,10 @@ components:
           type: string
         member:
           $ref: '#/components/schemas/api_organization_v1_Member'
+          x-overridden-field: true
         organization:
           $ref: '#/components/schemas/api_organization_v1_Organization'
+          x-overridden-field: true
         status_code:
           type: integer
           format: int32
@@ -13197,8 +13352,10 @@ components:
           type: string
         member:
           $ref: '#/components/schemas/api_organization_v1_Member'
+          x-overridden-field: true
         organization:
           $ref: '#/components/schemas/api_organization_v1_Organization'
+          x-overridden-field: true
         status_code:
           type: integer
           format: int32
@@ -13226,8 +13383,10 @@ components:
           type: string
         member:
           $ref: '#/components/schemas/api_organization_v1_Member'
+          x-overridden-field: true
         organization:
           $ref: '#/components/schemas/api_organization_v1_Organization'
+          x-overridden-field: true
         status_code:
           type: integer
           format: int32
@@ -13261,8 +13420,10 @@ components:
           type: string
         member:
           $ref: '#/components/schemas/api_organization_v1_Member'
+          x-overridden-field: true
         organization:
           $ref: '#/components/schemas/api_organization_v1_Organization'
+          x-overridden-field: true
         status_code:
           type: integer
           format: int32
@@ -13278,6 +13439,7 @@ components:
       properties:
         token:
           type: string
+          x-overridden-field: true
         method_id:
           type: string
         session_duration_minutes:
@@ -13303,12 +13465,16 @@ components:
           type: string
         session_token:
           type: string
+          x-overridden-field: true
         session:
           $ref: '#/components/schemas/api_session_v1_Session'
+          x-overridden-field: true
         session_jwt:
           type: string
+          x-overridden-field: true
         user:
           $ref: '#/components/schemas/api_user_v1_User'
+          x-overridden-field: true
         reset_sessions:
           type: boolean
         user_device:
@@ -13560,12 +13726,16 @@ components:
           type: string
         session_token:
           type: string
+          x-overridden-field: true
         session:
           $ref: '#/components/schemas/api_session_v1_Session'
+          x-overridden-field: true
         session_jwt:
           type: string
+          x-overridden-field: true
         user:
           $ref: '#/components/schemas/api_user_v1_User'
+          x-overridden-field: true
         user_device:
           $ref: '#/components/schemas/SDKDeviceInfo'
         status_code:
@@ -13613,12 +13783,16 @@ components:
           type: string
         session_token:
           type: string
+          x-overridden-field: true
         session:
           $ref: '#/components/schemas/api_session_v1_Session'
+          x-overridden-field: true
         session_jwt:
           type: string
+          x-overridden-field: true
         user:
           $ref: '#/components/schemas/api_user_v1_User'
+          x-overridden-field: true
         user_device:
           $ref: '#/components/schemas/SDKDeviceInfo'
         status_code:
@@ -13642,6 +13816,7 @@ components:
       properties:
         token:
           type: string
+          x-overridden-field: true
         password:
           type: string
         session_duration_minutes:
@@ -13667,12 +13842,16 @@ components:
           type: string
         session_token:
           type: string
+          x-overridden-field: true
         session:
           $ref: '#/components/schemas/api_session_v1_Session'
+          x-overridden-field: true
         session_jwt:
           type: string
+          x-overridden-field: true
         user:
           $ref: '#/components/schemas/api_user_v1_User'
+          x-overridden-field: true
         user_device:
           $ref: '#/components/schemas/SDKDeviceInfo'
         status_code:
@@ -13755,12 +13934,16 @@ components:
           type: string
         session_token:
           type: string
+          x-overridden-field: true
         session:
           $ref: '#/components/schemas/api_session_v1_Session'
+          x-overridden-field: true
         session_jwt:
           type: string
+          x-overridden-field: true
         user:
           $ref: '#/components/schemas/api_user_v1_User'
+          x-overridden-field: true
         user_device:
           $ref: '#/components/schemas/SDKDeviceInfo'
         status_code:
@@ -13802,12 +13985,16 @@ components:
           type: string
         session:
           $ref: '#/components/schemas/api_session_v1_Session'
+          x-overridden-field: true
         user:
           $ref: '#/components/schemas/api_user_v1_User'
+          x-overridden-field: true
         session_token:
           type: string
+          x-overridden-field: true
         session_jwt:
           type: string
+          x-overridden-field: true
         user_device:
           $ref: '#/components/schemas/SDKDeviceInfo'
         status_code:
@@ -13885,12 +14072,16 @@ components:
           type: string
         session:
           $ref: '#/components/schemas/api_session_v1_Session'
+          x-overridden-field: true
         session_token:
           type: string
+          x-overridden-field: true
         session_jwt:
           type: string
+          x-overridden-field: true
         user:
           $ref: '#/components/schemas/api_user_v1_User'
+          x-overridden-field: true
         status_code:
           type: integer
           format: int32
@@ -13911,6 +14102,7 @@ components:
           type: string
         token:
           type: string
+          x-overridden-field: true
         session_duration_minutes:
           type: integer
           format: int32
@@ -13927,12 +14119,16 @@ components:
           type: string
         session:
           $ref: '#/components/schemas/api_session_v1_Session'
+          x-overridden-field: true
         session_token:
           type: string
+          x-overridden-field: true
         session_jwt:
           type: string
+          x-overridden-field: true
         user:
           $ref: '#/components/schemas/api_user_v1_User'
+          x-overridden-field: true
         status_code:
           type: integer
           format: int32
@@ -13961,12 +14157,16 @@ components:
           type: string
         session:
           $ref: '#/components/schemas/api_session_v1_Session'
+          x-overridden-field: true
         session_token:
           type: string
+          x-overridden-field: true
         session_jwt:
           type: string
+          x-overridden-field: true
         user:
           $ref: '#/components/schemas/api_user_v1_User'
+          x-overridden-field: true
         status_code:
           type: integer
           format: int32
@@ -14406,16 +14606,21 @@ components:
           type: string
         member:
           $ref: '#/components/schemas/api_organization_v1_Member'
+          x-overridden-field: true
         session_token:
           type: string
+          x-overridden-field: true
         session_jwt:
           type: string
+          x-overridden-field: true
         member_session:
           $ref: '#/components/schemas/api_b2b_session_v1_MemberSession'
+          x-overridden-field: true
         reset_session:
           type: boolean
         organization:
           $ref: '#/components/schemas/api_organization_v1_Organization'
+          x-overridden-field: true
         intermediate_session_token:
           type: string
         member_authenticated:
@@ -14646,12 +14851,16 @@ components:
           type: string
         session_token:
           type: string
+          x-overridden-field: true
         session_jwt:
           type: string
+          x-overridden-field: true
         session:
           $ref: '#/components/schemas/api_session_v1_Session'
+          x-overridden-field: true
         user:
           $ref: '#/components/schemas/api_user_v1_User'
+          x-overridden-field: true
         user_device:
           $ref: '#/components/schemas/SDKDeviceInfo'
         status_code:
@@ -14694,6 +14903,7 @@ components:
             type: string
         user:
           $ref: '#/components/schemas/api_user_v1_User'
+          x-overridden-field: true
         user_id:
           type: string
         status_code:
@@ -14760,12 +14970,16 @@ components:
           type: string
         session_token:
           type: string
+          x-overridden-field: true
         session_jwt:
           type: string
+          x-overridden-field: true
         session:
           $ref: '#/components/schemas/api_session_v1_Session'
+          x-overridden-field: true
         user:
           $ref: '#/components/schemas/api_user_v1_User'
+          x-overridden-field: true
         user_device:
           $ref: '#/components/schemas/SDKDeviceInfo'
         status_code:
@@ -14793,6 +15007,7 @@ components:
           type: string
         user:
           $ref: '#/components/schemas/api_user_v1_User'
+          x-overridden-field: true
         status_code:
           type: integer
           format: int32
@@ -14811,6 +15026,7 @@ components:
           type: string
         user:
           $ref: '#/components/schemas/api_user_v1_User'
+          x-overridden-field: true
         status_code:
           type: integer
           format: int32
@@ -14829,6 +15045,7 @@ components:
           type: string
         user:
           $ref: '#/components/schemas/api_user_v1_User'
+          x-overridden-field: true
         status_code:
           type: integer
           format: int32
@@ -14847,6 +15064,7 @@ components:
           type: string
         user:
           $ref: '#/components/schemas/api_user_v1_User'
+          x-overridden-field: true
         status_code:
           type: integer
           format: int32
@@ -14865,6 +15083,7 @@ components:
           type: string
         user:
           $ref: '#/components/schemas/api_user_v1_User'
+          x-overridden-field: true
         status_code:
           type: integer
           format: int32
@@ -14883,6 +15102,7 @@ components:
           type: string
         user:
           $ref: '#/components/schemas/api_user_v1_User'
+          x-overridden-field: true
         status_code:
           type: integer
           format: int32
@@ -14901,6 +15121,7 @@ components:
           type: string
         user:
           $ref: '#/components/schemas/api_user_v1_User'
+          x-overridden-field: true
         status_code:
           type: integer
           format: int32
@@ -15060,6 +15281,7 @@ components:
             $ref: '#/components/schemas/api_user_v1_CryptoWallet'
         user:
           $ref: '#/components/schemas/api_user_v1_User'
+          x-overridden-field: true
         status_code:
           type: integer
           format: int32
@@ -15098,12 +15320,16 @@ components:
           type: string
         session_token:
           type: string
+          x-overridden-field: true
         session:
           $ref: '#/components/schemas/api_session_v1_Session'
+          x-overridden-field: true
         session_jwt:
           type: string
+          x-overridden-field: true
         user:
           $ref: '#/components/schemas/api_user_v1_User'
+          x-overridden-field: true
         user_device:
           $ref: '#/components/schemas/SDKDeviceInfo'
         status_code:
@@ -15172,12 +15398,16 @@ components:
           type: string
         session_token:
           type: string
+          x-overridden-field: true
         session_jwt:
           type: string
+          x-overridden-field: true
         user:
           $ref: '#/components/schemas/api_user_v1_User'
+          x-overridden-field: true
         session:
           $ref: '#/components/schemas/api_session_v1_Session'
+          x-overridden-field: true
         status_code:
           type: integer
           format: int32
@@ -15330,6 +15560,7 @@ components:
       - name
       - member_password_id
       - mfa_enrolled
+      x-overridden-field: true
     Organization:
       type: object
       properties:
@@ -15372,6 +15603,7 @@ components:
       - allowed_auth_methods
       - mfa_policy
       - organization_slug
+      x-overridden-field: true
     SSOConnection:
       type: object
       properties:
@@ -15681,6 +15913,7 @@ components:
           type: string
         member:
           $ref: '#/components/schemas/Member'
+          x-overridden-field: true
         status_code:
           type: integer
           format: int32
@@ -15824,6 +16057,7 @@ components:
           type: string
         organization:
           $ref: '#/components/schemas/Organization'
+          x-overridden-field: true
         status_code:
           type: integer
           format: int32
