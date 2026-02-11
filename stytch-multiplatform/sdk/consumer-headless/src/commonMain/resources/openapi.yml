@@ -7911,8 +7911,10 @@ components:
           type: string
         bearer_token_expires_at:
           type: string
+          format: date-time
         next_bearer_token_expires_at:
           type: string
+          format: date-time
       required:
       - organization_id
       - connection_id
@@ -7948,8 +7950,10 @@ components:
             $ref: '#/components/schemas/api_b2b_scim_v1_SCIMGroupImplicitRoleAssignments'
         bearer_token_expires_at:
           type: string
+          format: date-time
         next_bearer_token_expires_at:
           type: string
+          format: date-time
       required:
       - organization_id
       - connection_id
@@ -7983,6 +7987,7 @@ components:
             $ref: '#/components/schemas/api_b2b_scim_v1_SCIMGroupImplicitRoleAssignments'
         bearer_token_expires_at:
           type: string
+          format: date-time
       required:
       - organization_id
       - connection_id
@@ -8045,6 +8050,7 @@ components:
           type: string
         bearer_token_expires_at:
           type: string
+          format: date-time
       required:
       - connection_id
       - display_name
@@ -8166,16 +8172,20 @@ components:
           type: string
         created_at:
           type: string
+          format: date-time
         updated_at:
           type: string
+          format: date-time
         scim_registration:
           $ref: '#/components/schemas/api_organization_v1_SCIMRegistration'
         external_id:
           type: string
         lock_created_at:
           type: string
+          format: date-time
         lock_expires_at:
           type: string
+          format: date-time
       required:
       - organization_id
       - member_id
@@ -8328,8 +8338,10 @@ components:
           type: string
         created_at:
           type: string
+          format: date-time
         updated_at:
           type: string
+          format: date-time
         organization_external_id:
           type: string
         sso_default_connection_id:
@@ -8453,8 +8465,10 @@ components:
           type: boolean
         first_seen_at:
           type: string
+          format: date-time
         last_seen_at:
           type: string
+          format: date-time
       required:
       - is_new
     api_user_v1_BiometricRegistration:
@@ -8626,6 +8640,7 @@ components:
           $ref: '#/components/schemas/api_user_v1_Name'
         created_at:
           type: string
+          format: date-time
         password:
           $ref: '#/components/schemas/api_user_v1_Password'
         trusted_metadata:
@@ -8636,8 +8651,10 @@ components:
           type: string
         lock_created_at:
           type: string
+          format: date-time
         lock_expires_at:
           type: string
+          format: date-time
       required:
       - user_id
       - emails
@@ -8726,10 +8743,13 @@ components:
           $ref: '#/components/schemas/api_session_v1_AuthenticationFactorDeliveryMethod'
         last_authenticated_at:
           type: string
+          format: date-time
         created_at:
           type: string
+          format: date-time
         updated_at:
           type: string
+          format: date-time
         email_factor:
           $ref: '#/components/schemas/api_session_v1_EmailFactor'
         phone_number_factor:
@@ -9113,10 +9133,13 @@ components:
             type: string
         started_at:
           type: string
+          format: date-time
         last_accessed_at:
           type: string
+          format: date-time
         expires_at:
           type: string
+          format: date-time
         attributes:
           $ref: '#/components/schemas/api_attribute_v1_Attributes'
         custom_claims:
@@ -9393,10 +9416,13 @@ components:
           type: string
         started_at:
           type: string
+          format: date-time
         last_accessed_at:
           type: string
+          format: date-time
         expires_at:
           type: string
+          format: date-time
         authentication_factors:
           type: array
           items:
@@ -9536,6 +9562,7 @@ components:
           format: int32
         issued_at:
           type: string
+          format: date-time
         message_request_id:
           type: string
       required:
@@ -9596,6 +9623,7 @@ components:
           type: string
         expires_at:
           type: string
+          format: date-time
         id_token:
           type: string
       required:
@@ -9689,6 +9717,7 @@ components:
             type: string
         expires_at:
           type: string
+          format: date-time
       required:
       - access_token
       - refresh_token
@@ -9740,6 +9769,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.b2b.networking.AuthenticatedResponse
       required:
       - request_id
       - member_id
@@ -9831,6 +9862,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.b2b.networking.AuthenticatedResponse
       required:
       - request_id
       - member_id
@@ -10004,6 +10037,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.b2b.networking.AuthenticatedResponse
       required:
       - request_id
       - member_id
@@ -10091,6 +10126,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.b2b.networking.AuthenticatedResponse
       required:
       - request_id
       - member_id
@@ -10322,6 +10359,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.b2b.networking.AuthenticatedResponse
       required:
       - request_id
       - member_id
@@ -10448,6 +10487,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.b2b.networking.AuthenticatedResponse
       required:
       - request_id
       - member_id
@@ -10624,6 +10665,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.b2b.networking.AuthenticatedResponse
       required:
       - request_id
       - member_id
@@ -10807,6 +10850,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.b2b.networking.AuthenticatedResponse
       required:
       - request_id
       - member_id
@@ -10920,6 +10965,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.b2b.networking.AuthenticatedResponse
       required:
       - request_id
       - member_id
@@ -11036,6 +11083,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.b2b.networking.AuthenticatedResponse
       required:
       - request_id
       - member_id
@@ -11091,6 +11140,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.b2b.networking.AuthenticatedResponse
       required:
       - request_id
       - member_id
@@ -11228,6 +11279,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.b2b.networking.AuthenticatedResponse
       required:
       - request_id
       - member_id
@@ -11487,6 +11540,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.b2b.networking.AuthenticatedResponse
       required:
       - request_id
       - member_id
@@ -11533,6 +11588,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.b2b.networking.AuthenticatedResponse
       required:
       - request_id
       - member_id
@@ -11570,6 +11627,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.b2b.networking.AuthenticatedResponse
       required:
       - request_id
       - member_session
@@ -11622,6 +11681,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.b2b.networking.AuthenticatedResponse
       required:
       - request_id
       - member_id
@@ -11718,6 +11779,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.b2b.networking.AuthenticatedResponse
       required:
       - request_id
       - member_id
@@ -11825,6 +11888,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.consumer.networking.AuthenticatedResponse
       required:
       - request_id
       - user_id
@@ -11900,6 +11965,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.consumer.networking.AuthenticatedResponse
       required:
       - request_id
       - user_id
@@ -11953,6 +12020,7 @@ components:
           type: string
         issued_at:
           type: string
+          format: date-time
         not_before:
           type: string
         message_request_id:
@@ -12005,6 +12073,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.consumer.networking.AuthenticatedResponse
       required:
       - request_id
       - user_id
@@ -12196,6 +12266,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.consumer.networking.AuthenticatedResponse
       required:
       - request_id
       - user_id
@@ -12241,6 +12313,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.consumer.networking.AuthenticatedResponse
       required:
       - request_id
       - user_id
@@ -12421,6 +12495,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.consumer.networking.AuthenticatedResponse
       required:
       - request_id
       - user_id
@@ -12476,6 +12552,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.consumer.networking.AuthenticatedResponse
       required:
       - request_id
       - user_id
@@ -13239,6 +13317,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.consumer.networking.AuthenticatedResponse
       required:
       - request_id
       - user_id
@@ -13492,6 +13572,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.consumer.networking.AuthenticatedResponse
       required:
       - request_id
       - user_id
@@ -13543,6 +13625,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.consumer.networking.AuthenticatedResponse
       required:
       - request_id
       - user_id
@@ -13595,6 +13679,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.consumer.networking.AuthenticatedResponse
       required:
       - request_id
       - user_id
@@ -13681,6 +13767,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.consumer.networking.AuthenticatedResponse
       required:
       - request_id
       - user_id
@@ -13726,6 +13814,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.consumer.networking.AuthenticatedResponse
       required:
       - request_id
       - user_id
@@ -13805,6 +13895,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.consumer.networking.AuthenticatedResponse
       required:
       - request_id
       - session
@@ -13845,6 +13937,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.consumer.networking.AuthenticatedResponse
       required:
       - request_id
       - user_id
@@ -13877,6 +13971,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.consumer.networking.AuthenticatedResponse
       required:
       - request_id
       - session
@@ -13909,6 +14005,7 @@ components:
           type: string
         created_at:
           type: string
+          format: date-time
       required:
       - private_key_id
       - private_key
@@ -14110,10 +14207,13 @@ components:
           type: string
         created_at:
           type: string
+          format: date-time
         expires_at:
           type: string
+          format: date-time
         updated_at:
           type: string
+          format: date-time
       required:
       - certificate_id
       - certificate
@@ -14330,6 +14430,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.b2b.networking.AuthenticatedResponse
       required:
       - request_id
       - member_id
@@ -14556,6 +14658,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.consumer.networking.AuthenticatedResponse
       required:
       - request_id
       - user_id
@@ -14668,6 +14772,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.consumer.networking.AuthenticatedResponse
       required:
       - request_id
       - user_id
@@ -14875,6 +14981,7 @@ components:
           format: int32
         created_at:
           type: string
+          format: date-time
         trusted_metadata:
           type: string
         untrusted_metadata:
@@ -15003,6 +15110,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.consumer.networking.AuthenticatedResponse
       required:
       - request_id
       - user_id
@@ -15073,6 +15182,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.consumer.networking.AuthenticatedResponse
       required:
       - request_id
       - user_id

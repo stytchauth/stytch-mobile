@@ -1,6 +1,7 @@
 @file:OptIn(ExperimentalKotlinGradlePluginApi::class)
 
 import com.android.build.api.dsl.androidLibrary
+import com.android.build.gradle.tasks.ProcessLibraryArtProfileTask
 import com.google.devtools.ksp.gradle.KspAATask
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
@@ -88,7 +89,7 @@ kotlin {
 
     sourceSets {
         commonMain {
-            kotlin.srcDir(layout.buildDirectory.dir("generated/openapi"))
+            kotlin.srcDir(layout.buildDirectory.dir("generated/openapi/src/main/kotlin"))
             dependencies {
                 api("com.stytch.sdk:shared:$version")
                 implementation(libs.kotlinx.coroutines.core)
@@ -134,28 +135,27 @@ openApiGenerate {
             "library" to "jvm-retrofit2",
             "explicitApi" to "true",
             "sortParamsByRequiredFlag" to "true",
-            "omitGradleWrapper" to "true"
-        )
+            "omitGradleWrapper" to "true",
+        ),
     )
     additionalProperties.set(
         mapOf(
             "dateLibrary" to "kotlinx-datetime",
             "serializationLibrary" to "kotlinx_serialization",
-            "useCoroutines" to "true"
-        )
+            "useCoroutines" to "true",
+        ),
     )
     openapiNormalizer.set(
         mapOf(
             "NORMALIZER_CLASS" to "com.stytch.sdk.utils.StytchOpenAPINormalizer",
-            "FILTER" to "path:!/b2b/"
-        )
+            "FILTER" to "path:!/b2b/",
+        ),
     )
     globalProperties.set(
         mapOf(
             "models" to "",
             "apis" to "",
-            "supportingFiles" to ""
-        )
+        ),
     )
 }
 
@@ -165,7 +165,10 @@ tasks.withType<KspAATask>().configureEach {
     }
 }
 tasks.withType<KotlinCompileCommon>().configureEach {
-    mustRunAfter("openApiGenerate")
+    dependsOn("openApiGenerate")
+}
+tasks.withType<ProcessLibraryArtProfileTask>().configureEach {
+    dependsOn("openApiGenerate")
 }
 tasks.named("compileKotlinMetadata") {
     dependsOn("openApiGenerate")

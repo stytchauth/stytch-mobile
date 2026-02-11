@@ -11,13 +11,22 @@ import org.openapitools.codegen.OpenAPINormalizer
  * "standard" filter, and consumer will use this one. It lives in buildSrc because it needs to be on the buildpath
  * for the gradle plugin to access it
  */
-class StytchOpenAPINormalizer(openAPI: OpenAPI, inputRules: MutableMap<String, String>) : OpenAPINormalizer(openAPI, inputRules) {
-    override fun createFilter(openApi: OpenAPI, filters: String): Filter {
-        return NegatingSupportingFilter(filters)
-    }
+class StytchOpenAPINormalizer(
+    openAPI: OpenAPI,
+    inputRules: MutableMap<String, String>,
+) : OpenAPINormalizer(openAPI, inputRules) {
+    override fun createFilter(
+        openApi: OpenAPI,
+        filters: String,
+    ): Filter = NegatingSupportingFilter(filters)
 
-    private class NegatingSupportingFilter(val filters: String) : Filter(filters) {
-        override fun hasCustomFilterMatch(path: String, operation: Operation): Boolean {
+    private class NegatingSupportingFilter(
+        val filters: String,
+    ) : Filter(filters) {
+        override fun hasCustomFilterMatch(
+            path: String,
+            operation: Operation,
+        ): Boolean {
             val (_, filter) = filters.split("path:")
             if (filter.startsWith("!")) {
                 val pathWeDontWant = filter.removePrefix("!")
