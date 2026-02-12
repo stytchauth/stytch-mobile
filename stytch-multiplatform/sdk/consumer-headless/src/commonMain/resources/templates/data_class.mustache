@@ -66,7 +66,7 @@ import java.io.Serializable
 import {{roomModelPackage}}.{{classname}}RoomModel
 import {{packageName}}.infrastructure.ITransformForStorage
 {{/generateRoomModels}}
-
+import com.stytch.sdk.networking.NetworkModel
 /**
  * {{{description}}}
  *
@@ -102,6 +102,7 @@ import {{packageName}}.infrastructure.ITransformForStorage
 @SerialName(value = {{#lambda.doublequote}}{{{additionalProperties.discriminatorValue}}}{{/lambda.doublequote}})
 {{/additionalProperties.discriminatorValue}}
 {{/multiplatform}}
+@NetworkModel
 {{#nonPublicApi}}internal {{/nonPublicApi}}{{^nonPublicApi}}{{#explicitApi}}public {{/explicitApi}}{{/nonPublicApi}}{{#discriminator}}{{#kotlinx_serialization}}sealed class{{/kotlinx_serialization}}{{#multiplatform}}sealed class{{/multiplatform}}{{^multiplatform}}{{^kotlinx_serialization}}interface{{/kotlinx_serialization}}{{/multiplatform}}{{/discriminator}}{{^discriminator}}{{#hasVars}}data {{/hasVars}}class{{/discriminator}} {{classname}}{{^discriminator}} (
 
 {{#allVars}}
