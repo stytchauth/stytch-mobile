@@ -1,10 +1,10 @@
 package com.stytch.sdk.consumer.data
 
-import com.stytch.sdk.consumer.networking.Session
-import com.stytch.sdk.consumer.networking.User
 import com.stytch.sdk.data.AuthenticationState
 import kotlin.js.JsExport
 import kotlin.js.JsName
+import com.stytch.sdk.consumer.networking.models.ApiSessionV1Session as Session
+import com.stytch.sdk.consumer.networking.models.ApiUserV1User as User
 
 @JsExport
 @JsName("ConsumerAuthenticationState")
