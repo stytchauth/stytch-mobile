@@ -56,66 +56,12 @@ class StytchDtoProcessor(
         try {
             val packageName = requestClass.qualifiedName?.getQualifier() ?: return false
             val fileName = requestClass.simpleName.getShortName().replace("Request", "Parameters")
-            // Filter out blacklisted params and sort them into required/optional
-            val requiredParams = mutableListOf<ParameterSpec>()
-            val optionalParams = mutableListOf<ParameterSpec>()
-            requestClass
-                .getAllProperties()
-                .filter { property -> !BLACKLISTED_REQUEST_PARAMETERS.contains(property.simpleName.getShortName()) }
-                .forEach { property ->
-                    val spec =
-                        ParameterSpec
-                            .builder(
-                                name = property.simpleName.getShortName(),
-                                type = property.type.toTypeName(),
-                                modifiers = property.modifiers.mapNotNull { it.toKModifier() }.toTypedArray(),
-                            )
-                    if (property.type.toTypeName().isNullable) {
-                        spec.defaultValue("null")
-                        optionalParams.add(spec.build())
-                    } else {
-                        requiredParams.add(spec.build())
-                    }
-                }
-            // create the class builder with the primary constructor
-            val classSpec =
-                TypeSpec
-                    .classBuilder(fileName)
-                    .addModifiers(KModifier.PUBLIC)
-                    .addAnnotation(kotlin.js.ExperimentalJsExport::class)
-                    .primaryConstructor(
-                        FunSpec
-                            .constructorBuilder()
-                            .addParameters(requiredParams)
-                            .addParameters(optionalParams)
-                            .build(),
-                    )
-            // create the secondary constructors
-            val secondaryConstructors = mutableListOf<FunSpec>()
-            if (optionalParams.isNotEmpty()) {
-                for (i in optionalParams.size - 1 downTo 0) {
-                    val thisIteration = optionalParams.slice(0..<i)
-                    val nullCount = optionalParams.size - thisIteration.size
-                    val nulls = List(nullCount) { "null" }.joinToString(", ")
-                    val givenParams = (requiredParams + thisIteration)
-                    val spec =
-                        FunSpec
-                            .constructorBuilder()
-                            .addParameters(requiredParams)
-                            .addParameters(thisIteration)
-                            .callThisConstructor(
-                                "${givenParams.joinToString(", ") { it.name }} ${if (givenParams.isEmpty()) "" else ","} $nulls",
-                            ).build()
-                    secondaryConstructors.add(spec)
-                }
-            }
-            // add the secondary constructors
-            classSpec.addFunctions(secondaryConstructors)
-
-            // write the class to a file
+            val classSpec = createClass(requestClass)
+            val dtoMapperSpec = createDtoMapper(requestClass, classSpec)
             FileSpec
                 .builder(packageName, fileName)
-                .addType(classSpec.build())
+                .addType(classSpec)
+                // .addFunction(dtoMapperSpec)
                 .build()
                 .writeTo(codeGenerator, aggregating = true)
             return true
@@ -129,6 +75,89 @@ class StytchDtoProcessor(
         // placeholder for if we need/want to do any response parsing
         return true
     }
+
+    private fun createClass(requestClass: KSClassDeclaration): TypeSpec {
+        val originalClassName = requestClass.simpleName.getShortName()
+        val newClassName = originalClassName.replace("Request", "Parameters")
+        val (requiredParams, optionalParams) = sortParameters(requestClass)
+        return TypeSpec
+            .classBuilder(newClassName)
+            .addModifiers(KModifier.PUBLIC)
+            .addAnnotation(kotlin.js.ExperimentalJsExport::class)
+            .primaryConstructor(
+                FunSpec
+                    .constructorBuilder()
+                    .addParameters(requiredParams)
+                    .addParameters(optionalParams)
+                    .build(),
+            ).addFunctions(generateSecondaryConstructors(requiredParams, optionalParams))
+            // .addFunction(generateNetworkModelMapper(requestClass))
+            .build()
+    }
+
+    private fun sortParameters(requestClass: KSClassDeclaration): List<List<ParameterSpec>> {
+        // Filter out blacklisted params and sort them into required/optional
+        val requiredParams = mutableListOf<ParameterSpec>()
+        val optionalParams = mutableListOf<ParameterSpec>()
+        requestClass
+            .getAllProperties()
+            .filter { property -> !BLACKLISTED_REQUEST_PARAMETERS.contains(property.simpleName.getShortName()) }
+            .forEach { property ->
+                val spec =
+                    ParameterSpec
+                        .builder(
+                            name = property.simpleName.getShortName(),
+                            type = property.type.toTypeName(),
+                            modifiers = property.modifiers.mapNotNull { it.toKModifier() }.toTypedArray(),
+                        )
+                if (property.type.toTypeName().isNullable) {
+                    spec.defaultValue("null")
+                    optionalParams.add(spec.build())
+                } else {
+                    requiredParams.add(spec.build())
+                }
+            }
+        return listOf(requiredParams, optionalParams)
+    }
+
+    private fun generateSecondaryConstructors(
+        requiredParams: List<ParameterSpec>,
+        optionalParams: List<ParameterSpec>,
+    ): List<FunSpec> {
+        val secondaryConstructors = mutableListOf<FunSpec>()
+        if (optionalParams.isNotEmpty()) {
+            for (i in optionalParams.size - 1 downTo 0) {
+                val thisIteration = optionalParams.slice(0..<i)
+                val nullCount = optionalParams.size - thisIteration.size
+                val nulls = List(nullCount) { "null" }.joinToString(", ")
+                val givenParams = (requiredParams + thisIteration)
+                val constructorCall =
+                    buildString {
+                        append(givenParams.joinToString(", ") { it.name })
+                        if (givenParams.isNotEmpty()) {
+                            append(", ")
+                        }
+                        append(nulls)
+                    }
+                val spec =
+                    FunSpec
+                        .constructorBuilder()
+                        .addParameters(requiredParams)
+                        .addParameters(thisIteration)
+                        .callThisConstructor(constructorCall)
+                        .build()
+                secondaryConstructors.add(spec)
+            }
+        }
+        return secondaryConstructors
+    }
+
+    fun generateNetworkModelMapper(networkModelClass: KSClassDeclaration): FunSpec? = null
+
+    fun createDtoMapper(
+        networkModelClass: KSClassDeclaration,
+        dtoClass: TypeSpec,
+    ): FunSpec? = null
 }
 
 class StytchDtoProcessorProvider : SymbolProcessorProvider {
