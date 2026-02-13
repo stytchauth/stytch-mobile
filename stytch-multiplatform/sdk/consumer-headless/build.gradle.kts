@@ -3,7 +3,7 @@
 import com.android.build.api.dsl.androidLibrary
 import com.android.build.gradle.tasks.ProcessLibraryArtProfileTask
 import com.google.devtools.ksp.gradle.KspAATask
-import com.stytch.sdk.utils.StytchPoetTask
+import org.gradle.kotlin.dsl.register
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
@@ -105,7 +105,7 @@ kotlin {
 }
 
 dependencies {
-    // add("kspCommonMainMetadata", project(":buildSrc"))
+    add("kspCommonMainMetadata", project(":buildSrc"))
     add("kspJvm", project(":buildSrc"))
     add("kspJs", project(":buildSrc"))
     add("kspAndroid", project(":buildSrc"))
@@ -185,12 +185,3 @@ tasks.withType<ProcessLibraryArtProfileTask>().configureEach {
 tasks.named("compileKotlinMetadata") {
     dependsOn("openApiGenerate")
 }
-
-val generateDTOs =
-    tasks.register<StytchPoetTask>("generateDtos") {
-        dependsOn("openApiGenerate")
-        inputDir.set(layout.buildDirectory.dir("generated/openapi/src/main/kotlin"))
-        outputDir.set(layout.buildDirectory.dir("generated/stytchpoet/src/main/kotlin"))
-        packageName.set("com.stytch.sdk.consumer.networking.dto")
-        generate()
-    }

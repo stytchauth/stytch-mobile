@@ -1,12 +1,12 @@
 plugins {
     `kotlin-dsl`
-    kotlin("jvm") version "2.3.0" apply false
+    kotlin("jvm") version "2.2.20" apply false
     id("org.openapi.generator") version ("7.19.0")
 }
 
 buildscript {
     dependencies {
-        classpath(kotlin("gradle-plugin", version = "2.3.0"))
+        classpath(kotlin("gradle-plugin", version = "2.2.20"))
     }
 }
 
