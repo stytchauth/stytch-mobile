@@ -1,10 +1,13 @@
 package com.stytch.sdk.consumer.otp
 
 import com.stytch.sdk.consumer.networking.ConsumerNetworkingClient
+import com.stytch.sdk.consumer.networking.models.IOTPsAuthenticateParameters
+import com.stytch.sdk.consumer.networking.models.IOTPsSMSLoginOrCreateParameters
 import com.stytch.sdk.consumer.networking.models.OTPsAuthenticateRequest
 import com.stytch.sdk.consumer.networking.models.OTPsAuthenticateResponse
 import com.stytch.sdk.consumer.networking.models.OTPsSMSLoginOrCreateRequest
 import com.stytch.sdk.consumer.networking.models.OTPsSMSLoginOrCreateResponse
+import com.stytch.sdk.consumer.networking.models.toNetworkModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlin.js.JsExport
@@ -13,12 +16,12 @@ import kotlin.js.JsExport
 public interface OtpClient {
     public val sms: SmsOtpClient
 
-    public suspend fun authenticate(request: OTPsAuthenticateRequest): OTPsAuthenticateResponse
+    public suspend fun authenticate(request: IOTPsAuthenticateParameters): OTPsAuthenticateResponse
 }
 
 @JsExport
 public interface SmsOtpClient {
-    public suspend fun loginOrCreate(request: OTPsSMSLoginOrCreateRequest): OTPsSMSLoginOrCreateResponse
+    public suspend fun loginOrCreate(request: IOTPsSMSLoginOrCreateParameters): OTPsSMSLoginOrCreateResponse
 }
 
 public class OtpImpl private constructor(
@@ -26,10 +29,10 @@ public class OtpImpl private constructor(
 ) : OtpClient {
     override val sms: SmsOtpClient = SmsOtpImpl.create(networkingClient)
 
-    override suspend fun authenticate(request: OTPsAuthenticateRequest): OTPsAuthenticateResponse =
+    override suspend fun authenticate(request: IOTPsAuthenticateParameters): OTPsAuthenticateResponse =
         withContext(Dispatchers.Default) {
             networkingClient.request {
-                networkingClient.api.oTPsAuthenticate(request)
+                networkingClient.api.oTPsAuthenticate(request.toNetworkModel())
             }
         }
 
@@ -41,10 +44,10 @@ public class OtpImpl private constructor(
 public class SmsOtpImpl private constructor(
     private val networkingClient: ConsumerNetworkingClient,
 ) : SmsOtpClient {
-    override suspend fun loginOrCreate(request: OTPsSMSLoginOrCreateRequest): OTPsSMSLoginOrCreateResponse =
+    override suspend fun loginOrCreate(request: IOTPsSMSLoginOrCreateParameters): OTPsSMSLoginOrCreateResponse =
         withContext(Dispatchers.Default) {
             networkingClient.request {
-                networkingClient.api.oTPsSMSLoginOrCreate(request)
+                networkingClient.api.oTPsSMSLoginOrCreate(request.toNetworkModel())
             }
         }
 

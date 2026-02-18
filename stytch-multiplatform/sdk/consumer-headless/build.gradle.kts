@@ -91,7 +91,6 @@ kotlin {
     sourceSets {
         commonMain {
             kotlin.srcDir(layout.buildDirectory.dir("generated/openapi/src/main/kotlin"))
-            kotlin.srcDir(layout.buildDirectory.dir("generated/stytchpoet/src/main/kotlin"))
             dependencies {
                 api("com.stytch.sdk:shared:$version")
                 implementation(libs.kotlinx.coroutines.core)
@@ -106,12 +105,6 @@ kotlin {
 
 dependencies {
     add("kspCommonMainMetadata", project(":buildSrc"))
-    add("kspJvm", project(":buildSrc"))
-    add("kspJs", project(":buildSrc"))
-    add("kspAndroid", project(":buildSrc"))
-    add("kspIosX64", project(":buildSrc"))
-    add("kspIosArm64", project(":buildSrc"))
-    add("kspIosSimulatorArm64", project(":buildSrc"))
 }
 
 ktorfit {

@@ -8,17 +8,20 @@ import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
 import com.google.devtools.ksp.processing.SymbolProcessorProvider
 import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSClassDeclaration
+import com.squareup.kotlinpoet.AnnotationSpec
+import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.KModifier
 import com.squareup.kotlinpoet.ParameterSpec
+import com.squareup.kotlinpoet.PropertySpec
 import com.squareup.kotlinpoet.TypeSpec
 import com.squareup.kotlinpoet.ksp.toKModifier
 import com.squareup.kotlinpoet.ksp.toTypeName
 import com.squareup.kotlinpoet.ksp.writeTo
 import kotlin.collections.toTypedArray
 
-val BLACKLISTED_REQUEST_PARAMETERS =
+val INTERNALLY_MANAGED_PARAMETERS =
     listOf(
         "sessionToken",
         "sessionJwt",
@@ -27,11 +30,14 @@ val BLACKLISTED_REQUEST_PARAMETERS =
         "captchaToken",
         "pkceCodeVerifier",
         "pkceCodeChallenge",
+        "codeChallenge",
+        "codeVerifier",
     )
 
 class StytchDtoProcessor(
     val codeGenerator: CodeGenerator,
     val logger: KSPLogger,
+    val options: Map<String, String>,
 ) : SymbolProcessor {
     override fun process(resolver: Resolver): List<KSAnnotated> {
         val symbols = resolver.getSymbolsWithAnnotation("com.stytch.sdk.networking.NetworkModel")
@@ -55,14 +61,36 @@ class StytchDtoProcessor(
     private fun tryProcessRequest(requestClass: KSClassDeclaration): Boolean {
         try {
             val packageName = requestClass.qualifiedName?.getQualifier() ?: return false
-            val fileName = requestClass.simpleName.getShortName().replace("Request", "Parameters")
-            val classSpec = createClass(requestClass)
-            val dtoMapperSpec = createDtoMapper(requestClass, classSpec)
+            val networkModelName = requestClass.simpleName.getShortName()
+            val dtoName = networkModelName.replace("Request", "Parameters")
+            val interfaceName = "I$dtoName"
+            logger.info("Processing ${requestClass.qualifiedName}")
+            val (requiredParams, optionalParams, internalParams) = sortParameters(requestClass)
             FileSpec
-                .builder(packageName, fileName)
-                .addType(classSpec)
-                // .addFunction(dtoMapperSpec)
-                .build()
+                .builder(packageName, dtoName)
+                .addType(
+                    buildInterface(
+                        interfaceName = interfaceName,
+                        dtoName = dtoName,
+                        requiredParams = requiredParams,
+                        optionalParams = optionalParams,
+                    ),
+                ).addType(
+                    buildImplementingClass(
+                        packageName = packageName,
+                        dtoName = dtoName,
+                        requiredParams = requiredParams,
+                        optionalParams = optionalParams,
+                    ),
+                ).addFunction(
+                    buildDtoToNetworkModelMapper(
+                        packageName = packageName,
+                        interfaceName = interfaceName,
+                        networkModelName = networkModelName,
+                        publicParams = (requiredParams + optionalParams),
+                        internalParams = internalParams,
+                    ),
+                ).build()
                 .writeTo(codeGenerator, aggregating = true)
             return true
         } catch (e: Exception) {
@@ -76,32 +104,66 @@ class StytchDtoProcessor(
         return true
     }
 
-    private fun createClass(requestClass: KSClassDeclaration): TypeSpec {
-        val originalClassName = requestClass.simpleName.getShortName()
-        val newClassName = originalClassName.replace("Request", "Parameters")
-        val (requiredParams, optionalParams) = sortParameters(requestClass)
-        return TypeSpec
-            .classBuilder(newClassName)
-            .addModifiers(KModifier.PUBLIC)
-            .addAnnotation(kotlin.js.ExperimentalJsExport::class)
-            .primaryConstructor(
-                FunSpec
-                    .constructorBuilder()
-                    .addParameters(requiredParams)
-                    .addParameters(optionalParams)
+    private fun buildInterface(
+        interfaceName: String,
+        dtoName: String,
+        requiredParams: List<ParameterSpec>,
+        optionalParams: List<ParameterSpec>,
+    ): TypeSpec {
+        val typeSpec =
+            TypeSpec
+                .interfaceBuilder(interfaceName)
+                .addModifiers(KModifier.PUBLIC)
+                .addAnnotation(ClassName("kotlin.js", "JsExport"))
+                .addAnnotation(AnnotationSpec.builder(ClassName("kotlin.js", "JsName")).addMember("\"$dtoName\"").build())
+        (requiredParams + optionalParams).forEach {
+            typeSpec.addProperty(PropertySpec.builder(it.name, it.type).build())
+        }
+        return typeSpec.build()
+    }
+
+    private fun buildImplementingClass(
+        packageName: String,
+        dtoName: String,
+        requiredParams: List<ParameterSpec>,
+        optionalParams: List<ParameterSpec>,
+    ): TypeSpec {
+        val typeSpec =
+            TypeSpec
+                .classBuilder(dtoName)
+                .addModifiers(KModifier.PUBLIC)
+                .primaryConstructor(
+                    FunSpec
+                        .constructorBuilder()
+                        .addParameters(requiredParams)
+                        .addParameters(optionalParams)
+                        .build(),
+                ).addFunctions(
+                    generateSecondaryConstructors(
+                        requiredParams = requiredParams,
+                        optionalParams = optionalParams,
+                    ),
+                )
+        (requiredParams + optionalParams).forEach {
+            typeSpec.addProperty(
+                PropertySpec
+                    .builder(it.name, it.type)
+                    .initializer(it.name)
+                    .addModifiers(KModifier.OVERRIDE)
                     .build(),
-            ).addFunctions(generateSecondaryConstructors(requiredParams, optionalParams))
-            // .addFunction(generateNetworkModelMapper(requestClass))
-            .build()
+            )
+        }
+        typeSpec.addSuperinterface(ClassName(packageName, "I$dtoName"))
+        return typeSpec.build()
     }
 
     private fun sortParameters(requestClass: KSClassDeclaration): List<List<ParameterSpec>> {
-        // Filter out blacklisted params and sort them into required/optional
+        // Filter out blacklisted params and sort them into required/optional/internal
         val requiredParams = mutableListOf<ParameterSpec>()
         val optionalParams = mutableListOf<ParameterSpec>()
+        val internalParams = mutableListOf<ParameterSpec>()
         requestClass
             .getAllProperties()
-            .filter { property -> !BLACKLISTED_REQUEST_PARAMETERS.contains(property.simpleName.getShortName()) }
             .forEach { property ->
                 val spec =
                     ParameterSpec
@@ -112,12 +174,18 @@ class StytchDtoProcessor(
                         )
                 if (property.type.toTypeName().isNullable) {
                     spec.defaultValue("null")
-                    optionalParams.add(spec.build())
+                }
+                if (INTERNALLY_MANAGED_PARAMETERS.contains(property.simpleName.getShortName())) {
+                    internalParams.add(spec.build())
                 } else {
-                    requiredParams.add(spec.build())
+                    if (property.type.toTypeName().isNullable) {
+                        optionalParams.add(spec.build())
+                    } else {
+                        requiredParams.add(spec.build())
+                    }
                 }
             }
-        return listOf(requiredParams, optionalParams)
+        return listOf(requiredParams, optionalParams, internalParams)
     }
 
     private fun generateSecondaryConstructors(
@@ -152,15 +220,29 @@ class StytchDtoProcessor(
         return secondaryConstructors
     }
 
-    fun generateNetworkModelMapper(networkModelClass: KSClassDeclaration): FunSpec? = null
-
-    fun createDtoMapper(
-        networkModelClass: KSClassDeclaration,
-        dtoClass: TypeSpec,
-    ): FunSpec? = null
+    fun buildDtoToNetworkModelMapper(
+        packageName: String,
+        interfaceName: String,
+        networkModelName: String,
+        publicParams: List<ParameterSpec>,
+        internalParams: List<ParameterSpec>,
+    ): FunSpec {
+        val spec =
+            FunSpec
+                .builder("toNetworkModel")
+                .addParameters(internalParams)
+                .receiver(ClassName(packageName, interfaceName))
+                .returns(ClassName(packageName, networkModelName))
+                .addStatement(
+                    "return $networkModelName(\n\t${(publicParams + internalParams).joinToString(
+                        ",\n\t" ,
+                    ) { "${it.name} = ${it.name}" }}\n)",
+                )
+        return spec.build()
+    }
 }
 
 class StytchDtoProcessorProvider : SymbolProcessorProvider {
     override fun create(environment: SymbolProcessorEnvironment): SymbolProcessor =
-        StytchDtoProcessor(environment.codeGenerator, environment.logger)
+        StytchDtoProcessor(environment.codeGenerator, environment.logger, environment.options)
 }
