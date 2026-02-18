@@ -1,10 +1,12 @@
 @file:OptIn(ExperimentalKotlinGradlePluginApi::class)
 
 import com.android.build.api.dsl.androidLibrary
+import com.android.build.gradle.tasks.ProcessLibraryArtProfileTask
+import com.google.devtools.ksp.gradle.KspAATask
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
-import kotlin.collections.listOf
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompileCommon
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -14,6 +16,7 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.skie)
     id("maven-publish")
+    alias(libs.plugins.openapi)
 }
 
 group = rootProject.group
@@ -85,13 +88,16 @@ kotlin {
     jvm()
 
     sourceSets {
-        commonMain.dependencies {
-            api("com.stytch.sdk:shared:$version")
-            implementation(libs.kotlinx.coroutines.core)
-            implementation(libs.kotlinx.datetime)
-            implementation(libs.ktorfit.lib.light)
-            implementation(libs.kotlinx.serialization.json)
-            implementation(libs.skie.configuration.annotations)
+        commonMain {
+            kotlin.srcDir(layout.buildDirectory.dir("generated/openapi/src/main/kotlin"))
+            dependencies {
+                api("com.stytch.sdk:shared:$version")
+                implementation(libs.kotlinx.coroutines.core)
+                implementation(libs.kotlinx.datetime)
+                implementation(libs.ktorfit.lib.light)
+                implementation(libs.kotlinx.serialization.json)
+                implementation(libs.skie.configuration.annotations)
+            }
         }
     }
 }
@@ -106,4 +112,64 @@ tasks.named("sourcesJar").configure {
 
 skie {
     isEnabled = true
+}
+
+val generatedSourcesPath = "$buildDir/generated/openapi"
+val apiDescriptionFile = "$projectDir/src/commonMain/resources/openapi.yml"
+openApiGenerate {
+    verbose.set(false)
+    validateSpec.set(false)
+    skipValidateSpec.set(true)
+    generateApiTests.set(false)
+    generateModelTests.set(false)
+    generateApiDocumentation.set(false)
+    generateModelDocumentation.set(false)
+    generatorName.set("kotlin")
+    inputSpec.set(apiDescriptionFile)
+    outputDir.set(generatedSourcesPath)
+    apiPackage.set("com.stytch.sdk.consumer.networking.api")
+    modelPackage.set("com.stytch.sdk.consumer.networking.models")
+    templateDir.set("$projectDir/src/commonMain/resources/templates")
+    configOptions.set(
+        mapOf(
+            "library" to "jvm-retrofit2",
+            "explicitApi" to "true",
+            "sortParamsByRequiredFlag" to "true",
+            "omitGradleWrapper" to "true",
+        ),
+    )
+    additionalProperties.set(
+        mapOf(
+            "dateLibrary" to "kotlinx-datetime",
+            "serializationLibrary" to "kotlinx_serialization",
+            "useCoroutines" to "true",
+        ),
+    )
+    openapiNormalizer.set(
+        mapOf(
+            "NORMALIZER_CLASS" to "com.stytch.sdk.utils.StytchOpenAPINormalizer",
+            "FILTER" to "path:!/b2b/",
+        ),
+    )
+    globalProperties.set(
+        mapOf(
+            "models" to "",
+            "apis" to "",
+        ),
+    )
+}
+
+tasks.withType<KspAATask>().configureEach {
+    if (name != "openApiGenerate") {
+        dependsOn("openApiGenerate")
+    }
+}
+tasks.withType<KotlinCompileCommon>().configureEach {
+    dependsOn("openApiGenerate")
+}
+tasks.withType<ProcessLibraryArtProfileTask>().configureEach {
+    dependsOn("openApiGenerate")
+}
+tasks.named("compileKotlinMetadata") {
+    dependsOn("openApiGenerate")
 }

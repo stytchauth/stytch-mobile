@@ -10,6 +10,7 @@ serialization-json = "1.9.0"
 kotlinx-coroutines = "1.10.2"
 buildconfig = "6.0.7"
 skie = "0.10.9"
+openapi = "7.19.0"
 
 [libraries]
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization-json"}
@@ -27,3 +28,4 @@ kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", versi
 android-lint = { id = "com.android.lint", version.ref = "agp" }
 buildconfig = { id = "com.github.gmazzo.buildconfig", version.ref = "buildconfig" }
 skie = { id = "co.touchlab.skie", version.ref = "skie" }
+openapi = { id = "org.openapi.generator", version.ref = "openapi" }

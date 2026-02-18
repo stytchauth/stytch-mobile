@@ -3,8 +3,6 @@ package com.stytch.sdk.consumer
 import com.stytch.sdk.StytchAuthenticationStateManager
 import com.stytch.sdk.consumer.data.ConsumerAuthenticationState
 import com.stytch.sdk.consumer.networking.AuthenticatedResponse
-import com.stytch.sdk.consumer.networking.Session
-import com.stytch.sdk.consumer.networking.User
 import com.stytch.sdk.data.StytchDispatchers
 import com.stytch.sdk.persistence.StytchPersistenceClient
 import kotlinx.coroutines.CoroutineScope
@@ -17,6 +15,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import com.stytch.sdk.consumer.networking.models.ApiSessionV1Session as Session
+import com.stytch.sdk.consumer.networking.models.ApiUserV1User as User
 
 internal class StytchConsumerAuthenticationStateManager(
     private val dispatchers: StytchDispatchers,

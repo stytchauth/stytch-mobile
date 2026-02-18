@@ -46,7 +46,7 @@ buildAndPublishSharedSdkFirst() {
 buildAndCopyAndroid() {
     cd $MAIN_WORKING_DIR
     echo "Building android artifact..."
-    ./gradlew clean :sdk:consumer-headless:publishToMavenLocal :sdk:consumer-extensions:publishToMavenLocal
+    ./gradlew clean :sdk:consumer-headless:publishToMavenLocal
 }
 
 buildAndCopyIos() {

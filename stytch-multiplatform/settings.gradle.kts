@@ -34,4 +34,3 @@ plugins {
 }
 
 include(":sdk:consumer-headless")
-include(":sdk:consumer-extensions")
