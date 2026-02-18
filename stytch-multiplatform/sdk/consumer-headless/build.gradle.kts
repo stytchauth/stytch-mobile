@@ -91,6 +91,7 @@ kotlin {
     sourceSets {
         commonMain {
             kotlin.srcDir(layout.buildDirectory.dir("generated/openapi/src/main/kotlin"))
+            kotlin.srcDir(layout.buildDirectory.dir("generated/ksp/metadata/commonMain/src/main/kotlin"))
             dependencies {
                 api("com.stytch.sdk:shared:$version")
                 implementation(libs.kotlinx.coroutines.core)
