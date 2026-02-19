@@ -1,7 +1,9 @@
 package com.stytch.sdk.consumer.session
 
 import com.stytch.sdk.consumer.networking.ConsumerNetworkingClient
+import com.stytch.sdk.consumer.networking.models.ISessionsAttestParameters
 import com.stytch.sdk.consumer.networking.models.ISessionsAuthenticateParameters
+import com.stytch.sdk.consumer.networking.models.SessionsAttestResponse
 import com.stytch.sdk.consumer.networking.models.SessionsAuthenticateResponse
 import com.stytch.sdk.consumer.networking.models.SessionsRevokeResponse
 import com.stytch.sdk.consumer.networking.models.toNetworkModel
@@ -15,6 +17,8 @@ public interface SessionClient {
     public suspend fun authenticate(request: ISessionsAuthenticateParameters): SessionsAuthenticateResponse
 
     public suspend fun revoke(): SessionsRevokeResponse
+
+    public suspend fun attest(request: ISessionsAttestParameters): SessionsAttestResponse
 }
 
 internal class SessionImpl(
@@ -33,5 +37,10 @@ internal class SessionImpl(
             networkingClient.request {
                 networkingClient.api.sessionsRevoke()
             }
+        }
+
+    override suspend fun attest(request: ISessionsAttestParameters): SessionsAttestResponse =
+        withContext(dispatchers.ioDispatcher) {
+            networkingClient.request { networkingClient.api.sessionsAttest(request.toNetworkModel()) }
         }
 }

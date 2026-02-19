@@ -65,7 +65,7 @@ internal class DefaultStytchConsumer(
 
     override val authenticationStateFlow: StateFlow<ConsumerAuthenticationState> = sessionManager.authenticationStateFlow
 
-    override fun authenticationStateObserver(callback: (authenticatonState: ConsumerAuthenticationState) -> Unit): JsCleanup {
+    override fun authenticationStateObserver(callback: (authenticationState: ConsumerAuthenticationState) -> Unit): JsCleanup {
         val job =
             CoroutineScope(dispatchers.mainDispatcher).launch {
                 authenticationStateFlow.collect { callback(it) }
@@ -78,7 +78,7 @@ internal class DefaultStytchConsumer(
     }
 
     init {
-        CoroutineScope(Dispatchers.Default).launch {
+        CoroutineScope(dispatchers.ioDispatcher).launch {
             networkingClient.refreshBootStrapData()
         }
     }
