@@ -22,4 +22,12 @@ public actual class StytchEncryptionClient {
     public actual fun deleteKey() {
         StytchBridge.deleteKey()
     }
+
+    public actual fun generateCodeVerifier(): String {
+        TODO("Not yet implemented")
+    }
+
+    public actual fun generateCodeChallenge(codeVerifier: String): String {
+        TODO("Not yet implemented")
+    }
 }

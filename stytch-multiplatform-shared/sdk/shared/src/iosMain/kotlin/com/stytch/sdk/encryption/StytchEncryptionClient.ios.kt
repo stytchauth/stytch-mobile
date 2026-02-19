@@ -29,6 +29,14 @@ public actual class StytchEncryptionClient {
     public actual fun deleteKey() {
         swiftEncryptionManager.deleteEncryptionKeyWithName(STYTCH_MASTER_KEY_ALIAS)
     }
+
+    public actual fun generateCodeVerifier(): String {
+        TODO("Not yet implemented")
+    }
+
+    public actual fun generateCodeChallenge(codeVerifier: String): String {
+        TODO("Not yet implemented")
+    }
 }
 
 @OptIn(ExperimentalForeignApi::class)

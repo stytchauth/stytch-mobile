@@ -4,6 +4,8 @@ import com.stytch.sdk.StytchClient
 import com.stytch.sdk.consumer.crypto.CryptoClient
 import com.stytch.sdk.consumer.crypto.CryptoClientImpl
 import com.stytch.sdk.consumer.data.ConsumerAuthenticationState
+import com.stytch.sdk.consumer.magicLinks.MagicLinksClient
+import com.stytch.sdk.consumer.magicLinks.MagicLinksImpl
 import com.stytch.sdk.consumer.networking.ConsumerNetworkingClient
 import com.stytch.sdk.consumer.otp.OtpClient
 import com.stytch.sdk.consumer.otp.OtpImpl
@@ -14,6 +16,7 @@ import com.stytch.sdk.data.StytchClientConfiguration
 import com.stytch.sdk.data.StytchClientConfigurationInternal
 import com.stytch.sdk.data.StytchDispatchers
 import com.stytch.sdk.persistence.StytchPersistenceClient
+import com.stytch.sdk.pkce.PKCEClient
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.StateFlow
@@ -28,6 +31,9 @@ public interface StytchConsumer : StytchClient {
     public val otp: OtpClient
     public val session: SessionClient
     public val crypto: CryptoClient
+
+    public val magicLinks: MagicLinksClient
+
     public val authenticationStateFlow: StateFlow<ConsumerAuthenticationState>
 
     @JsName("authenticationStateObserver")
@@ -57,11 +63,15 @@ internal class DefaultStytchConsumer(
 
     private val networkingClient = ConsumerNetworkingClient(configuration, dispatchers, sessionManager)
 
+    private val pkceClient = PKCEClient(persistenceClient)
+
     override val otp: OtpClient = OtpImpl.create(dispatchers, networkingClient)
 
     override val session: SessionClient = SessionImpl(dispatchers, networkingClient)
 
     override val crypto: CryptoClient = CryptoClientImpl(dispatchers, networkingClient, sessionManager)
+
+    override val magicLinks: MagicLinksClient = MagicLinksImpl(dispatchers, networkingClient, pkceClient, sessionManager)
 
     override val authenticationStateFlow: StateFlow<ConsumerAuthenticationState> = sessionManager.authenticationStateFlow
 
