@@ -2,14 +2,12 @@ package com.stytch.sdk.consumer.session
 
 import com.stytch.sdk.consumer.networking.ConsumerNetworkingClient
 import com.stytch.sdk.consumer.networking.models.ISessionsAuthenticateParameters
-import com.stytch.sdk.consumer.networking.models.SessionsAuthenticateRequest
 import com.stytch.sdk.consumer.networking.models.SessionsAuthenticateResponse
 import com.stytch.sdk.consumer.networking.models.SessionsRevokeResponse
 import com.stytch.sdk.consumer.networking.models.toNetworkModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlin.js.JsExport
-import kotlin.js.JsName
 
 @JsExport
 public interface SessionClient {

@@ -3,9 +3,7 @@ package com.stytch.sdk.consumer.otp
 import com.stytch.sdk.consumer.networking.ConsumerNetworkingClient
 import com.stytch.sdk.consumer.networking.models.IOTPsAuthenticateParameters
 import com.stytch.sdk.consumer.networking.models.IOTPsSMSLoginOrCreateParameters
-import com.stytch.sdk.consumer.networking.models.OTPsAuthenticateRequest
 import com.stytch.sdk.consumer.networking.models.OTPsAuthenticateResponse
-import com.stytch.sdk.consumer.networking.models.OTPsSMSLoginOrCreateRequest
 import com.stytch.sdk.consumer.networking.models.OTPsSMSLoginOrCreateResponse
 import com.stytch.sdk.consumer.networking.models.toNetworkModel
 import kotlinx.coroutines.Dispatchers

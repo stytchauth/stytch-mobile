@@ -1,6 +1,8 @@
 package com.stytch.sdk.consumer
 
 import com.stytch.sdk.StytchClient
+import com.stytch.sdk.consumer.crypto.CryptoClient
+import com.stytch.sdk.consumer.crypto.CryptoClientImpl
 import com.stytch.sdk.consumer.data.ConsumerAuthenticationState
 import com.stytch.sdk.consumer.networking.ConsumerNetworkingClient
 import com.stytch.sdk.consumer.otp.OtpClient
@@ -25,6 +27,7 @@ import kotlin.js.JsName
 public interface StytchConsumer : StytchClient {
     public val otp: OtpClient
     public val session: SessionClient
+    public val crypto: CryptoClient
     public val authenticationStateFlow: StateFlow<ConsumerAuthenticationState>
 
     @JsName("authenticationStateObserver")
@@ -57,6 +60,8 @@ internal class DefaultStytchConsumer(
     override val otp: OtpClient = OtpImpl.create(networkingClient)
 
     override val session: SessionClient = SessionImpl(networkingClient)
+
+    override val crypto: CryptoClient = CryptoClientImpl(networkingClient, sessionManager)
 
     override val authenticationStateFlow: StateFlow<ConsumerAuthenticationState> = sessionManager.authenticationStateFlow
 

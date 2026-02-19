@@ -32,6 +32,8 @@ val INTERNALLY_MANAGED_PARAMETERS =
         "pkceCodeChallenge",
         "codeChallenge",
         "codeVerifier",
+        "signature",
+        "biometricRegistrationId",
     )
 
 class StytchDtoProcessor(
