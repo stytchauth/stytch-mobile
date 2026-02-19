@@ -5,6 +5,7 @@ import com.stytch.sdk.consumer.networking.models.ISessionsAuthenticateParameters
 import com.stytch.sdk.consumer.networking.models.SessionsAuthenticateResponse
 import com.stytch.sdk.consumer.networking.models.SessionsRevokeResponse
 import com.stytch.sdk.consumer.networking.models.toNetworkModel
+import com.stytch.sdk.data.StytchDispatchers
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlin.js.JsExport
@@ -17,17 +18,18 @@ public interface SessionClient {
 }
 
 internal class SessionImpl(
+    private val dispatchers: StytchDispatchers,
     private val networkingClient: ConsumerNetworkingClient,
 ) : SessionClient {
     override suspend fun authenticate(request: ISessionsAuthenticateParameters): SessionsAuthenticateResponse =
-        withContext(Dispatchers.Default) {
+        withContext(dispatchers.ioDispatcher) {
             networkingClient.request {
                 networkingClient.api.sessionsAuthenticate(request.toNetworkModel())
             }
         }
 
     override suspend fun revoke(): SessionsRevokeResponse =
-        withContext(Dispatchers.Default) {
+        withContext(dispatchers.ioDispatcher) {
             networkingClient.request {
                 networkingClient.api.sessionsRevoke()
             }

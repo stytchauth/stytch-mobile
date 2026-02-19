@@ -6,7 +6,7 @@ import com.stytch.sdk.consumer.networking.models.CryptoWalletsAuthenticateReques
 import com.stytch.sdk.consumer.networking.models.CryptoWalletsAuthenticateResponse
 import com.stytch.sdk.consumer.networking.models.CryptoWalletsAuthenticateStartSecondaryRequest
 import com.stytch.sdk.consumer.networking.models.ICryptoWalletsAuthenticateParameters
-import kotlinx.coroutines.Dispatchers
+import com.stytch.sdk.data.StytchDispatchers
 import kotlinx.coroutines.withContext
 import kotlin.js.JsExport
 
@@ -19,6 +19,7 @@ public interface CryptoClient {
 }
 
 internal class CryptoClientImpl(
+    private val dispatchers: StytchDispatchers,
     private val networkingClient: ConsumerNetworkingClient,
     private val authenticationStateManager: StytchConsumerAuthenticationStateManager,
 ) : CryptoClient {
@@ -26,7 +27,7 @@ internal class CryptoClientImpl(
         request: ICryptoWalletsAuthenticateParameters,
         signChallenge: suspend (String) -> String,
     ): CryptoWalletsAuthenticateResponse =
-        withContext(Dispatchers.Default) {
+        withContext(dispatchers.ioDispatcher) {
             networkingClient.request {
                 val challenge =
                     if (authenticationStateManager.currentSessionToken.isNullOrEmpty()) {
@@ -50,7 +51,10 @@ internal class CryptoClientImpl(
                     CryptoWalletsAuthenticateRequest(
                         cryptoWalletType = request.cryptoWalletType,
                         cryptoWalletAddress = request.cryptoWalletAddress,
-                        signature = signChallenge(challenge),
+                        signature =
+                            withContext(dispatchers.mainDispatcher) {
+                                signChallenge(challenge)
+                            },
                         sessionDurationMinutes = request.sessionDurationMinutes,
                     ),
                 )

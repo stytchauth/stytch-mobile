@@ -57,11 +57,11 @@ internal class DefaultStytchConsumer(
 
     private val networkingClient = ConsumerNetworkingClient(configuration, dispatchers, sessionManager)
 
-    override val otp: OtpClient = OtpImpl.create(networkingClient)
+    override val otp: OtpClient = OtpImpl.create(dispatchers, networkingClient)
 
-    override val session: SessionClient = SessionImpl(networkingClient)
+    override val session: SessionClient = SessionImpl(dispatchers, networkingClient)
 
-    override val crypto: CryptoClient = CryptoClientImpl(networkingClient, sessionManager)
+    override val crypto: CryptoClient = CryptoClientImpl(dispatchers, networkingClient, sessionManager)
 
     override val authenticationStateFlow: StateFlow<ConsumerAuthenticationState> = sessionManager.authenticationStateFlow
 

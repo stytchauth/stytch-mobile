@@ -6,6 +6,7 @@ import com.stytch.sdk.consumer.networking.models.IOTPsSMSLoginOrCreateParameters
 import com.stytch.sdk.consumer.networking.models.OTPsAuthenticateResponse
 import com.stytch.sdk.consumer.networking.models.OTPsSMSLoginOrCreateResponse
 import com.stytch.sdk.consumer.networking.models.toNetworkModel
+import com.stytch.sdk.data.StytchDispatchers
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlin.js.JsExport
@@ -23,33 +24,41 @@ public interface SmsOtpClient {
 }
 
 public class OtpImpl private constructor(
+    private val dispatchers: StytchDispatchers,
     private val networkingClient: ConsumerNetworkingClient,
 ) : OtpClient {
-    override val sms: SmsOtpClient = SmsOtpImpl.create(networkingClient)
+    override val sms: SmsOtpClient = SmsOtpImpl.create(dispatchers, networkingClient)
 
     override suspend fun authenticate(request: IOTPsAuthenticateParameters): OTPsAuthenticateResponse =
-        withContext(Dispatchers.Default) {
+        withContext(dispatchers.ioDispatcher) {
             networkingClient.request {
                 networkingClient.api.oTPsAuthenticate(request.toNetworkModel())
             }
         }
 
     internal companion object {
-        fun create(networkingClient: ConsumerNetworkingClient): OtpImpl = OtpImpl(networkingClient)
+        fun create(
+            dispatchers: StytchDispatchers,
+            networkingClient: ConsumerNetworkingClient,
+        ): OtpImpl = OtpImpl(dispatchers, networkingClient)
     }
 }
 
 public class SmsOtpImpl private constructor(
+    private val dispatchers: StytchDispatchers,
     private val networkingClient: ConsumerNetworkingClient,
 ) : SmsOtpClient {
     override suspend fun loginOrCreate(request: IOTPsSMSLoginOrCreateParameters): OTPsSMSLoginOrCreateResponse =
-        withContext(Dispatchers.Default) {
+        withContext(dispatchers.ioDispatcher) {
             networkingClient.request {
                 networkingClient.api.oTPsSMSLoginOrCreate(request.toNetworkModel())
             }
         }
 
     internal companion object {
-        fun create(networkingClient: ConsumerNetworkingClient): SmsOtpImpl = SmsOtpImpl(networkingClient)
+        fun create(
+            dispatchers: StytchDispatchers,
+            networkingClient: ConsumerNetworkingClient,
+        ): SmsOtpImpl = SmsOtpImpl(dispatchers, networkingClient)
     }
 }
