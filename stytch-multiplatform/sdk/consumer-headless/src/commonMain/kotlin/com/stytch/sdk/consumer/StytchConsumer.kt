@@ -65,7 +65,7 @@ internal class DefaultStytchConsumer(
 
     private val pkceClient = PKCEClient(persistenceClient)
 
-    override val otp: OtpClient = OtpImpl.create(dispatchers, networkingClient)
+    override val otp: OtpClient = OtpImpl(dispatchers, networkingClient, sessionManager)
 
     override val session: SessionClient = SessionImpl(dispatchers, networkingClient)
 
