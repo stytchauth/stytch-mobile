@@ -86,11 +86,11 @@ public actual class StytchEncryptionClient(
         private const val GCM_IV_LENGTH = 12
     }
 
-    public actual fun generateCodeVerifier(): String {
+    public actual fun generateCodeVerifier(): ByteArray {
         TODO("Not yet implemented")
     }
 
-    public actual fun generateCodeChallenge(codeVerifier: String): String {
+    public actual fun generateCodeChallenge(codeVerifier: ByteArray): ByteArray {
         TODO("Not yet implemented")
     }
 }

@@ -10,9 +10,9 @@ public expect class StytchEncryptionClient {
 
     public fun deleteKey()
 
-    public fun generateCodeVerifier(): String
+    public fun generateCodeVerifier(): ByteArray
 
-    public fun generateCodeChallenge(codeVerifier: String): String
+    public fun generateCodeChallenge(codeVerifier: ByteArray): ByteArray
 }
 
 internal const val STYTCH_MASTER_KEY_ALIAS = "StytchMobileMasterKey"

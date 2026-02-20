@@ -3,7 +3,6 @@ package com.stytch.sdk.encryption
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import io.ktor.util.decodeBase64Bytes
-import io.ktor.util.encodeBase64
 import java.security.KeyStore
 import java.security.MessageDigest
 import java.security.SecureRandom
@@ -78,15 +77,14 @@ public actual class StytchEncryptionClient {
         private const val GCM_IV_LENGTH = 12
     }
 
-    public actual fun generateCodeVerifier(): String {
+    public actual fun generateCodeVerifier(): ByteArray {
         val randomBytes = ByteArray(32)
         SecureRandom().nextBytes(randomBytes)
-        return randomBytes.encodeBase64()
+        return randomBytes
     }
 
-    public actual fun generateCodeChallenge(codeVerifier: String): String {
+    public actual fun generateCodeChallenge(codeVerifier: ByteArray): ByteArray {
         val md = MessageDigest.getInstance("SHA-256")
-        val digest = md.digest(codeVerifier.decodeBase64Bytes())
-        return digest.fold("") { str, byte -> str + "%02x".format(byte) }.encodeBase64()
+        return md.digest(codeVerifier)
     }
 }

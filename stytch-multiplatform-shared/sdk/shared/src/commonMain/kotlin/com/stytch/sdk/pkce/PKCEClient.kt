@@ -1,19 +1,27 @@
 package com.stytch.sdk.pkce
 
 import com.stytch.sdk.data.PKCECodePair
+import com.stytch.sdk.encryption.StytchEncryptionClient
 import com.stytch.sdk.persistence.StytchPersistenceClient
+import io.ktor.util.encodeBase64
 
 public class PKCEClient(
+    private val encryptionClient: StytchEncryptionClient,
     private val persistenceClient: StytchPersistenceClient,
 ) {
     public fun create(): PKCECodePair {
-        val codeVerifier = persistenceClient.encryptionClient.generateCodeVerifier()
-        val codeChallenge = persistenceClient.encryptionClient.generateCodeChallenge(codeVerifier)
+        val codeVerifierData = encryptionClient.generateCodeVerifier()
+        val codeVerifierString = codeVerifierData.encodeBase64()
+        val codeChallenge =
+            encryptionClient
+                .generateCodeChallenge(codeVerifierData)
+                .joinToString("") { it.toInt().toString(16).padStart(2, '0') }
+                .encodeBase64()
         persistenceClient.save(PKCE_CODE_CHALLENGE_KEY, codeChallenge)
-        persistenceClient.save(PKCE_CODE_VERIFIER_KEY, codeVerifier)
+        persistenceClient.save(PKCE_CODE_VERIFIER_KEY, codeVerifierString)
         return PKCECodePair(
             challenge = codeChallenge,
-            verifier = codeVerifier,
+            verifier = codeVerifierString,
         )
     }
 
