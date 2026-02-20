@@ -11,6 +11,8 @@ import com.stytch.sdk.consumer.otp.OtpClient
 import com.stytch.sdk.consumer.otp.OtpImpl
 import com.stytch.sdk.consumer.session.SessionClient
 import com.stytch.sdk.consumer.session.SessionImpl
+import com.stytch.sdk.consumer.totp.TOTPClient
+import com.stytch.sdk.consumer.totp.TOTPClientImpl
 import com.stytch.sdk.data.JsCleanup
 import com.stytch.sdk.data.StytchClientConfiguration
 import com.stytch.sdk.data.StytchClientConfigurationInternal
@@ -33,6 +35,8 @@ public interface StytchConsumer : StytchClient {
     public val crypto: CryptoClient
 
     public val magicLinks: MagicLinksClient
+
+    public val totp: TOTPClient
 
     public val authenticationStateFlow: StateFlow<ConsumerAuthenticationState>
 
@@ -72,6 +76,8 @@ internal class DefaultStytchConsumer(
     override val crypto: CryptoClient = CryptoClientImpl(dispatchers, networkingClient, sessionManager)
 
     override val magicLinks: MagicLinksClient = MagicLinksImpl(dispatchers, networkingClient, pkceClient, sessionManager)
+
+    override val totp: TOTPClient = TOTPClientImpl(dispatchers, networkingClient)
 
     override val authenticationStateFlow: StateFlow<ConsumerAuthenticationState> = sessionManager.authenticationStateFlow
 
