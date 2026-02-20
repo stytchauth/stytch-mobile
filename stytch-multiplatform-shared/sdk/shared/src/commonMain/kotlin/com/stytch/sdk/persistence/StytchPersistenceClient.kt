@@ -13,39 +13,32 @@ public class StytchPersistenceClient(
     public val encryptionClient: StytchEncryptionClient,
     public val platformPersistenceClient: StytchPlatformPersistenceClient,
 ) {
-    public suspend inline fun <reified T> save(
+    public inline fun <reified T> save(
         key: String,
         data: T?,
     ): Unit =
-        withContext(dispatcher) {
-            data?.let { plaintext ->
-                val plaintextAsString = Json.encodeToString(plaintext)
-                val encrypted = encryptionClient.encrypt(plaintextAsString.toByteArray())
-                val encoded = encrypted.encodeBase64()
-                platformPersistenceClient.saveData(key, encoded)
-            } ?: remove(key)
-        }
+        data?.let { plaintext ->
+            val plaintextAsString = Json.encodeToString(plaintext)
+            val encrypted = encryptionClient.encrypt(plaintextAsString.toByteArray())
+            val encoded = encrypted.encodeBase64()
+            platformPersistenceClient.saveData(key, encoded)
+        } ?: remove(key)
 
-    public suspend inline fun <reified T> get(
+    public inline fun <reified T> get(
         key: String,
         default: T?,
     ): T? =
-        withContext(dispatcher) {
-            return@withContext platformPersistenceClient.getData(key)?.let { encoded ->
-                try {
-                    val decoded = encoded.decodeBase64Bytes()
-                    val decrypted = encryptionClient.decrypt(decoded).decodeToString()
-                    Json.decodeFromString<T>(decrypted)
-                } catch (_: Exception) {
-                    // malformed data, nuke it
-                    remove(key)
-                    null
-                }
-            } ?: default
-        }
+        platformPersistenceClient.getData(key)?.let { encoded ->
+            try {
+                val decoded = encoded.decodeBase64Bytes()
+                val decrypted = encryptionClient.decrypt(decoded).decodeToString()
+                Json.decodeFromString<T>(decrypted)
+            } catch (_: Exception) {
+                // malformed data, nuke it
+                remove(key)
+                null
+            }
+        } ?: default
 
-    public suspend fun remove(key: String): Unit =
-        withContext(dispatcher) {
-            platformPersistenceClient.removeData(key)
-        }
+    public fun remove(key: String): Unit = platformPersistenceClient.removeData(key)
 }

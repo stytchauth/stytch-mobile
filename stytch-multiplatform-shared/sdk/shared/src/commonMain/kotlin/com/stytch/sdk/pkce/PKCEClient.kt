@@ -9,8 +9,8 @@ public class PKCEClient(
     public fun create(): PKCECodePair {
         val codeVerifier = persistenceClient.encryptionClient.generateCodeVerifier()
         val codeChallenge = persistenceClient.encryptionClient.generateCodeChallenge(codeVerifier)
-        persistenceClient.platformPersistenceClient.saveData(PKCE_CODE_CHALLENGE_KEY, codeChallenge)
-        persistenceClient.platformPersistenceClient.saveData(PKCE_CODE_VERIFIER_KEY, codeVerifier)
+        persistenceClient.save(PKCE_CODE_CHALLENGE_KEY, codeChallenge)
+        persistenceClient.save(PKCE_CODE_VERIFIER_KEY, codeVerifier)
         return PKCECodePair(
             challenge = codeChallenge,
             verifier = codeVerifier,
@@ -18,13 +18,13 @@ public class PKCEClient(
     }
 
     public fun revoke() {
-        persistenceClient.platformPersistenceClient.removeData(PKCE_CODE_CHALLENGE_KEY)
-        persistenceClient.platformPersistenceClient.removeData(PKCE_CODE_VERIFIER_KEY)
+        persistenceClient.remove(PKCE_CODE_CHALLENGE_KEY)
+        persistenceClient.remove(PKCE_CODE_VERIFIER_KEY)
     }
 
     public fun retrieve(): PKCECodePair? {
-        val challenge = persistenceClient.platformPersistenceClient.getData(PKCE_CODE_CHALLENGE_KEY) ?: return null
-        val verifier = persistenceClient.platformPersistenceClient.getData(PKCE_CODE_VERIFIER_KEY) ?: return null
+        val challenge = persistenceClient.get<String>(PKCE_CODE_CHALLENGE_KEY, null) ?: return null
+        val verifier = persistenceClient.get<String>(PKCE_CODE_VERIFIER_KEY, null) ?: return null
         return PKCECodePair(challenge, verifier)
     }
 
