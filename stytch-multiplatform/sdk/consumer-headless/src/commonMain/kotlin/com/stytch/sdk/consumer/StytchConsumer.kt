@@ -9,6 +9,8 @@ import com.stytch.sdk.consumer.magicLinks.MagicLinksImpl
 import com.stytch.sdk.consumer.networking.ConsumerNetworkingClient
 import com.stytch.sdk.consumer.otp.OtpClient
 import com.stytch.sdk.consumer.otp.OtpImpl
+import com.stytch.sdk.consumer.passkeys.PasskeysClient
+import com.stytch.sdk.consumer.passkeys.PasskeysClientImpl
 import com.stytch.sdk.consumer.passwords.PasswordsClient
 import com.stytch.sdk.consumer.passwords.PasswordsClientImpl
 import com.stytch.sdk.consumer.session.SessionClient
@@ -45,6 +47,8 @@ public interface StytchConsumer : StytchClient {
     public val passwords: PasswordsClient
 
     public val user: UserClient
+
+    public val passkeys: PasskeysClient
 
     public val authenticationStateFlow: StateFlow<ConsumerAuthenticationState>
 
@@ -91,6 +95,7 @@ internal class DefaultStytchConsumer(
 
     override val user: UserClient = UserClientImpl(dispatchers, networkingClient)
 
+    override val passkeys: PasskeysClient = PasskeysClientImpl(dispatchers, networkingClient, sessionManager)
     override val authenticationStateFlow: StateFlow<ConsumerAuthenticationState> = sessionManager.authenticationStateFlow
 
     override fun authenticationStateObserver(callback: (authenticationState: ConsumerAuthenticationState) -> Unit): JsCleanup {
