@@ -34,6 +34,7 @@ val INTERNALLY_MANAGED_PARAMETERS =
         "codeVerifier",
         "signature",
         "biometricRegistrationId",
+        "publicKey",
     )
 
 class StytchDtoProcessor(

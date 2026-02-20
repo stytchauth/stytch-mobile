@@ -1,6 +1,8 @@
 package com.stytch.sdk.consumer
 
 import com.stytch.sdk.StytchClient
+import com.stytch.sdk.consumer.biometrics.BiometricsClient
+import com.stytch.sdk.consumer.biometrics.BiometricsClientImpl
 import com.stytch.sdk.consumer.crypto.CryptoClient
 import com.stytch.sdk.consumer.crypto.CryptoClientImpl
 import com.stytch.sdk.consumer.data.ConsumerAuthenticationState
@@ -50,6 +52,8 @@ public interface StytchConsumer : StytchClient {
 
     public val passkeys: PasskeysClient
 
+    public val biometrics: BiometricsClient
+
     public val authenticationStateFlow: StateFlow<ConsumerAuthenticationState>
 
     @JsName("authenticationStateObserver")
@@ -79,7 +83,7 @@ internal class DefaultStytchConsumer(
 
     private val networkingClient = ConsumerNetworkingClient(configuration, dispatchers, sessionManager)
 
-    private val pkceClient = PKCEClient(persistenceClient)
+    private val pkceClient = PKCEClient(configuration.encryptionClient, persistenceClient)
 
     override val otp: OtpClient = OtpImpl(dispatchers, networkingClient, sessionManager)
 
@@ -95,7 +99,17 @@ internal class DefaultStytchConsumer(
 
     override val user: UserClient = UserClientImpl(dispatchers, networkingClient)
 
-    override val passkeys: PasskeysClient = PasskeysClientImpl(dispatchers, networkingClient, sessionManager)
+    override val passkeys: PasskeysClient = PasskeysClientImpl(dispatchers, networkingClient, sessionManager, configuration.passkeyProvider)
+
+    override val biometrics: BiometricsClient =
+        BiometricsClientImpl(
+            dispatchers,
+            networkingClient,
+            sessionManager,
+            persistenceClient,
+            configuration.encryptionClient,
+            configuration.biometricsProvider,
+        )
     override val authenticationStateFlow: StateFlow<ConsumerAuthenticationState> = sessionManager.authenticationStateFlow
 
     override fun authenticationStateObserver(callback: (authenticationState: ConsumerAuthenticationState) -> Unit): JsCleanup {

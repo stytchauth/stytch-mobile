@@ -21,7 +21,7 @@ public interface CryptoClient {
 internal class CryptoClientImpl(
     private val dispatchers: StytchDispatchers,
     private val networkingClient: ConsumerNetworkingClient,
-    private val authenticationStateManager: StytchConsumerAuthenticationStateManager,
+    private val sessionManager: StytchConsumerAuthenticationStateManager,
 ) : CryptoClient {
     override suspend fun authenticate(
         request: ICryptoWalletsAuthenticateParameters,
@@ -30,7 +30,7 @@ internal class CryptoClientImpl(
         withContext(dispatchers.ioDispatcher) {
             networkingClient.request {
                 val challenge =
-                    if (authenticationStateManager.currentSessionToken.isNullOrEmpty()) {
+                    if (sessionManager.currentSessionToken.isNullOrEmpty()) {
                         networkingClient.api
                             .cryptoWalletsAuthenticateStartPrimary(
                                 CryptoWalletsAuthenticateStartSecondaryRequest(

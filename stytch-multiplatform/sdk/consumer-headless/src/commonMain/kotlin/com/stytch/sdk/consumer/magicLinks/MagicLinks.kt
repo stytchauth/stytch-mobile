@@ -2,17 +2,11 @@ package com.stytch.sdk.consumer.magicLinks
 
 import com.stytch.sdk.consumer.StytchConsumerAuthenticationStateManager
 import com.stytch.sdk.consumer.networking.ConsumerNetworkingClient
-import com.stytch.sdk.consumer.networking.models.CryptoWalletsAuthenticateRequest
-import com.stytch.sdk.consumer.networking.models.CryptoWalletsAuthenticateResponse
-import com.stytch.sdk.consumer.networking.models.CryptoWalletsAuthenticateStartSecondaryRequest
-import com.stytch.sdk.consumer.networking.models.ICryptoWalletsAuthenticateParameters
 import com.stytch.sdk.consumer.networking.models.IMagicLinksAuthenticateParameters
 import com.stytch.sdk.consumer.networking.models.IMagicLinksEmailLoginOrCreateParameters
 import com.stytch.sdk.consumer.networking.models.IMagicLinksEmailSendSecondaryParameters
 import com.stytch.sdk.consumer.networking.models.MagicLinksAuthenticateResponse
-import com.stytch.sdk.consumer.networking.models.MagicLinksEmailLoginOrCreateRequest
 import com.stytch.sdk.consumer.networking.models.MagicLinksEmailLoginOrCreateResponse
-import com.stytch.sdk.consumer.networking.models.MagicLinksEmailSendSecondaryRequest
 import com.stytch.sdk.consumer.networking.models.MagicLinksEmailSendSecondaryResponse
 import com.stytch.sdk.consumer.networking.models.toNetworkModel
 import com.stytch.sdk.data.StytchDispatchers
@@ -41,9 +35,9 @@ internal class MagicLinksImpl(
     private val dispatchers: StytchDispatchers,
     private val networkingClient: ConsumerNetworkingClient,
     private val pkceClient: PKCEClient,
-    private val authenticationStateManager: StytchConsumerAuthenticationStateManager,
+    private val sessionManager: StytchConsumerAuthenticationStateManager,
 ) : MagicLinksClient {
-    override val email: EmailMagicLinksClient = EmailMagicLinksImpl(dispatchers, networkingClient, pkceClient, authenticationStateManager)
+    override val email: EmailMagicLinksClient = EmailMagicLinksImpl(dispatchers, networkingClient, pkceClient, sessionManager)
 
     override suspend fun authenticate(
         request: IMagicLinksAuthenticateParameters,
@@ -63,7 +57,7 @@ internal class EmailMagicLinksImpl(
     private val dispatchers: StytchDispatchers,
     private val networkingClient: ConsumerNetworkingClient,
     private val pkceClient: PKCEClient,
-    private val authenticationStateManager: StytchConsumerAuthenticationStateManager,
+    private val sessionManager: StytchConsumerAuthenticationStateManager,
 ) : EmailMagicLinksClient {
     override suspend fun loginOrCreate(request: IMagicLinksEmailLoginOrCreateParameters): MagicLinksEmailLoginOrCreateResponse =
         withContext(dispatchers.ioDispatcher) {
@@ -78,7 +72,7 @@ internal class EmailMagicLinksImpl(
             networkingClient.request {
                 val codePair = pkceClient.create()
                 val parameters = request.toNetworkModel(codeChallenge = codePair.challenge)
-                if (authenticationStateManager.currentSessionToken.isNullOrEmpty()) {
+                if (sessionManager.currentSessionToken.isNullOrEmpty()) {
                     networkingClient.api.magicLinksEmailSendPrimary(parameters)
                 } else {
                     networkingClient.api.magicLinksEmailSendSecondary(parameters)

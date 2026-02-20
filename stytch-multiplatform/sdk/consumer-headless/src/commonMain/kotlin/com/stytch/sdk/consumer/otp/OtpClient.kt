@@ -54,11 +54,11 @@ public interface WhatsAppOtpClient {
 internal class OtpImpl(
     private val dispatchers: StytchDispatchers,
     private val networkingClient: ConsumerNetworkingClient,
-    private val authenticationStateManager: StytchConsumerAuthenticationStateManager,
+    private val sessionManager: StytchConsumerAuthenticationStateManager,
 ) : OtpClient {
-    override val sms: SmsOtpClient = SmsOtpImpl(dispatchers, networkingClient, authenticationStateManager)
-    override val email: EmailOtpClient = EmailOtpImpl(dispatchers, networkingClient, authenticationStateManager)
-    override val whatsapp: WhatsAppOtpClient = WhatsAppOtpImpl(dispatchers, networkingClient, authenticationStateManager)
+    override val sms: SmsOtpClient = SmsOtpImpl(dispatchers, networkingClient, sessionManager)
+    override val email: EmailOtpClient = EmailOtpImpl(dispatchers, networkingClient, sessionManager)
+    override val whatsapp: WhatsAppOtpClient = WhatsAppOtpImpl(dispatchers, networkingClient, sessionManager)
 
     override suspend fun authenticate(request: IOTPsAuthenticateParameters): OTPsAuthenticateResponse =
         withContext(dispatchers.ioDispatcher) {
@@ -71,7 +71,7 @@ internal class OtpImpl(
 internal class SmsOtpImpl(
     private val dispatchers: StytchDispatchers,
     private val networkingClient: ConsumerNetworkingClient,
-    private val authenticationStateManager: StytchConsumerAuthenticationStateManager,
+    private val sessionManager: StytchConsumerAuthenticationStateManager,
 ) : SmsOtpClient {
     override suspend fun loginOrCreate(request: IOTPsSMSLoginOrCreateParameters): OTPsSMSLoginOrCreateResponse =
         withContext(dispatchers.ioDispatcher) {
@@ -83,7 +83,7 @@ internal class SmsOtpImpl(
     override suspend fun send(request: IOTPsSMSSendSecondaryParameters): OTPsSMSSendSecondaryResponse =
         withContext(dispatchers.ioDispatcher) {
             networkingClient.request {
-                if (authenticationStateManager.currentSessionToken.isNullOrEmpty()) {
+                if (sessionManager.currentSessionToken.isNullOrEmpty()) {
                     networkingClient.api.oTPsSMSSendPrimary(request.toNetworkModel())
                 } else {
                     networkingClient.api.oTPsSMSSendSecondary(request.toNetworkModel())
@@ -95,7 +95,7 @@ internal class SmsOtpImpl(
 internal class WhatsAppOtpImpl(
     private val dispatchers: StytchDispatchers,
     private val networkingClient: ConsumerNetworkingClient,
-    private val authenticationStateManager: StytchConsumerAuthenticationStateManager,
+    private val sessionManager: StytchConsumerAuthenticationStateManager,
 ) : WhatsAppOtpClient {
     override suspend fun loginOrCreate(request: IOTPsWhatsAppLoginOrCreateParameters): OTPsWhatsAppLoginOrCreateResponse =
         withContext(dispatchers.ioDispatcher) {
@@ -107,7 +107,7 @@ internal class WhatsAppOtpImpl(
     override suspend fun send(request: IOTPsWhatsAppSendSecondaryParameters): OTPsWhatsAppSendSecondaryResponse =
         withContext(dispatchers.ioDispatcher) {
             networkingClient.request {
-                if (authenticationStateManager.currentSessionToken.isNullOrEmpty()) {
+                if (sessionManager.currentSessionToken.isNullOrEmpty()) {
                     networkingClient.api.oTPsWhatsAppSendPrimary(request.toNetworkModel())
                 } else {
                     networkingClient.api.oTPsWhatsAppSendSecondary(request.toNetworkModel())
@@ -119,7 +119,7 @@ internal class WhatsAppOtpImpl(
 internal class EmailOtpImpl(
     private val dispatchers: StytchDispatchers,
     private val networkingClient: ConsumerNetworkingClient,
-    private val authenticationStateManager: StytchConsumerAuthenticationStateManager,
+    private val sessionManager: StytchConsumerAuthenticationStateManager,
 ) : EmailOtpClient {
     override suspend fun loginOrCreate(request: IOTPsEmailLoginOrCreateParameters): OTPsEmailLoginOrCreateResponse =
         withContext(dispatchers.ioDispatcher) {
@@ -131,7 +131,7 @@ internal class EmailOtpImpl(
     override suspend fun send(request: IOTPsEmailSendSecondaryParameters): OTPsEmailSendSecondaryResponse =
         withContext(dispatchers.ioDispatcher) {
             networkingClient.request {
-                if (authenticationStateManager.currentSessionToken.isNullOrEmpty()) {
+                if (sessionManager.currentSessionToken.isNullOrEmpty()) {
                     networkingClient.api.oTPsEmailSendPrimary(request.toNetworkModel())
                 } else {
                     networkingClient.api.oTPsEmailSendSecondary(request.toNetworkModel())

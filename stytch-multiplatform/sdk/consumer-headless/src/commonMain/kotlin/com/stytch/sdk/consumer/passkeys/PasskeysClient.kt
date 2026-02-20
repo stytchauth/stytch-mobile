@@ -2,9 +2,7 @@ package com.stytch.sdk.consumer.passkeys
 
 import com.stytch.sdk.consumer.StytchConsumerAuthenticationStateManager
 import com.stytch.sdk.consumer.networking.ConsumerNetworkingClient
-import com.stytch.sdk.consumer.networking.models.IWebAuthnAuthenticateParameters
 import com.stytch.sdk.consumer.networking.models.IWebAuthnAuthenticateStartSecondaryParameters
-import com.stytch.sdk.consumer.networking.models.IWebAuthnRegisterParameters
 import com.stytch.sdk.consumer.networking.models.IWebAuthnRegisterStartParameters
 import com.stytch.sdk.consumer.networking.models.IWebAuthnUpdateParameters
 import com.stytch.sdk.consumer.networking.models.WebAuthnAuthenticateRequest
@@ -42,10 +40,10 @@ public interface PasskeysClient {
 internal class PasskeysClientImpl(
     private val dispatchers: StytchDispatchers,
     private val networkingClient: ConsumerNetworkingClient,
-    private val authenticationStateManager: StytchConsumerAuthenticationStateManager,
-    private val passkeysProvider: PasskeyProvider,
+    private val sessionManager: StytchConsumerAuthenticationStateManager,
+    private val passkeyProvider: PasskeyProvider,
 ) : PasskeysClient {
-    override val isSupported: Boolean = passkeysProvider.isSupported
+    override val isSupported: Boolean = passkeyProvider.isSupported
 
     override suspend fun register(
         request: IWebAuthnRegisterStartParameters,
@@ -56,7 +54,7 @@ internal class PasskeysClientImpl(
             networkingClient.request {
                 val startResponse = networkingClient.api.webAuthnRegisterStart(request.toNetworkModel())
                 val credentials =
-                    passkeysProvider.createPublicKeyCredential(
+                    passkeyProvider.createPublicKeyCredential(
                         json = startResponse.data.publicKeyCredentialCreationOptions,
                         preferImmediatelyAvailableCredentials = preferImmediatelyAvailableCredentials,
                     )
@@ -77,13 +75,13 @@ internal class PasskeysClientImpl(
         return withContext(dispatchers.ioDispatcher) {
             networkingClient.request {
                 val startResponse =
-                    if (authenticationStateManager.currentSessionToken.isNullOrEmpty()) {
+                    if (sessionManager.currentSessionToken.isNullOrEmpty()) {
                         networkingClient.api.webAuthnAuthenticateStartPrimary(request.toNetworkModel())
                     } else {
                         networkingClient.api.webAuthnAuthenticateStartSecondary(request.toNetworkModel())
                     }
                 val credentials =
-                    passkeysProvider.getPublicKeyCredential(
+                    passkeyProvider.getPublicKeyCredential(
                         json = startResponse.data.publicKeyCredentialRequestOptions,
                         preferImmediatelyAvailableCredentials = preferImmediatelyAvailableCredentials,
                     )

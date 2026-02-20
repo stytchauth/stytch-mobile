@@ -93,4 +93,11 @@ public actual class StytchEncryptionClient(
     public actual fun generateCodeChallenge(codeVerifier: ByteArray): ByteArray {
         TODO("Not yet implemented")
     }
+
+    public actual fun signEd25519(
+        key: ByteArray,
+        data: ByteArray,
+    ): ByteArray {
+        TODO()
+    }
 }

@@ -87,4 +87,11 @@ public actual class StytchEncryptionClient {
         val md = MessageDigest.getInstance("SHA-256")
         return md.digest(codeVerifier)
     }
+
+    public actual fun signEd25519(
+        key: ByteArray,
+        data: ByteArray,
+    ): ByteArray {
+        TODO()
+    }
 }
