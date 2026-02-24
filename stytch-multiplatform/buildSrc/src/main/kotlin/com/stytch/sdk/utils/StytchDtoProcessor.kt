@@ -161,7 +161,7 @@ class StytchDtoProcessor(
     }
 
     private fun sortParameters(requestClass: KSClassDeclaration): List<List<ParameterSpec>> {
-        // Filter out blacklisted params and sort them into required/optional/internal
+        // Filter out internally managed params and sort them into required/optional/internal
         val requiredParams = mutableListOf<ParameterSpec>()
         val optionalParams = mutableListOf<ParameterSpec>()
         val internalParams = mutableListOf<ParameterSpec>()
