@@ -59,7 +59,10 @@ public actual class OAuthProvider(
                 return@withContext OAuthResult.Error(UnexpectedCredentialType(credentialResponse.credential.type))
             }
             val idTokenResponse = GoogleIdTokenCredential.createFrom(credentialResponse.credential.data)
-            OAuthResult.IDToken(idTokenResponse.idToken)
+            OAuthResult.IDToken(
+                token = idTokenResponse.idToken,
+                nonce = nonce,
+            )
         }
 
     private suspend fun attemptStandardOAuthAuthentication(

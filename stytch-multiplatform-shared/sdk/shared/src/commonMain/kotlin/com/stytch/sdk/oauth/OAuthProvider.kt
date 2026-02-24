@@ -47,6 +47,7 @@ public sealed class OAuthResult {
 
     public data class IDToken(
         val token: String,
+        val nonce: String,
         val name: String? = null,
     ) : OAuthResult()
 

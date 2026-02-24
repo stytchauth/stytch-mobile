@@ -8,6 +8,7 @@ import com.stytch.sdk.consumer.networking.models.IOAuthAttachParameters
 import com.stytch.sdk.consumer.networking.models.IOAuthAuthenticateParameters
 import com.stytch.sdk.consumer.networking.models.IOAuthGoogleIDTokenAuthenticateParameters
 import com.stytch.sdk.consumer.networking.models.OAuthAppleIDTokenAuthenticateParameters
+import com.stytch.sdk.consumer.networking.models.OAuthAttachParameters
 import com.stytch.sdk.consumer.networking.models.OAuthAttachResponse
 import com.stytch.sdk.consumer.networking.models.OAuthAuthenticateParameters
 import com.stytch.sdk.consumer.networking.models.OAuthAuthenticateRequest
@@ -194,15 +195,19 @@ internal class OAuthClientImpl(
                     authenticateGoogleIdToken(
                         OAuthGoogleIDTokenAuthenticateParameters(
                             idToken = response.token,
+                            nonce = response.nonce,
                             sessionDurationMinutes = startParameters.sessionDurationMinutes ?: defaultSessionDuration ?: 5,
+                            oauthAttachToken = startParameters.oauthAttachToken,
                         ),
                     )
                 } else {
                     authenticateAppleIdToken(
                         OAuthAppleIDTokenAuthenticateParameters(
                             idToken = response.token,
+                            nonce = response.nonce,
                             name = response.name?.toApiUserV1Name(),
                             sessionDurationMinutes = startParameters.sessionDurationMinutes ?: defaultSessionDuration ?: 5,
+                            oauthAttachToken = startParameters.oauthAttachToken,
                         ),
                     )
                 }
