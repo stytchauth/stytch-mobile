@@ -6,4 +6,5 @@ public actual class OAuthStartParameters(
     public actual val customScopes: List<String>? = null,
     public actual val providerParams: Map<String, String>? = null,
     public actual val oauthAttachToken: String? = null,
+    public actual val sessionDurationMinutes: Int? = null,
 )

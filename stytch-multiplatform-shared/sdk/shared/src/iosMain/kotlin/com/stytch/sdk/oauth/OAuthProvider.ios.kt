@@ -1,9 +1,17 @@
 package com.stytch.sdk.oauth
 
+import com.stytch.sdk.data.StytchDispatchers
+import com.stytch.sdk.pkce.PKCEClient
+
 public actual class OAuthProvider {
     public actual val isSupported: Boolean = true
 
-    public actual suspend fun getOAuthTokenFromUrl(url: String): String? {
+    public actual suspend fun getOAuthTokenFromUrl(
+        pkceClient: PKCEClient,
+        dispatchers: StytchDispatchers,
+        type: OAuthProviderType,
+        url: String,
+    ): OAuthResult {
         TODO()
     }
 }

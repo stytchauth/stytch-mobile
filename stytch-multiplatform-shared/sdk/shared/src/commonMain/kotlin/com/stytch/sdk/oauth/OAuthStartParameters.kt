@@ -6,4 +6,5 @@ public expect class OAuthStartParameters {
     public val customScopes: List<String>?
     public val providerParams: Map<String, String>?
     public val oauthAttachToken: String?
+    public val sessionDurationMinutes: Int?
 }

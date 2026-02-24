@@ -3,10 +3,10 @@ package com.stytch.sdk.consumer.networking
 import com.stytch.sdk.consumer.networking.models.ApiSessionV1Session
 import com.stytch.sdk.consumer.networking.models.ApiUserV1User
 
-internal interface AuthenticatedResponse {
-    val user: ApiUserV1User
-    val sessionToken: String
+public interface AuthenticatedResponse {
+    public val user: ApiUserV1User
+    public val sessionToken: String
 
-    val session: ApiSessionV1Session
-    val sessionJwt: String
+    public val session: ApiSessionV1Session
+    public val sessionJwt: String
 }

@@ -2,6 +2,8 @@
 agp = "8.12.3"
 android-compileSdk = "36"
 android-minSdk = "24"
+credentials = "1.3.0"
+googleid = "1.1.1"
 kotlin = "2.1.0"
 kotlinx-datetime = "0.7.1"
 ksp = "2.3.4"
@@ -32,6 +34,9 @@ napier = { module = "io.github.aakira:napier", version.ref = "napier" }
 skie-configuration-annotations = { module = "co.touchlab.skie:configuration-annotations", version.ref = "skie" }
 dfp-android = { module = "com.stytch.dfp:dfp", version.ref = "stytchDfp" }
 recaptcha = { module = "com.google.android.recaptcha:recaptcha", version.ref = "recaptcha" }
+credentials = { module = "androidx.credentials:credentials", version.ref = "credentials" }
+credentials-play-services-auth = { module = "androidx.credentials:credentials-play-services-auth", version.ref = "credentials" }
+googleid = { module = "com.google.android.libraries.identity.googleid:googleid", version.ref = "googleid" }
 
 [plugins]
 android-kotlin-multiplatform-library = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }
