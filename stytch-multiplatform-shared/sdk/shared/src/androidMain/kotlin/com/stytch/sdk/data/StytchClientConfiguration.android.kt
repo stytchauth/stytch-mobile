@@ -3,9 +3,11 @@ package com.stytch.sdk.data
 import android.app.Application
 import android.content.Context
 import android.os.Build
+import com.stytch.sdk.biometrics.BiometricsProvider
 import com.stytch.sdk.dfp.CAPTCHAProviderImpl
 import com.stytch.sdk.dfp.DFPProviderImpl
 import com.stytch.sdk.encryption.StytchEncryptionClient
+import com.stytch.sdk.passkeys.PasskeyProvider
 import com.stytch.sdk.persistence.StytchPlatformPersistenceClient
 
 public actual class StytchClientConfiguration(
@@ -28,6 +30,8 @@ public actual class StytchClientConfiguration(
             encryptionClient = StytchEncryptionClient(),
             dfpProvider = dfpProvider,
             captchaProvider = CAPTCHAProviderImpl(context.applicationContext as Application),
+            passkeyProvider = PasskeyProvider(),
+            biometricsProvider = BiometricsProvider(),
         )
     }
 }

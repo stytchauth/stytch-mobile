@@ -1,17 +1,32 @@
 package com.stytch.sdk.consumer
 
 import com.stytch.sdk.StytchClient
+import com.stytch.sdk.consumer.biometrics.BiometricsClient
+import com.stytch.sdk.consumer.biometrics.BiometricsClientImpl
+import com.stytch.sdk.consumer.crypto.CryptoClient
+import com.stytch.sdk.consumer.crypto.CryptoClientImpl
 import com.stytch.sdk.consumer.data.ConsumerAuthenticationState
+import com.stytch.sdk.consumer.magicLinks.MagicLinksClient
+import com.stytch.sdk.consumer.magicLinks.MagicLinksImpl
 import com.stytch.sdk.consumer.networking.ConsumerNetworkingClient
 import com.stytch.sdk.consumer.otp.OtpClient
 import com.stytch.sdk.consumer.otp.OtpImpl
+import com.stytch.sdk.consumer.passkeys.PasskeysClient
+import com.stytch.sdk.consumer.passkeys.PasskeysClientImpl
+import com.stytch.sdk.consumer.passwords.PasswordsClient
+import com.stytch.sdk.consumer.passwords.PasswordsClientImpl
 import com.stytch.sdk.consumer.session.SessionClient
 import com.stytch.sdk.consumer.session.SessionImpl
+import com.stytch.sdk.consumer.totp.TOTPClient
+import com.stytch.sdk.consumer.totp.TOTPClientImpl
+import com.stytch.sdk.consumer.user.UserClient
+import com.stytch.sdk.consumer.user.UserClientImpl
 import com.stytch.sdk.data.JsCleanup
 import com.stytch.sdk.data.StytchClientConfiguration
 import com.stytch.sdk.data.StytchClientConfigurationInternal
 import com.stytch.sdk.data.StytchDispatchers
 import com.stytch.sdk.persistence.StytchPersistenceClient
+import com.stytch.sdk.pkce.PKCEClient
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.StateFlow
@@ -25,6 +40,20 @@ import kotlin.js.JsName
 public interface StytchConsumer : StytchClient {
     public val otp: OtpClient
     public val session: SessionClient
+    public val crypto: CryptoClient
+
+    public val magicLinks: MagicLinksClient
+
+    public val totp: TOTPClient
+
+    public val passwords: PasswordsClient
+
+    public val user: UserClient
+
+    public val passkeys: PasskeysClient
+
+    public val biometrics: BiometricsClient
+
     public val authenticationStateFlow: StateFlow<ConsumerAuthenticationState>
 
     @JsName("authenticationStateObserver")
@@ -54,13 +83,36 @@ internal class DefaultStytchConsumer(
 
     private val networkingClient = ConsumerNetworkingClient(configuration, dispatchers, sessionManager)
 
-    override val otp: OtpClient = OtpImpl.create(networkingClient)
+    private val pkceClient = PKCEClient(configuration.encryptionClient, persistenceClient)
 
-    override val session: SessionClient = SessionImpl(networkingClient)
+    override val otp: OtpClient = OtpImpl(dispatchers, networkingClient, sessionManager)
 
+    override val session: SessionClient = SessionImpl(dispatchers, networkingClient)
+
+    override val crypto: CryptoClient = CryptoClientImpl(dispatchers, networkingClient, sessionManager)
+
+    override val magicLinks: MagicLinksClient = MagicLinksImpl(dispatchers, networkingClient, pkceClient, sessionManager)
+
+    override val totp: TOTPClient = TOTPClientImpl(dispatchers, networkingClient)
+
+    override val passwords: PasswordsClient = PasswordsClientImpl(dispatchers, networkingClient, pkceClient)
+
+    override val user: UserClient = UserClientImpl(dispatchers, networkingClient)
+
+    override val passkeys: PasskeysClient = PasskeysClientImpl(dispatchers, networkingClient, sessionManager, configuration.passkeyProvider)
+
+    override val biometrics: BiometricsClient =
+        BiometricsClientImpl(
+            dispatchers,
+            networkingClient,
+            sessionManager,
+            persistenceClient,
+            configuration.encryptionClient,
+            configuration.biometricsProvider,
+        )
     override val authenticationStateFlow: StateFlow<ConsumerAuthenticationState> = sessionManager.authenticationStateFlow
 
-    override fun authenticationStateObserver(callback: (authenticatonState: ConsumerAuthenticationState) -> Unit): JsCleanup {
+    override fun authenticationStateObserver(callback: (authenticationState: ConsumerAuthenticationState) -> Unit): JsCleanup {
         val job =
             CoroutineScope(dispatchers.mainDispatcher).launch {
                 authenticationStateFlow.collect { callback(it) }
@@ -73,7 +125,7 @@ internal class DefaultStytchConsumer(
     }
 
     init {
-        CoroutineScope(Dispatchers.Default).launch {
+        CoroutineScope(dispatchers.ioDispatcher).launch {
             networkingClient.refreshBootStrapData()
         }
     }

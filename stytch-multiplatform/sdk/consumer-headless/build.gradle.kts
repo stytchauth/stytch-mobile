@@ -178,4 +178,5 @@ tasks.withType<ProcessLibraryArtProfileTask>().configureEach {
 }
 tasks.named("compileKotlinMetadata") {
     dependsOn("openApiGenerate")
+    dependsOn("kspCommonMainKotlinMetadata")
 }

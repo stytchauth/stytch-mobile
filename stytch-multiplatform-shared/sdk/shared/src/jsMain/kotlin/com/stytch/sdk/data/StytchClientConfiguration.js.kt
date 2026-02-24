@@ -1,9 +1,11 @@
 package com.stytch.sdk.data
 
 import com.stytch.sdk.StytchBridge
+import com.stytch.sdk.biometrics.BiometricsProvider
 import com.stytch.sdk.dfp.CAPTCHAProviderImpl
 import com.stytch.sdk.dfp.DFPProviderImpl
 import com.stytch.sdk.encryption.StytchEncryptionClient
+import com.stytch.sdk.passkeys.PasskeyProvider
 import com.stytch.sdk.persistence.StytchPlatformPersistenceClient
 import kotlinx.serialization.json.Json
 
@@ -25,5 +27,7 @@ public actual class StytchClientConfiguration(
             encryptionClient = StytchEncryptionClient(),
             dfpProvider = DFPProviderImpl(publicToken = publicToken, dfppaDomain = endpointOptions.dfppaDomain),
             captchaProvider = CAPTCHAProviderImpl(),
+            passkeyProvider = PasskeyProvider(),
+            biometricsProvider = BiometricsProvider(),
         )
 }

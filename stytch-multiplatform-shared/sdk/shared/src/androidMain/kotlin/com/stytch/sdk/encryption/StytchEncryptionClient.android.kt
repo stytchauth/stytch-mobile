@@ -2,7 +2,10 @@ package com.stytch.sdk.encryption
 
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
+import io.ktor.util.decodeBase64Bytes
 import java.security.KeyStore
+import java.security.MessageDigest
+import java.security.SecureRandom
 import java.security.spec.RSAKeyGenParameterSpec
 import javax.crypto.Cipher
 import javax.crypto.KeyGenerator
@@ -72,5 +75,23 @@ public actual class StytchEncryptionClient {
         private const val KEY_SIZE = 256
         private const val GCM_TAG_LENGTH = 128
         private const val GCM_IV_LENGTH = 12
+    }
+
+    public actual fun generateCodeVerifier(): ByteArray {
+        val randomBytes = ByteArray(32)
+        SecureRandom().nextBytes(randomBytes)
+        return randomBytes
+    }
+
+    public actual fun generateCodeChallenge(codeVerifier: ByteArray): ByteArray {
+        val md = MessageDigest.getInstance("SHA-256")
+        return md.digest(codeVerifier)
+    }
+
+    public actual fun signEd25519(
+        key: ByteArray,
+        data: ByteArray,
+    ): ByteArray {
+        TODO()
     }
 }
