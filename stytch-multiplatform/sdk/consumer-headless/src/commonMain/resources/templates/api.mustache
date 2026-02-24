@@ -19,7 +19,7 @@ import kotlinx.serialization.Serializable
 import {{{modelPackage}}}.*
 
 {{/x-kotlin-import-models}}
-public interface {{classname}} {
+internal interface {{classname}} {
     {{#operation}}
     {{#allParams}}
     {{#isEnum}}

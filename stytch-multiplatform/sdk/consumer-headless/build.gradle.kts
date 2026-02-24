@@ -3,6 +3,7 @@
 import com.android.build.api.dsl.androidLibrary
 import com.android.build.gradle.tasks.ProcessLibraryArtProfileTask
 import com.google.devtools.ksp.gradle.KspAATask
+import org.gradle.kotlin.dsl.register
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
@@ -90,6 +91,7 @@ kotlin {
     sourceSets {
         commonMain {
             kotlin.srcDir(layout.buildDirectory.dir("generated/openapi/src/main/kotlin"))
+            kotlin.srcDir(layout.buildDirectory.dir("generated/ksp/metadata/commonMain/src/main/kotlin"))
             dependencies {
                 api("com.stytch.sdk:shared:$version")
                 implementation(libs.kotlinx.coroutines.core)
@@ -100,6 +102,10 @@ kotlin {
             }
         }
     }
+}
+
+dependencies {
+    add("kspCommonMainMetadata", project(":buildSrc"))
 }
 
 ktorfit {
