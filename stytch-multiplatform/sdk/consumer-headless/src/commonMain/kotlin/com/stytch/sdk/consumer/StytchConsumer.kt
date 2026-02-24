@@ -57,7 +57,7 @@ public interface StytchConsumer : StytchClient {
     public val authenticationStateFlow: StateFlow<ConsumerAuthenticationState>
 
     @JsName("authenticationStateObserver")
-    public fun authenticationStateObserver(callback: (authenticatonState: ConsumerAuthenticationState) -> Unit): JsCleanup
+    public fun authenticationStateObserver(callback: (authenticationState: ConsumerAuthenticationState) -> Unit): JsCleanup
 }
 
 @JsExport
