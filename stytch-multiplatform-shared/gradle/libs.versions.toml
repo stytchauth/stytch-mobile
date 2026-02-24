@@ -1,4 +1,5 @@
 [versions]
+activityKtx = "1.10.0"
 agp = "8.12.3"
 android-compileSdk = "36"
 android-minSdk = "24"
@@ -18,6 +19,8 @@ stytchDfp = "1.1.2"
 recaptcha = "18.7.0"
 
 [libraries]
+activity = { module = "androidx.activity:activity", version.ref = "activityKtx" }
+activity-ktx = { module = "androidx.activity:activity-ktx", version.ref = "activityKtx" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization-json"}
 ktor-client-auth = { module = "io.ktor:ktor-client-auth", version.ref = "ktor" }
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }

@@ -1,14 +1,25 @@
 package com.stytch.sdk.oauth
 
+import android.app.Activity.RESULT_OK
 import android.app.Application
+import android.content.Intent
+import android.os.Build
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.credentials.CredentialManager
 import androidx.credentials.GetCredentialRequest
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
+import com.stytch.sdk.data.EndpointOptions
 import com.stytch.sdk.data.GoogleCredentialConfiguration
+import com.stytch.sdk.data.PublicTokenInfo
+import com.stytch.sdk.data.SSOError
 import com.stytch.sdk.data.StytchDispatchers
 import com.stytch.sdk.pkce.PKCEClient
+import io.ktor.http.URLBuilder
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
+import java.io.Serializable
+import kotlin.coroutines.resume
 
 public actual class OAuthProvider(
     private val application: Application,
@@ -16,16 +27,19 @@ public actual class OAuthProvider(
 ) {
     public actual val isSupported: Boolean = true
 
-    public actual suspend fun getOAuthTokenFromUrl(
+    public actual suspend fun getOAuthToken(
+        parameters: OAuthStartParameters,
         pkceClient: PKCEClient,
         dispatchers: StytchDispatchers,
         type: OAuthProviderType,
-        url: String,
+        publicTokenInfo: PublicTokenInfo,
+        endpointOptions: EndpointOptions,
+        cnameDomain: () -> String?,
     ): OAuthResult =
         if (type == OAuthProviderType.GOOGLE && googleCredentialConfiguration != null) {
-            attemptGoogleIdTokenAuthentication(application, pkceClient, googleCredentialConfiguration, dispatchers, url)
+            attemptGoogleIdTokenAuthentication(application, pkceClient, googleCredentialConfiguration, dispatchers)
         } else {
-            attemptStandardOAuthAuthentication(pkceClient, dispatchers, url)
+            attemptStandardOAuthAuthentication(pkceClient, dispatchers, parameters, type, publicTokenInfo, endpointOptions, cnameDomain)
         }
 
     private suspend fun attemptGoogleIdTokenAuthentication(
@@ -33,7 +47,6 @@ public actual class OAuthProvider(
         pkceClient: PKCEClient,
         googleCredentialConfiguration: GoogleCredentialConfiguration,
         dispatchers: StytchDispatchers,
-        url: String,
     ): OAuthResult =
         withContext(dispatchers.ioDispatcher) {
             val nonce = pkceClient.create().challenge
@@ -68,6 +81,70 @@ public actual class OAuthProvider(
     private suspend fun attemptStandardOAuthAuthentication(
         pkceClient: PKCEClient,
         dispatchers: StytchDispatchers,
-        url: String,
-    ): OAuthResult = TODO()
+        startParameters: OAuthStartParameters,
+        type: OAuthProviderType,
+        publicTokenInfo: PublicTokenInfo,
+        endpointOptions: EndpointOptions,
+        cnameDomain: () -> String?,
+    ): OAuthResult {
+        if (startParameters.activity == null) throw MissingActivityException()
+        val codePair = pkceClient.create()
+        val host = "https://${cnameDomain() ?: if (publicTokenInfo.isTestToken) endpointOptions.testDomain else endpointOptions.liveDomain}/v1/"
+        val baseUrl = "${host}public/oauth/${type.hostName}/start"
+        val parameters =
+            mutableMapOf(
+                "public_token" to publicTokenInfo.publicToken,
+                "code_challenge" to codePair.challenge,
+                "login_redirect_url" to startParameters.loginRedirectUrl,
+                "signup_redirect_url" to startParameters.signupRedirectUrl,
+                "custom_scopes" to startParameters.customScopes?.joinToString(" "),
+                "oauth_attach_token" to startParameters.oauthAttachToken,
+            )
+        startParameters.providerParams?.entries?.forEach { (key, value) ->
+            parameters["provider_$key"] = value
+        }
+        val uri = URLBuilder(baseUrl)
+        parameters.forEach { (key, value) ->
+            if (value?.isNotEmpty() == true) {
+                uri.parameters.append(key, value)
+            }
+        }
+        return suspendCancellableCoroutine { continuation ->
+            val launcher =
+                startParameters.activity.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+                    val token = result.data?.data?.getQueryParameter("token")
+                    val response =
+                        if (result.resultCode == RESULT_OK && token != null) {
+                            OAuthResult.ClassicToken(token = token)
+                        } else {
+                            OAuthResult.Error(
+                                OAuthFailedException(
+                                    resultCode = result.resultCode,
+                                    message =
+                                        if (token == null) {
+                                            "Missing Token"
+                                        } else {
+                                            "SSO/OAuth Failed"
+                                        },
+                                    cause = result.data?.getSerializable("StytchSSOError", SSOError::class.java),
+                                ),
+                            )
+                        }
+                    continuation.resume(response)
+                }
+            val intent = SSOManagerActivity.createBaseIntent(activity)
+            intent.putExtra(URI_KEY, uri.build().toString())
+            launcher.launch(intent)
+        }
+    }
 }
+
+private fun <T : Serializable?> Intent.getSerializable(
+    key: String,
+    clazz: Class<T>,
+): T? =
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        this.getSerializableExtra(key, clazz)
+    } else {
+        this.getSerializableExtra(key) as T
+    }

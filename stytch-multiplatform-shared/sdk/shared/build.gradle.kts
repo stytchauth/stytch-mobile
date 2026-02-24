@@ -91,6 +91,8 @@ kotlin {
             implementation(libs.credentials)
             implementation(libs.credentials.play.services.auth)
             implementation(libs.googleid)
+            implementation(libs.activity)
+            implementation(libs.activity.ktx)
         }
         commonMain.dependencies {
             implementation(libs.kotlinx.serialization.json)

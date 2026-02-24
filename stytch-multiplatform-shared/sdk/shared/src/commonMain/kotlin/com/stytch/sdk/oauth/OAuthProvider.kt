@@ -1,5 +1,7 @@
 package com.stytch.sdk.oauth
 
+import com.stytch.sdk.data.EndpointOptions
+import com.stytch.sdk.data.PublicTokenInfo
 import com.stytch.sdk.data.StytchDispatchers
 import com.stytch.sdk.pkce.PKCEClient
 import kotlin.js.JsExport
@@ -7,11 +9,14 @@ import kotlin.js.JsExport
 public expect class OAuthProvider {
     public val isSupported: Boolean
 
-    public suspend fun getOAuthTokenFromUrl(
+    public suspend fun getOAuthToken(
+        parameters: OAuthStartParameters,
         pkceClient: PKCEClient,
         dispatchers: StytchDispatchers,
         type: OAuthProviderType,
-        url: String,
+        publicTokenInfo: PublicTokenInfo,
+        endpointOptions: EndpointOptions,
+        cnameDomain: () -> String?,
     ): OAuthResult
 }
 

@@ -25,6 +25,7 @@ import com.stytch.sdk.oauth.OAuthResult
 import com.stytch.sdk.oauth.OAuthStartParameters
 import com.stytch.sdk.pkce.PKCEClient
 import io.ktor.http.URLBuilder
+import io.ktor.http.parameters
 import kotlinx.coroutines.withContext
 import kotlin.collections.component1
 import kotlin.collections.component2
@@ -149,42 +150,24 @@ internal class OAuthClientImpl(
 
     private suspend fun start(
         provider: OAuthProviderType,
-        startParameters: OAuthStartParameters,
+        parameters: OAuthStartParameters,
     ) = withContext(dispatchers.ioDispatcher) {
-        val codePair = pkceClient.create()
-        val host = "https://${cnameDomain() ?: if (publicTokenInfo.isTestToken) endpointOptions.testDomain else endpointOptions.liveDomain}/v1/"
-        val baseUrl = "${host}public/oauth/${provider.hostName}/start"
-        val parameters =
-            mutableMapOf(
-                "public_token" to publicTokenInfo.publicToken,
-                "code_challenge" to codePair.challenge,
-                "login_redirect_url" to startParameters.loginRedirectUrl,
-                "signup_redirect_url" to startParameters.signupRedirectUrl,
-                "custom_scopes" to startParameters.customScopes?.joinToString(" "),
-                "oauth_attach_token" to startParameters.oauthAttachToken,
-            )
-        startParameters.providerParams?.entries?.forEach { (key, value) ->
-            parameters["provider_$key"] = value
-        }
-        val uri = URLBuilder(baseUrl)
-        parameters.forEach { (key, value) ->
-            if (value?.isNotEmpty() == true) {
-                uri.parameters.append(key, value)
-            }
-        }
         val response =
-            oauthProvider.getOAuthTokenFromUrl(
+            oauthProvider.getOAuthToken(
                 pkceClient = pkceClient,
                 dispatchers = dispatchers,
                 type = provider,
-                url = uri.buildString(),
+                parameters = parameters,
+                publicTokenInfo = publicTokenInfo,
+                endpointOptions = endpointOptions,
+                cnameDomain = cnameDomain,
             )
         return@withContext when (response) {
             is OAuthResult.ClassicToken -> {
                 authenticate(
                     OAuthAuthenticateParameters(
                         token = response.token,
-                        sessionDurationMinutes = startParameters.sessionDurationMinutes ?: defaultSessionDuration ?: 5,
+                        sessionDurationMinutes = parameters.sessionDurationMinutes ?: defaultSessionDuration ?: 5,
                     ),
                 )
             }
@@ -196,8 +179,8 @@ internal class OAuthClientImpl(
                         OAuthGoogleIDTokenAuthenticateParameters(
                             idToken = response.token,
                             nonce = response.nonce,
-                            sessionDurationMinutes = startParameters.sessionDurationMinutes ?: defaultSessionDuration ?: 5,
-                            oauthAttachToken = startParameters.oauthAttachToken,
+                            sessionDurationMinutes = parameters.sessionDurationMinutes ?: defaultSessionDuration ?: 5,
+                            oauthAttachToken = parameters.oauthAttachToken,
                         ),
                     )
                 } else {
@@ -206,8 +189,8 @@ internal class OAuthClientImpl(
                             idToken = response.token,
                             nonce = response.nonce,
                             name = response.name?.toApiUserV1Name(),
-                            sessionDurationMinutes = startParameters.sessionDurationMinutes ?: defaultSessionDuration ?: 5,
-                            oauthAttachToken = startParameters.oauthAttachToken,
+                            sessionDurationMinutes = parameters.sessionDurationMinutes ?: defaultSessionDuration ?: 5,
+                            oauthAttachToken = parameters.oauthAttachToken,
                         ),
                     )
                 }

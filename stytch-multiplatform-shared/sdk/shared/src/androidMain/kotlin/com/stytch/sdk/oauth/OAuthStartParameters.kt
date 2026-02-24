@@ -1,6 +1,9 @@
 package com.stytch.sdk.oauth
 
+import androidx.activity.ComponentActivity
+
 public actual class OAuthStartParameters(
+    public val activity: ComponentActivity? = null,
     public actual val loginRedirectUrl: String? = null,
     public actual val signupRedirectUrl: String? = null,
     public actual val customScopes: List<String>? = null,
