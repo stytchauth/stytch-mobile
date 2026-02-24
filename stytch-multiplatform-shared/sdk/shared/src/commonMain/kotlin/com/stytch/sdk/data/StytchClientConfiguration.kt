@@ -4,6 +4,7 @@ import com.stytch.sdk.biometrics.BiometricsProvider
 import com.stytch.sdk.dfp.CAPTCHAProvider
 import com.stytch.sdk.dfp.DFPProvider
 import com.stytch.sdk.encryption.StytchEncryptionClient
+import com.stytch.sdk.oauth.OAuthProvider
 import com.stytch.sdk.passkeys.PasskeyProvider
 import com.stytch.sdk.persistence.StytchPlatformPersistenceClient
 import kotlinx.datetime.TimeZone
@@ -49,6 +50,7 @@ public class StytchClientConfigurationInternal(
     public val captchaProvider: CAPTCHAProvider? = null,
     public val passkeyProvider: PasskeyProvider,
     public val biometricsProvider: BiometricsProvider,
+    public val oAuthProvider: OAuthProvider,
 )
 
 @JsExport

@@ -2,6 +2,7 @@ package com.stytch.sdk.data
 
 import com.stytch.sdk.biometrics.BiometricsProvider
 import com.stytch.sdk.encryption.StytchEncryptionClient
+import com.stytch.sdk.oauth.OAuthProvider
 import com.stytch.sdk.passkeys.PasskeyProvider
 import com.stytch.sdk.persistence.StytchPlatformPersistenceClient
 import java.awt.Toolkit
@@ -32,6 +33,7 @@ public actual class StytchClientConfiguration(
             encryptionClient = encryptionClient,
             passkeyProvider = PasskeyProvider(),
             biometricsProvider = BiometricsProvider(),
+            oAuthProvider = OAuthProvider(),
         )
     }
 

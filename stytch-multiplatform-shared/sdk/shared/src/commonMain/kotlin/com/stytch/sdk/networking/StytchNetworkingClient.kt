@@ -1,6 +1,7 @@
 package com.stytch.sdk.networking
 
 import com.stytch.sdk.StytchAuthenticationStateManager
+import com.stytch.sdk.data.BootstrapResponse
 import com.stytch.sdk.data.DFPConfiguration
 import com.stytch.sdk.data.DFPProtectedAuthMode
 import com.stytch.sdk.data.StytchAPIError
@@ -88,7 +89,7 @@ public abstract class StytchNetworkingClient(
 
     private var dfpConfiguration: DFPConfiguration = DFPConfiguration()
 
-    public suspend fun refreshBootStrapData() {
+    public suspend fun refreshBootStrapData(): BootstrapResponse =
         try {
             val bootstrapResponse = sharedAPI.getBootstrapData(configuration.tokenInfo.publicToken)
             dfpConfiguration =
@@ -103,10 +104,16 @@ public abstract class StytchNetworkingClient(
                     configuration.captchaProvider?.initialize(siteKey)
                 }
             }
+            bootstrapResponse.data
         } catch (e: Exception) {
             // TODO: Logging for failed bootstrap response
+            try {
+                val apiResponse = (e as ResponseException).response.body<StytchAPIError>()
+                BootstrapResponse(apiResponse.statusCode, apiResponse.requestId)
+            } catch (_: Exception) {
+                BootstrapResponse(-1, "request-failed")
+            }
         }
-    }
 
     private companion object {
         private const val HEARTBEAT_INTERVAL_MS = 3 * 60 * 1000L // 3 minutes
