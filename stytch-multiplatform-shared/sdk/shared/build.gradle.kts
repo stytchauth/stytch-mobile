@@ -88,6 +88,12 @@ kotlin {
             implementation(libs.ktor.client.okhttp)
             implementation(libs.dfp.android)
             implementation(libs.recaptcha)
+            implementation(libs.credentials)
+            implementation(libs.credentials.play.services.auth)
+            implementation(libs.googleid)
+            implementation(libs.activity)
+            implementation(libs.activity.ktx)
+            implementation(libs.browser)
         }
         commonMain.dependencies {
             implementation(libs.kotlinx.serialization.json)

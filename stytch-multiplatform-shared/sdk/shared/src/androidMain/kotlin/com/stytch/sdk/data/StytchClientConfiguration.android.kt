@@ -16,6 +16,7 @@ public actual class StytchClientConfiguration(
     internal val publicToken: String,
     internal val endpointOptions: EndpointOptions = EndpointOptions(),
     internal val defaultSessionDuration: Int? = null,
+    internal val googleCredentialConfiguration: GoogleCredentialConfiguration? = null,
 ) {
     public actual fun toInternal(): StytchClientConfigurationInternal {
         // DFP initialization is a two-step process SOLELY because it has to be on React Native :upsidedownface:
@@ -33,10 +34,19 @@ public actual class StytchClientConfiguration(
             captchaProvider = CAPTCHAProviderImpl(context.applicationContext as Application),
             passkeyProvider = PasskeyProvider(),
             biometricsProvider = BiometricsProvider(),
-            oAuthProvider = OAuthProvider(),
+            oAuthProvider =
+                OAuthProvider(
+                    application = context.applicationContext as Application,
+                    googleCredentialConfiguration = googleCredentialConfiguration,
+                ),
         )
     }
 }
+
+public class GoogleCredentialConfiguration(
+    public val googleClientId: String,
+    public val autoSelectEnabled: Boolean = true,
+)
 
 public fun Context.getDeviceInfo(): DeviceInfo {
     val applicationPackageName = applicationContext.packageName.toString()
