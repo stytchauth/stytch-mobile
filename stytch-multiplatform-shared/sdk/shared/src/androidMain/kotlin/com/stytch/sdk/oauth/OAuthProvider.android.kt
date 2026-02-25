@@ -15,7 +15,6 @@ import com.stytch.sdk.data.SSOError
 import com.stytch.sdk.data.StytchDispatchers
 import com.stytch.sdk.oauth.SSOManagerActivity.Companion.URI_KEY
 import com.stytch.sdk.pkce.PKCEClient
-import io.ktor.http.URLBuilder
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 import java.io.Serializable
@@ -84,25 +83,7 @@ public actual class OAuthProvider(
         publicTokenInfo: PublicTokenInfo,
     ): OAuthResult {
         if (parameters.activity == null) throw MissingActivityException()
-        val codePair = pkceClient.create()
-        val finalParameters =
-            mutableMapOf(
-                "public_token" to publicTokenInfo.publicToken,
-                "code_challenge" to codePair.challenge,
-                "login_redirect_url" to parameters.loginRedirectUrl,
-                "signup_redirect_url" to parameters.signupRedirectUrl,
-                "custom_scopes" to parameters.customScopes?.joinToString(" "),
-                "oauth_attach_token" to parameters.oauthAttachToken,
-            )
-        parameters.providerParams?.entries?.forEach { (key, value) ->
-            finalParameters["provider_$key"] = value
-        }
-        val uri = URLBuilder(baseUrl)
-        finalParameters.forEach { (key, value) ->
-            if (value?.isNotEmpty() == true) {
-                uri.parameters.append(key, value)
-            }
-        }
+        val uri = generateOAuthStartUrl(baseUrl, publicTokenInfo, parameters, pkceClient)
         return suspendCancellableCoroutine { continuation ->
             val launcher =
                 parameters.activity.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -127,7 +108,7 @@ public actual class OAuthProvider(
                     continuation.resume(response)
                 }
             val intent = SSOManagerActivity.createBaseIntent(parameters.activity)
-            intent.putExtra(URI_KEY, uri.build().toString())
+            intent.putExtra(URI_KEY, uri)
             launcher.launch(intent)
         }
     }
