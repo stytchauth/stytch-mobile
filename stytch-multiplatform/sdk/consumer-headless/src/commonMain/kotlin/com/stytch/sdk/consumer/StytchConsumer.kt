@@ -9,6 +9,8 @@ import com.stytch.sdk.consumer.data.ConsumerAuthenticationState
 import com.stytch.sdk.consumer.magicLinks.MagicLinksClient
 import com.stytch.sdk.consumer.magicLinks.MagicLinksImpl
 import com.stytch.sdk.consumer.networking.ConsumerNetworkingClient
+import com.stytch.sdk.consumer.oauth.OAuthClient
+import com.stytch.sdk.consumer.oauth.OAuthClientImpl
 import com.stytch.sdk.consumer.otp.OtpClient
 import com.stytch.sdk.consumer.otp.OtpImpl
 import com.stytch.sdk.consumer.passkeys.PasskeysClient
@@ -21,6 +23,7 @@ import com.stytch.sdk.consumer.totp.TOTPClient
 import com.stytch.sdk.consumer.totp.TOTPClientImpl
 import com.stytch.sdk.consumer.user.UserClient
 import com.stytch.sdk.consumer.user.UserClientImpl
+import com.stytch.sdk.data.BootstrapResponse
 import com.stytch.sdk.data.JsCleanup
 import com.stytch.sdk.data.StytchClientConfiguration
 import com.stytch.sdk.data.StytchClientConfigurationInternal
@@ -54,10 +57,12 @@ public interface StytchConsumer : StytchClient {
 
     public val biometrics: BiometricsClient
 
+    public val oauth: OAuthClient
+
     public val authenticationStateFlow: StateFlow<ConsumerAuthenticationState>
 
     @JsName("authenticationStateObserver")
-    public fun authenticationStateObserver(callback: (authenticatonState: ConsumerAuthenticationState) -> Unit): JsCleanup
+    public fun authenticationStateObserver(callback: (authenticationState: ConsumerAuthenticationState) -> Unit): JsCleanup
 }
 
 @JsExport
@@ -110,6 +115,17 @@ internal class DefaultStytchConsumer(
             configuration.encryptionClient,
             configuration.biometricsProvider,
         )
+
+    override val oauth: OAuthClient =
+        OAuthClientImpl(
+            publicTokenInfo = configuration.tokenInfo,
+            endpointOptions = configuration.endpointOptions,
+            cnameDomain = { bootstrapResponse?.cnameDomain },
+            dispatchers = dispatchers,
+            networkingClient = networkingClient,
+            pkceClient = pkceClient,
+            oauthProvider = configuration.oAuthProvider,
+        )
     override val authenticationStateFlow: StateFlow<ConsumerAuthenticationState> = sessionManager.authenticationStateFlow
 
     override fun authenticationStateObserver(callback: (authenticationState: ConsumerAuthenticationState) -> Unit): JsCleanup {
@@ -124,9 +140,11 @@ internal class DefaultStytchConsumer(
         }
     }
 
+    internal var bootstrapResponse: BootstrapResponse? = null
+
     init {
         CoroutineScope(dispatchers.ioDispatcher).launch {
-            networkingClient.refreshBootStrapData()
+            bootstrapResponse = networkingClient.refreshBootStrapData()
         }
     }
 

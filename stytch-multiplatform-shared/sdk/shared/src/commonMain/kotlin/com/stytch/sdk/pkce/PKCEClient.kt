@@ -9,7 +9,7 @@ public class PKCEClient(
     private val encryptionClient: StytchEncryptionClient,
     private val persistenceClient: StytchPersistenceClient,
 ) {
-    public fun create(): PKCECodePair {
+    public suspend fun create(): PKCECodePair {
         val codeVerifierData = encryptionClient.generateCodeVerifier()
         val codeVerifierString = codeVerifierData.encodeBase64()
         val codeChallenge =
@@ -25,12 +25,12 @@ public class PKCEClient(
         )
     }
 
-    public fun revoke() {
+    public suspend fun revoke() {
         persistenceClient.remove(PKCE_CODE_CHALLENGE_KEY)
         persistenceClient.remove(PKCE_CODE_VERIFIER_KEY)
     }
 
-    public fun retrieve(): PKCECodePair? {
+    public suspend fun retrieve(): PKCECodePair? {
         val challenge = persistenceClient.get<String>(PKCE_CODE_CHALLENGE_KEY, null) ?: return null
         val verifier = persistenceClient.get<String>(PKCE_CODE_VERIFIER_KEY, null) ?: return null
         return PKCECodePair(challenge, verifier)
