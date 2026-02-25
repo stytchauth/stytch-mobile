@@ -93,6 +93,7 @@ kotlin {
             implementation(libs.googleid)
             implementation(libs.activity)
             implementation(libs.activity.ktx)
+            implementation(libs.browser)
         }
         commonMain.dependencies {
             implementation(libs.kotlinx.serialization.json)

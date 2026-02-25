@@ -1,6 +1,5 @@
 package com.stytch.sdk.oauth
 
-import com.stytch.sdk.data.EndpointOptions
 import com.stytch.sdk.data.PublicTokenInfo
 import com.stytch.sdk.data.StytchDispatchers
 import com.stytch.sdk.pkce.PKCEClient
@@ -13,9 +12,8 @@ public actual class OAuthProvider {
         pkceClient: PKCEClient,
         dispatchers: StytchDispatchers,
         type: OAuthProviderType,
+        baseUrl: String,
         publicTokenInfo: PublicTokenInfo,
-        endpointOptions: EndpointOptions,
-        cnameDomain: () -> String?,
     ): OAuthResult {
         TODO()
     }

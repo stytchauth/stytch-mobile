@@ -8,10 +8,8 @@ import com.stytch.sdk.consumer.networking.models.IOAuthAttachParameters
 import com.stytch.sdk.consumer.networking.models.IOAuthAuthenticateParameters
 import com.stytch.sdk.consumer.networking.models.IOAuthGoogleIDTokenAuthenticateParameters
 import com.stytch.sdk.consumer.networking.models.OAuthAppleIDTokenAuthenticateParameters
-import com.stytch.sdk.consumer.networking.models.OAuthAttachParameters
 import com.stytch.sdk.consumer.networking.models.OAuthAttachResponse
 import com.stytch.sdk.consumer.networking.models.OAuthAuthenticateParameters
-import com.stytch.sdk.consumer.networking.models.OAuthAuthenticateRequest
 import com.stytch.sdk.consumer.networking.models.OAuthAuthenticateResponse
 import com.stytch.sdk.consumer.networking.models.OAuthGoogleIDTokenAuthenticateParameters
 import com.stytch.sdk.consumer.networking.models.OAuthGoogleIDTokenAuthenticateResponse
@@ -24,11 +22,7 @@ import com.stytch.sdk.oauth.OAuthProviderType
 import com.stytch.sdk.oauth.OAuthResult
 import com.stytch.sdk.oauth.OAuthStartParameters
 import com.stytch.sdk.pkce.PKCEClient
-import io.ktor.http.URLBuilder
-import io.ktor.http.parameters
 import kotlinx.coroutines.withContext
-import kotlin.collections.component1
-import kotlin.collections.component2
 import kotlin.js.JsExport
 
 @JsExport
@@ -152,15 +146,16 @@ internal class OAuthClientImpl(
         provider: OAuthProviderType,
         parameters: OAuthStartParameters,
     ) = withContext(dispatchers.ioDispatcher) {
+        val host = "https://${cnameDomain() ?: if (publicTokenInfo.isTestToken) endpointOptions.testDomain else endpointOptions.liveDomain}/v1/"
+        val baseUrl = "${host}public/oauth/${provider.hostName}/start"
         val response =
             oauthProvider.getOAuthToken(
                 pkceClient = pkceClient,
                 dispatchers = dispatchers,
                 type = provider,
                 parameters = parameters,
+                baseUrl = baseUrl,
                 publicTokenInfo = publicTokenInfo,
-                endpointOptions = endpointOptions,
-                cnameDomain = cnameDomain,
             )
         return@withContext when (response) {
             is OAuthResult.ClassicToken -> {

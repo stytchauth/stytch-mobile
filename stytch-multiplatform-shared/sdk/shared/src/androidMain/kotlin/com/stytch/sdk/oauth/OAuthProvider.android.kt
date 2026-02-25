@@ -9,11 +9,11 @@ import androidx.credentials.CredentialManager
 import androidx.credentials.GetCredentialRequest
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
-import com.stytch.sdk.data.EndpointOptions
 import com.stytch.sdk.data.GoogleCredentialConfiguration
 import com.stytch.sdk.data.PublicTokenInfo
 import com.stytch.sdk.data.SSOError
 import com.stytch.sdk.data.StytchDispatchers
+import com.stytch.sdk.oauth.SSOManagerActivity.Companion.URI_KEY
 import com.stytch.sdk.pkce.PKCEClient
 import io.ktor.http.URLBuilder
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -32,14 +32,13 @@ public actual class OAuthProvider(
         pkceClient: PKCEClient,
         dispatchers: StytchDispatchers,
         type: OAuthProviderType,
+        baseUrl: String,
         publicTokenInfo: PublicTokenInfo,
-        endpointOptions: EndpointOptions,
-        cnameDomain: () -> String?,
     ): OAuthResult =
         if (type == OAuthProviderType.GOOGLE && googleCredentialConfiguration != null) {
             attemptGoogleIdTokenAuthentication(application, pkceClient, googleCredentialConfiguration, dispatchers)
         } else {
-            attemptStandardOAuthAuthentication(pkceClient, dispatchers, parameters, type, publicTokenInfo, endpointOptions, cnameDomain)
+            attemptStandardOAuthAuthentication(pkceClient, parameters, baseUrl, publicTokenInfo)
         }
 
     private suspend fun attemptGoogleIdTokenAuthentication(
@@ -80,38 +79,33 @@ public actual class OAuthProvider(
 
     private suspend fun attemptStandardOAuthAuthentication(
         pkceClient: PKCEClient,
-        dispatchers: StytchDispatchers,
-        startParameters: OAuthStartParameters,
-        type: OAuthProviderType,
+        parameters: OAuthStartParameters,
+        baseUrl: String,
         publicTokenInfo: PublicTokenInfo,
-        endpointOptions: EndpointOptions,
-        cnameDomain: () -> String?,
     ): OAuthResult {
-        if (startParameters.activity == null) throw MissingActivityException()
+        if (parameters.activity == null) throw MissingActivityException()
         val codePair = pkceClient.create()
-        val host = "https://${cnameDomain() ?: if (publicTokenInfo.isTestToken) endpointOptions.testDomain else endpointOptions.liveDomain}/v1/"
-        val baseUrl = "${host}public/oauth/${type.hostName}/start"
-        val parameters =
+        val finalParameters =
             mutableMapOf(
                 "public_token" to publicTokenInfo.publicToken,
                 "code_challenge" to codePair.challenge,
-                "login_redirect_url" to startParameters.loginRedirectUrl,
-                "signup_redirect_url" to startParameters.signupRedirectUrl,
-                "custom_scopes" to startParameters.customScopes?.joinToString(" "),
-                "oauth_attach_token" to startParameters.oauthAttachToken,
+                "login_redirect_url" to parameters.loginRedirectUrl,
+                "signup_redirect_url" to parameters.signupRedirectUrl,
+                "custom_scopes" to parameters.customScopes?.joinToString(" "),
+                "oauth_attach_token" to parameters.oauthAttachToken,
             )
-        startParameters.providerParams?.entries?.forEach { (key, value) ->
-            parameters["provider_$key"] = value
+        parameters.providerParams?.entries?.forEach { (key, value) ->
+            finalParameters["provider_$key"] = value
         }
         val uri = URLBuilder(baseUrl)
-        parameters.forEach { (key, value) ->
+        finalParameters.forEach { (key, value) ->
             if (value?.isNotEmpty() == true) {
                 uri.parameters.append(key, value)
             }
         }
         return suspendCancellableCoroutine { continuation ->
             val launcher =
-                startParameters.activity.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+                parameters.activity.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
                     val token = result.data?.data?.getQueryParameter("token")
                     val response =
                         if (result.resultCode == RESULT_OK && token != null) {
@@ -132,7 +126,7 @@ public actual class OAuthProvider(
                         }
                     continuation.resume(response)
                 }
-            val intent = SSOManagerActivity.createBaseIntent(activity)
+            val intent = SSOManagerActivity.createBaseIntent(parameters.activity)
             intent.putExtra(URI_KEY, uri.build().toString())
             launcher.launch(intent)
         }
