@@ -9,5 +9,6 @@ public sealed interface BiometricsAvailability {
 
     public data class Unavailable(
         public val reason: String,
+        public val code: Int? = null,
     ) : BiometricsAvailability
 }

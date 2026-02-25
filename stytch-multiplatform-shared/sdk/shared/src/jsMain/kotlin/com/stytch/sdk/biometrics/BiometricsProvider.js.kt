@@ -1,20 +1,28 @@
 package com.stytch.sdk.biometrics
 
+import com.stytch.sdk.data.Ed25519KeyPair
+
 public actual class BiometricsProvider {
-    public actual val isSupported: Boolean
-        get() {
-            TODO()
-        }
-
-    public actual fun getAvailability(): BiometricsAvailability {
+    public actual suspend fun getAvailability(parameters: BiometricsParameters): BiometricsAvailability {
         TODO()
     }
 
-    public actual fun register(): BiometricsKeyPair {
+    public actual suspend fun register(parameters: BiometricsParameters): Ed25519KeyPair {
         TODO()
     }
 
-    public actual fun authenticate(): BiometricsKeyPair {
+    public actual suspend fun authenticate(parameters: BiometricsParameters): Ed25519KeyPair {
+        TODO()
+    }
+
+    public actual suspend fun persistRegistration(
+        registrationId: String,
+        privateKeyData: String,
+    ) {
+        TODO()
+    }
+
+    public actual suspend fun removeRegistration() {
         TODO()
     }
 }

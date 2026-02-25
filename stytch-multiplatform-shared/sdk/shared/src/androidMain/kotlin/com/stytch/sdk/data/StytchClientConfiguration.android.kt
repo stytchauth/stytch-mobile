@@ -22,18 +22,20 @@ public actual class StytchClientConfiguration(
         // DFP initialization is a two-step process SOLELY because it has to be on React Native :upsidedownface:
         val dfpProvider = DFPProviderImpl(context)
         dfpProvider.configureDfp(publicToken = publicToken, dfppaDomain = endpointOptions.dfppaDomain)
+        val encryptionClient = StytchEncryptionClient()
+        val platformPersistenceClient = StytchPlatformPersistenceClient(context)
         return StytchClientConfigurationInternal(
             publicToken = publicToken,
             endpointOptions = endpointOptions,
             defaultSessionDuration = defaultSessionDuration,
             deviceInfo = context.getDeviceInfo(),
-            platformPersistenceClient = StytchPlatformPersistenceClient(context),
+            platformPersistenceClient = platformPersistenceClient,
             platform = KMPPlatformType.ANDROID,
-            encryptionClient = StytchEncryptionClient(),
+            encryptionClient = encryptionClient,
             dfpProvider = dfpProvider,
             captchaProvider = CAPTCHAProviderImpl(context.applicationContext as Application),
             passkeyProvider = PasskeyProvider(),
-            biometricsProvider = BiometricsProvider(),
+            biometricsProvider = BiometricsProvider(encryptionClient, platformPersistenceClient),
             oAuthProvider =
                 OAuthProvider(
                     application = context.applicationContext as Application,
