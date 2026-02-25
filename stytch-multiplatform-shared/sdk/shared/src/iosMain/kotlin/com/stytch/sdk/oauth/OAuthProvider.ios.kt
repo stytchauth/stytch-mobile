@@ -4,12 +4,22 @@ import com.stytch.sdk.data.PublicTokenInfo
 import com.stytch.sdk.data.SSOError
 import com.stytch.sdk.data.StytchDispatchers
 import com.stytch.sdk.pkce.PKCEClient
+import kotlinx.coroutines.CancellableContinuation
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
+import platform.AuthenticationServices.ASAuthorization
+import platform.AuthenticationServices.ASAuthorizationAppleIDCredential
+import platform.AuthenticationServices.ASAuthorizationAppleIDProvider
+import platform.AuthenticationServices.ASAuthorizationController
+import platform.AuthenticationServices.ASAuthorizationControllerDelegateProtocol
+import platform.AuthenticationServices.ASAuthorizationScopeEmail
+import platform.AuthenticationServices.ASAuthorizationScopeFullName
 import platform.AuthenticationServices.ASWebAuthenticationSession
+import platform.Foundation.NSError
 import platform.Foundation.NSURL
 import platform.Foundation.NSURLComponents
 import platform.Foundation.NSURLQueryItem
+import platform.darwin.NSObject
 import kotlin.coroutines.resume
 
 public actual class OAuthProvider {
@@ -24,13 +34,67 @@ public actual class OAuthProvider {
         publicTokenInfo: PublicTokenInfo,
     ): OAuthResult =
         if (type == OAuthProviderType.APPLE) {
-            attemptAppleIdTokenAuthentication()
+            attemptAppleIdTokenAuthentication(pkceClient, parameters, dispatchers)
         } else {
             attemptStandardOAuthAuthentication(pkceClient, parameters, dispatchers, baseUrl, publicTokenInfo)
         }
 
-    private suspend fun attemptAppleIdTokenAuthentication(): OAuthResult {
-        TODO()
+    private suspend fun attemptAppleIdTokenAuthentication(
+        pkceClient: PKCEClient,
+        parameters: OAuthStartParameters,
+        dispatchers: StytchDispatchers,
+    ): OAuthResult =
+        withContext(dispatchers.ioDispatcher) {
+            val nonce = pkceClient.create().challenge
+            val provider = ASAuthorizationAppleIDProvider()
+            val request = provider.createRequest()
+            request.requestedScopes = listOf(ASAuthorizationScopeEmail, ASAuthorizationScopeFullName)
+            request.nonce = nonce
+            val controller = ASAuthorizationController(authorizationRequests = listOf(request))
+            controller.presentationContextProvider = parameters.applePresentationContextProvider
+            suspendCancellableCoroutine { continuation ->
+                controller.delegate = AppleIdTokenDelegate(nonce, continuation)
+                controller.performRequests()
+            }
+        }
+
+    private class AppleIdTokenDelegate(
+        val nonce: String,
+        val continuation: CancellableContinuation<OAuthResult>,
+    ) : NSObject(),
+        ASAuthorizationControllerDelegateProtocol {
+        override fun authorizationController(
+            controller: ASAuthorizationController,
+            didCompleteWithAuthorization: ASAuthorization,
+        ) {
+            val credential =
+                didCompleteWithAuthorization.credential as? ASAuthorizationAppleIDCredential ?: return continuation.resume(
+                    OAuthResult.Error(InvalidAuthorizationCredential()),
+                )
+            val idToken =
+                credential.identityToken?.toString()
+                    ?: return continuation.resume(OAuthResult.Error(MissingAuthorizationCredentialIDToken()))
+            val name =
+                listOf(
+                    credential.fullName?.givenName,
+                    credential.fullName?.middleName,
+                    credential.fullName?.familyName,
+                ).joinToString(" ")
+            continuation.resume(
+                OAuthResult.IDToken(
+                    token = idToken,
+                    name = name,
+                    nonce = nonce,
+                ),
+            )
+        }
+
+        override fun authorizationController(
+            controller: ASAuthorizationController,
+            didCompleteWithError: NSError,
+        ) {
+            continuation.resume(OAuthResult.Error(SSOError.UnknownError(didCompleteWithError.localizedDescription)))
+        }
     }
 
     private suspend fun attemptStandardOAuthAuthentication(
@@ -66,7 +130,7 @@ public actual class OAuthProvider {
                                 continuation.resume(OAuthResult.Error(SSOError.NoTokenFound()))
                             }
                         }
-                    session.presentationContextProvider = parameters.presentationContextProvider
+                    session.presentationContextProvider = parameters.oauthPresentationContextProvider
                     session.start()
                 } ?: run {
                     continuation.resume(OAuthResult.Error(SSOError.NoURIFound()))

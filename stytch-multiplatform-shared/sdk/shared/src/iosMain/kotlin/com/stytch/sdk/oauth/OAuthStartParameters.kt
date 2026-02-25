@@ -1,9 +1,11 @@
 package com.stytch.sdk.oauth
 
+import platform.AuthenticationServices.ASAuthorizationControllerPresentationContextProvidingProtocol
 import platform.AuthenticationServices.ASWebAuthenticationPresentationContextProvidingProtocol
 
 public actual class OAuthStartParameters(
-    public val presentationContextProvider: ASWebAuthenticationPresentationContextProvidingProtocol? = null,
+    public val applePresentationContextProvider: ASAuthorizationControllerPresentationContextProvidingProtocol? = null,
+    public val oauthPresentationContextProvider: ASWebAuthenticationPresentationContextProvidingProtocol? = null,
     public actual val loginRedirectUrl: String? = null,
     public actual val signupRedirectUrl: String? = null,
     public actual val customScopes: List<String>? = null,
