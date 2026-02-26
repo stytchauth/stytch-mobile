@@ -108,12 +108,11 @@ internal class DefaultStytchConsumer(
 
     override val biometrics: BiometricsClient =
         BiometricsClientImpl(
-            dispatchers,
-            networkingClient,
-            sessionManager,
-            persistenceClient,
-            configuration.encryptionClient,
-            configuration.biometricsProvider,
+            dispatchers = dispatchers,
+            networkingClient = networkingClient,
+            sessionManager = sessionManager,
+            encryptionClient = configuration.encryptionClient,
+            biometricsProvider = configuration.biometricsProvider,
         )
 
     override val oauth: OAuthClient =
@@ -125,6 +124,7 @@ internal class DefaultStytchConsumer(
             networkingClient = networkingClient,
             pkceClient = pkceClient,
             oauthProvider = configuration.oAuthProvider,
+            defaultSessionDuration = configuration.defaultSessionDuration,
         )
     override val authenticationStateFlow: StateFlow<ConsumerAuthenticationState> = sessionManager.authenticationStateFlow
 

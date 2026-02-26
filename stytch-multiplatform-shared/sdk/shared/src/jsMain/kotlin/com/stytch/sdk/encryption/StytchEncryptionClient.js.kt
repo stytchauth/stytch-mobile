@@ -1,9 +1,9 @@
 package com.stytch.sdk.encryption
 
 import com.stytch.sdk.StytchBridge
+import com.stytch.sdk.data.Ed25519KeyPair
 import io.ktor.util.decodeBase64Bytes
 import io.ktor.util.encodeBase64
-import kotlinx.coroutines.await
 
 @JsExport
 public actual class StytchEncryptionClient {
@@ -35,6 +35,14 @@ public actual class StytchEncryptionClient {
         key: ByteArray,
         data: ByteArray,
     ): ByteArray {
+        TODO()
+    }
+
+    public actual fun generateEd25519KeyPair(): Ed25519KeyPair {
+        TODO()
+    }
+
+    public actual fun deriveEd25519PublicKeyFromPrivateKeyBytes(privateKeyBytes: ByteArray): ByteArray {
         TODO()
     }
 }

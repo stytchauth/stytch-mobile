@@ -1,5 +1,6 @@
 package com.stytch.sdk.encryption
 
+import com.stytch.sdk.data.Ed25519KeyPair
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -98,6 +99,14 @@ public actual class StytchEncryptionClient(
         key: ByteArray,
         data: ByteArray,
     ): ByteArray {
+        TODO()
+    }
+
+    public actual fun generateEd25519KeyPair(): Ed25519KeyPair {
+        TODO()
+    }
+
+    public actual fun deriveEd25519PublicKeyFromPrivateKeyBytes(privateKeyBytes: ByteArray): ByteArray {
         TODO()
     }
 }

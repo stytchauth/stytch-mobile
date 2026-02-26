@@ -2,7 +2,14 @@ package com.stytch.sdk.encryption
 
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
+import com.stytch.sdk.data.Ed25519KeyPair
 import io.ktor.util.decodeBase64Bytes
+import org.bouncycastle.crypto.Signer
+import org.bouncycastle.crypto.generators.Ed25519KeyPairGenerator
+import org.bouncycastle.crypto.params.Ed25519KeyGenerationParameters
+import org.bouncycastle.crypto.params.Ed25519PrivateKeyParameters
+import org.bouncycastle.crypto.params.Ed25519PublicKeyParameters
+import org.bouncycastle.crypto.signers.Ed25519Signer
 import java.security.KeyStore
 import java.security.MessageDigest
 import java.security.SecureRandom
@@ -66,7 +73,7 @@ public actual class StytchEncryptionClient {
         return keyGenerator.generateKey()
     }
 
-    private companion object {
+    internal companion object {
         private const val ANDROID_KEYSTORE = "AndroidKeyStore"
         private const val ALGORITHM = KeyProperties.KEY_ALGORITHM_AES
         private const val BLOCK_MODE = KeyProperties.BLOCK_MODE_GCM
@@ -74,7 +81,7 @@ public actual class StytchEncryptionClient {
         private const val CIPHER_TRANSFORMATION = "$ALGORITHM/$BLOCK_MODE/$PADDING"
         private const val KEY_SIZE = 256
         private const val GCM_TAG_LENGTH = 128
-        private const val GCM_IV_LENGTH = 12
+        internal const val GCM_IV_LENGTH = 12
     }
 
     public actual fun generateCodeVerifier(): ByteArray {
@@ -92,6 +99,28 @@ public actual class StytchEncryptionClient {
         key: ByteArray,
         data: ByteArray,
     ): ByteArray {
-        TODO()
+        val signer: Signer = Ed25519Signer()
+        val privateKey = Ed25519PrivateKeyParameters(key)
+        signer.init(true, privateKey)
+        signer.update(data, 0, data.size)
+        return signer.generateSignature()
+    }
+
+    public actual fun generateEd25519KeyPair(): Ed25519KeyPair {
+        val gen = Ed25519KeyPairGenerator()
+        gen.init(Ed25519KeyGenerationParameters(SecureRandom()))
+        val keyPair = gen.generateKeyPair()
+        val publicKey = keyPair.public as Ed25519PublicKeyParameters
+        val privateKey = keyPair.private as Ed25519PrivateKeyParameters
+        return Ed25519KeyPair(
+            publicKey = publicKey.encoded,
+            privateKey = privateKey.encoded,
+        )
+    }
+
+    public actual fun deriveEd25519PublicKeyFromPrivateKeyBytes(privateKeyBytes: ByteArray): ByteArray {
+        val privateKeyRebuild = Ed25519PrivateKeyParameters(privateKeyBytes, 0)
+        val publicKeyRebuild = privateKeyRebuild.generatePublicKey()
+        return publicKeyRebuild.encoded
     }
 }
