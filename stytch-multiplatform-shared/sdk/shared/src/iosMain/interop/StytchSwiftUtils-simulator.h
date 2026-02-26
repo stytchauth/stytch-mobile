@@ -281,6 +281,7 @@ typedef unsigned int swift_uint4  __attribute__((__ext_vector_type__(4)));
 #if __has_warning("-Watimport-in-framework-header")
 #pragma clang diagnostic ignored "-Watimport-in-framework-header"
 #endif
+@import Foundation;
 @import ObjectiveC;
 #endif
 
@@ -333,6 +334,11 @@ SWIFT_CLASS_PROPERTY(@property (nonatomic, class, readonly, strong) StytchEncryp
 - (NSData * _Nullable)encryptDataWithPlainText:(NSData * _Nonnull)plainText withKeyData:(NSData * _Nonnull)withKeyData SWIFT_WARN_UNUSED_RESULT;
 - (NSData * _Nullable)decryptDataWithEncryptedData:(NSData * _Nonnull)encryptedData withKeyData:(NSData * _Nonnull)withKeyData SWIFT_WARN_UNUSED_RESULT;
 - (void)deleteEncryptionKeyWithName:(NSString * _Nonnull)name;
+- (NSData * _Nonnull)generateCodeVerifier SWIFT_WARN_UNUSED_RESULT;
+- (NSData * _Nonnull)generateCodeChallengeWithChallenge:(NSData * _Nonnull)challenge SWIFT_WARN_UNUSED_RESULT;
+- (NSDictionary<NSString *, NSData *> * _Nonnull)generateEd25519KeyPair SWIFT_WARN_UNUSED_RESULT;
+- (NSData * _Nullable)signEd25519WithKey:(NSData * _Nonnull)key challenge:(NSData * _Nonnull)challenge error:(NSError * _Nullable * _Nullable)error SWIFT_WARN_UNUSED_RESULT;
+- (NSData * _Nullable)deriveEd25519PublicKeyFromPrivateKeyBytesWithPrivateKeyData:(NSData * _Nonnull)privateKeyData error:(NSError * _Nullable * _Nullable)error SWIFT_WARN_UNUSED_RESULT;
 - (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
 @end
 
@@ -627,6 +633,7 @@ typedef unsigned int swift_uint4  __attribute__((__ext_vector_type__(4)));
 #if __has_warning("-Watimport-in-framework-header")
 #pragma clang diagnostic ignored "-Watimport-in-framework-header"
 #endif
+@import Foundation;
 @import ObjectiveC;
 #endif
 
@@ -679,6 +686,11 @@ SWIFT_CLASS_PROPERTY(@property (nonatomic, class, readonly, strong) StytchEncryp
 - (NSData * _Nullable)encryptDataWithPlainText:(NSData * _Nonnull)plainText withKeyData:(NSData * _Nonnull)withKeyData SWIFT_WARN_UNUSED_RESULT;
 - (NSData * _Nullable)decryptDataWithEncryptedData:(NSData * _Nonnull)encryptedData withKeyData:(NSData * _Nonnull)withKeyData SWIFT_WARN_UNUSED_RESULT;
 - (void)deleteEncryptionKeyWithName:(NSString * _Nonnull)name;
+- (NSData * _Nonnull)generateCodeVerifier SWIFT_WARN_UNUSED_RESULT;
+- (NSData * _Nonnull)generateCodeChallengeWithChallenge:(NSData * _Nonnull)challenge SWIFT_WARN_UNUSED_RESULT;
+- (NSDictionary<NSString *, NSData *> * _Nonnull)generateEd25519KeyPair SWIFT_WARN_UNUSED_RESULT;
+- (NSData * _Nullable)signEd25519WithKey:(NSData * _Nonnull)key challenge:(NSData * _Nonnull)challenge error:(NSError * _Nullable * _Nullable)error SWIFT_WARN_UNUSED_RESULT;
+- (NSData * _Nullable)deriveEd25519PublicKeyFromPrivateKeyBytesWithPrivateKeyData:(NSData * _Nonnull)privateKeyData error:(NSError * _Nullable * _Nullable)error SWIFT_WARN_UNUSED_RESULT;
 - (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
 @end
 
