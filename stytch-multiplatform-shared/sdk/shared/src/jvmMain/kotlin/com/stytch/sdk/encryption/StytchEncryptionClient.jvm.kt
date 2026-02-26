@@ -1,11 +1,19 @@
 package com.stytch.sdk.encryption
 
 import com.stytch.sdk.data.Ed25519KeyPair
+import org.bouncycastle.crypto.Signer
+import org.bouncycastle.crypto.generators.Ed25519KeyPairGenerator
+import org.bouncycastle.crypto.params.Ed25519KeyGenerationParameters
+import org.bouncycastle.crypto.params.Ed25519PrivateKeyParameters
+import org.bouncycastle.crypto.params.Ed25519PublicKeyParameters
+import org.bouncycastle.crypto.signers.Ed25519Signer
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.security.KeyStore
 import java.security.KeyStoreException
+import java.security.MessageDigest
+import java.security.SecureRandom
 import javax.crypto.Cipher
 import javax.crypto.KeyGenerator
 import javax.crypto.SecretKey
@@ -88,25 +96,42 @@ public actual class StytchEncryptionClient(
     }
 
     public actual fun generateCodeVerifier(): ByteArray {
-        TODO("Not yet implemented")
+        val randomBytes = ByteArray(32)
+        SecureRandom().nextBytes(randomBytes)
+        return randomBytes
     }
 
     public actual fun generateCodeChallenge(codeVerifier: ByteArray): ByteArray {
-        TODO("Not yet implemented")
+        val md = MessageDigest.getInstance("SHA-256")
+        return md.digest(codeVerifier)
     }
 
     public actual fun signEd25519(
         key: ByteArray,
         data: ByteArray,
     ): ByteArray {
-        TODO()
+        val signer: Signer = Ed25519Signer()
+        val privateKey = Ed25519PrivateKeyParameters(key)
+        signer.init(true, privateKey)
+        signer.update(data, 0, data.size)
+        return signer.generateSignature()
     }
 
     public actual fun generateEd25519KeyPair(): Ed25519KeyPair {
-        TODO()
+        val gen = Ed25519KeyPairGenerator()
+        gen.init(Ed25519KeyGenerationParameters(SecureRandom()))
+        val keyPair = gen.generateKeyPair()
+        val publicKey = keyPair.public as Ed25519PublicKeyParameters
+        val privateKey = keyPair.private as Ed25519PrivateKeyParameters
+        return Ed25519KeyPair(
+            publicKey = publicKey.encoded,
+            privateKey = privateKey.encoded,
+        )
     }
 
     public actual fun deriveEd25519PublicKeyFromPrivateKeyBytes(privateKeyBytes: ByteArray): ByteArray {
-        TODO()
+        val privateKeyRebuild = Ed25519PrivateKeyParameters(privateKeyBytes, 0)
+        val publicKeyRebuild = privateKeyRebuild.generatePublicKey()
+        return publicKeyRebuild.encoded
     }
 }
