@@ -35,6 +35,9 @@ val INTERNALLY_MANAGED_PARAMETERS =
         "signature",
         "biometricRegistrationId",
         "publicKey",
+        "returnPasskeyCredentialOptions",
+        "userAgent",
+        "authenticatorType",
     )
 
 class StytchDtoProcessor(
