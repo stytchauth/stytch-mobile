@@ -9,13 +9,11 @@ public expect class PasskeyProvider {
         parameters: PasskeysParameters,
         dispatchers: StytchDispatchers,
         json: String,
-        preferImmediatelyAvailableCredentials: Boolean,
     ): String
 
     public suspend fun getPublicKeyCredential(
         parameters: PasskeysParameters,
         dispatchers: StytchDispatchers,
         json: String,
-        preferImmediatelyAvailableCredentials: Boolean,
     ): String
 }

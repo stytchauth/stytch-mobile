@@ -9,13 +9,11 @@ public actual class PasskeyProvider {
         parameters: PasskeysParameters,
         dispatchers: StytchDispatchers,
         json: String,
-        preferImmediatelyAvailableCredentials: Boolean,
     ): String = throw PasskeysUnsupportedError()
 
     public actual suspend fun getPublicKeyCredential(
         parameters: PasskeysParameters,
         dispatchers: StytchDispatchers,
         json: String,
-        preferImmediatelyAvailableCredentials: Boolean,
     ): String = throw PasskeysUnsupportedError()
 }

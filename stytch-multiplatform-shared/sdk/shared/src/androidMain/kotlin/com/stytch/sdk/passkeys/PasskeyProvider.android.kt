@@ -16,12 +16,11 @@ public actual class PasskeyProvider {
         parameters: PasskeysParameters,
         dispatchers: StytchDispatchers,
         json: String,
-        preferImmediatelyAvailableCredentials: Boolean,
     ): String {
         val createPublicKeyCredentialRequest =
             CreatePublicKeyCredentialRequest(
                 requestJson = json,
-                preferImmediatelyAvailableCredentials = preferImmediatelyAvailableCredentials,
+                preferImmediatelyAvailableCredentials = parameters.preferImmediatelyAvailableCredentials,
             )
         val credentialManager = CredentialManager.create(parameters.activity)
         val response =
@@ -38,7 +37,6 @@ public actual class PasskeyProvider {
         parameters: PasskeysParameters,
         dispatchers: StytchDispatchers,
         json: String,
-        preferImmediatelyAvailableCredentials: Boolean,
     ): String {
         val getPublicKeyCredentialOption = GetPublicKeyCredentialOption(requestJson = json)
         val credentialManager = CredentialManager.create(parameters.activity)
@@ -49,7 +47,7 @@ public actual class PasskeyProvider {
                     request =
                         GetCredentialRequest(
                             credentialOptions = listOf(getPublicKeyCredentialOption),
-                            preferImmediatelyAvailableCredentials = preferImmediatelyAvailableCredentials,
+                            preferImmediatelyAvailableCredentials = parameters.preferImmediatelyAvailableCredentials,
                         ),
                 )
             }.credential as PublicKeyCredential

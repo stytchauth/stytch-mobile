@@ -9,7 +9,6 @@ public actual class PasskeyProvider {
         parameters: PasskeysParameters,
         dispatchers: StytchDispatchers,
         json: String,
-        preferImmediatelyAvailableCredentials: Boolean,
     ): String {
         TODO("Not yet implemented")
     }
@@ -18,7 +17,6 @@ public actual class PasskeyProvider {
         parameters: PasskeysParameters,
         dispatchers: StytchDispatchers,
         json: String,
-        preferImmediatelyAvailableCredentials: Boolean,
     ): String {
         TODO("Not yet implemented")
     }

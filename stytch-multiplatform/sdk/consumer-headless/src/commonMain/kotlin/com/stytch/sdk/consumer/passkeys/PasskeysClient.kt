@@ -25,15 +25,9 @@ import kotlin.js.JsExport
 public interface PasskeysClient {
     public val isSupported: Boolean
 
-    public suspend fun register(
-        parameters: PasskeysParameters,
-        preferImmediatelyAvailableCredentials: Boolean,
-    ): WebAuthnRegisterResponse
+    public suspend fun register(parameters: PasskeysParameters): WebAuthnRegisterResponse
 
-    public suspend fun authenticate(
-        parameters: PasskeysParameters,
-        preferImmediatelyAvailableCredentials: Boolean,
-    ): WebAuthnAuthenticateResponse
+    public suspend fun authenticate(parameters: PasskeysParameters): WebAuthnAuthenticateResponse
 
     public suspend fun update(
         id: String,
@@ -49,10 +43,7 @@ internal class PasskeysClientImpl(
 ) : PasskeysClient {
     override val isSupported: Boolean = passkeyProvider.isSupported
 
-    override suspend fun register(
-        parameters: PasskeysParameters,
-        preferImmediatelyAvailableCredentials: Boolean,
-    ): WebAuthnRegisterResponse {
+    override suspend fun register(parameters: PasskeysParameters): WebAuthnRegisterResponse {
         if (!isSupported) throw PasskeysUnsupportedError()
         return withContext(dispatchers.ioDispatcher) {
             networkingClient.request {
@@ -68,21 +59,18 @@ internal class PasskeysClientImpl(
                         parameters = parameters,
                         dispatchers = dispatchers,
                         json = startResponse.data.publicKeyCredentialCreationOptions,
-                        preferImmediatelyAvailableCredentials = preferImmediatelyAvailableCredentials,
                     )
                 networkingClient.api.webAuthnRegister(
                     WebAuthnRegisterRequest(
                         publicKeyCredential = credentials,
+                        sessionDurationMinutes = parameters.sessionDurationMinutes,
                     ),
                 )
             }
         }
     }
 
-    override suspend fun authenticate(
-        parameters: PasskeysParameters,
-        preferImmediatelyAvailableCredentials: Boolean,
-    ): WebAuthnAuthenticateResponse {
+    override suspend fun authenticate(parameters: PasskeysParameters): WebAuthnAuthenticateResponse {
         if (!isSupported) throw PasskeysUnsupportedError()
         return withContext(dispatchers.ioDispatcher) {
             networkingClient.request {
@@ -105,11 +93,11 @@ internal class PasskeysClientImpl(
                         parameters = parameters,
                         dispatchers = dispatchers,
                         json = startResponse.data.publicKeyCredentialRequestOptions,
-                        preferImmediatelyAvailableCredentials = preferImmediatelyAvailableCredentials,
                     )
                 networkingClient.api.webAuthnAuthenticate(
                     WebAuthnAuthenticateRequest(
                         publicKeyCredential = credentials,
+                        sessionDurationMinutes = parameters.sessionDurationMinutes,
                     ),
                 )
             }
