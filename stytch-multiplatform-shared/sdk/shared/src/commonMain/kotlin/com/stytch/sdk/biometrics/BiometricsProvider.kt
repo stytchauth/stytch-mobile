@@ -16,3 +16,7 @@ public expect class BiometricsProvider {
 
     public suspend fun removeRegistration()
 }
+
+internal const val BIOMETRIC_KEY_NAME = "stytch_biometric_key"
+internal const val BIOMETRIC_REGISTRATION_ID_KEY = "BIOMETRIC_REGISTRATION_ID"
+internal const val BIOMETRIC_REGISTRATION_PRIVATE_KEY_KEY = "BIOMETRIC_REGISTRATION_PRIVATE_KEY"

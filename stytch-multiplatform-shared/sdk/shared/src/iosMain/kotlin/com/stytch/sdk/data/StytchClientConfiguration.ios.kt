@@ -26,8 +26,10 @@ public actual class StytchClientConfiguration(
     public constructor(publicToken: String) : this(publicToken, EndpointOptions())
 
     @OptIn(ExperimentalForeignApi::class)
-    public actual fun toInternal(): StytchClientConfigurationInternal =
-        StytchClientConfigurationInternal(
+    public actual fun toInternal(): StytchClientConfigurationInternal {
+        val encryptionClient = StytchEncryptionClient()
+        val platformPersistenceClient = StytchPlatformPersistenceClient()
+        return StytchClientConfigurationInternal(
             publicToken = publicToken,
             endpointOptions = endpointOptions,
             defaultSessionDuration = defaultSessionDuration,
@@ -40,15 +42,16 @@ public actual class StytchClientConfiguration(
                     deviceName = UIDevice.currentDevice.model.lowercase(),
                     screenSize = UIScreen.mainScreen.bounds.useContents { "(${size.width},${size.height})" },
                 ),
-            platformPersistenceClient = StytchPlatformPersistenceClient(),
+            platformPersistenceClient = platformPersistenceClient,
             platform = KMPPlatformType.IOS,
-            encryptionClient = StytchEncryptionClient(),
+            encryptionClient = encryptionClient,
             dfpProvider = DFPProviderImpl(publicToken = publicToken, dfppaDomain = endpointOptions.dfppaDomain),
             captchaProvider = CAPTCHAProviderImpl(),
             passkeyProvider = PasskeyProvider(),
-            biometricsProvider = BiometricsProvider(),
+            biometricsProvider = BiometricsProvider(encryptionClient, platformPersistenceClient),
             oAuthProvider = OAuthProvider(),
         )
+    }
 }
 
 private fun NSBundle.getVersion(): String =
