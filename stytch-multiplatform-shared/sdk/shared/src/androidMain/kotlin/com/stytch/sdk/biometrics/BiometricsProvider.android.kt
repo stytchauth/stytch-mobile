@@ -14,7 +14,9 @@ import com.stytch.sdk.encryption.StytchEncryptionClient
 import com.stytch.sdk.encryption.StytchEncryptionClient.Companion.GCM_IV_LENGTH
 import com.stytch.sdk.persistence.StytchPlatformPersistenceClient
 import io.ktor.util.decodeBase64Bytes
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.withContext
 import java.security.InvalidAlgorithmParameterException
 import java.security.KeyStore
 import java.util.concurrent.Executors
@@ -29,6 +31,8 @@ public actual class BiometricsProvider(
     private val encryptionClient: StytchEncryptionClient,
     private val persistenceClient: StytchPlatformPersistenceClient,
 ) {
+    private var keyStoreLoaded = false
+
     public actual suspend fun getAvailability(parameters: BiometricsParameters): BiometricsAvailability {
         val allowedAuthenticators = getAllowedAuthenticators(parameters.allowDeviceCredentials)
         var errorEncounteredWhenGeneratingKey = false
@@ -110,6 +114,13 @@ public actual class BiometricsProvider(
             throw UnhandledCryptographyError(e)
         }
 
+    private suspend fun ensureKeystoreIsLoaded() =
+        withContext(Dispatchers.IO) {
+            if (!keyStoreLoaded) {
+                keyStore.load(null).also { keyStoreLoaded = true }
+            }
+        }
+
     private fun getAllowedAuthenticators(allowDeviceCredentials: Boolean) =
         if (allowDeviceCredentials && Build.VERSION.SDK_INT > Build.VERSION_CODES.Q) {
             BIOMETRIC_STRONG or DEVICE_CREDENTIAL
@@ -122,8 +133,9 @@ public actual class BiometricsProvider(
     private fun allowedAuthenticatorsIncludeDeviceCredentials(allowedAuthenticators: Int) =
         allowedAuthenticators == BIOMETRIC_STRONG or DEVICE_CREDENTIAL
 
-    private fun getSecretKey(allowedAuthenticators: Int): SecretKey? =
+    private suspend fun getSecretKey(allowedAuthenticators: Int): SecretKey? =
         try {
+            ensureKeystoreIsLoaded()
             if (!keyStore.containsAlias(BIOMETRIC_KEY_NAME)) {
                 val keyGenerator =
                     KeyGenerator.getInstance(
@@ -156,10 +168,6 @@ public actual class BiometricsProvider(
         } catch (_: Exception) {
             null
         }
-
-    init {
-        keyStore.load(null)
-    }
 
     private fun getCipher(): Cipher =
         Cipher.getInstance(
@@ -235,7 +243,7 @@ public actual class BiometricsProvider(
         allowedAuthenticators: Int,
     ): Int = BiometricManager.from(context).canAuthenticate(allowedAuthenticators)
 
-    private fun ensureSecretKeyIsAvailable(allowedAuthenticators: Int) {
+    private suspend fun ensureSecretKeyIsAvailable(allowedAuthenticators: Int) {
         val secretKey = getSecretKey(allowedAuthenticators) ?: error("SecretKey cannot be null")
         // initialize a cipher (that we won't use) with the secretkey to ensure it hasn't been invalidated
         val cipher = getCipher()
