@@ -11,6 +11,7 @@ import kotlinx.cinterop.alloc
 import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.ptr
 import kotlinx.cinterop.value
+import kotlinx.coroutines.CancellableContinuation
 import kotlinx.coroutines.suspendCancellableCoroutine
 import platform.Foundation.NSError
 import platform.LocalAuthentication.LAContext
@@ -54,15 +55,14 @@ public actual class BiometricsProvider(
                     return@evaluatePolicy
                 }
                 val keyPair = encryptionClient.generateEd25519KeyPair()
-                // iOS doesn't give us a cipher object to encrypt our keydata with, so we just pass the same data back
-                // for both the privateKey and the encryptedPrivateKey
-                continuation.resume(
+                val encryptedPrivateKey = encryptionClient.encrypt(keyPair.privateKey)
+                continuation.resumeIgnoringCancellation(
                     Ed25519KeyPair(
                         publicKey = keyPair.publicKey,
                         privateKey = keyPair.privateKey,
-                        encryptedPrivateKey = keyPair.privateKey,
+                        encryptedPrivateKey = encryptedPrivateKey,
                     ),
-                ) { _, _, _ -> }
+                )
             }
         }
     }
@@ -79,16 +79,16 @@ public actual class BiometricsProvider(
                     continuation.resumeWithException(BiometricAuthenticationFailed("Failed policy evaluation"))
                     return@evaluatePolicy
                 }
-                val privateKey =
-                    persistenceClient.getData(BIOMETRIC_REGISTRATION_PRIVATE_KEY_KEY)?.decodeBase64Bytes()
-                        ?: throw MissingBiometricKeyDataError()
-                val publicKey = encryptionClient.deriveEd25519PublicKeyFromPrivateKeyBytes(privateKey)
-                continuation.resume(
+                val encryptedPrivateKey =
+                    encryptionClient.retrieveBiometricKey(BIOMETRIC_REGISTRATION_PRIVATE_KEY_KEY) ?: throw MissingBiometricKeyDataError()
+                val decryptedPrivateKey = encryptionClient.decrypt(encryptedPrivateKey)
+                val publicKey = encryptionClient.deriveEd25519PublicKeyFromPrivateKeyBytes(decryptedPrivateKey)
+                continuation.resumeIgnoringCancellation(
                     Ed25519KeyPair(
                         publicKey = publicKey,
-                        privateKey = privateKey,
+                        privateKey = decryptedPrivateKey,
                     ),
-                ) { _, _, _ -> }
+                )
             }
         }
     }
@@ -98,12 +98,12 @@ public actual class BiometricsProvider(
         privateKeyData: String,
     ) {
         persistenceClient.saveData(BIOMETRIC_REGISTRATION_ID_KEY, registrationId)
-        persistenceClient.saveData(BIOMETRIC_REGISTRATION_PRIVATE_KEY_KEY, privateKeyData)
+        encryptionClient.createBiometricKey(BIOMETRIC_REGISTRATION_PRIVATE_KEY_KEY, privateKeyData.encodeToByteArray())
     }
 
     public actual suspend fun removeRegistration() {
         persistenceClient.removeData(BIOMETRIC_REGISTRATION_ID_KEY)
-        persistenceClient.removeData(BIOMETRIC_REGISTRATION_PRIVATE_KEY_KEY)
+        encryptionClient.deleteBiometricKey(BIOMETRIC_REGISTRATION_PRIVATE_KEY_KEY)
     }
 
     private fun setPromptData(promptData: BiometricPromptData) {
@@ -111,4 +111,8 @@ public actual class BiometricsProvider(
         laContext.localizedFallbackTitle = promptData.fallbackTitle
         laContext.localizedCancelTitle = promptData.cancelTitle
     }
+}
+
+private fun <T> CancellableContinuation<T>.resumeIgnoringCancellation(result: T) {
+    resume(result) { _, _, _ -> }
 }
