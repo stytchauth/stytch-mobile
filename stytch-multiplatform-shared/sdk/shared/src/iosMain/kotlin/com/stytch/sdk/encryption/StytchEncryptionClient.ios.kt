@@ -31,6 +31,19 @@ public actual class StytchEncryptionClient {
         swiftEncryptionManager.deleteEncryptionKeyWithName(STYTCH_MASTER_KEY_ALIAS)
     }
 
+    public fun createBiometricKey(
+        name: String,
+        data: ByteArray,
+    ) {
+        swiftEncryptionManager.persistBiometricKeyDataWithName(name, data.toNSData())
+    }
+
+    public fun retrieveBiometricKey(name: String): ByteArray? = swiftEncryptionManager.getBiometricKeyDataWithName(name)?.toByteArray()
+
+    public fun deleteBiometricKey(name: String) {
+        swiftEncryptionManager.deleteEncryptionKeyWithName(name)
+    }
+
     public actual fun generateCodeVerifier(): ByteArray {
         TODO("Not yet implemented")
     }

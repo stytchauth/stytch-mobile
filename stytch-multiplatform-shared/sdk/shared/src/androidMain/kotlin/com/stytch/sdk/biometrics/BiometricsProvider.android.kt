@@ -250,12 +250,6 @@ public actual class BiometricsProvider(
         cipher.init(Cipher.ENCRYPT_MODE, secretKey)
     }
 
-    private companion object {
-        private const val BIOMETRIC_KEY_NAME = "stytch_biometric_key"
-        private const val BIOMETRIC_REGISTRATION_ID_KEY = "BIOMETRIC_REGISTRATION_ID"
-        private const val BIOMETRIC_REGISTRATION_PRIVATE_KEY_KEY = "BIOMETRIC_REGISTRATION_PRIVATE_KEY"
-    }
-
     public actual suspend fun persistRegistration(
         registrationId: String,
         privateKeyData: String,
