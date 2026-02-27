@@ -1,9 +1,11 @@
 package com.stytch.mobile.bridge
 
 import android.app.Application
+import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReadableArray
+import com.facebook.react.bridge.WritableArray
 import com.facebook.react.module.annotations.ReactModule
 import com.stytch.sdk.data.getDeviceInfo
 import com.stytch.sdk.dfp.CAPTCHAProviderImpl
@@ -111,9 +113,12 @@ class StytchBridgeModule(reactContext: ReactApplicationContext) :
     return encryptionClient.signEd25519(key.decodeBase64Bytes(), data.decodeBase64Bytes()).encodeBase64()
   }
 
-  override fun generateEd25519KeyPair(): List<String> {
+  override fun generateEd25519KeyPair(): WritableArray {
     val result = encryptionClient.generateEd25519KeyPair()
-    return listOf(result.publicKey.encodeBase64(), result.privateKey.encodeBase64(), result.encryptedPrivateKey.encodeBase64())
+    val nativeArray = Arguments.createArray()
+    nativeArray.pushString(result.publicKey.encodeBase64())
+    nativeArray.pushString(result.privateKey.encodeBase64())
+    return nativeArray
   }
 
   override fun deriveEd25519PublicKeyFromPrivateKeyBytes(privateKeyBytes: String): String {

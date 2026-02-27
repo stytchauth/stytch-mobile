@@ -18,6 +18,7 @@ public expect class OAuthProvider {
     ): OAuthResult
 }
 
+@JsExport
 public enum class OAuthProviderType(
     public val hostName: String,
 ) {

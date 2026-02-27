@@ -1,14 +1,17 @@
 package com.stytch.sdk.biometrics
 
-public sealed interface BiometricsAvailability {
-    public data object Available : BiometricsAvailability
+import kotlin.js.JsExport
 
-    public data object AlreadyRegistered : BiometricsAvailability
+@JsExport
+public sealed class BiometricsAvailability {
+    public data object Available : BiometricsAvailability()
 
-    public data object RegistrationRevoked : BiometricsAvailability
+    public data object AlreadyRegistered : BiometricsAvailability()
+
+    public data object RegistrationRevoked : BiometricsAvailability()
 
     public data class Unavailable(
         public val reason: String,
         public val code: Int? = null,
-    ) : BiometricsAvailability
+    ) : BiometricsAvailability()
 }

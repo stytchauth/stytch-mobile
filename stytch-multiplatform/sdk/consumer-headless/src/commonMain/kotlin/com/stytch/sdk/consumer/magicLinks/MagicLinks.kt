@@ -18,10 +18,7 @@ import kotlin.js.JsExport
 public interface MagicLinksClient {
     public val email: EmailMagicLinksClient
 
-    public suspend fun authenticate(
-        request: IMagicLinksAuthenticateParameters,
-        signChallenge: suspend (String) -> String,
-    ): MagicLinksAuthenticateResponse
+    public suspend fun authenticate(request: IMagicLinksAuthenticateParameters): MagicLinksAuthenticateResponse
 }
 
 @JsExport
@@ -39,10 +36,7 @@ internal class MagicLinksImpl(
 ) : MagicLinksClient {
     override val email: EmailMagicLinksClient = EmailMagicLinksImpl(dispatchers, networkingClient, pkceClient, sessionManager)
 
-    override suspend fun authenticate(
-        request: IMagicLinksAuthenticateParameters,
-        signChallenge: suspend (String) -> String,
-    ): MagicLinksAuthenticateResponse =
+    override suspend fun authenticate(request: IMagicLinksAuthenticateParameters): MagicLinksAuthenticateResponse =
         withContext(dispatchers.ioDispatcher) {
             val codePair = pkceClient.retrieve() ?: throw IllegalStateException("PKCE is missing")
             networkingClient.request {

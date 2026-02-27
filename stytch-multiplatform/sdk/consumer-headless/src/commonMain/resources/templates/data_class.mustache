@@ -67,6 +67,7 @@ import {{roomModelPackage}}.{{classname}}RoomModel
 import {{packageName}}.infrastructure.ITransformForStorage
 {{/generateRoomModels}}
 import com.stytch.sdk.networking.NetworkModel
+import kotlin.js.JsExport
 /**
  * {{{description}}}
  *
@@ -103,6 +104,7 @@ import com.stytch.sdk.networking.NetworkModel
 {{/additionalProperties.discriminatorValue}}
 {{/multiplatform}}
 @NetworkModel
+@JsExport
 {{#nonPublicApi}}internal {{/nonPublicApi}}{{^nonPublicApi}}{{#explicitApi}}public {{/explicitApi}}{{/nonPublicApi}}{{#discriminator}}{{#kotlinx_serialization}}sealed class{{/kotlinx_serialization}}{{#multiplatform}}sealed class{{/multiplatform}}{{^multiplatform}}{{^kotlinx_serialization}}interface{{/kotlinx_serialization}}{{/multiplatform}}{{/discriminator}}{{^discriminator}}{{#hasVars}}data {{/hasVars}}class{{/discriminator}} {{classname}}{{^discriminator}} (
 
 {{#allVars}}
