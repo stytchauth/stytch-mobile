@@ -23,10 +23,9 @@ public actual class BiometricsProvider(
     private val encryptionClient: StytchEncryptionClient,
     private val persistenceClient: StytchPlatformPersistenceClient,
 ) {
-    private val laContext = LAContext()
-
     public actual suspend fun getAvailability(parameters: BiometricsParameters): BiometricsAvailability =
         memScoped {
+            val laContext = LAContext()
             val registrationExists = persistenceClient.getData(BIOMETRIC_REGISTRATION_ID_KEY) != null
             val policyError = alloc<ObjCObjectVar<NSError?>>()
             val canEvaluate = laContext.canEvaluatePolicy(LAPolicyDeviceOwnerAuthenticationWithBiometrics, policyError.ptr)
@@ -43,11 +42,12 @@ public actual class BiometricsProvider(
         }
 
     public actual suspend fun register(parameters: BiometricsParameters): Ed25519KeyPair {
+        val laContext = LAContext()
         val canEvaluate = laContext.canEvaluatePolicy(LAPolicyDeviceOwnerAuthenticationWithBiometrics, null)
         if (!canEvaluate) {
             throw BiometricsUnsupportedError()
         }
-        setPromptData(parameters.promptData)
+        setPromptData(laContext, parameters.promptData)
         return suspendCancellableCoroutine { continuation ->
             laContext.evaluatePolicy(LAPolicyDeviceOwnerAuthenticationWithBiometrics, parameters.promptData.reason) { passed, error ->
                 if (!passed || error != null) {
@@ -68,11 +68,12 @@ public actual class BiometricsProvider(
     }
 
     public actual suspend fun authenticate(parameters: BiometricsParameters): Ed25519KeyPair {
+        val laContext = LAContext()
         val canEvaluate = laContext.canEvaluatePolicy(LAPolicyDeviceOwnerAuthenticationWithBiometrics, null)
         if (!canEvaluate) {
             throw BiometricsUnsupportedError()
         }
-        setPromptData(parameters.promptData)
+        setPromptData(laContext, parameters.promptData)
         return suspendCancellableCoroutine { continuation ->
             laContext.evaluatePolicy(LAPolicyDeviceOwnerAuthenticationWithBiometrics, parameters.promptData.reason) { passed, error ->
                 if (!passed || error != null) {
@@ -106,7 +107,10 @@ public actual class BiometricsProvider(
         encryptionClient.deleteBiometricKey(BIOMETRIC_REGISTRATION_PRIVATE_KEY_KEY)
     }
 
-    private fun setPromptData(promptData: BiometricPromptData) {
+    private fun setPromptData(
+        laContext: LAContext,
+        promptData: BiometricPromptData,
+    ) {
         laContext.localizedReason = promptData.reason
         laContext.localizedFallbackTitle = promptData.fallbackTitle
         laContext.localizedCancelTitle = promptData.cancelTitle
