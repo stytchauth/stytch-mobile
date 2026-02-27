@@ -76,6 +76,52 @@ SCSDKDFPProviderImpl *dfpClient;
 - (void)deleteKey {
     [encryptionClient deleteKey];
 }
+
+- (nonnull NSString *)deriveEd25519PublicKeyFromPrivateKeyBytes:(nonnull NSString *)privateKeyBytes {
+    NSData *decoded = [[NSData alloc] initWithBase64EncodedString:privateKeyBytes options:NSDataBase64DecodingIgnoreUnknownCharacters];
+    SCSDKKotlinByteArray *decodedByteArray = [SCSDKStytchEncryptionClient_iosKt toByteArray:decoded];
+    SCSDKKotlinByteArray *publicKeyByteArray = [encryptionClient deriveEd25519PublicKeyFromPrivateKeyBytesPrivateKeyBytes:decodedByteArray];
+    NSData *publicKeyData = [publicKeyByteArray toNSData];
+    return [publicKeyData base64EncodedStringWithOptions:0];
+}
+
+
+- (nonnull NSString *)generateCodeChallenge:(nonnull NSString *)verifier {
+    NSData *verifierData = [[NSData alloc] initWithBase64EncodedString:verifier options:NSDataBase64DecodingIgnoreUnknownCharacters];
+    SCSDKKotlinByteArray *verifierByteArray = [SCSDKStytchEncryptionClient_iosKt toByteArray:verifierData];
+    SCSDKKotlinByteArray *challengeByteArray = [encryptionClient generateCodeChallengeCodeVerifier:verifierByteArray];
+    NSData *challengeData = [challengeByteArray toNSData];
+    return [challengeData base64EncodedStringWithOptions:0];
+}
+
+
+- (nonnull NSString *)generateCodeVerifier {
+    SCSDKKotlinByteArray *codeVerifierByteArray = [encryptionClient generateCodeVerifier];
+    NSData *codeVerifierData = [codeVerifierByteArray toNSData];
+    return [codeVerifierData base64EncodedStringWithOptions:0];
+}
+
+
+- (nonnull NSArray<NSString *> *)generateEd25519KeyPair {
+    SCSDKEd25519KeyPair *keyPair = [encryptionClient generateEd25519KeyPair];
+    NSData *publicKeyData = [keyPair.publicKey toNSData];
+    NSData *privateKeyData = [keyPair.privateKey toNSData];
+    NSMutableArray *outArray = [NSMutableArray array];
+    [outArray addObject:[publicKeyData base64EncodedStringWithOptions:0]];
+    [outArray addObject:[privateKeyData base64EncodedStringWithOptions:0]];
+    return outArray;
+}
+
+
+- (nonnull NSString *)signEd25519:(nonnull NSString *)key data:(nonnull NSString *)data {
+    NSData *keyData = [[NSData alloc] initWithBase64EncodedString:key options:NSDataBase64DecodingIgnoreUnknownCharacters];
+    NSData *dataData = [[NSData alloc] initWithBase64EncodedString:data options:NSDataBase64DecodingIgnoreUnknownCharacters];
+    SCSDKKotlinByteArray *keyByteArray = [SCSDKStytchEncryptionClient_iosKt toByteArray:keyData];
+    SCSDKKotlinByteArray *dataByteArray = [SCSDKStytchEncryptionClient_iosKt toByteArray:dataData];
+    SCSDKKotlinByteArray *signatureByteArray = [encryptionClient signEd25519Key:keyByteArray data:dataByteArray];
+    NSData *signatureData = [signatureByteArray toNSData];
+    return [signatureData base64EncodedStringWithOptions:0];
+}
 // End Encryption Stuff
 
 // Begin DFP stuff
@@ -113,4 +159,5 @@ SCSDKDFPProviderImpl *dfpClient;
     return [NSNumber numberWithBool:result];
 }
 // End CAPTCHA stuff
+
 @end
