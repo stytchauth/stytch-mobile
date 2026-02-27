@@ -11,6 +11,7 @@ import kotlinx.cinterop.alloc
 import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.ptr
 import kotlinx.cinterop.value
+import kotlinx.coroutines.CancellableContinuation
 import kotlinx.coroutines.suspendCancellableCoroutine
 import platform.Foundation.NSError
 import platform.LocalAuthentication.LAContext
@@ -55,13 +56,13 @@ public actual class BiometricsProvider(
                 }
                 val keyPair = encryptionClient.generateEd25519KeyPair()
                 val encryptedPrivateKey = encryptionClient.encrypt(keyPair.privateKey)
-                continuation.resume(
+                continuation.resumeIgnoringCancellation(
                     Ed25519KeyPair(
                         publicKey = keyPair.publicKey,
                         privateKey = keyPair.privateKey,
                         encryptedPrivateKey = encryptedPrivateKey,
                     ),
-                ) { _, _, _ -> }
+                )
             }
         }
     }
@@ -82,12 +83,12 @@ public actual class BiometricsProvider(
                     encryptionClient.retrieveBiometricKey(BIOMETRIC_REGISTRATION_PRIVATE_KEY_KEY) ?: throw MissingBiometricKeyDataError()
                 val decryptedPrivateKey = encryptionClient.decrypt(encryptedPrivateKey)
                 val publicKey = encryptionClient.deriveEd25519PublicKeyFromPrivateKeyBytes(decryptedPrivateKey)
-                continuation.resume(
+                continuation.resumeIgnoringCancellation(
                     Ed25519KeyPair(
                         publicKey = publicKey,
                         privateKey = decryptedPrivateKey,
                     ),
-                ) { _, _, _ -> }
+                )
             }
         }
     }
@@ -110,4 +111,8 @@ public actual class BiometricsProvider(
         laContext.localizedFallbackTitle = promptData.fallbackTitle
         laContext.localizedCancelTitle = promptData.cancelTitle
     }
+}
+
+private fun <T> CancellableContinuation<T>.resumeIgnoringCancellation(result: T) {
+    resume(result) { _, _, _ -> }
 }
