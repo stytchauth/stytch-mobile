@@ -1,6 +1,6 @@
 package com.stytch.sdk
 
-import com.stytch.sdk.data.Ed25519KeyPair
+import com.stytch.sdk.biometrics.BiometricsAvailability
 import kotlin.js.Promise
 
 public external object StytchBridge {
@@ -48,4 +48,47 @@ public external object StytchBridge {
     public fun generateEd25519KeyPair(): List<String>
 
     public fun deriveEd25519PublicKeyFromPrivateKeyBytes(privateKeyBytes: String): String
+
+    public fun getBiometricsAvailability(
+        sessionDurationMinutes: Int,
+        androidAllowDeviceCredentials: Boolean?,
+        androidTitle: String?,
+        androidSubTitle: String?,
+        androidNegativeButtonText: String?,
+        androidAllowFallbackToCleartext: Boolean?,
+        iosReason: String?,
+        iosFallbackTitle: String?,
+        iosCancelTitle: String?,
+    ): Map<String, Any?>
+
+    public fun registerBiometrics(
+        sessionDurationMinutes: Int,
+        androidAllowDeviceCredentials: Boolean?,
+        androidTitle: String?,
+        androidSubTitle: String?,
+        androidNegativeButtonText: String?,
+        androidAllowFallbackToCleartext: Boolean?,
+        iosReason: String?,
+        iosFallbackTitle: String?,
+        iosCancelTitle: String?,
+    ): List<String>
+
+    public fun authenticateBiometrics(
+        sessionDurationMinutes: Int,
+        androidAllowDeviceCredentials: Boolean?,
+        androidTitle: String?,
+        androidSubTitle: String?,
+        androidNegativeButtonText: String?,
+        androidAllowFallbackToCleartext: Boolean?,
+        iosReason: String?,
+        iosFallbackTitle: String?,
+        iosCancelTitle: String?,
+    ): List<String>
+
+    public fun persistBiometricRegistration(
+        registrationId: String,
+        privateKeyData: String,
+    )
+
+    public fun removeBiometricRegistration()
 }

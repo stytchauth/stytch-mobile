@@ -20,6 +20,44 @@ export interface Spec extends TurboModule {
   signEd25519(key: string, data: string): string
   generateEd25519KeyPair(): string[]
   deriveEd25519PublicKeyFromPrivateKeyBytes(privateKeyBytes: string): string
+  getBiometricsAvailability(
+      sessionDurationMinutes: Number,
+      androidAllowDeviceCredentials?: Boolean,
+      androidTitle?: string,
+      androidSubTitle?: string,
+      androidNegativeButtonText?: string,
+      androidAllowFallbackToCleartext?: boolean,
+      iosReason?: string,
+      iosFallbackTitle?: string,
+      iosCancelTitle?: string,
+  ): Record<string, any>;
+  registerBiometrics(
+      sessionDurationMinutes: Number,
+      androidAllowDeviceCredentials?: Boolean,
+      androidTitle?: string,
+      androidSubTitle?: string,
+      androidNegativeButtonText?: string,
+      androidAllowFallbackToCleartext?: boolean,
+      iosReason?: string,
+      iosFallbackTitle?: string,
+      iosCancelTitle?: string,
+  ): string[];
+  authenticateBiometrics(
+      sessionDurationMinutes: Number,
+      androidAllowDeviceCredentials?: Boolean,
+      androidTitle?: string,
+      androidSubTitle?: string,
+      androidNegativeButtonText?: string,
+      androidAllowFallbackToCleartext?: boolean,
+      iosReason?: string,
+      iosFallbackTitle?: string,
+      iosCancelTitle?: string,
+  ): string[];
+  persistBiometricRegistration(
+      registrationId: string,
+      privateKeyData: string,
+  ): void;
+  removeBiometricRegistration(): void;
 };
 
 // create an instance of the module
