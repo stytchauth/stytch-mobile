@@ -23,26 +23,25 @@ public actual class StytchEncryptionClient {
         StytchBridge.deleteKey()
     }
 
-    public actual fun generateCodeVerifier(): ByteArray {
-        TODO("Not yet implemented")
-    }
+    public actual fun generateCodeVerifier(): ByteArray = StytchBridge.generateCodeVerifier().decodeBase64Bytes()
 
-    public actual fun generateCodeChallenge(codeVerifier: ByteArray): ByteArray {
-        TODO("Not yet implemented")
-    }
+    public actual fun generateCodeChallenge(codeVerifier: ByteArray): ByteArray =
+        StytchBridge.generateCodeChallenge(codeVerifier.encodeBase64()).decodeBase64Bytes()
 
     public actual fun signEd25519(
         key: ByteArray,
         data: ByteArray,
-    ): ByteArray {
-        TODO()
-    }
+    ): ByteArray = StytchBridge.signEd25519(key.encodeBase64(), data.encodeBase64()).decodeBase64Bytes()
 
     public actual fun generateEd25519KeyPair(): Ed25519KeyPair {
-        TODO()
+        val result = StytchBridge.generateEd25519KeyPair()
+        return Ed25519KeyPair(
+            publicKey = result[0].decodeBase64Bytes(),
+            privateKey = result[1].decodeBase64Bytes(),
+            encryptedPrivateKey = result[2].decodeBase64Bytes(),
+        )
     }
 
-    public actual fun deriveEd25519PublicKeyFromPrivateKeyBytes(privateKeyBytes: ByteArray): ByteArray {
-        TODO()
-    }
+    public actual fun deriveEd25519PublicKeyFromPrivateKeyBytes(privateKeyBytes: ByteArray): ByteArray =
+        StytchBridge.deriveEd25519PublicKeyFromPrivateKeyBytes(privateKeyBytes.encodeBase64()).decodeBase64Bytes()
 }

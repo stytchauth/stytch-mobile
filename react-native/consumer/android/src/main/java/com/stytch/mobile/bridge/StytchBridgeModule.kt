@@ -99,6 +99,27 @@ class StytchBridgeModule(reactContext: ReactApplicationContext) :
     return captchaProvider.isConfigured
   }
 
+  override fun generateCodeVerifier(): String {
+    return encryptionClient.generateCodeVerifier().encodeBase64()
+  }
+
+  override fun generateCodeChallenge(verifier: String): String {
+    return encryptionClient.generateCodeChallenge(verifier.decodeBase64Bytes()).encodeBase64()
+  }
+
+  override fun signEd25519(key: String, data: String): String {
+    return encryptionClient.signEd25519(key.decodeBase64Bytes(), data.decodeBase64Bytes()).encodeBase64()
+  }
+
+  override fun generateEd25519KeyPair(): List<String> {
+    val result = encryptionClient.generateEd25519KeyPair()
+    return listOf(result.publicKey.encodeBase64(), result.privateKey.encodeBase64(), result.encryptedPrivateKey.encodeBase64())
+  }
+
+  override fun deriveEd25519PublicKeyFromPrivateKeyBytes(privateKeyBytes: String): String {
+    return encryptionClient.deriveEd25519PublicKeyFromPrivateKeyBytes(privateKeyBytes.decodeBase64Bytes()).encodeBase64()
+  }
+
   companion object {
     const val NAME = "StytchBridge"
   }

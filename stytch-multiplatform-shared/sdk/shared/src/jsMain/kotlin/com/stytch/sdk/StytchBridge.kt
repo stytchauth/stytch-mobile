@@ -1,5 +1,6 @@
 package com.stytch.sdk
 
+import com.stytch.sdk.data.Ed25519KeyPair
 import kotlin.js.Promise
 
 public external object StytchBridge {
@@ -34,4 +35,17 @@ public external object StytchBridge {
     public fun getCAPTCHAToken(): Promise<String>
 
     public fun isCaptchaConfigured(): Boolean
+
+    public fun generateCodeVerifier(): String
+
+    public fun generateCodeChallenge(verifier: String): String
+
+    public fun signEd25519(
+        key: String,
+        data: String,
+    ): String
+
+    public fun generateEd25519KeyPair(): List<String>
+
+    public fun deriveEd25519PublicKeyFromPrivateKeyBytes(privateKeyBytes: String): String
 }

@@ -15,6 +15,11 @@ export interface Spec extends TurboModule {
   configureCaptcha(siteKey: string): void;
   getCAPTCHAToken(): Promise<string>;
   isCaptchaConfigured(): boolean;
+  generateCodeVerifier(): string;
+  generateCodeChallenge(verifier: string): string;
+  signEd25519(key: string, data: string): string
+  generateEd25519KeyPair(): string[]
+  deriveEd25519PublicKeyFromPrivateKeyBytes(privateKeyBytes: string): string
 };
 
 // create an instance of the module
