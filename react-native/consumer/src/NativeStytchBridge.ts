@@ -21,8 +21,8 @@ export interface Spec extends TurboModule {
   generateEd25519KeyPair(): string[]
   deriveEd25519PublicKeyFromPrivateKeyBytes(privateKeyBytes: string): string
   getBiometricsAvailability(
-      sessionDurationMinutes: Number,
-      androidAllowDeviceCredentials?: Boolean,
+      sessionDurationMinutes: number,
+      androidAllowDeviceCredentials?: boolean,
       androidTitle?: string,
       androidSubTitle?: string,
       androidNegativeButtonText?: string,
@@ -30,10 +30,10 @@ export interface Spec extends TurboModule {
       iosReason?: string,
       iosFallbackTitle?: string,
       iosCancelTitle?: string,
-  ): Record<string, any>;
+  ): Promise<string[]>;
   registerBiometrics(
-      sessionDurationMinutes: Number,
-      androidAllowDeviceCredentials?: Boolean,
+      sessionDurationMinutes: number,
+      androidAllowDeviceCredentials?: boolean,
       androidTitle?: string,
       androidSubTitle?: string,
       androidNegativeButtonText?: string,
@@ -41,10 +41,10 @@ export interface Spec extends TurboModule {
       iosReason?: string,
       iosFallbackTitle?: string,
       iosCancelTitle?: string,
-  ): string[];
+  ): Promise<string[]>;
   authenticateBiometrics(
-      sessionDurationMinutes: Number,
-      androidAllowDeviceCredentials?: Boolean,
+      sessionDurationMinutes: number,
+      androidAllowDeviceCredentials?: boolean,
       androidTitle?: string,
       androidSubTitle?: string,
       androidNegativeButtonText?: string,
@@ -52,7 +52,7 @@ export interface Spec extends TurboModule {
       iosReason?: string,
       iosFallbackTitle?: string,
       iosCancelTitle?: string,
-  ): string[];
+  ): Promise<string[]>;
   persistBiometricRegistration(
       registrationId: string,
       privateKeyData: string,

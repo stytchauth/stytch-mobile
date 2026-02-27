@@ -59,7 +59,7 @@ public external object StytchBridge {
         iosReason: String?,
         iosFallbackTitle: String?,
         iosCancelTitle: String?,
-    ): Map<String, Any?>
+    ): List<Any?>
 
     public fun registerBiometrics(
         sessionDurationMinutes: Int,

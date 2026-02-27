@@ -17,11 +17,14 @@ public actual class BiometricsProvider {
                 iosFallbackTitle = parameters.iosBiometricOptions.fallbackTitle,
                 iosCancelTitle = parameters.iosBiometricOptions.cancelTitle,
             )
-        return BiometricsAvailability.fromString(
-            availability["name"] as String,
-            availability["reason"] as? String,
-            availability["code"] as? Int,
-        )
+        val name = availability[0] as String
+        var reason: String? = null
+        var code: Int? = null
+        if (availability.size > 1) {
+            reason = availability[1] as String
+            code = (availability[2] as String).toInt()
+        }
+        return BiometricsAvailability.fromString(name, reason, code)
     }
 
     public actual suspend fun register(parameters: BiometricsParameters): Ed25519KeyPair {
@@ -40,6 +43,7 @@ public actual class BiometricsProvider {
         return Ed25519KeyPair(
             publicKey = keyPairList[0].encodeToByteArray(),
             privateKey = keyPairList[1].encodeToByteArray(),
+            encryptedPrivateKey = keyPairList[2].encodeToByteArray(),
         )
     }
 
