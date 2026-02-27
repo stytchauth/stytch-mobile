@@ -334,6 +334,8 @@ SWIFT_CLASS_PROPERTY(@property (nonatomic, class, readonly, strong) StytchEncryp
 - (NSData * _Nullable)encryptDataWithPlainText:(NSData * _Nonnull)plainText withKeyData:(NSData * _Nonnull)withKeyData SWIFT_WARN_UNUSED_RESULT;
 - (NSData * _Nullable)decryptDataWithEncryptedData:(NSData * _Nonnull)encryptedData withKeyData:(NSData * _Nonnull)withKeyData SWIFT_WARN_UNUSED_RESULT;
 - (void)deleteEncryptionKeyWithName:(NSString * _Nonnull)name;
+- (void)persistBiometricKeyDataWithName:(NSString * _Nonnull)name keyData:(NSData * _Nonnull)keyData;
+- (NSData * _Nullable)getBiometricKeyDataWithName:(NSString * _Nonnull)name SWIFT_WARN_UNUSED_RESULT;
 - (NSData * _Nonnull)generateCodeVerifier SWIFT_WARN_UNUSED_RESULT;
 - (NSData * _Nonnull)generateCodeChallengeWithChallenge:(NSData * _Nonnull)challenge SWIFT_WARN_UNUSED_RESULT;
 - (NSDictionary<NSString *, NSData *> * _Nonnull)generateEd25519KeyPair SWIFT_WARN_UNUSED_RESULT;
@@ -686,6 +688,8 @@ SWIFT_CLASS_PROPERTY(@property (nonatomic, class, readonly, strong) StytchEncryp
 - (NSData * _Nullable)encryptDataWithPlainText:(NSData * _Nonnull)plainText withKeyData:(NSData * _Nonnull)withKeyData SWIFT_WARN_UNUSED_RESULT;
 - (NSData * _Nullable)decryptDataWithEncryptedData:(NSData * _Nonnull)encryptedData withKeyData:(NSData * _Nonnull)withKeyData SWIFT_WARN_UNUSED_RESULT;
 - (void)deleteEncryptionKeyWithName:(NSString * _Nonnull)name;
+- (void)persistBiometricKeyDataWithName:(NSString * _Nonnull)name keyData:(NSData * _Nonnull)keyData;
+- (NSData * _Nullable)getBiometricKeyDataWithName:(NSString * _Nonnull)name SWIFT_WARN_UNUSED_RESULT;
 - (NSData * _Nonnull)generateCodeVerifier SWIFT_WARN_UNUSED_RESULT;
 - (NSData * _Nonnull)generateCodeChallengeWithChallenge:(NSData * _Nonnull)challenge SWIFT_WARN_UNUSED_RESULT;
 - (NSDictionary<NSString *, NSData *> * _Nonnull)generateEd25519KeyPair SWIFT_WARN_UNUSED_RESULT;
