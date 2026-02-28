@@ -5,6 +5,7 @@ SCSDKStytchEncryptionClient *encryptionClient = [[SCSDKStytchEncryptionClient al
 SCSDKStytchPlatformPersistenceClient *platformPersistenceClient = [[SCSDKStytchPlatformPersistenceClient alloc] init];
 SCSDKCAPTCHAProviderImpl *captchaClient = [[SCSDKCAPTCHAProviderImpl alloc] init];
 SCSDKDFPProviderImpl *dfpClient;
+SCSDKBiometricsProvider *biometricsProvider = [[SCSDKBiometricsProvider alloc] initWithEncryptionClient:encryptionClient persistenceClient:platformPersistenceClient];
 
 @implementation StytchBridge
 
@@ -159,5 +160,82 @@ SCSDKDFPProviderImpl *dfpClient;
     return [NSNumber numberWithBool:result];
 }
 // End CAPTCHA stuff
+
+// Begin Biometrics stuff
+- (void)authenticateBiometrics:(double)sessionDurationMinutes androidAllowDeviceCredentials:(nonnull NSNumber *)androidAllowDeviceCredentials androidTitle:(nonnull NSString *)androidTitle androidSubTitle:(nonnull NSString *)androidSubTitle androidNegativeButtonText:(nonnull NSString *)androidNegativeButtonText androidAllowFallbackToCleartext:(nonnull NSNumber *)androidAllowFallbackToCleartext iosReason:(nonnull NSString *)iosReason iosFallbackTitle:(nonnull NSString *)iosFallbackTitle iosCancelTitle:(nonnull NSString *)iosCancelTitle resolve:(nonnull RCTPromiseResolveBlock)resolve reject:(nonnull RCTPromiseRejectBlock)reject {
+    SCSDKBiometricPromptData *promptData = [[SCSDKBiometricPromptData alloc] initWithReason:iosReason fallbackTitle:iosFallbackTitle cancelTitle:iosCancelTitle];
+    SCSDKBiometricsParameters *params = [[SCSDKBiometricsParameters alloc] initWithSessionDurationMinutes:sessionDurationMinutes promptData:promptData];
+    [biometricsProvider authenticateParameters:params completionHandler:^(SCSDKEd25519KeyPair * _Nullable keyPair, NSError * _Nullable error) {
+        if (error == nil) {
+            NSData *publicKeyData = [keyPair.publicKey toNSData];
+            NSData *privateKeyData = [keyPair.privateKey toNSData];
+            NSMutableArray *outArray = [NSMutableArray array];
+            [outArray addObject:[publicKeyData base64EncodedStringWithOptions:0]];
+            [outArray addObject:[privateKeyData base64EncodedStringWithOptions:0]];
+            resolve(outArray);
+        } else {
+            reject(@"", [error description], error);
+        }
+    }];
+}
+
+
+- (void)getBiometricsAvailability:(double)sessionDurationMinutes androidAllowDeviceCredentials:(nonnull NSNumber *)androidAllowDeviceCredentials androidTitle:(nonnull NSString *)androidTitle androidSubTitle:(nonnull NSString *)androidSubTitle androidNegativeButtonText:(nonnull NSString *)androidNegativeButtonText androidAllowFallbackToCleartext:(nonnull NSNumber *)androidAllowFallbackToCleartext iosReason:(nonnull NSString *)iosReason iosFallbackTitle:(nonnull NSString *)iosFallbackTitle iosCancelTitle:(nonnull NSString *)iosCancelTitle resolve:(nonnull RCTPromiseResolveBlock)resolve reject:(nonnull RCTPromiseRejectBlock)reject {
+    SCSDKBiometricPromptData *promptData = [[SCSDKBiometricPromptData alloc] initWithReason:iosReason fallbackTitle:iosFallbackTitle cancelTitle:iosCancelTitle];
+    SCSDKBiometricsParameters *params = [[SCSDKBiometricsParameters alloc] initWithSessionDurationMinutes:sessionDurationMinutes promptData:promptData];
+    [biometricsProvider getAvailabilityParameters:params completionHandler:^(SCSDKBiometricsAvailability * _Nullable availability, NSError * _Nullable error) {
+        if (error == nil) {
+            NSMutableArray *outArray = [NSMutableArray array];
+            [outArray addObject:[NSString stringWithFormat:@"%s", availability.name]];
+            [outArray addObject:[NSString stringWithFormat:@"%s", availability.reason]];
+            [outArray addObject:[NSString stringWithFormat:@"%d", availability.code]];
+            resolve(outArray);
+        } else {
+            reject(@"", [error description], error);
+        }
+    }];
+}
+
+
+- (void)persistBiometricRegistration:(nonnull NSString *)registrationId privateKeyData:(nonnull NSString *)privateKeyData resolve:(nonnull RCTPromiseResolveBlock)resolve reject:(nonnull RCTPromiseRejectBlock)reject {
+    [biometricsProvider persistRegistrationRegistrationId:registrationId privateKeyData:privateKeyData completionHandler:^(NSError * _Nullable error) {
+        if (error == nil) {
+            resolve(nil);
+        } else {
+            reject(@"", [error description], error);
+        }
+    }];
+}
+
+
+- (void)registerBiometrics:(double)sessionDurationMinutes androidAllowDeviceCredentials:(nonnull NSNumber *)androidAllowDeviceCredentials androidTitle:(nonnull NSString *)androidTitle androidSubTitle:(nonnull NSString *)androidSubTitle androidNegativeButtonText:(nonnull NSString *)androidNegativeButtonText androidAllowFallbackToCleartext:(nonnull NSNumber *)androidAllowFallbackToCleartext iosReason:(nonnull NSString *)iosReason iosFallbackTitle:(nonnull NSString *)iosFallbackTitle iosCancelTitle:(nonnull NSString *)iosCancelTitle resolve:(nonnull RCTPromiseResolveBlock)resolve reject:(nonnull RCTPromiseRejectBlock)reject {
+    SCSDKBiometricPromptData *promptData = [[SCSDKBiometricPromptData alloc] initWithReason:iosReason fallbackTitle:iosFallbackTitle cancelTitle:iosCancelTitle];
+    SCSDKBiometricsParameters *params = [[SCSDKBiometricsParameters alloc] initWithSessionDurationMinutes:sessionDurationMinutes promptData:promptData];
+    [biometricsProvider registerParameters:params completionHandler:^(SCSDKEd25519KeyPair * _Nullable keyPair, NSError * _Nullable error) {
+        if (error == nil) {
+            NSData *publicKeyData = [keyPair.publicKey toNSData];
+            NSData *privateKeyData = [keyPair.privateKey toNSData];
+            NSData *encryptedPrivateKeyData = [keyPair.encryptedPrivateKey toNSData];
+            NSMutableArray *outArray = [NSMutableArray array];
+            [outArray addObject:[publicKeyData base64EncodedStringWithOptions:0]];
+            [outArray addObject:[privateKeyData base64EncodedStringWithOptions:0]];
+            [outArray addObject:[encryptedPrivateKeyData base64EncodedStringWithOptions:0]];
+            resolve(outArray);
+        } else {
+            reject(@"", [error description], error);
+        }
+    }];
+}
+
+- (void)removeBiometricRegistration:(nonnull RCTPromiseResolveBlock)resolve reject:(nonnull RCTPromiseRejectBlock)reject {
+    [biometricsProvider removeRegistrationWithCompletionHandler:^(NSError * _Nullable error) {
+        if (error == nil) {
+            resolve(nil);
+        } else {
+            reject(@"", [error description], error);
+        }
+    }];
+}
+// End Biometrics stuff
 
 @end

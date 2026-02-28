@@ -59,7 +59,7 @@ public external object StytchBridge {
         iosReason: String?,
         iosFallbackTitle: String?,
         iosCancelTitle: String?,
-    ): List<Any?>
+    ): Promise<List<Any?>>
 
     public fun registerBiometrics(
         sessionDurationMinutes: Int,
@@ -71,7 +71,7 @@ public external object StytchBridge {
         iosReason: String?,
         iosFallbackTitle: String?,
         iosCancelTitle: String?,
-    ): List<String>
+    ): Promise<List<String>>
 
     public fun authenticateBiometrics(
         sessionDurationMinutes: Int,
@@ -83,12 +83,12 @@ public external object StytchBridge {
         iosReason: String?,
         iosFallbackTitle: String?,
         iosCancelTitle: String?,
-    ): List<String>
+    ): Promise<List<String>>
 
     public fun persistBiometricRegistration(
         registrationId: String,
         privateKeyData: String,
-    )
+    ): Promise<Unit>
 
-    public fun removeBiometricRegistration()
+    public fun removeBiometricRegistration(): Promise<Unit>
 }

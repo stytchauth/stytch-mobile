@@ -56,8 +56,8 @@ export interface Spec extends TurboModule {
   persistBiometricRegistration(
       registrationId: string,
       privateKeyData: string,
-  ): void;
-  removeBiometricRegistration(): void;
+  ): Promise<void>;
+  removeBiometricRegistration(): Promise<void>;
 };
 
 // create an instance of the module

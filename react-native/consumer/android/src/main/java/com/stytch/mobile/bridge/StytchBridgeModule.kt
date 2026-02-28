@@ -250,15 +250,31 @@ class StytchBridgeModule(reactContext: ReactApplicationContext) :
     }
   }
 
-  override fun persistBiometricRegistration(registrationId: String, privateKeyData: String) {
+  override fun persistBiometricRegistration(registrationId: String, privateKeyData: String, promise: Promise) {
     scope.launch {
-      biometricsProvider.persistRegistration(registrationId, privateKeyData)
+      runCatching {
+        biometricsProvider.persistRegistration(registrationId, privateKeyData)
+      }
+      .onSuccess {
+        promise.resolve(Unit)
+      }
+      .onFailure { exception ->
+        promise.reject(exception)
+      }
     }
   }
 
-  override fun removeBiometricRegistration() {
+  override fun removeBiometricRegistration(promise: Promise) {
     scope.launch {
-      biometricsProvider.removeRegistration()
+      runCatching {
+        biometricsProvider.removeRegistration()
+      }
+      .onSuccess {
+        promise.resolve(Unit)
+      }
+      .onFailure { exception ->
+        promise.reject(exception)
+      }
     }
   }
 
