@@ -91,4 +91,18 @@ public external object StytchBridge {
     ): Promise<Unit>
 
     public fun removeBiometricRegistration(): Promise<Unit>
+
+    public fun createPublicKeyCredential(
+        domain: String,
+        preferImmediatelyAvailableCredentials: Boolean,
+        json: String,
+        sessionDurationMinutes: Int?,
+    ): Promise<String>
+
+    public fun getPublicKeyCredential(
+        domain: String,
+        preferImmediatelyAvailableCredentials: Boolean,
+        json: String,
+        sessionDurationMinutes: Int?,
+    ): Promise<String>
 }

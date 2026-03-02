@@ -58,6 +58,18 @@ export interface Spec extends TurboModule {
       privateKeyData: string,
   ): Promise<void>;
   removeBiometricRegistration(): Promise<void>;
+  createPublicKeyCredential(
+      domain: string,
+      preferImmediatelyAvailableCredentials: boolean,
+      json: string,
+      sessionDurationMinutes?: number,
+  ): Promise<string>;
+  getPublicKeyCredential(
+      domain: string,
+      preferImmediatelyAvailableCredentials: boolean,
+      json: string,
+      sessionDurationMinutes?: number,
+  ): Promise<string>;
 };
 
 // create an instance of the module
