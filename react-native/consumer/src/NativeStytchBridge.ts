@@ -30,7 +30,7 @@ export interface Spec extends TurboModule {
       iosReason?: string,
       iosFallbackTitle?: string,
       iosCancelTitle?: string,
-  ): Promise<string[]>;
+  ): Promise<string>;
   registerBiometrics(
       sessionDurationMinutes: number,
       androidAllowDeviceCredentials?: boolean,
@@ -70,6 +70,17 @@ export interface Spec extends TurboModule {
       json: string,
       sessionDurationMinutes?: number,
   ): Promise<string>;
+  getOAuthToken(
+    type: string,
+    baseUrl: string,
+    publicToken: string,
+    loginRedirectUrl?: string,
+    signupRedirectUrl?: string,
+    customScopes?: string[],
+    providerParams?: string,
+    oauthAttachToken?: string,
+    sessionDurationMinutes?: number,
+  ): Promise<string>
 };
 
 // create an instance of the module

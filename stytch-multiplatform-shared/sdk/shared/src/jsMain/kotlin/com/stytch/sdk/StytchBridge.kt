@@ -1,6 +1,8 @@
 package com.stytch.sdk
 
 import com.stytch.sdk.biometrics.BiometricsAvailability
+import com.stytch.sdk.data.PublicTokenInfo
+import com.stytch.sdk.oauth.OAuthProviderType
 import kotlin.js.Promise
 
 public external object StytchBridge {
@@ -59,7 +61,7 @@ public external object StytchBridge {
         iosReason: String?,
         iosFallbackTitle: String?,
         iosCancelTitle: String?,
-    ): Promise<List<Any?>>
+    ): Promise<String>
 
     public fun registerBiometrics(
         sessionDurationMinutes: Int,
@@ -104,5 +106,17 @@ public external object StytchBridge {
         preferImmediatelyAvailableCredentials: Boolean,
         json: String,
         sessionDurationMinutes: Int?,
+    ): Promise<String>
+
+    public fun getOAuthToken(
+        loginRedirectUrl: String?,
+        signupRedirectUrl: String?,
+        customScopes: List<String>?,
+        providerParams: String?,
+        oauthAttachToken: String?,
+        sessionDurationMinutes: Int?,
+        type: String,
+        baseUrl: String,
+        publicToken: String,
     ): Promise<String>
 }

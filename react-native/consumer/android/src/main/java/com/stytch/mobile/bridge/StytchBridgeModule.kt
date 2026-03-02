@@ -157,11 +157,8 @@ class StytchBridgeModule(reactContext: ReactApplicationContext) :
         )
       }
       .onSuccess { availability ->
-        val outArray = Arguments.createArray()
-        outArray.pushString(availability.name)
-        outArray.pushString(availability.reason)
-        outArray.pushString(availability.code.toString())
-        promise.resolve(outArray)
+        val asString = Json.encodeToString(availability)
+        promise.resolve(asString)
       }
       .onFailure { exception ->
         promise.reject(exception)

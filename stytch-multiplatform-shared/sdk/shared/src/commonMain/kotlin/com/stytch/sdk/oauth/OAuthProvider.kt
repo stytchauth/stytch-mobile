@@ -3,6 +3,8 @@ package com.stytch.sdk.oauth
 import com.stytch.sdk.data.PublicTokenInfo
 import com.stytch.sdk.data.StytchDispatchers
 import com.stytch.sdk.pkce.PKCEClient
+import kotlinx.serialization.Contextual
+import kotlinx.serialization.Serializable
 import kotlin.js.JsExport
 
 public expect class OAuthProvider {
@@ -19,6 +21,7 @@ public expect class OAuthProvider {
 }
 
 @JsExport
+@Serializable
 public enum class OAuthProviderType(
     public val hostName: String,
 ) {
@@ -44,18 +47,19 @@ public enum class OAuthProviderType(
 }
 
 @JsExport
+@Serializable
 public sealed class OAuthResult {
-    public data class ClassicToken(
+    @Serializable public data class ClassicToken(
         val token: String,
     ) : OAuthResult()
 
-    public data class IDToken(
+    @Serializable public data class IDToken(
         val token: String,
         val nonce: String,
         val name: String? = null,
     ) : OAuthResult()
 
-    public data class Error(
-        val error: Throwable,
+    @Serializable public data class Error(
+        val error: @Contextual Throwable,
     ) : OAuthResult()
 }
