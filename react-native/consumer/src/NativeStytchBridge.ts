@@ -41,7 +41,7 @@ export interface Spec extends TurboModule {
       iosReason?: string,
       iosFallbackTitle?: string,
       iosCancelTitle?: string,
-  ): Promise<string[]>;
+  ): Promise<string>;
   authenticateBiometrics(
       sessionDurationMinutes: number,
       androidAllowDeviceCredentials?: boolean,
@@ -52,7 +52,7 @@ export interface Spec extends TurboModule {
       iosReason?: string,
       iosFallbackTitle?: string,
       iosCancelTitle?: string,
-  ): Promise<string[]>;
+  ): Promise<string>;
   persistBiometricRegistration(
       registrationId: string,
       privateKeyData: string,
@@ -80,6 +80,7 @@ export interface Spec extends TurboModule {
     providerParams?: string,
     oauthAttachToken?: string,
     sessionDurationMinutes?: number,
+    googleCredentialConfiguration?: string,
   ): Promise<string>
 };
 

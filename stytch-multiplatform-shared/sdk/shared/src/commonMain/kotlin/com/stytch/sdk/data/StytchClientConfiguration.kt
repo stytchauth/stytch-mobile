@@ -24,7 +24,7 @@ public class PublicTokenInfo(
 
 private val PUBLIC_TOKEN_REGEX = Regex("^public-token-(test|live)-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$")
 
-internal fun getPublicTokenInfo(publicToken: String): PublicTokenInfo {
+public fun getPublicTokenInfo(publicToken: String): PublicTokenInfo {
     val matches = PUBLIC_TOKEN_REGEX.find(publicToken)
     require(matches != null) { "Invalid public token provided: $publicToken" }
     return PublicTokenInfo(

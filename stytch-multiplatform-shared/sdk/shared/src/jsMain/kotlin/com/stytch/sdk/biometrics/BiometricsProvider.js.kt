@@ -24,7 +24,7 @@ public actual class BiometricsProvider {
     }
 
     public actual suspend fun register(parameters: BiometricsParameters): Ed25519KeyPair {
-        val keyPairList =
+        val keyPairString =
             StytchBridge
                 .registerBiometrics(
                     sessionDurationMinutes = parameters.sessionDurationMinutes,
@@ -37,15 +37,11 @@ public actual class BiometricsProvider {
                     iosFallbackTitle = parameters.iosBiometricOptions.fallbackTitle,
                     iosCancelTitle = parameters.iosBiometricOptions.cancelTitle,
                 ).await()
-        return Ed25519KeyPair(
-            publicKey = keyPairList[0].encodeToByteArray(),
-            privateKey = keyPairList[1].encodeToByteArray(),
-            encryptedPrivateKey = keyPairList[2].encodeToByteArray(),
-        )
+        return Json.decodeFromString(keyPairString)
     }
 
     public actual suspend fun authenticate(parameters: BiometricsParameters): Ed25519KeyPair {
-        val keyPairList =
+        val keyPairString =
             StytchBridge
                 .authenticateBiometrics(
                     sessionDurationMinutes = parameters.sessionDurationMinutes,
@@ -58,10 +54,7 @@ public actual class BiometricsProvider {
                     iosFallbackTitle = parameters.iosBiometricOptions.fallbackTitle,
                     iosCancelTitle = parameters.iosBiometricOptions.cancelTitle,
                 ).await()
-        return Ed25519KeyPair(
-            publicKey = keyPairList[0].encodeToByteArray(),
-            privateKey = keyPairList[1].encodeToByteArray(),
-        )
+        return Json.decodeFromString(keyPairString)
     }
 
     public actual suspend fun persistRegistration(
