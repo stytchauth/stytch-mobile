@@ -115,6 +115,7 @@ kotlin {
         }
         jvmMain.dependencies {
             implementation(libs.ktor.client.okhttp)
+            implementation(libs.bcprov.jdk18on)
         }
         jsMain.dependencies {
             implementation(libs.ktor.client.js)

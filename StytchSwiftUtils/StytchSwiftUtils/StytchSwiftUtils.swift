@@ -63,6 +63,32 @@ public class StytchEncryptionManagerSwift: NSObject {
         return getKeyDataFromKeychain(name: name, accessControl: accessControl)
     }
 
+    @objc public func generateCodeVerifier() -> Data {
+        var buffer = [UInt8](repeating: 0, count: Int(32))
+        let _ = SecRandomCopyBytes(kSecRandomDefault, buffer.count, &buffer)
+        return .init(buffer)
+    }
+
+    @objc public func generateCodeChallenge(challenge: Data) -> Data {
+        return .init(SHA256.hash(data: challenge))
+    }
+
+    @objc public func generateEd25519KeyPair() -> [String:Data] {
+        let privateKey = Curve25519.Signing.PrivateKey()
+        return [
+            "publicKey": privateKey.publicKey.rawRepresentation,
+            "privateKey": privateKey.rawRepresentation,
+        ]
+    }
+
+    @objc public func signEd25519(key: Data, challenge: Data) throws -> Data {
+        return try Curve25519.Signing.PrivateKey(rawRepresentation: key).signature(for: challenge)
+    }
+
+    @objc public func deriveEd25519PublicKeyFromPrivateKeyBytes(privateKeyData: Data) throws -> Data {
+        return try Curve25519.Signing.PrivateKey(rawRepresentation: privateKeyData).publicKey.rawRepresentation
+    }
+
     private func getKeyDataFromKeychain(name: String, accessControl: SecAccessControl? = nil) -> Data? {
         var query = baseKeyQuery(name: name).merging(
             [

@@ -3,7 +3,6 @@ package com.stytch.sdk.encryption
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import com.stytch.sdk.data.Ed25519KeyPair
-import io.ktor.util.decodeBase64Bytes
 import org.bouncycastle.crypto.Signer
 import org.bouncycastle.crypto.generators.Ed25519KeyPairGenerator
 import org.bouncycastle.crypto.params.Ed25519KeyGenerationParameters
