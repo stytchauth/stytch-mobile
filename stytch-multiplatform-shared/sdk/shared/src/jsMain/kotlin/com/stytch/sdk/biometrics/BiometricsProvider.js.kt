@@ -5,7 +5,7 @@ import com.stytch.sdk.data.Ed25519KeyPair
 import kotlinx.coroutines.await
 import kotlinx.serialization.json.Json
 
-public actual class BiometricsProvider {
+public actual class BiometricsProvider : IBiometricsProvider {
     public actual suspend fun getAvailability(parameters: BiometricsParameters): BiometricsAvailability {
         val result =
             StytchBridge

@@ -10,7 +10,7 @@ import kotlinx.serialization.json.Json
 
 public actual class OAuthProvider(
     private val googleCredentialConfiguration: GoogleCredentialConfiguration? = null,
-) {
+) : IOAuthProvider {
     public actual val isSupported: Boolean = true
 
     public actual suspend fun getOAuthToken(

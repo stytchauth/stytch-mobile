@@ -22,7 +22,7 @@ import platform.Foundation.NSURLQueryItem
 import platform.darwin.NSObject
 import kotlin.coroutines.resume
 
-public actual class OAuthProvider {
+public actual class OAuthProvider : IOAuthProvider {
     public actual val isSupported: Boolean = true
 
     public actual suspend fun getOAuthToken(

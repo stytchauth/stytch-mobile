@@ -20,7 +20,7 @@ import kotlin.coroutines.Continuation
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
-public actual class PasskeyProvider {
+public actual class PasskeyProvider : IPasskeyProvider {
     public actual val isSupported: Boolean = true
 
     public actual suspend fun createPublicKeyCredential(

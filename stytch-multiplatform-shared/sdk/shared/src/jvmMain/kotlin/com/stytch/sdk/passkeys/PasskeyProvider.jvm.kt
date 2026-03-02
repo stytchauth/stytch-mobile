@@ -2,7 +2,7 @@ package com.stytch.sdk.passkeys
 
 import com.stytch.sdk.data.StytchDispatchers
 
-public actual class PasskeyProvider {
+public actual class PasskeyProvider : IPasskeyProvider {
     public actual val isSupported: Boolean = false
 
     public actual suspend fun createPublicKeyCredential(

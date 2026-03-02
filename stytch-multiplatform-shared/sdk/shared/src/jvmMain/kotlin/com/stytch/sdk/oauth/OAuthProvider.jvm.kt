@@ -4,7 +4,7 @@ import com.stytch.sdk.data.PublicTokenInfo
 import com.stytch.sdk.data.StytchDispatchers
 import com.stytch.sdk.pkce.PKCEClient
 
-public actual class OAuthProvider {
+public actual class OAuthProvider : IOAuthProvider {
     public actual val isSupported: Boolean = false
 
     public actual suspend fun getOAuthToken(

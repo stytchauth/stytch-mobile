@@ -9,7 +9,7 @@ import androidx.credentials.PublicKeyCredential
 import com.stytch.sdk.data.StytchDispatchers
 import kotlinx.coroutines.withContext
 
-public actual class PasskeyProvider {
+public actual class PasskeyProvider : IPasskeyProvider {
     public actual val isSupported: Boolean = true
 
     public actual suspend fun createPublicKeyCredential(

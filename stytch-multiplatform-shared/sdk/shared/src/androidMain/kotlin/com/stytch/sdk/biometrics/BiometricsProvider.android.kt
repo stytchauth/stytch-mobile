@@ -30,7 +30,7 @@ import kotlin.coroutines.resumeWithException
 public actual class BiometricsProvider(
     private val encryptionClient: StytchEncryptionClient,
     private val persistenceClient: StytchPlatformPersistenceClient,
-) {
+) : IBiometricsProvider {
     private var keyStoreLoaded = false
 
     public actual suspend fun getAvailability(parameters: BiometricsParameters): BiometricsAvailability {
