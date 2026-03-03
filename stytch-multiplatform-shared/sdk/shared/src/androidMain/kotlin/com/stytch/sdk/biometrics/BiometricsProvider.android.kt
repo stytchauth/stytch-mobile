@@ -207,7 +207,7 @@ public actual class BiometricsProvider(
                     .Builder()
                     .apply {
                         setTitle(promptData?.title ?: "Biometric Authentication")
-                        setSubtitle(promptData?.subTitle ?: "Authenticate using your device bioemtrics")
+                        setSubtitle(promptData?.subTitle ?: "Authenticate using your device biometrics")
                         setAllowedAuthenticators(allowedAuthenticators)
                         if (!allowedAuthenticatorsIncludeDeviceCredentials(allowedAuthenticators)) {
                             // can only show negative button if device credentials are not allowed

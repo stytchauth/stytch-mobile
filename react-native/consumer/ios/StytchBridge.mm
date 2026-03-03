@@ -5,6 +5,7 @@ SCSDKStytchEncryptionClient *encryptionClient = [[SCSDKStytchEncryptionClient al
 SCSDKStytchPlatformPersistenceClient *platformPersistenceClient = [[SCSDKStytchPlatformPersistenceClient alloc] init];
 SCSDKCAPTCHAProviderImpl *captchaClient = [[SCSDKCAPTCHAProviderImpl alloc] init];
 SCSDKDFPProviderImpl *dfpClient;
+SCSDKBiometricsProvider *biometricsProvider = [[SCSDKBiometricsProvider alloc] initWithEncryptionClient:encryptionClient persistenceClient:platformPersistenceClient];
 
 @implementation StytchBridge
 
@@ -76,6 +77,52 @@ SCSDKDFPProviderImpl *dfpClient;
 - (void)deleteKey {
     [encryptionClient deleteKey];
 }
+
+- (nonnull NSString *)deriveEd25519PublicKeyFromPrivateKeyBytes:(nonnull NSString *)privateKeyBytes {
+    NSData *decoded = [[NSData alloc] initWithBase64EncodedString:privateKeyBytes options:NSDataBase64DecodingIgnoreUnknownCharacters];
+    SCSDKKotlinByteArray *decodedByteArray = [SCSDKStytchEncryptionClient_iosKt toByteArray:decoded];
+    SCSDKKotlinByteArray *publicKeyByteArray = [encryptionClient deriveEd25519PublicKeyFromPrivateKeyBytesPrivateKeyBytes:decodedByteArray];
+    NSData *publicKeyData = [publicKeyByteArray toNSData];
+    return [publicKeyData base64EncodedStringWithOptions:0];
+}
+
+
+- (nonnull NSString *)generateCodeChallenge:(nonnull NSString *)verifier {
+    NSData *verifierData = [[NSData alloc] initWithBase64EncodedString:verifier options:NSDataBase64DecodingIgnoreUnknownCharacters];
+    SCSDKKotlinByteArray *verifierByteArray = [SCSDKStytchEncryptionClient_iosKt toByteArray:verifierData];
+    SCSDKKotlinByteArray *challengeByteArray = [encryptionClient generateCodeChallengeCodeVerifier:verifierByteArray];
+    NSData *challengeData = [challengeByteArray toNSData];
+    return [challengeData base64EncodedStringWithOptions:0];
+}
+
+
+- (nonnull NSString *)generateCodeVerifier {
+    SCSDKKotlinByteArray *codeVerifierByteArray = [encryptionClient generateCodeVerifier];
+    NSData *codeVerifierData = [codeVerifierByteArray toNSData];
+    return [codeVerifierData base64EncodedStringWithOptions:0];
+}
+
+
+- (nonnull NSArray<NSString *> *)generateEd25519KeyPair {
+    SCSDKEd25519KeyPair *keyPair = [encryptionClient generateEd25519KeyPair];
+    NSData *publicKeyData = [keyPair.publicKey toNSData];
+    NSData *privateKeyData = [keyPair.privateKey toNSData];
+    NSMutableArray *outArray = [NSMutableArray array];
+    [outArray addObject:[publicKeyData base64EncodedStringWithOptions:0]];
+    [outArray addObject:[privateKeyData base64EncodedStringWithOptions:0]];
+    return outArray;
+}
+
+
+- (nonnull NSString *)signEd25519:(nonnull NSString *)key data:(nonnull NSString *)data {
+    NSData *keyData = [[NSData alloc] initWithBase64EncodedString:key options:NSDataBase64DecodingIgnoreUnknownCharacters];
+    NSData *dataData = [[NSData alloc] initWithBase64EncodedString:data options:NSDataBase64DecodingIgnoreUnknownCharacters];
+    SCSDKKotlinByteArray *keyByteArray = [SCSDKStytchEncryptionClient_iosKt toByteArray:keyData];
+    SCSDKKotlinByteArray *dataByteArray = [SCSDKStytchEncryptionClient_iosKt toByteArray:dataData];
+    SCSDKKotlinByteArray *signatureByteArray = [encryptionClient signEd25519Key:keyByteArray data:dataByteArray];
+    NSData *signatureData = [signatureByteArray toNSData];
+    return [signatureData base64EncodedStringWithOptions:0];
+}
 // End Encryption Stuff
 
 // Begin DFP stuff
@@ -113,4 +160,82 @@ SCSDKDFPProviderImpl *dfpClient;
     return [NSNumber numberWithBool:result];
 }
 // End CAPTCHA stuff
+
+// Begin Biometrics stuff
+- (void)authenticateBiometrics:(double)sessionDurationMinutes androidAllowDeviceCredentials:(nonnull NSNumber *)androidAllowDeviceCredentials androidTitle:(nonnull NSString *)androidTitle androidSubTitle:(nonnull NSString *)androidSubTitle androidNegativeButtonText:(nonnull NSString *)androidNegativeButtonText androidAllowFallbackToCleartext:(nonnull NSNumber *)androidAllowFallbackToCleartext iosReason:(nonnull NSString *)iosReason iosFallbackTitle:(nonnull NSString *)iosFallbackTitle iosCancelTitle:(nonnull NSString *)iosCancelTitle resolve:(nonnull RCTPromiseResolveBlock)resolve reject:(nonnull RCTPromiseRejectBlock)reject {
+    SCSDKBiometricPromptData *promptData = [[SCSDKBiometricPromptData alloc] initWithReason:iosReason fallbackTitle:iosFallbackTitle cancelTitle:iosCancelTitle];
+    SCSDKBiometricsParameters *params = [[SCSDKBiometricsParameters alloc] initWithSessionDurationMinutes:sessionDurationMinutes promptData:promptData];
+    [biometricsProvider authenticateParameters:params completionHandler:^(SCSDKEd25519KeyPair * _Nullable keyPair, NSError * _Nullable error) {
+        if (error == nil) {
+            NSData *publicKeyData = [keyPair.publicKey toNSData];
+            NSData *privateKeyData = [keyPair.privateKey toNSData];
+            NSMutableArray *outArray = [NSMutableArray array];
+            [outArray addObject:[publicKeyData base64EncodedStringWithOptions:0]];
+            [outArray addObject:[privateKeyData base64EncodedStringWithOptions:0]];
+            resolve(outArray);
+        } else {
+            reject(@"", [error description], error);
+        }
+    }];
+}
+
+
+- (void)getBiometricsAvailability:(double)sessionDurationMinutes androidAllowDeviceCredentials:(nonnull NSNumber *)androidAllowDeviceCredentials androidTitle:(nonnull NSString *)androidTitle androidSubTitle:(nonnull NSString *)androidSubTitle androidNegativeButtonText:(nonnull NSString *)androidNegativeButtonText androidAllowFallbackToCleartext:(nonnull NSNumber *)androidAllowFallbackToCleartext iosReason:(nonnull NSString *)iosReason iosFallbackTitle:(nonnull NSString *)iosFallbackTitle iosCancelTitle:(nonnull NSString *)iosCancelTitle resolve:(nonnull RCTPromiseResolveBlock)resolve reject:(nonnull RCTPromiseRejectBlock)reject {
+    SCSDKBiometricPromptData *promptData = [[SCSDKBiometricPromptData alloc] initWithReason:iosReason fallbackTitle:iosFallbackTitle cancelTitle:iosCancelTitle];
+    SCSDKBiometricsParameters *params = [[SCSDKBiometricsParameters alloc] initWithSessionDurationMinutes:sessionDurationMinutes promptData:promptData];
+    [biometricsProvider getAvailabilityParameters:params completionHandler:^(SCSDKBiometricsAvailability * _Nullable availability, NSError * _Nullable error) {
+        if (error == nil) {
+            NSMutableArray *outArray = [NSMutableArray array];
+            [outArray addObject:[NSString stringWithFormat:@"%s", availability.name]];
+            [outArray addObject:[NSString stringWithFormat:@"%s", availability.reason]];
+            [outArray addObject:[NSString stringWithFormat:@"%d", availability.code]];
+            resolve(outArray);
+        } else {
+            reject(@"", [error description], error);
+        }
+    }];
+}
+
+
+- (void)persistBiometricRegistration:(nonnull NSString *)registrationId privateKeyData:(nonnull NSString *)privateKeyData resolve:(nonnull RCTPromiseResolveBlock)resolve reject:(nonnull RCTPromiseRejectBlock)reject {
+    [biometricsProvider persistRegistrationRegistrationId:registrationId privateKeyData:privateKeyData completionHandler:^(NSError * _Nullable error) {
+        if (error == nil) {
+            resolve(nil);
+        } else {
+            reject(@"", [error description], error);
+        }
+    }];
+}
+
+
+- (void)registerBiometrics:(double)sessionDurationMinutes androidAllowDeviceCredentials:(nonnull NSNumber *)androidAllowDeviceCredentials androidTitle:(nonnull NSString *)androidTitle androidSubTitle:(nonnull NSString *)androidSubTitle androidNegativeButtonText:(nonnull NSString *)androidNegativeButtonText androidAllowFallbackToCleartext:(nonnull NSNumber *)androidAllowFallbackToCleartext iosReason:(nonnull NSString *)iosReason iosFallbackTitle:(nonnull NSString *)iosFallbackTitle iosCancelTitle:(nonnull NSString *)iosCancelTitle resolve:(nonnull RCTPromiseResolveBlock)resolve reject:(nonnull RCTPromiseRejectBlock)reject {
+    SCSDKBiometricPromptData *promptData = [[SCSDKBiometricPromptData alloc] initWithReason:iosReason fallbackTitle:iosFallbackTitle cancelTitle:iosCancelTitle];
+    SCSDKBiometricsParameters *params = [[SCSDKBiometricsParameters alloc] initWithSessionDurationMinutes:sessionDurationMinutes promptData:promptData];
+    [biometricsProvider registerParameters:params completionHandler:^(SCSDKEd25519KeyPair * _Nullable keyPair, NSError * _Nullable error) {
+        if (error == nil) {
+            NSData *publicKeyData = [keyPair.publicKey toNSData];
+            NSData *privateKeyData = [keyPair.privateKey toNSData];
+            NSData *encryptedPrivateKeyData = [keyPair.encryptedPrivateKey toNSData];
+            NSMutableArray *outArray = [NSMutableArray array];
+            [outArray addObject:[publicKeyData base64EncodedStringWithOptions:0]];
+            [outArray addObject:[privateKeyData base64EncodedStringWithOptions:0]];
+            [outArray addObject:[encryptedPrivateKeyData base64EncodedStringWithOptions:0]];
+            resolve(outArray);
+        } else {
+            reject(@"", [error description], error);
+        }
+    }];
+}
+
+- (void)removeBiometricRegistration:(nonnull RCTPromiseResolveBlock)resolve reject:(nonnull RCTPromiseRejectBlock)reject {
+    [biometricsProvider removeRegistrationWithCompletionHandler:^(NSError * _Nullable error) {
+        if (error == nil) {
+            resolve(nil);
+        } else {
+            reject(@"", [error description], error);
+        }
+    }];
+}
+// End Biometrics stuff
+
 @end

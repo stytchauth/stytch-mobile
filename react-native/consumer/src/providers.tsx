@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StytchConsumer, User, Session, ConsumerAuthenticationState, SessionsAuthenticateRequest } from '../lib/@stytch/react-native-consumer.mjs'
+import { StytchConsumer, ApiUserV1User, ApiSessionV1Session, ConsumerAuthenticationState, SessionsAuthenticateParameters, SessionsAuthenticateRequest } from '../lib/@stytch/react-native-consumer.mjs'
 import { AppState, AppStateStatus } from 'react-native';
 import { useStytch, useStytchUser, useStytchSession, useStytchAuthenticationState } from './hooks';
 import { StytchContext, StytchUserContext, StytchSessionContext, StytchAuthenticationStateContext } from './contexts';
@@ -13,7 +13,7 @@ export const withStytch = <T extends object>(Component: React.ComponentType<T & 
   return WithStytch;
 };
 export const withStytchUser = <T extends object>(
-  Component: React.ComponentType<T & { stytchUser: User | undefined }>,
+  Component: React.ComponentType<T & { stytchUser: ApiUserV1User | undefined }>,
 ): React.ComponentType<T> => {
   const WithStytchUser: React.ComponentType<T> = (props) => {
     const user = useStytchUser();
@@ -23,7 +23,7 @@ export const withStytchUser = <T extends object>(
   return WithStytchUser;
 };
 export const withStytchSession = <T extends object>(
-  Component: React.ComponentType<T & { stytchSession: Session | undefined }>,
+  Component: React.ComponentType<T & { stytchSession: ApiSessionV1Session | undefined }>,
 ): React.ComponentType<T> => {
   const WithStytchSession: React.ComponentType<T> = (props) => {
     const session = useStytchSession();
@@ -52,7 +52,7 @@ export const StytchProvider = ({
   stytch,
   children,
 }: StytchProviderProps): React.JSX.Element => {
-  const [{ user, session }, setClientState] = useState<{ user: User | undefined, session: Session | undefined}>({
+  const [{ user, session }, setClientState] = useState<{ user: ApiUserV1User | undefined, session: ApiSessionV1Session | undefined}>({
     session: undefined,
     user: undefined,
   });
@@ -69,7 +69,7 @@ export const StytchProvider = ({
       const observationJob = stytch.authenticationStateObserver(async (state: ConsumerAuthenticationState) => {
         if (state instanceof ConsumerAuthenticationState.Authenticated) {
           try {
-            await stytch.session.authenticate(new SessionsAuthenticateRequest(null));
+            //await stytch.session.authenticate(new SessionsAuthenticateRequest(null));
           } catch {
             // log it
           }
@@ -85,8 +85,8 @@ export const StytchProvider = ({
   useEffect(
     () => {
       const observationJob = stytch.authenticationStateObserver((state: ConsumerAuthenticationState) => {
-        let newUser: User | undefined = undefined
-        let newSession: Session | undefined = undefined
+        let newUser: ApiUserV1User | undefined = undefined
+        let newSession: ApiSessionV1Session | undefined = undefined
         if (state instanceof ConsumerAuthenticationState.Authenticated) {
           newUser = (state as ConsumerAuthenticationState.Authenticated).user
           newSession = (state as ConsumerAuthenticationState.Authenticated).session

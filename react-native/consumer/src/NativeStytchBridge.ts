@@ -15,6 +15,49 @@ export interface Spec extends TurboModule {
   configureCaptcha(siteKey: string): void;
   getCAPTCHAToken(): Promise<string>;
   isCaptchaConfigured(): boolean;
+  generateCodeVerifier(): string;
+  generateCodeChallenge(verifier: string): string;
+  signEd25519(key: string, data: string): string
+  generateEd25519KeyPair(): string[]
+  deriveEd25519PublicKeyFromPrivateKeyBytes(privateKeyBytes: string): string
+  getBiometricsAvailability(
+      sessionDurationMinutes: number,
+      androidAllowDeviceCredentials?: boolean,
+      androidTitle?: string,
+      androidSubTitle?: string,
+      androidNegativeButtonText?: string,
+      androidAllowFallbackToCleartext?: boolean,
+      iosReason?: string,
+      iosFallbackTitle?: string,
+      iosCancelTitle?: string,
+  ): Promise<string[]>;
+  registerBiometrics(
+      sessionDurationMinutes: number,
+      androidAllowDeviceCredentials?: boolean,
+      androidTitle?: string,
+      androidSubTitle?: string,
+      androidNegativeButtonText?: string,
+      androidAllowFallbackToCleartext?: boolean,
+      iosReason?: string,
+      iosFallbackTitle?: string,
+      iosCancelTitle?: string,
+  ): Promise<string[]>;
+  authenticateBiometrics(
+      sessionDurationMinutes: number,
+      androidAllowDeviceCredentials?: boolean,
+      androidTitle?: string,
+      androidSubTitle?: string,
+      androidNegativeButtonText?: string,
+      androidAllowFallbackToCleartext?: boolean,
+      iosReason?: string,
+      iosFallbackTitle?: string,
+      iosCancelTitle?: string,
+  ): Promise<string[]>;
+  persistBiometricRegistration(
+      registrationId: string,
+      privateKeyData: string,
+  ): Promise<void>;
+  removeBiometricRegistration(): Promise<void>;
 };
 
 // create an instance of the module

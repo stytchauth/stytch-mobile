@@ -1,5 +1,6 @@
 package com.stytch.sdk.oauth
 
+@JsExport
 public actual class OAuthStartParameters(
     public actual val loginRedirectUrl: String? = null,
     public actual val signupRedirectUrl: String? = null,
