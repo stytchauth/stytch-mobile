@@ -101,6 +101,11 @@ kotlin {
                 implementation(libs.skie.configuration.annotations)
             }
         }
+        jvmTest.dependencies {
+            implementation(kotlin("test"))
+            implementation(libs.mockk)
+            implementation(libs.kotlinx.coroutines.test)
+        }
     }
 }
 
