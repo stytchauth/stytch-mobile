@@ -19,15 +19,15 @@ public interface IPasskeyProvider {
 }
 
 public expect class PasskeyProvider : IPasskeyProvider {
-    public val isSupported: Boolean
+    public override val isSupported: Boolean
 
-    public suspend fun createPublicKeyCredential(
+    public override suspend fun createPublicKeyCredential(
         parameters: PasskeysParameters,
         dispatchers: StytchDispatchers,
         json: String,
     ): String
 
-    public suspend fun getPublicKeyCredential(
+    public override suspend fun getPublicKeyCredential(
         parameters: PasskeysParameters,
         dispatchers: StytchDispatchers,
         json: String,

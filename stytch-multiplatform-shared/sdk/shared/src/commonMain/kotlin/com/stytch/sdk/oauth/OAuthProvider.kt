@@ -21,9 +21,9 @@ public interface IOAuthProvider {
 }
 
 public expect class OAuthProvider : IOAuthProvider {
-    public val isSupported: Boolean
+    public override val isSupported: Boolean
 
-    public suspend fun getOAuthToken(
+    public override suspend fun getOAuthToken(
         parameters: OAuthStartParameters,
         pkceClient: PKCEClient,
         dispatchers: StytchDispatchers,

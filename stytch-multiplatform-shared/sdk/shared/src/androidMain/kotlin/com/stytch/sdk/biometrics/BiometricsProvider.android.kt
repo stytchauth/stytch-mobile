@@ -33,7 +33,7 @@ public actual class BiometricsProvider(
 ) : IBiometricsProvider {
     private var keyStoreLoaded = false
 
-    public actual suspend fun getAvailability(parameters: BiometricsParameters): BiometricsAvailability {
+    public actual override suspend fun getAvailability(parameters: BiometricsParameters): BiometricsAvailability {
         val allowedAuthenticators = getAllowedAuthenticators(parameters.allowDeviceCredentials)
         var errorEncounteredWhenGeneratingKey = false
         try {
@@ -69,7 +69,7 @@ public actual class BiometricsProvider(
         }
     }
 
-    public actual suspend fun register(parameters: BiometricsParameters): Ed25519KeyPair =
+    public actual override suspend fun register(parameters: BiometricsParameters): Ed25519KeyPair =
         try {
             val allowedAuthenticators = getAllowedAuthenticators(parameters.allowDeviceCredentials)
             val cipher =
@@ -89,7 +89,7 @@ public actual class BiometricsProvider(
             throw UnhandledCryptographyError(e)
         }
 
-    public actual suspend fun authenticate(parameters: BiometricsParameters): Ed25519KeyPair =
+    public actual override suspend fun authenticate(parameters: BiometricsParameters): Ed25519KeyPair =
         try {
             val allowedAuthenticators = getAllowedAuthenticators(parameters.allowDeviceCredentials)
             val encodedPrivateKeyBytes =
@@ -250,7 +250,7 @@ public actual class BiometricsProvider(
         cipher.init(Cipher.ENCRYPT_MODE, secretKey)
     }
 
-    public actual suspend fun persistRegistration(
+    public actual override suspend fun persistRegistration(
         registrationId: String,
         privateKeyData: String,
     ) {
@@ -258,7 +258,7 @@ public actual class BiometricsProvider(
         persistenceClient.saveData(BIOMETRIC_REGISTRATION_PRIVATE_KEY_KEY, privateKeyData)
     }
 
-    public actual suspend fun removeRegistration() {
+    public actual override suspend fun removeRegistration() {
         persistenceClient.removeData(BIOMETRIC_REGISTRATION_ID_KEY)
         persistenceClient.removeData(BIOMETRIC_REGISTRATION_PRIVATE_KEY_KEY)
         keyStore.deleteEntry(BIOMETRIC_KEY_NAME)

@@ -18,18 +18,18 @@ public interface IBiometricsProvider {
 }
 
 public expect class BiometricsProvider : IBiometricsProvider {
-    public suspend fun getAvailability(parameters: BiometricsParameters): BiometricsAvailability
+    public override suspend fun getAvailability(parameters: BiometricsParameters): BiometricsAvailability
 
-    public suspend fun register(parameters: BiometricsParameters): Ed25519KeyPair
+    public override suspend fun register(parameters: BiometricsParameters): Ed25519KeyPair
 
-    public suspend fun authenticate(parameters: BiometricsParameters): Ed25519KeyPair
+    public override suspend fun authenticate(parameters: BiometricsParameters): Ed25519KeyPair
 
-    public suspend fun persistRegistration(
+    public override suspend fun persistRegistration(
         registrationId: String,
         privateKeyData: String,
     )
 
-    public suspend fun removeRegistration()
+    public override suspend fun removeRegistration()
 }
 
 internal const val BIOMETRIC_KEY_NAME = "stytch_biometric_key"

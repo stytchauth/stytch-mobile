@@ -25,7 +25,7 @@ public actual class BiometricsProvider(
 ) : IBiometricsProvider {
     private val laContext = LAContext()
 
-    public actual suspend fun getAvailability(parameters: BiometricsParameters): BiometricsAvailability =
+    public actual override suspend fun getAvailability(parameters: BiometricsParameters): BiometricsAvailability =
         memScoped {
             val registrationExists = persistenceClient.getData(BIOMETRIC_REGISTRATION_ID_KEY) != null
             val policyError = alloc<ObjCObjectVar<NSError?>>()
@@ -42,7 +42,7 @@ public actual class BiometricsProvider(
             BiometricsAvailability.Available
         }
 
-    public actual suspend fun register(parameters: BiometricsParameters): Ed25519KeyPair {
+    public actual override suspend fun register(parameters: BiometricsParameters): Ed25519KeyPair {
         val canEvaluate = laContext.canEvaluatePolicy(LAPolicyDeviceOwnerAuthenticationWithBiometrics, null)
         if (!canEvaluate) {
             throw BiometricsUnsupportedError()
@@ -67,7 +67,7 @@ public actual class BiometricsProvider(
         }
     }
 
-    public actual suspend fun authenticate(parameters: BiometricsParameters): Ed25519KeyPair {
+    public actual override suspend fun authenticate(parameters: BiometricsParameters): Ed25519KeyPair {
         val canEvaluate = laContext.canEvaluatePolicy(LAPolicyDeviceOwnerAuthenticationWithBiometrics, null)
         if (!canEvaluate) {
             throw BiometricsUnsupportedError()
@@ -93,7 +93,7 @@ public actual class BiometricsProvider(
         }
     }
 
-    public actual suspend fun persistRegistration(
+    public actual override suspend fun persistRegistration(
         registrationId: String,
         privateKeyData: String,
     ) {
@@ -101,7 +101,7 @@ public actual class BiometricsProvider(
         encryptionClient.createBiometricKey(BIOMETRIC_REGISTRATION_PRIVATE_KEY_KEY, privateKeyData.encodeToByteArray())
     }
 
-    public actual suspend fun removeRegistration() {
+    public actual override suspend fun removeRegistration() {
         persistenceClient.removeData(BIOMETRIC_REGISTRATION_ID_KEY)
         encryptionClient.deleteBiometricKey(BIOMETRIC_REGISTRATION_PRIVATE_KEY_KEY)
     }

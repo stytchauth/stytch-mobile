@@ -23,9 +23,9 @@ import platform.darwin.NSObject
 import kotlin.coroutines.resume
 
 public actual class OAuthProvider : IOAuthProvider {
-    public actual val isSupported: Boolean = true
+    public actual override val isSupported: Boolean = true
 
-    public actual suspend fun getOAuthToken(
+    public actual override suspend fun getOAuthToken(
         parameters: OAuthStartParameters,
         pkceClient: PKCEClient,
         dispatchers: StytchDispatchers,
