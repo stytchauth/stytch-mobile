@@ -41,6 +41,23 @@ Provides `TestCoroutineScope`, `UnconfinedTestDispatcher`, and `runTest`. Requir
 
 ---
 
+## Status
+
+| Wave | Scope | Status | Tests |
+|------|-------|--------|-------|
+| 1 | `StytchPersistenceClient`, `PKCEClient` | ✅ done | 19 |
+| 2 | `StytchConsumerAuthenticationStateManager` | ✅ done | 12 |
+| 3 | `SessionImpl`, `TOTPClientImpl` | ✅ done | 7 |
+| 4 | `OtpImpl`, `MagicLinksImpl`, `PasswordsClientImpl` | ✅ done | 23 |
+| 5 | `UserClientImpl`, `CryptoClientImpl` | ✅ done | 11 |
+| 6 | `PasskeysClientImpl`, `BiometricsClientImpl` | ✅ done | 16 |
+| 7a | `OAuthClientImpl` | ✅ done | 18 |
+| 7b | `ConsumerNetworkingClient` | ❌ not started | see below |
+
+**Total written: 106 tests**
+
+---
+
 ## Test Plan
 
 Tests are ordered from simplest/most foundational to most complex. Each wave builds on the previous. Complete each wave before moving to the next.
@@ -242,13 +259,27 @@ Mock: `ConsumerNetworkingClient`, `PKCEClient`, `IOAuthProvider`, `StytchDispatc
 
 #### `ConsumerNetworkingClient`
 
-Mock: `SdkExternalApi`, `StytchConsumerAuthenticationStateManager`, `StytchDispatchers`
+Unlike the other clients, this requires constructing a real `ConsumerNetworkingClient` instance (with a mocked `StytchConsumerAuthenticationStateManager` and real-enough `StytchClientConfigurationInternal`) rather than mocking `ConsumerNetworkingClient` itself.
+
+**Group 1 — `middleware.onSuccess` (straightforward)**
+
+No Ktor HTTP machinery required. Access `client.middleware` directly and call `onSuccess(data)`.
 
 - Middleware `onSuccess` with an `AuthenticatedResponse` calls `update` on the state manager
 - Middleware `onSuccess` with a `SessionsRevokeResponse` calls `revoke` on the state manager
 - Middleware `onSuccess` with any other type is a no-op
+
+**Group 2 — `init` block (requires `sessionFlow` control)**
+
+Stub `sessionManager.sessionFlow` with a real `MutableStateFlow` and emit to it to drive the init coroutine.
+
+- Init: when the first emitted session is expired, `revoke` is called on the state manager
+- Init: when the first emitted session is valid, the session refresh job is started
+
+**Group 3 — `middleware.onError` (requires mocking Ktor internals)**
+
+These require `mockkStatic` on `io.ktor.client.call.HttpClientCallKt` (for `body<T>()`) and `io.ktor.client.statement.HttpResponseKt` (for `bodyAsText()`), plus a `ResponseException` constructed with a mocked `HttpResponse`. Feasible, but fragile — couples tests to Ktor 3.x compilation output.
+
 - Middleware `onError` parses a valid `StytchAPIError` body and returns it
 - Middleware `onError` with an unrecoverable error calls `revoke` on the state manager
 - Middleware `onError` returns a `StytchNetworkError` fallback when the body cannot be parsed
-- Init: when the first emitted session is expired, `revoke` is called on the state manager
-- Init: when the first emitted session is valid, the session refresh job is started
