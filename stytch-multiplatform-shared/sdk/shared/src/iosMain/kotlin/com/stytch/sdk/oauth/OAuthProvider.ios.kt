@@ -52,9 +52,11 @@ public actual class OAuthProvider {
             request.nonce = nonce
             val controller = ASAuthorizationController(authorizationRequests = listOf(request))
             controller.presentationContextProvider = parameters.applePresentationContextProvider
-            suspendCancellableCoroutine { continuation ->
-                controller.delegate = AppleIdTokenDelegate(nonce, continuation)
-                controller.performRequests()
+            withContext(dispatchers.mainDispatcher) {
+                suspendCancellableCoroutine { continuation ->
+                    controller.delegate = AppleIdTokenDelegate(nonce, continuation)
+                    controller.performRequests()
+                }
             }
         }
 
@@ -107,33 +109,35 @@ public actual class OAuthProvider {
         withContext(dispatchers.ioDispatcher) {
             val uri = generateOAuthStartUrl(baseUrl, publicTokenInfo, parameters, pkceClient)
             val scheme = getCallbackUrlScheme(parameters)
-            suspendCancellableCoroutine { continuation ->
-                NSURL.URLWithString(uri)?.let { nsUrl ->
-                    val session =
-                        ASWebAuthenticationSession(nsUrl, callbackURLScheme = scheme) { nsUrl, nsError ->
-                            if (nsUrl == null) {
-                                return@ASWebAuthenticationSession continuation.resume(OAuthResult.Error(SSOError.NoURIFound()))
+            withContext(dispatchers.mainDispatcher) {
+                suspendCancellableCoroutine { continuation ->
+                    NSURL.URLWithString(uri)?.let { nsUrl ->
+                        val session =
+                            ASWebAuthenticationSession(nsUrl, callbackURLScheme = scheme) { nsUrl, nsError ->
+                                if (nsUrl == null) {
+                                    return@ASWebAuthenticationSession continuation.resume(OAuthResult.Error(SSOError.NoURIFound()))
+                                }
+                                if (nsError != null) {
+                                    return@ASWebAuthenticationSession continuation.resume(
+                                        OAuthResult.Error(
+                                            SSOError.UnknownError(nsError.localizedDescription),
+                                        ),
+                                    )
+                                }
+                                val components = NSURLComponents(nsUrl, true)
+                                val items = components.queryItems?.mapNotNull { it as NSURLQueryItem }
+                                val token = items?.firstOrNull { it.name == "token" }?.value
+                                if (token != null) {
+                                    continuation.resume(OAuthResult.ClassicToken(token = token))
+                                } else {
+                                    continuation.resume(OAuthResult.Error(SSOError.NoTokenFound()))
+                                }
                             }
-                            if (nsError != null) {
-                                return@ASWebAuthenticationSession continuation.resume(
-                                    OAuthResult.Error(
-                                        SSOError.UnknownError(nsError.localizedDescription),
-                                    ),
-                                )
-                            }
-                            val components = NSURLComponents(nsUrl, true)
-                            val items = components.queryItems?.mapNotNull { it as NSURLQueryItem }
-                            val token = items?.firstOrNull { it.name == "token" }?.value
-                            if (token != null) {
-                                continuation.resume(OAuthResult.ClassicToken(token = token))
-                            } else {
-                                continuation.resume(OAuthResult.Error(SSOError.NoTokenFound()))
-                            }
-                        }
-                    session.presentationContextProvider = parameters.oauthPresentationContextProvider
-                    session.start()
-                } ?: run {
-                    continuation.resume(OAuthResult.Error(SSOError.NoURIFound()))
+                        session.presentationContextProvider = parameters.oauthPresentationContextProvider
+                        session.start()
+                    } ?: run {
+                        continuation.resume(OAuthResult.Error(SSOError.NoURIFound()))
+                    }
                 }
             }
         }

@@ -30,7 +30,7 @@ export interface Spec extends TurboModule {
       iosReason?: string,
       iosFallbackTitle?: string,
       iosCancelTitle?: string,
-  ): Promise<string[]>;
+  ): Promise<string>;
   registerBiometrics(
       sessionDurationMinutes: number,
       androidAllowDeviceCredentials?: boolean,
@@ -41,7 +41,7 @@ export interface Spec extends TurboModule {
       iosReason?: string,
       iosFallbackTitle?: string,
       iosCancelTitle?: string,
-  ): Promise<string[]>;
+  ): Promise<string>;
   authenticateBiometrics(
       sessionDurationMinutes: number,
       androidAllowDeviceCredentials?: boolean,
@@ -52,12 +52,36 @@ export interface Spec extends TurboModule {
       iosReason?: string,
       iosFallbackTitle?: string,
       iosCancelTitle?: string,
-  ): Promise<string[]>;
+  ): Promise<string>;
   persistBiometricRegistration(
       registrationId: string,
       privateKeyData: string,
   ): Promise<void>;
   removeBiometricRegistration(): Promise<void>;
+  createPublicKeyCredential(
+      domain: string,
+      preferImmediatelyAvailableCredentials: boolean,
+      json: string,
+      sessionDurationMinutes?: number,
+  ): Promise<string>;
+  getPublicKeyCredential(
+      domain: string,
+      preferImmediatelyAvailableCredentials: boolean,
+      json: string,
+      sessionDurationMinutes?: number,
+  ): Promise<string>;
+  getOAuthToken(
+    type: string,
+    baseUrl: string,
+    publicToken: string,
+    loginRedirectUrl?: string,
+    signupRedirectUrl?: string,
+    customScopes?: string[],
+    providerParams?: string,
+    oauthAttachToken?: string,
+    sessionDurationMinutes?: number,
+    googleCredentialConfiguration?: string,
+  ): Promise<string>
 };
 
 // create an instance of the module

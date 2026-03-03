@@ -6,7 +6,7 @@ import de.jensklingenberg.ktorfit.http.GET
 import de.jensklingenberg.ktorfit.http.Path
 
 internal interface SharedAPI {
-    @GET("projects/bootstrap/{publicToken}")
+    @GET("sdk/v1/projects/bootstrap/{publicToken}")
     suspend fun getBootstrapData(
         @Path(value = "publicToken") publicToken: String,
     ): StytchDataResponse<BootstrapResponse>

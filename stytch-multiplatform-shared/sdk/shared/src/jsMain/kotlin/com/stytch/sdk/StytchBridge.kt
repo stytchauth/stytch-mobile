@@ -1,6 +1,5 @@
 package com.stytch.sdk
 
-import com.stytch.sdk.biometrics.BiometricsAvailability
 import kotlin.js.Promise
 
 public external object StytchBridge {
@@ -59,7 +58,7 @@ public external object StytchBridge {
         iosReason: String?,
         iosFallbackTitle: String?,
         iosCancelTitle: String?,
-    ): Promise<List<Any?>>
+    ): Promise<String>
 
     public fun registerBiometrics(
         sessionDurationMinutes: Int,
@@ -71,7 +70,7 @@ public external object StytchBridge {
         iosReason: String?,
         iosFallbackTitle: String?,
         iosCancelTitle: String?,
-    ): Promise<List<String>>
+    ): Promise<String>
 
     public fun authenticateBiometrics(
         sessionDurationMinutes: Int,
@@ -83,7 +82,7 @@ public external object StytchBridge {
         iosReason: String?,
         iosFallbackTitle: String?,
         iosCancelTitle: String?,
-    ): Promise<List<String>>
+    ): Promise<String>
 
     public fun persistBiometricRegistration(
         registrationId: String,
@@ -91,4 +90,31 @@ public external object StytchBridge {
     ): Promise<Unit>
 
     public fun removeBiometricRegistration(): Promise<Unit>
+
+    public fun createPublicKeyCredential(
+        domain: String,
+        preferImmediatelyAvailableCredentials: Boolean,
+        json: String,
+        sessionDurationMinutes: Int?,
+    ): Promise<String>
+
+    public fun getPublicKeyCredential(
+        domain: String,
+        preferImmediatelyAvailableCredentials: Boolean,
+        json: String,
+        sessionDurationMinutes: Int?,
+    ): Promise<String>
+
+    public fun getOAuthToken(
+        loginRedirectUrl: String?,
+        signupRedirectUrl: String?,
+        customScopes: List<String>?,
+        providerParams: String?,
+        oauthAttachToken: String?,
+        sessionDurationMinutes: Int?,
+        type: String,
+        baseUrl: String,
+        publicToken: String,
+        googleCredentialConfiguration: String?,
+    ): Promise<String>
 }

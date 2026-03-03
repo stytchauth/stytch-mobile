@@ -16,6 +16,7 @@ public actual class StytchClientConfiguration(
     internal val publicToken: String,
     internal val endpointOptions: EndpointOptions = EndpointOptions(),
     internal val defaultSessionDuration: Int? = null,
+    internal val googleCredentialConfiguration: GoogleCredentialConfiguration? = null,
 ) {
     public actual fun toInternal(): StytchClientConfigurationInternal =
         StytchClientConfigurationInternal(
@@ -30,6 +31,6 @@ public actual class StytchClientConfiguration(
             captchaProvider = CAPTCHAProviderImpl(),
             passkeyProvider = PasskeyProvider(),
             biometricsProvider = BiometricsProvider(),
-            oAuthProvider = OAuthProvider(),
+            oAuthProvider = OAuthProvider(googleCredentialConfiguration),
         )
 }

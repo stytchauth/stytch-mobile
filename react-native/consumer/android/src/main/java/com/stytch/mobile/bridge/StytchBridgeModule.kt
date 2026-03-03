@@ -1,20 +1,31 @@
 package com.stytch.mobile.bridge
 
 import android.app.Application
+import androidx.activity.ComponentActivity
 import androidx.fragment.app.FragmentActivity
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
+import com.facebook.react.bridge.ReadableArray
 import com.facebook.react.bridge.WritableArray
 import com.facebook.react.module.annotations.ReactModule
 import com.stytch.sdk.biometrics.BiometricPromptData
 import com.stytch.sdk.biometrics.BiometricsParameters
 import com.stytch.sdk.biometrics.BiometricsProvider
+import com.stytch.sdk.data.PublicTokenInfo
+import com.stytch.sdk.data.StytchDispatchers
 import com.stytch.sdk.data.getDeviceInfo
+import com.stytch.sdk.data.getPublicTokenInfo
 import com.stytch.sdk.dfp.CAPTCHAProviderImpl
 import com.stytch.sdk.dfp.DFPProviderImpl
 import com.stytch.sdk.encryption.StytchEncryptionClient
+import com.stytch.sdk.oauth.OAuthProvider
+import com.stytch.sdk.oauth.OAuthStartParameters
+import com.stytch.sdk.passkeys.PasskeyProvider
+import com.stytch.sdk.passkeys.PasskeysParameters
+import com.stytch.sdk.persistence.StytchPersistenceClient
 import com.stytch.sdk.persistence.StytchPlatformPersistenceClient
+import com.stytch.sdk.pkce.PKCEClient
 import io.ktor.util.decodeBase64Bytes
 import io.ktor.util.encodeBase64
 import kotlinx.coroutines.CoroutineScope
@@ -22,7 +33,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import kotlinx.coroutines.*
-import kotlin.toString
 
 
 /**
@@ -41,6 +51,9 @@ class StytchBridgeModule(reactContext: ReactApplicationContext) :
   private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
   private val biometricsProvider = BiometricsProvider(encryptionClient, platformPersistenceClient)
+  private val passkeysProvider = PasskeyProvider()
+  private val persistenceClient = StytchPersistenceClient(Dispatchers.IO, encryptionClient, platformPersistenceClient)
+  private val pkceClient = PKCEClient(encryptionClient, persistenceClient)
 
   override fun getName(): String {
     return NAME
@@ -157,11 +170,8 @@ class StytchBridgeModule(reactContext: ReactApplicationContext) :
         )
       }
       .onSuccess { availability ->
-        val outArray = Arguments.createArray()
-        outArray.pushString(availability.name)
-        outArray.pushString(availability.reason)
-        outArray.pushString(availability.code.toString())
-        promise.resolve(outArray)
+        val asString = Json.encodeToString(availability)
+        promise.resolve(asString)
       }
       .onFailure { exception ->
         promise.reject(exception)
@@ -198,11 +208,7 @@ class StytchBridgeModule(reactContext: ReactApplicationContext) :
         )
       }
       .onSuccess { keyPair ->
-        val outArray = Arguments.createArray()
-        outArray.pushString(keyPair.publicKey.encodeBase64())
-        outArray.pushString(keyPair.privateKey.encodeBase64())
-        outArray.pushString(keyPair.encryptedPrivateKey!!.encodeBase64())
-        promise.resolve(outArray)
+        promise.resolve(Json.encodeToString(keyPair))
       }
       .onFailure { exception ->
         promise.reject(exception)
@@ -239,10 +245,7 @@ class StytchBridgeModule(reactContext: ReactApplicationContext) :
         )
       }
       .onSuccess { keyPair ->
-        val outArray = Arguments.createArray()
-        outArray.pushString(keyPair.publicKey.encodeBase64())
-        outArray.pushString(keyPair.privateKey.encodeBase64())
-        promise.resolve(outArray)
+        promise.resolve(Json.encodeToString(keyPair))
       }
       .onFailure { exception ->
         promise.reject(exception)
@@ -275,6 +278,119 @@ class StytchBridgeModule(reactContext: ReactApplicationContext) :
       .onFailure { exception ->
         promise.reject(exception)
       }
+    }
+  }
+
+  override fun createPublicKeyCredential(
+    domain: String,
+    preferImmediatelyAvailableCredentials: Boolean,
+    json: String,
+    sessionDurationMinutes: Double?,
+    promise: Promise
+  ) {
+    scope.launch {
+      runCatching {
+        passkeysProvider.createPublicKeyCredential(
+            parameters = PasskeysParameters(
+                activity = reactApplicationContext.currentActivity!! as FragmentActivity,
+                domain = domain,
+                sessionDurationMinutes = sessionDurationMinutes?.toInt(),
+                preferImmediatelyAvailableCredentials = preferImmediatelyAvailableCredentials,
+            ),
+            dispatchers = StytchDispatchers(ioDispatcher = Dispatchers.IO, mainDispatcher = Dispatchers.Main),
+            json = json,
+        )
+      }
+        .onSuccess { credential ->
+          promise.resolve(Json.encodeToString(credential))
+        }
+        .onFailure { exception ->
+          promise.reject(exception)
+        }
+    }
+  }
+
+  override fun getPublicKeyCredential(
+    domain: String,
+    preferImmediatelyAvailableCredentials: Boolean,
+    json: String,
+    sessionDurationMinutes: Double?,
+    promise: Promise
+  ) {
+    scope.launch {
+      runCatching {
+        passkeysProvider.getPublicKeyCredential(
+          parameters = PasskeysParameters(
+            activity = reactApplicationContext.currentActivity!! as FragmentActivity,
+            domain = domain,
+            sessionDurationMinutes = sessionDurationMinutes?.toInt(),
+            preferImmediatelyAvailableCredentials = preferImmediatelyAvailableCredentials,
+          ),
+          dispatchers = StytchDispatchers(ioDispatcher = Dispatchers.IO, mainDispatcher = Dispatchers.Main),
+          json = json,
+        )
+      }
+        .onSuccess { credential ->
+          promise.resolve(Json.encodeToString(credential))
+        }
+        .onFailure { exception ->
+          promise.reject(exception)
+        }
+    }
+  }
+
+  override fun getOAuthToken(
+    type: String,
+    baseUrl: String,
+    publicToken: String,
+    loginRedirectUrl: String?,
+    signupRedirectUrl: String?,
+    customScopes: ReadableArray?,
+    providerParams: String?,
+    oauthAttachToken: String?,
+    sessionDurationMinutes: Double?,
+    googleCredentialConfiguration: String?,
+    promise: Promise
+  ) {
+    scope.launch {
+      runCatching {
+        val oauthProvider = OAuthProvider(
+          application = reactApplicationContext.applicationContext as Application,
+          googleCredentialConfiguration = googleCredentialConfiguration?.let { Json.decodeFromString(it) }
+        )
+        val providerParamsMap = mutableMapOf<String, String>()
+        providerParams?.split("&")?.forEach {
+          val (key, value) = it.split("=")
+          providerParamsMap[key] = value
+        }
+        val customScopesList = mutableListOf<String>()
+        customScopes?.toArrayList()?.forEach {
+          customScopesList.add(it as String)
+        }
+        oauthProvider.getOAuthToken(
+            parameters = OAuthStartParameters(
+              activity = reactApplicationContext.currentActivity!! as ComponentActivity,
+              loginRedirectUrl = loginRedirectUrl,
+              signupRedirectUrl = signupRedirectUrl,
+              customScopes = customScopesList,
+              providerParams = providerParamsMap,
+              oauthAttachToken = oauthAttachToken,
+              sessionDurationMinutes = sessionDurationMinutes?.toInt(),
+            ),
+            pkceClient = pkceClient,
+            dispatchers = StytchDispatchers(ioDispatcher = Dispatchers.IO, mainDispatcher = Dispatchers.Main),
+            type = Json.decodeFromString(type),
+            baseUrl = baseUrl,
+            publicTokenInfo = getPublicTokenInfo(publicToken),
+        )
+      }
+        .onSuccess { token ->
+          val asString = Json.encodeToString(token)
+          promise.resolve(asString)
+        }
+        .onFailure { exception ->
+          promise.reject(exception)
+        }
     }
   }
 

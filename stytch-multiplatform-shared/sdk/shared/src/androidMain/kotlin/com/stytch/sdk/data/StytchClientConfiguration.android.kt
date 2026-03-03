@@ -45,11 +45,6 @@ public actual class StytchClientConfiguration(
     }
 }
 
-public class GoogleCredentialConfiguration(
-    public val googleClientId: String,
-    public val autoSelectEnabled: Boolean = true,
-)
-
 public fun Context.getDeviceInfo(): DeviceInfo {
     val applicationPackageName = applicationContext.packageName.toString()
     val applicationVersion =
