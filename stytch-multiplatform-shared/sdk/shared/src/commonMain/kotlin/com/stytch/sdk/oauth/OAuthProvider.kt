@@ -7,10 +7,23 @@ import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
 import kotlin.js.JsExport
 
-public expect class OAuthProvider {
+public interface IOAuthProvider {
     public val isSupported: Boolean
 
     public suspend fun getOAuthToken(
+        parameters: OAuthStartParameters,
+        pkceClient: PKCEClient,
+        dispatchers: StytchDispatchers,
+        type: OAuthProviderType,
+        baseUrl: String,
+        publicTokenInfo: PublicTokenInfo,
+    ): OAuthResult
+}
+
+public expect class OAuthProvider : IOAuthProvider {
+    public override val isSupported: Boolean
+
+    public override suspend fun getOAuthToken(
         parameters: OAuthStartParameters,
         pkceClient: PKCEClient,
         dispatchers: StytchDispatchers,

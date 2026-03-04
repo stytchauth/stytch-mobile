@@ -15,7 +15,7 @@ import com.stytch.sdk.consumer.networking.models.WebAuthnRegisterStartParameters
 import com.stytch.sdk.consumer.networking.models.WebAuthnUpdateResponse
 import com.stytch.sdk.consumer.networking.models.toNetworkModel
 import com.stytch.sdk.data.StytchDispatchers
-import com.stytch.sdk.passkeys.PasskeyProvider
+import com.stytch.sdk.passkeys.IPasskeyProvider
 import com.stytch.sdk.passkeys.PasskeysParameters
 import com.stytch.sdk.passkeys.PasskeysUnsupportedError
 import kotlinx.coroutines.withContext
@@ -39,7 +39,7 @@ internal class PasskeysClientImpl(
     private val dispatchers: StytchDispatchers,
     private val networkingClient: ConsumerNetworkingClient,
     private val sessionManager: StytchConsumerAuthenticationStateManager,
-    private val passkeyProvider: PasskeyProvider,
+    private val passkeyProvider: IPasskeyProvider,
 ) : PasskeysClient {
     override val isSupported: Boolean = passkeyProvider.isSupported
 

@@ -2,7 +2,7 @@ package com.stytch.sdk.biometrics
 
 import com.stytch.sdk.data.Ed25519KeyPair
 
-public expect class BiometricsProvider {
+public interface IBiometricsProvider {
     public suspend fun getAvailability(parameters: BiometricsParameters): BiometricsAvailability
 
     public suspend fun register(parameters: BiometricsParameters): Ed25519KeyPair
@@ -15,6 +15,21 @@ public expect class BiometricsProvider {
     )
 
     public suspend fun removeRegistration()
+}
+
+public expect class BiometricsProvider : IBiometricsProvider {
+    public override suspend fun getAvailability(parameters: BiometricsParameters): BiometricsAvailability
+
+    public override suspend fun register(parameters: BiometricsParameters): Ed25519KeyPair
+
+    public override suspend fun authenticate(parameters: BiometricsParameters): Ed25519KeyPair
+
+    public override suspend fun persistRegistration(
+        registrationId: String,
+        privateKeyData: String,
+    )
+
+    public override suspend fun removeRegistration()
 }
 
 internal const val BIOMETRIC_KEY_NAME = "stytch_biometric_key"

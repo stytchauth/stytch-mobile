@@ -20,6 +20,7 @@ buildconfig = "6.0.7"
 skie = "0.10.9"
 stytchDfp = "1.1.2"
 recaptcha = "18.7.0"
+mockk = "1.13.12"
 
 [libraries]
 activity = { module = "androidx.activity:activity", version.ref = "activityKtx" }
@@ -46,6 +47,8 @@ recaptcha = { module = "com.google.android.recaptcha:recaptcha", version.ref = "
 credentials = { module = "androidx.credentials:credentials", version.ref = "credentials" }
 credentials-play-services-auth = { module = "androidx.credentials:credentials-play-services-auth", version.ref = "credentials" }
 googleid = { module = "com.google.android.libraries.identity.googleid:googleid", version.ref = "googleid" }
+mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
+kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinx-coroutines" }
 
 [plugins]
 android-kotlin-multiplatform-library = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }

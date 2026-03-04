@@ -20,10 +20,10 @@ import kotlin.coroutines.Continuation
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
-public actual class PasskeyProvider {
-    public actual val isSupported: Boolean = true
+public actual class PasskeyProvider : IPasskeyProvider {
+    public actual override val isSupported: Boolean = true
 
-    public actual suspend fun createPublicKeyCredential(
+    public actual override suspend fun createPublicKeyCredential(
         parameters: PasskeysParameters,
         dispatchers: StytchDispatchers,
         json: String,
@@ -44,7 +44,7 @@ public actual class PasskeyProvider {
         return credential.rawClientDataJSON.base64Encoding()
     }
 
-    public actual suspend fun getPublicKeyCredential(
+    public actual override suspend fun getPublicKeyCredential(
         parameters: PasskeysParameters,
         dispatchers: StytchDispatchers,
         json: String,

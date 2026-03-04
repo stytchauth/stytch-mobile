@@ -120,6 +120,11 @@ kotlin {
         jsMain.dependencies {
             implementation(libs.ktor.client.js)
         }
+        jvmTest.dependencies {
+            implementation(kotlin("test"))
+            implementation(libs.mockk)
+            implementation(libs.kotlinx.coroutines.test)
+        }
     }
 }
 

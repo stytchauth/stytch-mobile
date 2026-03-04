@@ -3,7 +3,7 @@ package com.stytch.sdk.consumer.biometrics
 import com.stytch.sdk.StytchAuthenticationStateManager
 import com.stytch.sdk.biometrics.BiometricsAvailability
 import com.stytch.sdk.biometrics.BiometricsParameters
-import com.stytch.sdk.biometrics.BiometricsProvider
+import com.stytch.sdk.biometrics.IBiometricsProvider
 import com.stytch.sdk.biometrics.BiometricsUnsupportedError
 import com.stytch.sdk.consumer.networking.ConsumerNetworkingClient
 import com.stytch.sdk.consumer.networking.models.BiometricsAuthenticateParameters
@@ -35,7 +35,7 @@ internal class BiometricsClientImpl(
     private val networkingClient: ConsumerNetworkingClient,
     private val sessionManager: StytchAuthenticationStateManager,
     private val encryptionClient: StytchEncryptionClient,
-    private val biometricsProvider: BiometricsProvider,
+    private val biometricsProvider: IBiometricsProvider,
 ) : BiometricsClient {
     override suspend fun register(parameters: BiometricsParameters): BiometricsRegisterResponse {
         val availability = getAvailability(parameters)

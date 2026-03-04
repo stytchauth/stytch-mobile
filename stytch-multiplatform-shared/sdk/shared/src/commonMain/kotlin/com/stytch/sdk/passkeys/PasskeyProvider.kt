@@ -2,7 +2,7 @@ package com.stytch.sdk.passkeys
 
 import com.stytch.sdk.data.StytchDispatchers
 
-public expect class PasskeyProvider {
+public interface IPasskeyProvider {
     public val isSupported: Boolean
 
     public suspend fun createPublicKeyCredential(
@@ -12,6 +12,22 @@ public expect class PasskeyProvider {
     ): String
 
     public suspend fun getPublicKeyCredential(
+        parameters: PasskeysParameters,
+        dispatchers: StytchDispatchers,
+        json: String,
+    ): String
+}
+
+public expect class PasskeyProvider : IPasskeyProvider {
+    public override val isSupported: Boolean
+
+    public override suspend fun createPublicKeyCredential(
+        parameters: PasskeysParameters,
+        dispatchers: StytchDispatchers,
+        json: String,
+    ): String
+
+    public override suspend fun getPublicKeyCredential(
         parameters: PasskeysParameters,
         dispatchers: StytchDispatchers,
         json: String,

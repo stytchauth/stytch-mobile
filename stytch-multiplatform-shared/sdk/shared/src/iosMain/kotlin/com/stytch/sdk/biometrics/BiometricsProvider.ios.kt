@@ -22,8 +22,8 @@ import kotlin.coroutines.resumeWithException
 public actual class BiometricsProvider(
     private val encryptionClient: StytchEncryptionClient,
     private val persistenceClient: StytchPlatformPersistenceClient,
-) {
-    public actual suspend fun getAvailability(parameters: BiometricsParameters): BiometricsAvailability =
+) : IBiometricsProvider {
+    public actual override suspend fun getAvailability(parameters: BiometricsParameters): BiometricsAvailability =
         memScoped {
             val laContext = LAContext()
             val registrationExists = persistenceClient.getData(BIOMETRIC_REGISTRATION_ID_KEY) != null
@@ -41,7 +41,7 @@ public actual class BiometricsProvider(
             BiometricsAvailability.Available
         }
 
-    public actual suspend fun register(parameters: BiometricsParameters): Ed25519KeyPair {
+    public actual override suspend fun register(parameters: BiometricsParameters): Ed25519KeyPair {
         val laContext = LAContext()
         val canEvaluate = laContext.canEvaluatePolicy(LAPolicyDeviceOwnerAuthenticationWithBiometrics, null)
         if (!canEvaluate) {
@@ -67,7 +67,7 @@ public actual class BiometricsProvider(
         }
     }
 
-    public actual suspend fun authenticate(parameters: BiometricsParameters): Ed25519KeyPair {
+    public actual override suspend fun authenticate(parameters: BiometricsParameters): Ed25519KeyPair {
         val laContext = LAContext()
         val canEvaluate = laContext.canEvaluatePolicy(LAPolicyDeviceOwnerAuthenticationWithBiometrics, null)
         if (!canEvaluate) {
@@ -94,7 +94,7 @@ public actual class BiometricsProvider(
         }
     }
 
-    public actual suspend fun persistRegistration(
+    public actual override suspend fun persistRegistration(
         registrationId: String,
         privateKeyData: String,
     ) {
@@ -102,7 +102,7 @@ public actual class BiometricsProvider(
         encryptionClient.createBiometricKey(BIOMETRIC_REGISTRATION_PRIVATE_KEY_KEY, privateKeyData.encodeToByteArray())
     }
 
-    public actual suspend fun removeRegistration() {
+    public actual override suspend fun removeRegistration() {
         persistenceClient.removeData(BIOMETRIC_REGISTRATION_ID_KEY)
         encryptionClient.deleteBiometricKey(BIOMETRIC_REGISTRATION_PRIVATE_KEY_KEY)
     }

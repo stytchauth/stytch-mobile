@@ -17,7 +17,7 @@ import com.stytch.sdk.consumer.networking.models.toNetworkModel
 import com.stytch.sdk.data.EndpointOptions
 import com.stytch.sdk.data.PublicTokenInfo
 import com.stytch.sdk.data.StytchDispatchers
-import com.stytch.sdk.oauth.OAuthProvider
+import com.stytch.sdk.oauth.IOAuthProvider
 import com.stytch.sdk.oauth.OAuthProviderType
 import com.stytch.sdk.oauth.OAuthResult
 import com.stytch.sdk.oauth.OAuthStartParameters
@@ -86,7 +86,7 @@ internal class OAuthClientImpl(
     private val dispatchers: StytchDispatchers,
     private val networkingClient: ConsumerNetworkingClient,
     private val pkceClient: PKCEClient,
-    private val oauthProvider: OAuthProvider,
+    private val oauthProvider: IOAuthProvider,
     private val defaultSessionDuration: Int?,
 ) : OAuthClient {
     override suspend fun authenticate(request: IOAuthAuthenticateParameters): OAuthAuthenticateResponse =
