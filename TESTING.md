@@ -53,10 +53,10 @@ Provides `TestCoroutineScope`, `UnconfinedTestDispatcher`, and `runTest`. Requir
 | 6 | `PasskeysClientImpl`, `BiometricsClientImpl` | ✅ done | 16 |
 | 7a | `OAuthClientImpl` | ✅ done | 18 |
 | 7b | `ConsumerNetworkingClientMiddleware` | ✅ done | 6 |
-| 7c | `ConsumerNetworkingClient` (init + updateSessionAndReturnExpiration) | ❌ not started | 3 planned |
+| 7c | `ConsumerNetworkingClient` (init + updateSessionAndReturnExpiration) | ✅ done | 5 |
 | 7d | `stytchNetworkRequest`, `stytchNetworkRequestWithRetryAndBackoff` | ✅ done | 6 |
 
-**Total written: 118 tests**
+**Total written: 123 tests**
 
 ---
 
@@ -272,13 +272,18 @@ Mock: `StytchConsumerAuthenticationStateManager`, `FakeErrorResponseParser`
 - `onError` calls `revoke` for an unrecoverable error type
 - `onError` returns `StytchNetworkError` when body cannot be parsed
 
-#### `ConsumerNetworkingClient` (remaining)
+#### `ConsumerNetworkingClient` (remaining) ✅
 
-Requires constructing a real `ConsumerNetworkingClient` with a mocked `StytchConsumerAuthenticationStateManager` and a controlled `MutableStateFlow` for `sessionFlow`.
+Init logic was extracted into a top-level `checkAndHandleInitialSession(session, now, onExpired, onValid)` function, and `SdkExternalApi` was made injectable via an `apiOverride` constructor parameter (defaults to `ktorfit.create()`).
 
-- Init: when the first emitted session is expired, `revoke` is called on the state manager
-- Init: when the first emitted session is valid, the session refresh job is started
-- `updateSessionAndReturnExpiration` calls `sessionsAuthenticate` with the configured session duration and returns `session.expiresAt`
+**`checkAndHandleInitialSession` (no construction needed):**
+- `expiresAt` in the past → `onExpired` called
+- `expiresAt` in the future → `onValid` called
+- `expiresAt` is null → `onExpired` called (falls back to `Instant.DISTANT_PAST`)
+
+**`updateSessionAndReturnExpiration` (real client with injected `mockApi`):**
+- Returns `session.expiresAt` when present
+- Returns `Instant.DISTANT_PAST` when `expiresAt` is null
 
 #### `stytchNetworkRequest` / `stytchNetworkRequestWithRetryAndBackoff` (`stytch-multiplatform-shared`)
 
