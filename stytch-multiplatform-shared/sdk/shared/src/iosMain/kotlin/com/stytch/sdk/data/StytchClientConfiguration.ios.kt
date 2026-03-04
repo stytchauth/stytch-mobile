@@ -32,7 +32,7 @@ public actual class StytchClientConfiguration(
         return StytchClientConfigurationInternal(
             publicToken = publicToken,
             endpointOptions = endpointOptions,
-            defaultSessionDuration = defaultSessionDuration,
+            defaultSessionDuration = defaultSessionDuration ?: DEFAULT_SESSION_DURATION_MINUTES,
             deviceInfo =
                 DeviceInfo(
                     applicationPackageName = NSBundle.mainBundle.bundleIdentifier ?: "unknown_bundle_id",
