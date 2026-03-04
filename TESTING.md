@@ -52,9 +52,9 @@ Provides `TestCoroutineScope`, `UnconfinedTestDispatcher`, and `runTest`. Requir
 | 5 | `UserClientImpl`, `CryptoClientImpl` | ✅ done | 11 |
 | 6 | `PasskeysClientImpl`, `BiometricsClientImpl` | ✅ done | 16 |
 | 7a | `OAuthClientImpl` | ✅ done | 18 |
-| 7b | `ConsumerNetworkingClient` | ❌ not started | see below |
+| 7b | `ConsumerNetworkingClientMiddleware` | ✅ done | 6 |
 
-**Total written: 106 tests**
+**Total written: 112 tests**
 
 ---
 
@@ -257,29 +257,19 @@ Mock: `ConsumerNetworkingClient`, `PKCEClient`, `IOAuthProvider`, `StytchDispatc
 - Name parsing: 1 part → first only
 - Session duration fallback: uses provided value, then `defaultSessionDuration`, then hardcoded `5`
 
-#### `ConsumerNetworkingClient`
+#### `ConsumerNetworkingClientMiddleware` ✅
 
-Unlike the other clients, this requires constructing a real `ConsumerNetworkingClient` instance (with a mocked `StytchConsumerAuthenticationStateManager` and real-enough `StytchClientConfigurationInternal`) rather than mocking `ConsumerNetworkingClient` itself.
+The original anonymous `middleware` object was extracted into a named `ConsumerNetworkingClientMiddleware` class. Ktor HTTP deserialization (`body<T>()`, `bodyAsText()`) was abstracted behind an `IErrorResponseParser` interface, with `DefaultErrorResponseParser` as the production implementation. This makes all middleware logic testable via a `FakeErrorResponseParser` — no Ktor internals, no `mockkStatic`.
 
-**Group 1 — `middleware.onSuccess` (straightforward)**
+Mock: `StytchConsumerAuthenticationStateManager`, `FakeErrorResponseParser`
 
-No Ktor HTTP machinery required. Access `client.middleware` directly and call `onSuccess(data)`.
+- `onSuccess` with an `AuthenticatedResponse` calls `update` and triggers `onSessionAuthenticated`
+- `onSuccess` with a `SessionsRevokeResponse` calls `revoke`
+- `onSuccess` with any other type is a no-op
+- `onError` returns the parsed `StytchAPIError`
+- `onError` calls `revoke` for an unrecoverable error type
+- `onError` returns `StytchNetworkError` when body cannot be parsed
 
-- Middleware `onSuccess` with an `AuthenticatedResponse` calls `update` on the state manager
-- Middleware `onSuccess` with a `SessionsRevokeResponse` calls `revoke` on the state manager
-- Middleware `onSuccess` with any other type is a no-op
+**Not tested: `ConsumerNetworkingClient.init` block**
 
-**Group 2 — `init` block (requires `sessionFlow` control)**
-
-Stub `sessionManager.sessionFlow` with a real `MutableStateFlow` and emit to it to drive the init coroutine.
-
-- Init: when the first emitted session is expired, `revoke` is called on the state manager
-- Init: when the first emitted session is valid, the session refresh job is started
-
-**Group 3 — `middleware.onError` (requires mocking Ktor internals)**
-
-These require `mockkStatic` on `io.ktor.client.call.HttpClientCallKt` (for `body<T>()`) and `io.ktor.client.statement.HttpResponseKt` (for `bodyAsText()`), plus a `ResponseException` constructed with a mocked `HttpResponse`. Feasible, but fragile — couples tests to Ktor 3.x compilation output.
-
-- Middleware `onError` parses a valid `StytchAPIError` body and returns it
-- Middleware `onError` with an unrecoverable error calls `revoke` on the state manager
-- Middleware `onError` returns a `StytchNetworkError` fallback when the body cannot be parsed
+The init block (expired session → revoke, valid session → start refresh job) could be tested by constructing a real `ConsumerNetworkingClient` with a controlled `MutableStateFlow`. Skipped for now as lower priority than the middleware logic.
