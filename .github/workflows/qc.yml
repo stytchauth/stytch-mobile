@@ -51,8 +51,8 @@ jobs:
 
       - name: Lint
         working-directory: stytch-multiplatform
-        run: ./gradlew ktlintCheck
+        run: ./gradlew ktlintCheck --rerun-tasks
 
       - name: Test
         working-directory: stytch-multiplatform
-        run: ./gradlew jvmTest
+        run: ./gradlew jvmTest --rerun-tasks
