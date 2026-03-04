@@ -31,76 +31,81 @@ internal class MagicLinksImplTest : ConsumerClientTest() {
     // --- authenticate ---
 
     @Test
-    fun `authenticate retrieves PKCE, calls magicLinksAuthenticate with verifier, then revokes PKCE`() = runTest(testDispatcher) {
-        coEvery { pkceClient.retrieve() } returns fakePair
-        coEvery { api.magicLinksAuthenticate(any()) } returns StytchDataResponse(mockk(relaxed = true))
+    fun `authenticate retrieves PKCE, calls magicLinksAuthenticate with verifier, then revokes PKCE`() =
+        runTest(testDispatcher) {
+            coEvery { pkceClient.retrieve() } returns fakePair
+            coEvery { api.magicLinksAuthenticate(any()) } returns StytchDataResponse(mockk(relaxed = true))
 
-        client.authenticate(MagicLinksAuthenticateParameters(token = "tok", sessionDurationMinutes = 30))
+            client.authenticate(MagicLinksAuthenticateParameters(token = "tok", sessionDurationMinutes = 30))
 
-        coVerify {
-            api.magicLinksAuthenticate(
-                MagicLinksAuthenticateRequest(token = "tok", sessionDurationMinutes = 30, codeVerifier = "test-verifier"),
-            )
+            coVerify {
+                api.magicLinksAuthenticate(
+                    MagicLinksAuthenticateRequest(token = "tok", sessionDurationMinutes = 30, codeVerifier = "test-verifier"),
+                )
+            }
+            coVerify { pkceClient.revoke() }
         }
-        coVerify { pkceClient.revoke() }
-    }
 
     @Test
-    fun `authenticate throws IllegalStateException when PKCE is missing`() = runTest(testDispatcher) {
-        coEvery { pkceClient.retrieve() } returns null
+    fun `authenticate throws IllegalStateException when PKCE is missing`() =
+        runTest(testDispatcher) {
+            coEvery { pkceClient.retrieve() } returns null
 
-        assertFailsWith<IllegalStateException> {
-            client.authenticate(MagicLinksAuthenticateParameters(token = "tok", sessionDurationMinutes = 30))
+            assertFailsWith<IllegalStateException> {
+                client.authenticate(MagicLinksAuthenticateParameters(token = "tok", sessionDurationMinutes = 30))
+            }
         }
-    }
 
     // --- email.loginOrCreate ---
 
     @Test
-    fun `email loginOrCreate creates PKCE and calls magicLinksEmailLoginOrCreate with code challenge`() = runTest(testDispatcher) {
-        coEvery { pkceClient.create() } returns fakePair
-        coEvery { api.magicLinksEmailLoginOrCreate(any()) } returns StytchDataResponse(mockk(relaxed = true))
+    fun `email loginOrCreate creates PKCE and calls magicLinksEmailLoginOrCreate with code challenge`() =
+        runTest(testDispatcher) {
+            coEvery { pkceClient.create() } returns fakePair
+            coEvery { api.magicLinksEmailLoginOrCreate(any()) } returns StytchDataResponse(mockk(relaxed = true))
 
-        client.email.loginOrCreate(MagicLinksEmailLoginOrCreateParameters(email = "test@example.com"))
+            client.email.loginOrCreate(MagicLinksEmailLoginOrCreateParameters(email = "test@example.com"))
 
-        coVerify {
-            api.magicLinksEmailLoginOrCreate(
-                MagicLinksEmailLoginOrCreateRequest(email = "test@example.com", codeChallenge = "test-challenge"),
-            )
+            coVerify {
+                api.magicLinksEmailLoginOrCreate(
+                    MagicLinksEmailLoginOrCreateRequest(email = "test@example.com", codeChallenge = "test-challenge"),
+                )
+            }
         }
-    }
 
     // --- email.send ---
 
     @Test
-    fun `email send creates PKCE and calls primary endpoint when no session token`() = runTest(testDispatcher) {
-        coEvery { pkceClient.create() } returns fakePair
-        every { sessionManager.currentSessionToken } returns null
-        coEvery { api.magicLinksEmailSendPrimary(any()) } returns StytchDataResponse(mockk(relaxed = true))
+    fun `email send creates PKCE and calls primary endpoint when no session token`() =
+        runTest(testDispatcher) {
+            coEvery { pkceClient.create() } returns fakePair
+            every { sessionManager.currentSessionToken } returns null
+            coEvery { api.magicLinksEmailSendPrimary(any()) } returns StytchDataResponse(mockk(relaxed = true))
 
-        client.email.send(MagicLinksEmailSendSecondaryParameters(email = "test@example.com"))
+            client.email.send(MagicLinksEmailSendSecondaryParameters(email = "test@example.com"))
 
-        coVerify {
-            api.magicLinksEmailSendPrimary(
-                MagicLinksEmailSendSecondaryRequest(email = "test@example.com", codeChallenge = "test-challenge"),
-            )
+            coVerify {
+                api.magicLinksEmailSendPrimary(
+                    MagicLinksEmailSendSecondaryRequest(email = "test@example.com", codeChallenge = "test-challenge"),
+                )
+            }
+            coVerify(exactly = 0) { api.magicLinksEmailSendSecondary(any()) }
         }
-        coVerify(exactly = 0) { api.magicLinksEmailSendSecondary(any()) }
-    }
 
     @Test
-    fun `email send creates PKCE and calls secondary endpoint when session token present`() = runTest(testDispatcher) {
-        coEvery { pkceClient.create() } returns fakePair
-        every { sessionManager.currentSessionToken } returns "session-tok"
-        coEvery { api.magicLinksEmailSendSecondary(any()) } returns StytchDataResponse(mockk(relaxed = true))
+    fun `email send creates PKCE and calls secondary endpoint when session token present`() =
+        runTest(testDispatcher) {
+            coEvery { pkceClient.create() } returns fakePair
+            every { sessionManager.currentSessionToken } returns "session-tok"
+            coEvery { api.magicLinksEmailSendSecondary(any()) } returns StytchDataResponse(mockk(relaxed = true))
 
-        client.email.send(MagicLinksEmailSendSecondaryParameters(email = "test@example.com"))
+            client.email.send(MagicLinksEmailSendSecondaryParameters(email = "test@example.com"))
 
-        coVerify {
-            api.magicLinksEmailSendSecondary(
-                MagicLinksEmailSendSecondaryRequest(email = "test@example.com", codeChallenge = "test-challenge"),
-            )
+            coVerify {
+                api.magicLinksEmailSendSecondary(
+                    MagicLinksEmailSendSecondaryRequest(email = "test@example.com", codeChallenge = "test-challenge"),
+                )
+            }
+            coVerify(exactly = 0) { api.magicLinksEmailSendPrimary(any()) }
         }
-        coVerify(exactly = 0) { api.magicLinksEmailSendPrimary(any()) }
-    }
 }

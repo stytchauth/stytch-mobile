@@ -1,11 +1,6 @@
 package com.stytch.sdk.consumer.totp
 
-import com.stytch.sdk.consumer.StytchConsumerAuthenticationStateManager
 import com.stytch.sdk.consumer.networking.ConsumerNetworkingClient
-import com.stytch.sdk.consumer.networking.models.CryptoWalletsAuthenticateRequest
-import com.stytch.sdk.consumer.networking.models.CryptoWalletsAuthenticateResponse
-import com.stytch.sdk.consumer.networking.models.CryptoWalletsAuthenticateStartSecondaryRequest
-import com.stytch.sdk.consumer.networking.models.ICryptoWalletsAuthenticateParameters
 import com.stytch.sdk.consumer.networking.models.ITOTPsAuthenticateParameters
 import com.stytch.sdk.consumer.networking.models.ITOTPsCreateParameters
 import com.stytch.sdk.consumer.networking.models.ITOTPsRecoverParameters

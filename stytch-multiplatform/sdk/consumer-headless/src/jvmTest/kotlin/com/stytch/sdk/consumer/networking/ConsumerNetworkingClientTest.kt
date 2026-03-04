@@ -13,7 +13,6 @@ import com.stytch.sdk.data.StytchDispatchers
 import com.stytch.sdk.encryption.StytchEncryptionClient
 import com.stytch.sdk.persistence.StytchPlatformPersistenceClient
 import io.mockk.coEvery
-import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -23,7 +22,6 @@ import kotlinx.coroutines.test.runTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.hours
@@ -34,52 +32,55 @@ internal class CheckAndHandleInitialSessionTest {
     private val fixedNow: Instant = Clock.System.now()
 
     @Test
-    fun `calls onExpired when session expiresAt is in the past`() = runTest {
-        val session = mockk<ApiSessionV1Session>(relaxed = true)
-        every { session.expiresAt } returns fixedNow - 1.hours
-        var expiredCalled = false
+    fun `calls onExpired when session expiresAt is in the past`() =
+        runTest {
+            val session = mockk<ApiSessionV1Session>(relaxed = true)
+            every { session.expiresAt } returns fixedNow - 1.hours
+            var expiredCalled = false
 
-        checkAndHandleInitialSession(
-            session = session,
-            now = fixedNow,
-            onExpired = { expiredCalled = true },
-            onValid = { error("should not be called") },
-        )
+            checkAndHandleInitialSession(
+                session = session,
+                now = fixedNow,
+                onExpired = { expiredCalled = true },
+                onValid = { error("should not be called") },
+            )
 
-        assertTrue(expiredCalled)
-    }
-
-    @Test
-    fun `calls onValid when session expiresAt is in the future`() = runTest {
-        val session = mockk<ApiSessionV1Session>(relaxed = true)
-        every { session.expiresAt } returns fixedNow + 1.hours
-        var validCalled = false
-
-        checkAndHandleInitialSession(
-            session = session,
-            now = fixedNow,
-            onExpired = { error("should not be called") },
-            onValid = { validCalled = true },
-        )
-
-        assertTrue(validCalled)
-    }
+            assertTrue(expiredCalled)
+        }
 
     @Test
-    fun `calls onExpired when session expiresAt is null`() = runTest {
-        val session = mockk<ApiSessionV1Session>(relaxed = true)
-        every { session.expiresAt } returns null
-        var expiredCalled = false
+    fun `calls onValid when session expiresAt is in the future`() =
+        runTest {
+            val session = mockk<ApiSessionV1Session>(relaxed = true)
+            every { session.expiresAt } returns fixedNow + 1.hours
+            var validCalled = false
 
-        checkAndHandleInitialSession(
-            session = session,
-            now = fixedNow,
-            onExpired = { expiredCalled = true },
-            onValid = { error("should not be called") },
-        )
+            checkAndHandleInitialSession(
+                session = session,
+                now = fixedNow,
+                onExpired = { error("should not be called") },
+                onValid = { validCalled = true },
+            )
 
-        assertTrue(expiredCalled)
-    }
+            assertTrue(validCalled)
+        }
+
+    @Test
+    fun `calls onExpired when session expiresAt is null`() =
+        runTest {
+            val session = mockk<ApiSessionV1Session>(relaxed = true)
+            every { session.expiresAt } returns null
+            var expiredCalled = false
+
+            checkAndHandleInitialSession(
+                session = session,
+                now = fixedNow,
+                onExpired = { expiredCalled = true },
+                onValid = { error("should not be called") },
+            )
+
+            assertTrue(expiredCalled)
+        }
 }
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -116,29 +117,31 @@ internal class ConsumerNetworkingClientTest {
         )
 
     @Test
-    fun `updateSessionAndReturnExpiration returns session expiresAt`() = runTest(testDispatcher) {
-        val futureInstant = Clock.System.now() + 1.hours
-        val mockSession = mockk<ApiSessionV1Session>(relaxed = true)
-        every { mockSession.expiresAt } returns futureInstant
-        val mockResponse = mockk<SessionsAuthenticateResponse>(relaxed = true)
-        every { mockResponse.session } returns mockSession
-        coEvery { mockApi.sessionsAuthenticate(any()) } returns StytchDataResponse(mockResponse)
+    fun `updateSessionAndReturnExpiration returns session expiresAt`() =
+        runTest(testDispatcher) {
+            val futureInstant = Clock.System.now() + 1.hours
+            val mockSession = mockk<ApiSessionV1Session>(relaxed = true)
+            every { mockSession.expiresAt } returns futureInstant
+            val mockResponse = mockk<SessionsAuthenticateResponse>(relaxed = true)
+            every { mockResponse.session } returns mockSession
+            coEvery { mockApi.sessionsAuthenticate(any()) } returns StytchDataResponse(mockResponse)
 
-        val result = makeClient().updateSessionAndReturnExpiration()
+            val result = makeClient().updateSessionAndReturnExpiration()
 
-        assertEquals(futureInstant, result)
-    }
+            assertEquals(futureInstant, result)
+        }
 
     @Test
-    fun `updateSessionAndReturnExpiration returns DISTANT_PAST when expiresAt is null`() = runTest(testDispatcher) {
-        val mockSession = mockk<ApiSessionV1Session>(relaxed = true)
-        every { mockSession.expiresAt } returns null
-        val mockResponse = mockk<SessionsAuthenticateResponse>(relaxed = true)
-        every { mockResponse.session } returns mockSession
-        coEvery { mockApi.sessionsAuthenticate(any()) } returns StytchDataResponse(mockResponse)
+    fun `updateSessionAndReturnExpiration returns DISTANT_PAST when expiresAt is null`() =
+        runTest(testDispatcher) {
+            val mockSession = mockk<ApiSessionV1Session>(relaxed = true)
+            every { mockSession.expiresAt } returns null
+            val mockResponse = mockk<SessionsAuthenticateResponse>(relaxed = true)
+            every { mockResponse.session } returns mockSession
+            coEvery { mockApi.sessionsAuthenticate(any()) } returns StytchDataResponse(mockResponse)
 
-        val result = makeClient().updateSessionAndReturnExpiration()
+            val result = makeClient().updateSessionAndReturnExpiration()
 
-        assertEquals(Instant.DISTANT_PAST, result)
-    }
+            assertEquals(Instant.DISTANT_PAST, result)
+        }
 }

@@ -6,24 +6,28 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 private fun makePolicy(): RBACPolicy {
-    val role = RBACPolicyRole(
-        roleId = "admin",
-        roleDescription = "Administrator",
-        permissions = listOf(
-            RBACPermission(resourceId = "documents", actions = listOf("read", "write")),
-            RBACPermission(resourceId = "users", actions = listOf("*")),
-        ),
-    )
-    val resource1 = RBACPolicyResource(
-        resourceId = "documents",
-        resourceDescription = "Documents",
-        actions = listOf("read", "write", "delete"),
-    )
-    val resource2 = RBACPolicyResource(
-        resourceId = "users",
-        resourceDescription = "Users",
-        actions = listOf("read", "write", "delete"),
-    )
+    val role =
+        RBACPolicyRole(
+            roleId = "admin",
+            roleDescription = "Administrator",
+            permissions =
+                listOf(
+                    RBACPermission(resourceId = "documents", actions = listOf("read", "write")),
+                    RBACPermission(resourceId = "users", actions = listOf("*")),
+                ),
+        )
+    val resource1 =
+        RBACPolicyResource(
+            resourceId = "documents",
+            resourceDescription = "Documents",
+            actions = listOf("read", "write", "delete"),
+        )
+    val resource2 =
+        RBACPolicyResource(
+            resourceId = "users",
+            resourceDescription = "Users",
+            actions = listOf("read", "write", "delete"),
+        )
     return RBACPolicy(roles = listOf(role), resources = listOf(resource1, resource2))
 }
 

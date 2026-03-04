@@ -146,7 +146,8 @@ internal class OAuthClientImpl(
         provider: OAuthProviderType,
         parameters: OAuthStartParameters,
     ) = withContext(dispatchers.ioDispatcher) {
-        val host = "https://${cnameDomain() ?: if (publicTokenInfo.isTestToken) endpointOptions.testDomain else endpointOptions.liveDomain}/v1/"
+        val host =
+            "https://${cnameDomain() ?: if (publicTokenInfo.isTestToken) endpointOptions.testDomain else endpointOptions.liveDomain}/v1/"
         val baseUrl = "${host}public/oauth/${provider.hostName}/start"
         val response =
             oauthProvider.getOAuthToken(

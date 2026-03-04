@@ -1,7 +1,6 @@
 package com.stytch.sdk.persistence
 
 import com.stytch.sdk.StytchBridge
-import kotlinx.coroutines.await
 
 @JsExport
 public actual class StytchPlatformPersistenceClient(

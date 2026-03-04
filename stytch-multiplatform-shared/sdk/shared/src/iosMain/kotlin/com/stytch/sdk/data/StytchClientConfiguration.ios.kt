@@ -9,13 +9,10 @@ import com.stytch.sdk.passkeys.PasskeyProvider
 import com.stytch.sdk.persistence.StytchPlatformPersistenceClient
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.useContents
-import kotlinx.datetime.TimeZone
 import platform.Foundation.NSBundle
 import platform.Foundation.NSProcessInfo
 import platform.UIKit.UIDevice
 import platform.UIKit.UIScreen
-import kotlin.uuid.ExperimentalUuidApi
-import kotlin.uuid.Uuid
 
 public actual class StytchClientConfiguration(
     internal val publicToken: String,

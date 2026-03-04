@@ -23,7 +23,7 @@ subprojects {
         }
     }
     afterEvaluate {
-        tasks.matching { it.name.startsWith("runKtlintCheck") }.configureEach {
+        tasks.matching { it.name.lowercase().contains("ktlint") }.configureEach {
             mustRunAfter(tasks.matching { it.name.startsWith("ksp") })
         }
     }

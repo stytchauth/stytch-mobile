@@ -18,7 +18,12 @@ subprojects {
     extensions.configure<org.jlleitschuh.gradle.ktlint.KtlintExtension> {
         version.set("1.5.0")
         filter {
-            exclude("**/build/generated/**")
+            exclude { it.file.absolutePath.contains("/build/generated/") }
+        }
+    }
+    afterEvaluate {
+        tasks.matching { it.name.lowercase().contains("ktlint") }.configureEach {
+            mustRunAfter(tasks.matching { it.name.startsWith("ksp") })
         }
     }
 }

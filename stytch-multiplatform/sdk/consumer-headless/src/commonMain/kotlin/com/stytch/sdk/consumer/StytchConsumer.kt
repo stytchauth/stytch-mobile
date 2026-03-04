@@ -14,7 +14,6 @@ import com.stytch.sdk.consumer.magicLinks.MagicLinksImpl
 import com.stytch.sdk.consumer.networking.AuthenticatedResponse
 import com.stytch.sdk.consumer.networking.ConsumerNetworkingClient
 import com.stytch.sdk.consumer.networking.models.MagicLinksAuthenticateParameters
-import com.stytch.sdk.consumer.networking.models.MagicLinksAuthenticateRequest
 import com.stytch.sdk.consumer.networking.models.OAuthAuthenticateParameters
 import com.stytch.sdk.consumer.oauth.OAuthClient
 import com.stytch.sdk.consumer.oauth.OAuthClientImpl
@@ -39,7 +38,6 @@ import com.stytch.sdk.data.StytchDispatchers
 import com.stytch.sdk.persistence.StytchPersistenceClient
 import com.stytch.sdk.pkce.PKCEClient
 import io.ktor.http.URLBuilder
-import io.ktor.http.Url
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.StateFlow

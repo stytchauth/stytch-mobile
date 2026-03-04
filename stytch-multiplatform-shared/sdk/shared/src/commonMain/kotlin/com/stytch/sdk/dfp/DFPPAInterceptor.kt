@@ -6,12 +6,10 @@ import com.stytch.sdk.data.StytchAPIError
 import com.stytch.sdk.dfp.DFPPAEnabled
 import de.jensklingenberg.ktorfit.annotations
 import io.ktor.client.call.body
-import io.ktor.client.plugins.ResponseException
 import io.ktor.client.plugins.api.Send
 import io.ktor.client.plugins.api.createClientPlugin
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.http.ContentType
-import io.ktor.http.HttpStatusCode
 import io.ktor.http.content.TextContent
 import io.ktor.utils.io.InternalAPI
 import kotlinx.coroutines.CompletableJob

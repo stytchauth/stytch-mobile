@@ -2,9 +2,6 @@ package com.stytch.sdk.consumer.passkeys
 
 import com.stytch.sdk.consumer.StytchConsumerAuthenticationStateManager
 import com.stytch.sdk.consumer.networking.ConsumerNetworkingClient
-import com.stytch.sdk.consumer.networking.models.IWebAuthnAuthenticateStartSecondaryParameters
-import com.stytch.sdk.consumer.networking.models.IWebAuthnRegisterParameters
-import com.stytch.sdk.consumer.networking.models.IWebAuthnRegisterStartParameters
 import com.stytch.sdk.consumer.networking.models.IWebAuthnUpdateParameters
 import com.stytch.sdk.consumer.networking.models.WebAuthnAuthenticateRequest
 import com.stytch.sdk.consumer.networking.models.WebAuthnAuthenticateResponse
