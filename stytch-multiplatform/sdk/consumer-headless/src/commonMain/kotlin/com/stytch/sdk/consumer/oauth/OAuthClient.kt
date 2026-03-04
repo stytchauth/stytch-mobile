@@ -87,7 +87,7 @@ internal class OAuthClientImpl(
     private val networkingClient: ConsumerNetworkingClient,
     private val pkceClient: PKCEClient,
     private val oauthProvider: IOAuthProvider,
-    private val defaultSessionDuration: Int?,
+    private val defaultSessionDuration: Int,
 ) : OAuthClient {
     override suspend fun authenticate(request: IOAuthAuthenticateParameters): OAuthAuthenticateResponse =
         withContext(dispatchers.ioDispatcher) {
@@ -162,7 +162,7 @@ internal class OAuthClientImpl(
                 authenticate(
                     OAuthAuthenticateParameters(
                         token = response.token,
-                        sessionDurationMinutes = parameters.sessionDurationMinutes ?: defaultSessionDuration ?: 5,
+                        sessionDurationMinutes = parameters.sessionDurationMinutes ?: defaultSessionDuration,
                     ),
                 )
             }
@@ -174,7 +174,7 @@ internal class OAuthClientImpl(
                         OAuthGoogleIDTokenAuthenticateParameters(
                             idToken = response.token,
                             nonce = response.nonce,
-                            sessionDurationMinutes = parameters.sessionDurationMinutes ?: defaultSessionDuration ?: 5,
+                            sessionDurationMinutes = parameters.sessionDurationMinutes ?: defaultSessionDuration,
                             oauthAttachToken = parameters.oauthAttachToken,
                         ),
                     )
@@ -184,7 +184,7 @@ internal class OAuthClientImpl(
                             idToken = response.token,
                             nonce = response.nonce,
                             name = response.name?.toApiUserV1Name(),
-                            sessionDurationMinutes = parameters.sessionDurationMinutes ?: defaultSessionDuration ?: 5,
+                            sessionDurationMinutes = parameters.sessionDurationMinutes ?: defaultSessionDuration,
                             oauthAttachToken = parameters.oauthAttachToken,
                         ),
                     )

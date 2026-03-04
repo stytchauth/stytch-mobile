@@ -22,7 +22,7 @@ public actual class StytchClientConfiguration(
         StytchClientConfigurationInternal(
             publicToken = publicToken,
             endpointOptions = endpointOptions,
-            defaultSessionDuration = defaultSessionDuration,
+            defaultSessionDuration = defaultSessionDuration ?: DEFAULT_SESSION_DURATION_MINUTES,
             deviceInfo = Json.decodeFromString<DeviceInfo>(StytchBridge.getDeviceInfo()),
             platformPersistenceClient = StytchPlatformPersistenceClient(StytchBridge),
             platform = KMPPlatformType.REACTNATIVE,

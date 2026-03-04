@@ -37,7 +37,7 @@ public fun getPublicTokenInfo(publicToken: String): PublicTokenInfo {
 public class StytchClientConfigurationInternal(
     publicToken: String,
     public val endpointOptions: EndpointOptions,
-    public val defaultSessionDuration: Int?,
+    public val defaultSessionDuration: Int,
     internal val deviceInfo: DeviceInfo,
     public val tokenInfo: PublicTokenInfo = getPublicTokenInfo(publicToken),
     @OptIn(ExperimentalUuidApi::class)
@@ -60,3 +60,6 @@ public enum class KMPPlatformType {
     REACTNATIVE,
     JVM,
 }
+
+// This is the minimum a session can last in Stytch
+internal const val DEFAULT_SESSION_DURATION_MINUTES = 5

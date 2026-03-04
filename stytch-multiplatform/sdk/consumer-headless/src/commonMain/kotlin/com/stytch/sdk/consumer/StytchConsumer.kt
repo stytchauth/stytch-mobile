@@ -6,9 +6,16 @@ import com.stytch.sdk.consumer.biometrics.BiometricsClientImpl
 import com.stytch.sdk.consumer.crypto.CryptoClient
 import com.stytch.sdk.consumer.crypto.CryptoClientImpl
 import com.stytch.sdk.consumer.data.ConsumerAuthenticationState
+import com.stytch.sdk.consumer.data.ConsumerTokenType
+import com.stytch.sdk.consumer.data.DeeplinkAuthenticationStatus
+import com.stytch.sdk.consumer.data.DeeplinkToken
 import com.stytch.sdk.consumer.magicLinks.MagicLinksClient
 import com.stytch.sdk.consumer.magicLinks.MagicLinksImpl
+import com.stytch.sdk.consumer.networking.AuthenticatedResponse
 import com.stytch.sdk.consumer.networking.ConsumerNetworkingClient
+import com.stytch.sdk.consumer.networking.models.MagicLinksAuthenticateParameters
+import com.stytch.sdk.consumer.networking.models.MagicLinksAuthenticateRequest
+import com.stytch.sdk.consumer.networking.models.OAuthAuthenticateParameters
 import com.stytch.sdk.consumer.oauth.OAuthClient
 import com.stytch.sdk.consumer.oauth.OAuthClientImpl
 import com.stytch.sdk.consumer.otp.OtpClient
@@ -25,15 +32,19 @@ import com.stytch.sdk.consumer.user.UserClient
 import com.stytch.sdk.consumer.user.UserClientImpl
 import com.stytch.sdk.data.BootstrapResponse
 import com.stytch.sdk.data.JsCleanup
+import com.stytch.sdk.data.PKCECodePair
 import com.stytch.sdk.data.StytchClientConfiguration
 import com.stytch.sdk.data.StytchClientConfigurationInternal
 import com.stytch.sdk.data.StytchDispatchers
 import com.stytch.sdk.persistence.StytchPersistenceClient
 import com.stytch.sdk.pkce.PKCEClient
+import io.ktor.http.URLBuilder
+import io.ktor.http.Url
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlin.concurrent.Volatile
 import kotlin.js.JsExport
 import kotlin.js.JsName
@@ -63,6 +74,15 @@ public interface StytchConsumer : StytchClient {
 
     @JsName("authenticationStateObserver")
     public fun authenticationStateObserver(callback: (authenticationState: ConsumerAuthenticationState) -> Unit): JsCleanup
+
+    public suspend fun authenticate(
+        url: String,
+        sessionDurationMinutes: Int?,
+    ): DeeplinkAuthenticationStatus
+
+    public suspend fun getPKCECodePair(): PKCECodePair?
+
+    public fun parseDeeplink(url: String): DeeplinkToken?
 }
 
 @JsExport
@@ -70,7 +90,7 @@ public interface StytchConsumer : StytchClient {
 public fun createStytchConsumer(configuration: StytchClientConfiguration): StytchConsumer = DefaultStytchConsumer.getInstance(configuration)
 
 internal class DefaultStytchConsumer(
-    configuration: StytchClientConfigurationInternal,
+    private val configuration: StytchClientConfigurationInternal,
 ) : StytchConsumer {
     private val dispatchers =
         StytchDispatchers(
@@ -138,6 +158,56 @@ internal class DefaultStytchConsumer(
                 job.cancel()
             }
         }
+    }
+
+    override suspend fun authenticate(
+        url: String,
+        sessionDurationMinutes: Int?,
+    ): DeeplinkAuthenticationStatus =
+        withContext(dispatchers.ioDispatcher) {
+            val token = parseDeeplink(url) ?: return@withContext DeeplinkAuthenticationStatus.UnknownDeeplink(url)
+            when (token.type) {
+                ConsumerTokenType.UNKNOWN -> {
+                    DeeplinkAuthenticationStatus.UnknownDeeplink(url)
+                }
+
+                ConsumerTokenType.RESET_PASSWORD -> {
+                    DeeplinkAuthenticationStatus.ManualHandlingRequired(token.token)
+                }
+
+                ConsumerTokenType.MAGIC_LINKS -> {
+                    DeeplinkAuthenticationStatus.Authenticated(
+                        magicLinks.authenticate(
+                            MagicLinksAuthenticateParameters(
+                                token = token.token,
+                                sessionDurationMinutes =
+                                    sessionDurationMinutes ?: configuration.defaultSessionDuration,
+                            ),
+                        ) as AuthenticatedResponse,
+                    )
+                }
+
+                ConsumerTokenType.OAUTH -> {
+                    DeeplinkAuthenticationStatus.Authenticated(
+                        oauth.authenticate(
+                            OAuthAuthenticateParameters(
+                                token = token.token,
+                                sessionDurationMinutes =
+                                    sessionDurationMinutes ?: configuration.defaultSessionDuration,
+                            ),
+                        ),
+                    )
+                }
+            }
+        }
+
+    override suspend fun getPKCECodePair(): PKCECodePair? = pkceClient.retrieve()
+
+    override fun parseDeeplink(url: String): DeeplinkToken? {
+        val uri = URLBuilder(url).build()
+        val tokenType = ConsumerTokenType.fromString(uri.parameters["stytch_token_type"])
+        val token = uri.parameters["token"] ?: return null
+        return DeeplinkToken(tokenType, token)
     }
 
     internal var bootstrapResponse: BootstrapResponse? = null
