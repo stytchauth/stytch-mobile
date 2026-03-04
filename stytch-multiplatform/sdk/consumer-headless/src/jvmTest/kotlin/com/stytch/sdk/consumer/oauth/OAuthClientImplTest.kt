@@ -39,7 +39,7 @@ internal class OAuthClientImplTest : ConsumerClientTest() {
     private fun makeClient(
         isTestToken: Boolean = true,
         cnameDomain: () -> String? = { null },
-        defaultSessionDuration: Int? = null,
+        defaultSessionDuration: Int = 5,
     ) = OAuthClientImpl(
         publicTokenInfo = PublicTokenInfo(publicToken = "public-token-test-xxx", isTestToken = isTestToken),
         endpointOptions = EndpointOptions(),
@@ -244,17 +244,6 @@ internal class OAuthClientImplTest : ConsumerClientTest() {
         makeClient(defaultSessionDuration = 15).apple.start(OAuthStartParameters(sessionDurationMinutes = null))
 
         coVerify { api.oAuthAuthenticate(match { it.sessionDurationMinutes == 15 }) }
-    }
-
-    @Test
-    fun `start falls back to 5 when both sessionDurationMinutes and defaultSessionDuration are null`() = runTest(testDispatcher) {
-        coEvery { oauthProvider.getOAuthToken(any(), any(), any(), any(), any(), any()) } returns OAuthResult.ClassicToken("tok")
-        coEvery { pkceClient.retrieve() } returns fakePair
-        coEvery { api.oAuthAuthenticate(any()) } returns StytchDataResponse(mockk(relaxed = true))
-
-        makeClient(defaultSessionDuration = null).apple.start(OAuthStartParameters(sessionDurationMinutes = null))
-
-        coVerify { api.oAuthAuthenticate(match { it.sessionDurationMinutes == 5 }) }
     }
 
     // --- start: name parsing (via Apple IDToken) ---
