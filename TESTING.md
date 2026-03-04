@@ -53,6 +53,8 @@ Provides `TestCoroutineScope`, `UnconfinedTestDispatcher`, and `runTest`. Requir
 | 6 | `PasskeysClientImpl`, `BiometricsClientImpl` | ✅ done | 16 |
 | 7a | `OAuthClientImpl` | ✅ done | 18 |
 | 7b | `ConsumerNetworkingClientMiddleware` | ✅ done | 6 |
+| 7c | `ConsumerNetworkingClient` (init + updateSessionAndReturnExpiration) | ❌ not started | 3 planned |
+| 7d | `stytchNetworkRequest`, `stytchNetworkRequestWithRetryAndBackoff` | ❌ not started | 6 planned |
 
 **Total written: 112 tests**
 
@@ -270,6 +272,24 @@ Mock: `StytchConsumerAuthenticationStateManager`, `FakeErrorResponseParser`
 - `onError` calls `revoke` for an unrecoverable error type
 - `onError` returns `StytchNetworkError` when body cannot be parsed
 
-**Not tested: `ConsumerNetworkingClient.init` block**
+#### `ConsumerNetworkingClient` (remaining)
 
-The init block (expired session → revoke, valid session → start refresh job) could be tested by constructing a real `ConsumerNetworkingClient` with a controlled `MutableStateFlow`. Skipped for now as lower priority than the middleware logic.
+Requires constructing a real `ConsumerNetworkingClient` with a mocked `StytchConsumerAuthenticationStateManager` and a controlled `MutableStateFlow` for `sessionFlow`.
+
+- Init: when the first emitted session is expired, `revoke` is called on the state manager
+- Init: when the first emitted session is valid, the session refresh job is started
+- `updateSessionAndReturnExpiration` calls `sessionsAuthenticate` with the configured session duration and returns `session.expiresAt`
+
+#### `stytchNetworkRequest` / `stytchNetworkRequestWithRetryAndBackoff` (`stytch-multiplatform-shared`)
+
+Pure top-level functions — no HTTP, no mocking required. Pass lambdas directly.
+
+**`stytchNetworkRequest`:**
+- On success: calls `middleware.onSuccess` with the response data and returns it
+- On `ResponseException`: calls `middleware.onError` and throws the returned exception
+- On any other exception: throws `StytchNetworkError` without calling middleware
+
+**`stytchNetworkRequestWithRetryAndBackoff`:**
+- Returns the result immediately on first success
+- Retries up to `maxRetries` times on failure before rethrowing
+- Applies exponential backoff delay between retries, capped at `maxDelay`
