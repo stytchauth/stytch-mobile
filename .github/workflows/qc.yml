@@ -16,10 +16,6 @@ jobs:
           distribution: zulu
           java-version: 17
 
-      - name: Write local.properties (for local CI)
-        if: ${{ env.ACT }}
-        run: echo "sdk.dir=$ANDROID_HOME" > stytch-multiplatform-shared/local.properties 
-
       - name: Lint
         working-directory: stytch-multiplatform-shared
         run: ./gradlew ktlintCheck
@@ -39,20 +35,10 @@ jobs:
           distribution: zulu
           java-version: 17
 
-      - name: Write local.properties (for local CI)
-        if: ${{ env.ACT }}
-        run: |
-          echo "sdk.dir=$ANDROID_HOME" > stytch-multiplatform-shared/local.properties
-          echo "sdk.dir=$ANDROID_HOME" > stytch-multiplatform/local.properties
-
       - name: Publish shared to mavenLocal
         working-directory: stytch-multiplatform-shared
         run: ./gradlew publishToMavenLocal
 
-      - name: Lint
+      - name: Lint And Test
         working-directory: stytch-multiplatform
-        run: ./gradlew ktlintCheck --rerun-tasks
-
-      - name: Test
-        working-directory: stytch-multiplatform
-        run: ./gradlew jvmTest --rerun-tasks
+        run: ./gradlew ktlintCheck jvmTest --rerun-tasks
