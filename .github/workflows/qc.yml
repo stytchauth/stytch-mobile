@@ -47,7 +47,7 @@ jobs:
 
       - name: Publish shared to mavenLocal
         working-directory: stytch-multiplatform-shared
-        run: ./gradlew publishKotlinMultiplatformPublicationToMavenLocal publishJvmPublicationToMavenLocal
+        run: ./gradlew publishKotlinMultiplatformPublicationToMavenLocal publishAndroidPublicationToMavenLocal publishJvmPublicationToMavenLocal
 
       - name: Lint
         working-directory: stytch-multiplatform
