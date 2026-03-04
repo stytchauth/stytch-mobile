@@ -55,8 +55,9 @@ Provides `TestCoroutineScope`, `UnconfinedTestDispatcher`, and `runTest`. Requir
 | 7b | `ConsumerNetworkingClientMiddleware` | ✅ done | 6 |
 | 7c | `ConsumerNetworkingClient` (init + updateSessionAndReturnExpiration) | ✅ done | 5 |
 | 7d | `stytchNetworkRequest`, `stytchNetworkRequestWithRetryAndBackoff` | ✅ done | 6 |
+| 8 | `getPublicTokenInfo`, `RBACPolicy`, `generateOAuthStartUrl` | ✅ done | 21 |
 
-**Total written: 123 tests**
+**Total written: 144 tests**
 
 ---
 
@@ -298,3 +299,47 @@ Pure top-level functions — no HTTP, no mocking required. Pass lambdas directly
 - Returns the result immediately on first success
 - Retries up to `maxRetries` times on failure before rethrowing
 - Applies exponential backoff delay between retries, capped at `maxDelay`
+
+---
+
+### Wave 8 — Remaining Shared Utilities (`stytch-multiplatform-shared`)
+
+#### `getPublicTokenInfo`
+
+Pure function — no mocks required.
+
+- Returns `isTestToken = true` for a `public-token-test-*` token
+- Returns `isTestToken = false` for a `public-token-live-*` token
+- Throws `IllegalArgumentException` for a token missing the test/live segment
+- Throws `IllegalArgumentException` for a completely invalid string
+- Throws `IllegalArgumentException` for a token with an invalid UUID
+
+#### `RBACPolicy`
+
+Pure methods on data classes — no mocks required.
+
+**`callerIsAuthorized`:**
+- Returns `true` for an exact action match
+- Returns `true` when the role has a wildcard `"*"` action
+- Returns `false` when the role does not exist
+- Returns `false` when the action is not in the role's permissions
+- Returns `false` when the resource ID does not match
+- Returns `false` when the member roles list is empty
+
+**`allPermissionsForCaller`:**
+- Returns correct `true`/`false` map for a matching role (exact actions granted, others denied)
+- Wildcard role grants all actions as `true`
+- Returns all `false` for an unknown role
+- Returns map covering all resources even when no roles match
+
+#### `generateOAuthStartUrl`
+
+Mock: `PKCEClient`. `OAuthStartParameters` constructable directly from its JVM `actual`.
+
+- URL includes `public_token` and `code_challenge` parameters
+- Preserves the base URL path
+- Includes `loginRedirectUrl` and `signupRedirectUrl` when provided
+- Omits null parameters
+- Joins `customScopes` with a space separator
+- Prefixes `providerParams` keys with `"provider_"`
+- Omits empty-string values
