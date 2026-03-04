@@ -54,9 +54,9 @@ Provides `TestCoroutineScope`, `UnconfinedTestDispatcher`, and `runTest`. Requir
 | 7a | `OAuthClientImpl` | ✅ done | 18 |
 | 7b | `ConsumerNetworkingClientMiddleware` | ✅ done | 6 |
 | 7c | `ConsumerNetworkingClient` (init + updateSessionAndReturnExpiration) | ❌ not started | 3 planned |
-| 7d | `stytchNetworkRequest`, `stytchNetworkRequestWithRetryAndBackoff` | ❌ not started | 6 planned |
+| 7d | `stytchNetworkRequest`, `stytchNetworkRequestWithRetryAndBackoff` | ✅ done | 6 |
 
-**Total written: 112 tests**
+**Total written: 118 tests**
 
 ---
 
