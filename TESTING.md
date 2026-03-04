@@ -41,6 +41,25 @@ Provides `TestCoroutineScope`, `UnconfinedTestDispatcher`, and `runTest`. Requir
 
 ---
 
+## Status
+
+| Wave | Scope | Status | Tests |
+|------|-------|--------|-------|
+| 1 | `StytchPersistenceClient`, `PKCEClient` | ✅ done | 19 |
+| 2 | `StytchConsumerAuthenticationStateManager` | ✅ done | 12 |
+| 3 | `SessionImpl`, `TOTPClientImpl` | ✅ done | 7 |
+| 4 | `OtpImpl`, `MagicLinksImpl`, `PasswordsClientImpl` | ✅ done | 23 |
+| 5 | `UserClientImpl`, `CryptoClientImpl` | ✅ done | 11 |
+| 6 | `PasskeysClientImpl`, `BiometricsClientImpl` | ✅ done | 16 |
+| 7a | `OAuthClientImpl` | ✅ done | 18 |
+| 7b | `ConsumerNetworkingClientMiddleware` | ✅ done | 6 |
+| 7c | `ConsumerNetworkingClient` (init + updateSessionAndReturnExpiration) | ✅ done | 5 |
+| 7d | `stytchNetworkRequest`, `stytchNetworkRequestWithRetryAndBackoff` | ✅ done | 6 |
+
+**Total written: 123 tests**
+
+---
+
 ## Test Plan
 
 Tests are ordered from simplest/most foundational to most complex. Each wave builds on the previous. Complete each wave before moving to the next.
@@ -240,15 +259,42 @@ Mock: `ConsumerNetworkingClient`, `PKCEClient`, `IOAuthProvider`, `StytchDispatc
 - Name parsing: 1 part → first only
 - Session duration fallback: uses provided value, then `defaultSessionDuration`, then hardcoded `5`
 
-#### `ConsumerNetworkingClient`
+#### `ConsumerNetworkingClientMiddleware` ✅
 
-Mock: `SdkExternalApi`, `StytchConsumerAuthenticationStateManager`, `StytchDispatchers`
+The original anonymous `middleware` object was extracted into a named `ConsumerNetworkingClientMiddleware` class. Ktor HTTP deserialization (`body<T>()`, `bodyAsText()`) was abstracted behind an `IErrorResponseParser` interface, with `DefaultErrorResponseParser` as the production implementation. This makes all middleware logic testable via a `FakeErrorResponseParser` — no Ktor internals, no `mockkStatic`.
 
-- Middleware `onSuccess` with an `AuthenticatedResponse` calls `update` on the state manager
-- Middleware `onSuccess` with a `SessionsRevokeResponse` calls `revoke` on the state manager
-- Middleware `onSuccess` with any other type is a no-op
-- Middleware `onError` parses a valid `StytchAPIError` body and returns it
-- Middleware `onError` with an unrecoverable error calls `revoke` on the state manager
-- Middleware `onError` returns a `StytchNetworkError` fallback when the body cannot be parsed
-- Init: when the first emitted session is expired, `revoke` is called on the state manager
-- Init: when the first emitted session is valid, the session refresh job is started
+Mock: `StytchConsumerAuthenticationStateManager`, `FakeErrorResponseParser`
+
+- `onSuccess` with an `AuthenticatedResponse` calls `update` and triggers `onSessionAuthenticated`
+- `onSuccess` with a `SessionsRevokeResponse` calls `revoke`
+- `onSuccess` with any other type is a no-op
+- `onError` returns the parsed `StytchAPIError`
+- `onError` calls `revoke` for an unrecoverable error type
+- `onError` returns `StytchNetworkError` when body cannot be parsed
+
+#### `ConsumerNetworkingClient` (remaining) ✅
+
+Init logic was extracted into a top-level `checkAndHandleInitialSession(session, now, onExpired, onValid)` function, and `SdkExternalApi` was made injectable via an `apiOverride` constructor parameter (defaults to `ktorfit.create()`).
+
+**`checkAndHandleInitialSession` (no construction needed):**
+- `expiresAt` in the past → `onExpired` called
+- `expiresAt` in the future → `onValid` called
+- `expiresAt` is null → `onExpired` called (falls back to `Instant.DISTANT_PAST`)
+
+**`updateSessionAndReturnExpiration` (real client with injected `mockApi`):**
+- Returns `session.expiresAt` when present
+- Returns `Instant.DISTANT_PAST` when `expiresAt` is null
+
+#### `stytchNetworkRequest` / `stytchNetworkRequestWithRetryAndBackoff` (`stytch-multiplatform-shared`)
+
+Pure top-level functions — no HTTP, no mocking required. Pass lambdas directly.
+
+**`stytchNetworkRequest`:**
+- On success: calls `middleware.onSuccess` with the response data and returns it
+- On `ResponseException`: calls `middleware.onError` and throws the returned exception
+- On any other exception: throws `StytchNetworkError` without calling middleware
+
+**`stytchNetworkRequestWithRetryAndBackoff`:**
+- Returns the result immediately on first success
+- Retries up to `maxRetries` times on failure before rethrowing
+- Applies exponential backoff delay between retries, capped at `maxDelay`
