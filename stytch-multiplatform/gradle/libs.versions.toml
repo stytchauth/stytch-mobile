@@ -11,6 +11,8 @@ kotlinx-coroutines = "1.10.2"
 buildconfig = "6.0.7"
 skie = "0.10.9"
 openapi = "7.19.0"
+ktlint = "1.5.0"
+ktlint-gradle = "12.1.2"
 mockk = "1.13.12"
 
 [libraries]
@@ -32,3 +34,4 @@ android-lint = { id = "com.android.lint", version.ref = "agp" }
 buildconfig = { id = "com.github.gmazzo.buildconfig", version.ref = "buildconfig" }
 skie = { id = "co.touchlab.skie", version.ref = "skie" }
 openapi = { id = "org.openapi.generator", version.ref = "openapi" }
+ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint-gradle" }

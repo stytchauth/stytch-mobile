@@ -8,7 +8,23 @@ plugins {
     alias(libs.plugins.buildconfig) apply false
     alias(libs.plugins.skie) apply false
     alias(libs.plugins.openapi) apply false
+    alias(libs.plugins.ktlint) apply false
 }
 
 group = "com.stytch.sdk"
 version = "0.0.1"
+
+subprojects {
+    apply(plugin = "org.jlleitschuh.gradle.ktlint")
+    extensions.configure<org.jlleitschuh.gradle.ktlint.KtlintExtension> {
+        version.set("1.5.0")
+        filter {
+            exclude { it.file.absolutePath.contains("/build/generated/") }
+        }
+    }
+    afterEvaluate {
+        tasks.matching { it.name.startsWith("runKtlintCheck") }.configureEach {
+            mustRunAfter(tasks.matching { it.name.startsWith("ksp") })
+        }
+    }
+}
