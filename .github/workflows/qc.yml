@@ -20,9 +20,15 @@ jobs:
         working-directory: stytch-multiplatform-shared
         run: ./gradlew ktlintCheck
 
-      - name: Test
+      - name: Test & Coverage
         working-directory: stytch-multiplatform-shared
-        run: ./gradlew jvmTest
+        run: ./gradlew koverXmlReportJvm
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-shared
+          path: stytch-multiplatform-shared/sdk/shared/build/reports/kover/reportJvm.xml
 
   check-consumer:
     name: Lint & Test (stytch-multiplatform)
@@ -39,6 +45,12 @@ jobs:
         working-directory: stytch-multiplatform-shared
         run: ./gradlew publishToMavenLocal
 
-      - name: Lint And Test
+      - name: Lint, Test & Coverage
         working-directory: stytch-multiplatform
-        run: ./gradlew ktlintCheck jvmTest --rerun-tasks
+        run: ./gradlew ktlintCheck koverXmlReportJvm --rerun-tasks
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-consumer
+          path: stytch-multiplatform/sdk/consumer-headless/build/reports/kover/reportJvm.xml
