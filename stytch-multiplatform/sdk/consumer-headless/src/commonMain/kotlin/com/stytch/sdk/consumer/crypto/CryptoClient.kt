@@ -26,6 +26,7 @@ internal class CryptoClientImpl(
     private val networkingClient: ConsumerNetworkingClient,
     private val sessionManager: StytchConsumerAuthenticationStateManager,
 ) : CryptoClient {
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun authenticate(
         request: ICryptoWalletsAuthenticateParameters,
         signChallenge: suspend (String) -> String,

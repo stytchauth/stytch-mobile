@@ -45,6 +45,7 @@ internal class PasskeysClientImpl(
 ) : PasskeysClient {
     override val isSupported: Boolean = passkeyProvider.isSupported
 
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun register(parameters: PasskeysParameters): WebAuthnRegisterResponse {
         if (!isSupported) throw PasskeysUnsupportedError()
         return withContext(dispatchers.ioDispatcher) {
@@ -72,6 +73,7 @@ internal class PasskeysClientImpl(
         }
     }
 
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun authenticate(parameters: PasskeysParameters): WebAuthnAuthenticateResponse {
         if (!isSupported) throw PasskeysUnsupportedError()
         return withContext(dispatchers.ioDispatcher) {
@@ -106,6 +108,7 @@ internal class PasskeysClientImpl(
         }
     }
 
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun update(
         id: String,
         request: IWebAuthnUpdateParameters,

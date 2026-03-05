@@ -70,6 +70,7 @@ internal class OtpImpl(
     override val email: EmailOtpClient = EmailOtpImpl(dispatchers, networkingClient, sessionManager)
     override val whatsapp: WhatsAppOtpClient = WhatsAppOtpImpl(dispatchers, networkingClient, sessionManager)
 
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun authenticate(request: IOTPsAuthenticateParameters): OTPsAuthenticateResponse =
         withContext(dispatchers.ioDispatcher) {
             networkingClient.request {
@@ -83,6 +84,7 @@ internal class SmsOtpImpl(
     private val networkingClient: ConsumerNetworkingClient,
     private val sessionManager: StytchConsumerAuthenticationStateManager,
 ) : SmsOtpClient {
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun loginOrCreate(request: IOTPsSMSLoginOrCreateParameters): OTPsSMSLoginOrCreateResponse =
         withContext(dispatchers.ioDispatcher) {
             networkingClient.request {
@@ -90,6 +92,7 @@ internal class SmsOtpImpl(
             }
         }
 
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun send(request: IOTPsSMSSendSecondaryParameters): OTPsSMSSendSecondaryResponse =
         withContext(dispatchers.ioDispatcher) {
             networkingClient.request {
@@ -107,6 +110,7 @@ internal class WhatsAppOtpImpl(
     private val networkingClient: ConsumerNetworkingClient,
     private val sessionManager: StytchConsumerAuthenticationStateManager,
 ) : WhatsAppOtpClient {
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun loginOrCreate(request: IOTPsWhatsAppLoginOrCreateParameters): OTPsWhatsAppLoginOrCreateResponse =
         withContext(dispatchers.ioDispatcher) {
             networkingClient.request {
@@ -114,6 +118,7 @@ internal class WhatsAppOtpImpl(
             }
         }
 
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun send(request: IOTPsWhatsAppSendSecondaryParameters): OTPsWhatsAppSendSecondaryResponse =
         withContext(dispatchers.ioDispatcher) {
             networkingClient.request {
@@ -131,6 +136,7 @@ internal class EmailOtpImpl(
     private val networkingClient: ConsumerNetworkingClient,
     private val sessionManager: StytchConsumerAuthenticationStateManager,
 ) : EmailOtpClient {
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun loginOrCreate(request: IOTPsEmailLoginOrCreateParameters): OTPsEmailLoginOrCreateResponse =
         withContext(dispatchers.ioDispatcher) {
             networkingClient.request {
@@ -138,6 +144,7 @@ internal class EmailOtpImpl(
             }
         }
 
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun send(request: IOTPsEmailSendSecondaryParameters): OTPsEmailSendSecondaryResponse =
         withContext(dispatchers.ioDispatcher) {
             networkingClient.request {

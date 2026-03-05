@@ -34,6 +34,7 @@ internal class TOTPClientImpl(
     private val dispatchers: StytchDispatchers,
     private val networkingClient: ConsumerNetworkingClient,
 ) : TOTPClient {
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun create(request: ITOTPsCreateParameters): TOTPsCreateResponse =
         withContext(dispatchers.ioDispatcher) {
             networkingClient.request {
@@ -41,6 +42,7 @@ internal class TOTPClientImpl(
             }
         }
 
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun authenticate(request: ITOTPsAuthenticateParameters): TOTPsAuthenticateResponse =
         withContext(dispatchers.ioDispatcher) {
             networkingClient.request {
@@ -48,6 +50,7 @@ internal class TOTPClientImpl(
             }
         }
 
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun recover(request: ITOTPsRecoverParameters): TOTPsRecoverResponse =
         withContext(dispatchers.ioDispatcher) {
             networkingClient.request {
@@ -55,6 +58,7 @@ internal class TOTPClientImpl(
             }
         }
 
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun recoveryCodes() =
         withContext(dispatchers.ioDispatcher) {
             networkingClient.request {

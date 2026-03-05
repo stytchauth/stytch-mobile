@@ -98,6 +98,7 @@ internal class OAuthClientImpl(
     private val oauthProvider: IOAuthProvider,
     private val defaultSessionDuration: Int,
 ) : OAuthClient {
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun authenticate(request: IOAuthAuthenticateParameters): OAuthAuthenticateResponse =
         withContext(dispatchers.ioDispatcher) {
             networkingClient.request {
@@ -106,6 +107,7 @@ internal class OAuthClientImpl(
             }
         }
 
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun authenticateGoogleIdToken(
         request: IOAuthGoogleIDTokenAuthenticateParameters,
     ): OAuthGoogleIDTokenAuthenticateResponse =
@@ -115,6 +117,7 @@ internal class OAuthClientImpl(
             }
         }
 
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun authenticateAppleIdToken(
         request: IOAuthAppleIDTokenAuthenticateParameters,
     ): OAuthGoogleIDTokenAuthenticateResponse =
@@ -124,6 +127,7 @@ internal class OAuthClientImpl(
             }
         }
 
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun attach(request: IOAuthAttachParameters): OAuthAttachResponse =
         withContext(dispatchers.ioDispatcher) {
             networkingClient.request {
@@ -212,6 +216,7 @@ internal class OAuthTypeImpl(
     private val provider: OAuthProviderType,
     private val handler: suspend (OAuthProviderType, OAuthStartParameters) -> AuthenticatedResponse,
 ) : OAuthType {
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun start(startParameters: OAuthStartParameters): AuthenticatedResponse = handler(provider, startParameters)
 }
 

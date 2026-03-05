@@ -161,6 +161,7 @@ internal class DefaultStytchConsumer(
         }
     }
 
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun authenticate(
         url: String,
         sessionDurationMinutes: Int?,

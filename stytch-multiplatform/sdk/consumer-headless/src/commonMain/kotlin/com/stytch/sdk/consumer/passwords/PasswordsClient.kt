@@ -53,6 +53,7 @@ internal class PasswordsClientImpl(
     private val networkingClient: ConsumerNetworkingClient,
     private val pkceClient: PKCEClient,
 ) : PasswordsClient {
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun authenticate(request: IPasswordsAuthenticateParameters): PasswordsAuthenticateResponse =
         withContext(dispatchers.ioDispatcher) {
             networkingClient.request {
@@ -60,6 +61,7 @@ internal class PasswordsClientImpl(
             }
         }
 
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun create(request: IPasswordsCreateParameters): PasswordsCreateResponse =
         withContext(dispatchers.ioDispatcher) {
             networkingClient.request {
@@ -67,6 +69,7 @@ internal class PasswordsClientImpl(
             }
         }
 
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun resetByEmailStart(request: IPasswordsEmailResetStartParameters): PasswordsEmailResetStartResponse =
         withContext(dispatchers.ioDispatcher) {
             networkingClient.request {
@@ -75,6 +78,7 @@ internal class PasswordsClientImpl(
             }
         }
 
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun resetByEmail(request: IPasswordsEmailResetParameters): PasswordsEmailResetResponse =
         withContext(dispatchers.ioDispatcher) {
             networkingClient.request {
@@ -83,6 +87,7 @@ internal class PasswordsClientImpl(
             }
         }
 
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun resetByExistingPassword(
         request: IPasswordsExistingPasswordResetParameters,
     ): PasswordsExistingPasswordResetResponse =
@@ -92,6 +97,7 @@ internal class PasswordsClientImpl(
             }
         }
 
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun resetBySession(request: IPasswordsSessionResetParameters): PasswordsSessionResetResponse =
         withContext(dispatchers.ioDispatcher) {
             networkingClient.request {
@@ -99,6 +105,7 @@ internal class PasswordsClientImpl(
             }
         }
 
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun strengthCheck(request: IPasswordsStrengthCheckParameters): PasswordsStrengthCheckResponse =
         withContext(dispatchers.ioDispatcher) {
             networkingClient.request {

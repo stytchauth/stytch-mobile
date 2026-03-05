@@ -42,6 +42,7 @@ internal class MagicLinksImpl(
 ) : MagicLinksClient {
     override val email: EmailMagicLinksClient = EmailMagicLinksImpl(dispatchers, networkingClient, pkceClient, sessionManager)
 
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun authenticate(request: IMagicLinksAuthenticateParameters): MagicLinksAuthenticateResponse =
         withContext(dispatchers.ioDispatcher) {
             val codePair = pkceClient.retrieve() ?: throw MissingPKCEException()
@@ -59,6 +60,7 @@ internal class EmailMagicLinksImpl(
     private val pkceClient: PKCEClient,
     private val sessionManager: StytchConsumerAuthenticationStateManager,
 ) : EmailMagicLinksClient {
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun loginOrCreate(request: IMagicLinksEmailLoginOrCreateParameters): MagicLinksEmailLoginOrCreateResponse =
         withContext(dispatchers.ioDispatcher) {
             networkingClient.request {
@@ -67,6 +69,7 @@ internal class EmailMagicLinksImpl(
             }
         }
 
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun send(request: IMagicLinksEmailSendSecondaryParameters): MagicLinksEmailSendSecondaryResponse =
         withContext(dispatchers.ioDispatcher) {
             networkingClient.request {

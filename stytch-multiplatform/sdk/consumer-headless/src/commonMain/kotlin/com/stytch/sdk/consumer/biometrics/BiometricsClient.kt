@@ -17,8 +17,8 @@ import com.stytch.sdk.data.StytchDispatchers
 import com.stytch.sdk.data.StytchError
 import com.stytch.sdk.encryption.StytchEncryptionClient
 import io.ktor.util.encodeBase64
-import io.ktor.utils.io.CancellationException
 import kotlinx.coroutines.withContext
+import kotlin.coroutines.cancellation.CancellationException
 import kotlin.js.JsExport
 
 @JsExport
@@ -43,6 +43,7 @@ internal class BiometricsClientImpl(
     private val encryptionClient: StytchEncryptionClient,
     private val biometricsProvider: IBiometricsProvider,
 ) : BiometricsClient {
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun register(parameters: BiometricsParameters): BiometricsRegisterResponse {
         val availability = getAvailability(parameters)
         if (availability is BiometricsAvailability.Unavailable) {
@@ -85,6 +86,7 @@ internal class BiometricsClientImpl(
         }
     }
 
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun authenticate(parameters: BiometricsParameters): BiometricsAuthenticateResponse {
         if (getAvailability(parameters) != BiometricsAvailability.AlreadyRegistered) {
             throw NoBiometricsRegistered()
@@ -112,11 +114,13 @@ internal class BiometricsClientImpl(
         }
     }
 
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun removeRegistration(): Boolean {
         biometricsProvider.removeRegistration()
         return true
     }
 
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun getAvailability(parameters: BiometricsParameters): BiometricsAvailability =
         biometricsProvider.getAvailability(parameters)
 }

@@ -29,6 +29,7 @@ internal class SessionImpl(
     private val dispatchers: StytchDispatchers,
     private val networkingClient: ConsumerNetworkingClient,
 ) : SessionClient {
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun authenticate(request: ISessionsAuthenticateParameters): SessionsAuthenticateResponse =
         withContext(dispatchers.ioDispatcher) {
             networkingClient.request {
@@ -36,6 +37,7 @@ internal class SessionImpl(
             }
         }
 
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun revoke(): SessionsRevokeResponse =
         withContext(dispatchers.ioDispatcher) {
             networkingClient.request {
@@ -43,6 +45,7 @@ internal class SessionImpl(
             }
         }
 
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun attest(request: ISessionsAttestParameters): SessionsAttestResponse =
         withContext(dispatchers.ioDispatcher) {
             networkingClient.request { networkingClient.api.sessionsAttest(request.toNetworkModel()) }
