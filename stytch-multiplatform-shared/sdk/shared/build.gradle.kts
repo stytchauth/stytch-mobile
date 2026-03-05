@@ -10,6 +10,7 @@ plugins {
     alias(libs.plugins.skie)
     alias(libs.plugins.ksp)
     alias(libs.plugins.ktorfit)
+    alias(libs.plugins.kover)
     id("maven-publish")
 }
 
@@ -124,6 +125,16 @@ kotlin {
             implementation(kotlin("test"))
             implementation(libs.mockk)
             implementation(libs.kotlinx.coroutines.test)
+        }
+    }
+}
+
+kover {
+    reports {
+        filters {
+            excludes {
+                classes("com.stytch.sdk.BuildConfig")
+            }
         }
     }
 }
