@@ -11,7 +11,6 @@ import io.ktor.http.ContentType
 import io.ktor.http.content.TextContent
 import io.ktor.utils.io.InternalAPI
 import io.mockk.coEvery
-import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
