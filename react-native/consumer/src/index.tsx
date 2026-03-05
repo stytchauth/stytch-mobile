@@ -10,4 +10,4 @@ export * from './hooks'
 export * from './providers'
 
 // export everything generated from the KMP library for client consumption
-export * from '../lib/@stytch/react-native-consumer.mjs';
+export * from '../lib/consumer-headless.mjs';

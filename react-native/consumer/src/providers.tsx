@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StytchConsumer, ApiUserV1User, ApiSessionV1Session, ConsumerAuthenticationState, SessionsAuthenticateParameters, SessionsAuthenticateRequest } from '../lib/@stytch/react-native-consumer.mjs'
+import { StytchConsumer, ApiUserV1User, ApiSessionV1Session, ConsumerAuthenticationState } from '../lib/consumer-headless.mjs'
 import { AppState, AppStateStatus } from 'react-native';
 import { useStytch, useStytchUser, useStytchSession, useStytchAuthenticationState } from './hooks';
 import { StytchContext, StytchUserContext, StytchSessionContext, StytchAuthenticationStateContext } from './contexts';
@@ -69,7 +69,7 @@ export const StytchProvider = ({
       const observationJob = stytch.authenticationStateObserver(async (state: ConsumerAuthenticationState) => {
         if (state instanceof ConsumerAuthenticationState.Authenticated) {
           try {
-            //await stytch.session.authenticate(new SessionsAuthenticateRequest(null));
+            await stytch.session.authenticate({ sessionDurationMinutes: null });
           } catch {
             // log it
           }

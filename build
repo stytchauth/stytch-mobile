@@ -59,8 +59,9 @@ buildAndCopyIos() {
 buildAndCopyRn() {
     cd $MAIN_WORKING_DIR
     echo "Building RN artifacts..."
-    ./gradlew kotlinUpgradeYarnLock :sdk:consumer-headless:jsBrowserProductionLibraryDistribution
-    cp -r sdk/consumer-headless/build/dist/js/productionLibrary/ $ROOT_DIR/react-native/consumer/lib
+    ./gradlew clean kotlinUpgradeYarnLock :sdk:consumer-headless:assemble :sdk:consumer-headless:jsBrowserProductionLibraryDistribution
+    mkdir -p $ROOT_DIR/react-native/consumer/lib
+    cp -r sdk/consumer-headless/build/dist/js/productionLibrary/consumer-headless* $ROOT_DIR/react-native/consumer/lib
     cd $ROOT_DIR/react-native/consumer
     yarn build
     updateRnDemoApp

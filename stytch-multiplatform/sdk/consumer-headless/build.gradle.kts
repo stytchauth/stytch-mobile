@@ -76,7 +76,7 @@ kotlin {
 
     js {
         browser()
-        outputModuleName = "@stytch/react-native-consumer"
+        outputModuleName = "consumer-headless"
         binaries.library()
         generateTypeScriptDefinitions()
         compilerOptions {
@@ -111,6 +111,12 @@ kotlin {
 
 dependencies {
     add("kspCommonMainMetadata", project(":buildSrc"))
+    add("kspAndroid", project(":buildSrc"))
+    add("kspIosArm64", project(":buildSrc"))
+    add("kspIosX64", project(":buildSrc"))
+    add("kspIosSimulatorArm64", project(":buildSrc"))
+    add("kspJs", project(":buildSrc"))
+    add("kspJvm", project(":buildSrc"))
 }
 
 ktorfit {

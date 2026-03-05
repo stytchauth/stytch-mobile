@@ -1,7 +1,9 @@
 package com.stytch.sdk.utils
 
 import com.google.devtools.ksp.processing.CodeGenerator
+import com.google.devtools.ksp.processing.JsPlatformInfo
 import com.google.devtools.ksp.processing.KSPLogger
+import com.google.devtools.ksp.processing.PlatformInfo
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.processing.SymbolProcessor
 import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
@@ -44,7 +46,11 @@ class StytchDtoProcessor(
     val codeGenerator: CodeGenerator,
     val logger: KSPLogger,
     val options: Map<String, String>,
+    platforms: List<PlatformInfo>,
 ) : SymbolProcessor {
+    private val isCommonMain = platforms.size > 1
+    private val isJs = platforms.any { it is JsPlatformInfo }
+
     override fun process(resolver: Resolver): List<KSAnnotated> {
         val symbols = resolver.getSymbolsWithAnnotation("com.stytch.sdk.networking.NetworkModel")
         val unprocessedSymbols = mutableListOf<KSAnnotated>()
@@ -72,32 +78,52 @@ class StytchDtoProcessor(
             val interfaceName = "I$dtoName"
             logger.info("Processing ${requestClass.qualifiedName}")
             val (requiredParams, optionalParams, internalParams) = sortParameters(requestClass)
-            FileSpec
-                .builder(packageName, dtoName)
-                .addType(
-                    buildInterface(
-                        interfaceName = interfaceName,
-                        dtoName = dtoName,
-                        requiredParams = requiredParams,
-                        optionalParams = optionalParams,
-                    ),
-                ).addType(
-                    buildImplementingClass(
-                        packageName = packageName,
-                        dtoName = dtoName,
-                        requiredParams = requiredParams,
-                        optionalParams = optionalParams,
-                    ),
-                ).addFunction(
-                    buildDtoToNetworkModelMapper(
-                        packageName = packageName,
-                        interfaceName = interfaceName,
-                        networkModelName = networkModelName,
-                        publicParams = (requiredParams + optionalParams),
-                        internalParams = internalParams,
-                    ),
-                ).build()
-                .writeTo(codeGenerator, aggregating = true)
+            if (isCommonMain) {
+                // in common code, we build the expect interface, the implementing class, and the model mapper
+                FileSpec
+                    .builder(packageName, dtoName)
+                    .addType(
+                        buildInterface(
+                            interfaceName = interfaceName,
+                            dtoName = dtoName,
+                            isCommonMain = true,
+                            isJs = false,
+                            requiredParams = requiredParams,
+                            optionalParams = optionalParams,
+                        ),
+                    ).addType(
+                        buildImplementingClass(
+                            packageName = packageName,
+                            dtoName = dtoName,
+                            requiredParams = requiredParams,
+                            optionalParams = optionalParams,
+                        ),
+                    ).addFunction(
+                        buildDtoToNetworkModelMapper(
+                            packageName = packageName,
+                            interfaceName = interfaceName,
+                            networkModelName = networkModelName,
+                            publicParams = (requiredParams + optionalParams),
+                            internalParams = internalParams,
+                        ),
+                    ).build()
+                    .writeTo(codeGenerator, aggregating = true)
+            } else {
+                // in the non-common envs, we only build the actual interface
+                FileSpec
+                    .builder(packageName, dtoName)
+                    .addType(
+                        buildInterface(
+                            interfaceName = interfaceName,
+                            dtoName = dtoName,
+                            isCommonMain = false,
+                            isJs = isJs,
+                            requiredParams = requiredParams,
+                            optionalParams = optionalParams,
+                        ),
+                    ).build()
+                    .writeTo(codeGenerator, aggregating = true)
+            }
             return true
         } catch (e: Exception) {
             logger.exception(e)
@@ -113,17 +139,33 @@ class StytchDtoProcessor(
     private fun buildInterface(
         interfaceName: String,
         dtoName: String,
+        isCommonMain: Boolean,
+        isJs: Boolean,
         requiredParams: List<ParameterSpec>,
         optionalParams: List<ParameterSpec>,
     ): TypeSpec {
-        val typeSpec =
-            TypeSpec
-                .interfaceBuilder(interfaceName)
-                .addModifiers(KModifier.PUBLIC)
+        val typeSpec = TypeSpec.interfaceBuilder(interfaceName).addModifiers(KModifier.PUBLIC)
+        if (isCommonMain) {
+            // in common code we define an `expect` interface
+            typeSpec.addModifiers(KModifier.EXPECT)
+        } else {
+            // in non-common code we define the `actual` interface (they are identical)
+            typeSpec.addModifiers(KModifier.ACTUAL)
+        }
+        if (isJs) {
+            // in the JS env, we additionally export the interface AND mark it as external
+            typeSpec
+                .addModifiers(KModifier.EXTERNAL)
                 .addAnnotation(ClassName("kotlin.js", "JsExport"))
                 .addAnnotation(AnnotationSpec.builder(ClassName("kotlin.js", "JsName")).addMember("\"$dtoName\"").build())
+        }
         (requiredParams + optionalParams).forEach {
-            typeSpec.addProperty(PropertySpec.builder(it.name, it.type).build())
+            val propertySpec = PropertySpec.builder(it.name, it.type)
+            if (!isCommonMain) {
+                // in non-common (`actual`) interfaces, we need to specify the properties as `actual`s too
+                propertySpec.addModifiers(KModifier.ACTUAL)
+            }
+            typeSpec.addProperty(propertySpec.build())
         }
         return typeSpec.build()
     }
@@ -250,5 +292,5 @@ class StytchDtoProcessor(
 
 class StytchDtoProcessorProvider : SymbolProcessorProvider {
     override fun create(environment: SymbolProcessorEnvironment): SymbolProcessor =
-        StytchDtoProcessor(environment.codeGenerator, environment.logger, environment.options)
+        StytchDtoProcessor(environment.codeGenerator, environment.logger, environment.options, environment.platforms)
 }
