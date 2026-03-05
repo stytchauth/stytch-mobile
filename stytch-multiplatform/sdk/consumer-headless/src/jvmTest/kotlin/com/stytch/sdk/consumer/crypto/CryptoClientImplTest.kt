@@ -22,15 +22,17 @@ internal class CryptoClientImplTest : ConsumerClientTest() {
     private val sessionManager = mockk<StytchConsumerAuthenticationStateManager>(relaxed = true)
     private val client = CryptoClientImpl(dispatchers, networkingClient, sessionManager)
 
-    private val params = CryptoWalletsAuthenticateParameters(
-        cryptoWalletAddress = "0xabc123",
-        cryptoWalletType = "ethereum",
-        sessionDurationMinutes = 30,
-    )
-    private val startRequest = CryptoWalletsAuthenticateStartSecondaryRequest(
-        cryptoWalletType = "ethereum",
-        cryptoWalletAddress = "0xabc123",
-    )
+    private val params =
+        CryptoWalletsAuthenticateParameters(
+            cryptoWalletAddress = "0xabc123",
+            cryptoWalletType = "ethereum",
+            sessionDurationMinutes = 30,
+        )
+    private val startRequest =
+        CryptoWalletsAuthenticateStartSecondaryRequest(
+            cryptoWalletType = "ethereum",
+            cryptoWalletAddress = "0xabc123",
+        )
 
     @Test
     fun `authenticate calls primary start, threads challenge to signChallenge, passes signature to authenticate`() =
@@ -64,17 +66,18 @@ internal class CryptoClientImplTest : ConsumerClientTest() {
         }
 
     @Test
-    fun `authenticate calls secondary start when session token is present`() = runTest(testDispatcher) {
-        every { sessionManager.currentSessionToken } returns "session-tok"
+    fun `authenticate calls secondary start when session token is present`() =
+        runTest(testDispatcher) {
+            every { sessionManager.currentSessionToken } returns "session-tok"
 
-        val secondaryStartResponse = mockk<CryptoWalletsAuthenticateStartSecondaryResponse>()
-        every { secondaryStartResponse.challenge } returns "test-challenge"
-        coEvery { api.cryptoWalletsAuthenticateStartSecondary(any()) } returns StytchDataResponse(secondaryStartResponse)
-        coEvery { api.cryptoWalletsAuthenticate(any()) } returns StytchDataResponse(mockk(relaxed = true))
+            val secondaryStartResponse = mockk<CryptoWalletsAuthenticateStartSecondaryResponse>()
+            every { secondaryStartResponse.challenge } returns "test-challenge"
+            coEvery { api.cryptoWalletsAuthenticateStartSecondary(any()) } returns StytchDataResponse(secondaryStartResponse)
+            coEvery { api.cryptoWalletsAuthenticate(any()) } returns StytchDataResponse(mockk(relaxed = true))
 
-        client.authenticate(params) { "sig" }
+            client.authenticate(params) { "sig" }
 
-        coVerify { api.cryptoWalletsAuthenticateStartSecondary(startRequest) }
-        coVerify(exactly = 0) { api.cryptoWalletsAuthenticateStartPrimary(any()) }
-    }
+            coVerify { api.cryptoWalletsAuthenticateStartSecondary(startRequest) }
+            coVerify(exactly = 0) { api.cryptoWalletsAuthenticateStartPrimary(any()) }
+        }
 }

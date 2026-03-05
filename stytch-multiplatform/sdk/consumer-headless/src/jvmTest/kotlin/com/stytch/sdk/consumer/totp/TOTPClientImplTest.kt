@@ -20,38 +20,42 @@ internal class TOTPClientImplTest : ConsumerClientTest() {
     private val client = TOTPClientImpl(dispatchers, networkingClient)
 
     @Test
-    fun `create calls tOTPsCreate with correct network model`() = runTest(testDispatcher) {
-        coEvery { api.tOTPsCreate(any()) } returns StytchDataResponse(mockk(relaxed = true))
+    fun `create calls tOTPsCreate with correct network model`() =
+        runTest(testDispatcher) {
+            coEvery { api.tOTPsCreate(any()) } returns StytchDataResponse(mockk(relaxed = true))
 
-        client.create(TOTPsCreateParameters(expirationMinutes = 5))
+            client.create(TOTPsCreateParameters(expirationMinutes = 5))
 
-        coVerify { api.tOTPsCreate(TOTPsCreateRequest(expirationMinutes = 5)) }
-    }
-
-    @Test
-    fun `authenticate calls tOTPsAuthenticate with correct network model`() = runTest(testDispatcher) {
-        coEvery { api.tOTPsAuthenticate(any()) } returns StytchDataResponse(mockk(relaxed = true))
-
-        client.authenticate(TOTPsAuthenticateParameters(totpCode = "123456", sessionDurationMinutes = 30))
-
-        coVerify { api.tOTPsAuthenticate(TOTPsAuthenticateRequest(totpCode = "123456", sessionDurationMinutes = 30)) }
-    }
+            coVerify { api.tOTPsCreate(TOTPsCreateRequest(expirationMinutes = 5)) }
+        }
 
     @Test
-    fun `recover calls tOTPsRecover with correct network model`() = runTest(testDispatcher) {
-        coEvery { api.tOTPsRecover(any()) } returns StytchDataResponse(mockk(relaxed = true))
+    fun `authenticate calls tOTPsAuthenticate with correct network model`() =
+        runTest(testDispatcher) {
+            coEvery { api.tOTPsAuthenticate(any()) } returns StytchDataResponse(mockk(relaxed = true))
 
-        client.recover(TOTPsRecoverParameters(recoveryCode = "abc-def", sessionDurationMinutes = 60))
+            client.authenticate(TOTPsAuthenticateParameters(totpCode = "123456", sessionDurationMinutes = 30))
 
-        coVerify { api.tOTPsRecover(TOTPsRecoverRequest(recoveryCode = "abc-def", sessionDurationMinutes = 60)) }
-    }
+            coVerify { api.tOTPsAuthenticate(TOTPsAuthenticateRequest(totpCode = "123456", sessionDurationMinutes = 30)) }
+        }
 
     @Test
-    fun `recoveryCodes calls tOTPsGetRecoveryCodes`() = runTest(testDispatcher) {
-        coEvery { api.tOTPsGetRecoveryCodes() } returns StytchDataResponse(mockk(relaxed = true))
+    fun `recover calls tOTPsRecover with correct network model`() =
+        runTest(testDispatcher) {
+            coEvery { api.tOTPsRecover(any()) } returns StytchDataResponse(mockk(relaxed = true))
 
-        client.recoveryCodes()
+            client.recover(TOTPsRecoverParameters(recoveryCode = "abc-def", sessionDurationMinutes = 60))
 
-        coVerify { api.tOTPsGetRecoveryCodes() }
-    }
+            coVerify { api.tOTPsRecover(TOTPsRecoverRequest(recoveryCode = "abc-def", sessionDurationMinutes = 60)) }
+        }
+
+    @Test
+    fun `recoveryCodes calls tOTPsGetRecoveryCodes`() =
+        runTest(testDispatcher) {
+            coEvery { api.tOTPsGetRecoveryCodes() } returns StytchDataResponse(mockk(relaxed = true))
+
+            client.recoveryCodes()
+
+            coVerify { api.tOTPsGetRecoveryCodes() }
+        }
 }

@@ -1,0 +1,44 @@
+name: Quality Control
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  check-shared:
+    name: Lint & Test (stytch-multiplatform-shared)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: zulu
+          java-version: 17
+
+      - name: Lint
+        working-directory: stytch-multiplatform-shared
+        run: ./gradlew ktlintCheck
+
+      - name: Test
+        working-directory: stytch-multiplatform-shared
+        run: ./gradlew jvmTest
+
+  check-consumer:
+    name: Lint & Test (stytch-multiplatform)
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: zulu
+          java-version: 17
+
+      - name: Publish shared to mavenLocal
+        working-directory: stytch-multiplatform-shared
+        run: ./gradlew publishToMavenLocal
+
+      - name: Lint And Test
+        working-directory: stytch-multiplatform
+        run: ./gradlew ktlintCheck jvmTest --rerun-tasks

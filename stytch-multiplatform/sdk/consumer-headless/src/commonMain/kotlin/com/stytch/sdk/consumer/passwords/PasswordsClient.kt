@@ -8,9 +8,6 @@ import com.stytch.sdk.consumer.networking.models.IPasswordsEmailResetStartParame
 import com.stytch.sdk.consumer.networking.models.IPasswordsExistingPasswordResetParameters
 import com.stytch.sdk.consumer.networking.models.IPasswordsSessionResetParameters
 import com.stytch.sdk.consumer.networking.models.IPasswordsStrengthCheckParameters
-import com.stytch.sdk.consumer.networking.models.ITOTPsAuthenticateParameters
-import com.stytch.sdk.consumer.networking.models.ITOTPsCreateParameters
-import com.stytch.sdk.consumer.networking.models.ITOTPsRecoverParameters
 import com.stytch.sdk.consumer.networking.models.PasswordsAuthenticateResponse
 import com.stytch.sdk.consumer.networking.models.PasswordsCreateResponse
 import com.stytch.sdk.consumer.networking.models.PasswordsEmailResetResponse
@@ -18,10 +15,6 @@ import com.stytch.sdk.consumer.networking.models.PasswordsEmailResetStartRespons
 import com.stytch.sdk.consumer.networking.models.PasswordsExistingPasswordResetResponse
 import com.stytch.sdk.consumer.networking.models.PasswordsSessionResetResponse
 import com.stytch.sdk.consumer.networking.models.PasswordsStrengthCheckResponse
-import com.stytch.sdk.consumer.networking.models.TOTPsAuthenticateResponse
-import com.stytch.sdk.consumer.networking.models.TOTPsCreateResponse
-import com.stytch.sdk.consumer.networking.models.TOTPsGetRecoveryCodesResponse
-import com.stytch.sdk.consumer.networking.models.TOTPsRecoverResponse
 import com.stytch.sdk.consumer.networking.models.toNetworkModel
 import com.stytch.sdk.data.StytchDispatchers
 import com.stytch.sdk.pkce.PKCEClient

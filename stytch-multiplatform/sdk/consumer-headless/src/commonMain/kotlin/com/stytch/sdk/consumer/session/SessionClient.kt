@@ -8,7 +8,6 @@ import com.stytch.sdk.consumer.networking.models.SessionsAuthenticateResponse
 import com.stytch.sdk.consumer.networking.models.SessionsRevokeResponse
 import com.stytch.sdk.consumer.networking.models.toNetworkModel
 import com.stytch.sdk.data.StytchDispatchers
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlin.js.JsExport
 

@@ -3,7 +3,6 @@
 import com.android.build.api.dsl.androidLibrary
 import com.android.build.gradle.tasks.ProcessLibraryArtProfileTask
 import com.google.devtools.ksp.gradle.KspAATask
-import org.gradle.kotlin.dsl.register
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework

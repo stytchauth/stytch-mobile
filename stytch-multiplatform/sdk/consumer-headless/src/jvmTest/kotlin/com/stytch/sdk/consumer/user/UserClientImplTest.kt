@@ -17,92 +17,101 @@ internal class UserClientImplTest : ConsumerClientTest() {
     private val client = UserClientImpl(dispatchers, networkingClient)
 
     @Test
-    fun `getUser calls getMe`() = runTest(testDispatcher) {
-        coEvery { api.getMe() } returns StytchDataResponse(mockk(relaxed = true))
+    fun `getUser calls getMe`() =
+        runTest(testDispatcher) {
+            coEvery { api.getMe() } returns StytchDataResponse(mockk(relaxed = true))
 
-        client.getUser()
+            client.getUser()
 
-        coVerify { api.getMe() }
-    }
+            coVerify { api.getMe() }
+        }
 
     @Test
-    fun `update calls updateMe with correct network model`() = runTest(testDispatcher) {
-        coEvery { api.updateMe(any()) } returns StytchDataResponse(mockk(relaxed = true))
+    fun `update calls updateMe with correct network model`() =
+        runTest(testDispatcher) {
+            coEvery { api.updateMe(any()) } returns StytchDataResponse(mockk(relaxed = true))
 
-        client.update(UpdateMeParameters(trustedMetadata = """{"role":"admin"}"""))
+            client.update(UpdateMeParameters(trustedMetadata = """{"role":"admin"}"""))
 
-        coVerify { api.updateMe(UpdateMeRequest(trustedMetadata = """{"role":"admin"}""")) }
-    }
+            coVerify { api.updateMe(UpdateMeRequest(trustedMetadata = """{"role":"admin"}""")) }
+        }
 
     // --- deleteFactor routing ---
 
     @Test
-    fun `deleteFactor TOTP calls deleteTOTP with factor id`() = runTest(testDispatcher) {
-        coEvery { api.deleteTOTP(any()) } returns StytchDataResponse(mockk(relaxed = true))
+    fun `deleteFactor TOTP calls deleteTOTP with factor id`() =
+        runTest(testDispatcher) {
+            coEvery { api.deleteTOTP(any()) } returns StytchDataResponse(mockk(relaxed = true))
 
-        val result = client.deleteFactor(AuthenticationFactor.TOTP("totp-id"))
+            val result = client.deleteFactor(AuthenticationFactor.TOTP("totp-id"))
 
-        coVerify { api.deleteTOTP("totp-id") }
-        assertIs<DeleteFactorResponse>(result)
-    }
-
-    @Test
-    fun `deleteFactor Biometric calls deleteBiometricRegistration with factor id`() = runTest(testDispatcher) {
-        coEvery { api.deleteBiometricRegistration(any()) } returns StytchDataResponse(mockk(relaxed = true))
-
-        val result = client.deleteFactor(AuthenticationFactor.Biometric("bio-id"))
-
-        coVerify { api.deleteBiometricRegistration("bio-id") }
-        assertIs<DeleteFactorResponse>(result)
-    }
+            coVerify { api.deleteTOTP("totp-id") }
+            assertIs<DeleteFactorResponse>(result)
+        }
 
     @Test
-    fun `deleteFactor CryptoWallet calls deleteCryptoWallet with factor id`() = runTest(testDispatcher) {
-        coEvery { api.deleteCryptoWallet(any()) } returns StytchDataResponse(mockk(relaxed = true))
+    fun `deleteFactor Biometric calls deleteBiometricRegistration with factor id`() =
+        runTest(testDispatcher) {
+            coEvery { api.deleteBiometricRegistration(any()) } returns StytchDataResponse(mockk(relaxed = true))
 
-        val result = client.deleteFactor(AuthenticationFactor.CryptoWallet("crypto-id"))
+            val result = client.deleteFactor(AuthenticationFactor.Biometric("bio-id"))
 
-        coVerify { api.deleteCryptoWallet("crypto-id") }
-        assertIs<DeleteFactorResponse>(result)
-    }
-
-    @Test
-    fun `deleteFactor Email calls deleteEmail with factor id`() = runTest(testDispatcher) {
-        coEvery { api.deleteEmail(any()) } returns StytchDataResponse(mockk(relaxed = true))
-
-        val result = client.deleteFactor(AuthenticationFactor.Email("email-id"))
-
-        coVerify { api.deleteEmail("email-id") }
-        assertIs<DeleteFactorResponse>(result)
-    }
+            coVerify { api.deleteBiometricRegistration("bio-id") }
+            assertIs<DeleteFactorResponse>(result)
+        }
 
     @Test
-    fun `deleteFactor OAuth calls deleteOAuthUserRegistration with factor id`() = runTest(testDispatcher) {
-        coEvery { api.deleteOAuthUserRegistration(any()) } returns StytchDataResponse(mockk(relaxed = true))
+    fun `deleteFactor CryptoWallet calls deleteCryptoWallet with factor id`() =
+        runTest(testDispatcher) {
+            coEvery { api.deleteCryptoWallet(any()) } returns StytchDataResponse(mockk(relaxed = true))
 
-        val result = client.deleteFactor(AuthenticationFactor.OAuth("oauth-id"))
+            val result = client.deleteFactor(AuthenticationFactor.CryptoWallet("crypto-id"))
 
-        coVerify { api.deleteOAuthUserRegistration("oauth-id") }
-        assertIs<DeleteFactorResponse>(result)
-    }
-
-    @Test
-    fun `deleteFactor PhoneNumber calls deletePhoneNumber with factor id`() = runTest(testDispatcher) {
-        coEvery { api.deletePhoneNumber(any()) } returns StytchDataResponse(mockk(relaxed = true))
-
-        val result = client.deleteFactor(AuthenticationFactor.PhoneNumber("phone-id"))
-
-        coVerify { api.deletePhoneNumber("phone-id") }
-        assertIs<DeleteFactorResponse>(result)
-    }
+            coVerify { api.deleteCryptoWallet("crypto-id") }
+            assertIs<DeleteFactorResponse>(result)
+        }
 
     @Test
-    fun `deleteFactor WebAuthn calls deleteWebAuthnRegistration with factor id`() = runTest(testDispatcher) {
-        coEvery { api.deleteWebAuthnRegistration(any()) } returns StytchDataResponse(mockk(relaxed = true))
+    fun `deleteFactor Email calls deleteEmail with factor id`() =
+        runTest(testDispatcher) {
+            coEvery { api.deleteEmail(any()) } returns StytchDataResponse(mockk(relaxed = true))
 
-        val result = client.deleteFactor(AuthenticationFactor.WebAuthn("webauthn-id"))
+            val result = client.deleteFactor(AuthenticationFactor.Email("email-id"))
 
-        coVerify { api.deleteWebAuthnRegistration("webauthn-id") }
-        assertIs<DeleteFactorResponse>(result)
-    }
+            coVerify { api.deleteEmail("email-id") }
+            assertIs<DeleteFactorResponse>(result)
+        }
+
+    @Test
+    fun `deleteFactor OAuth calls deleteOAuthUserRegistration with factor id`() =
+        runTest(testDispatcher) {
+            coEvery { api.deleteOAuthUserRegistration(any()) } returns StytchDataResponse(mockk(relaxed = true))
+
+            val result = client.deleteFactor(AuthenticationFactor.OAuth("oauth-id"))
+
+            coVerify { api.deleteOAuthUserRegistration("oauth-id") }
+            assertIs<DeleteFactorResponse>(result)
+        }
+
+    @Test
+    fun `deleteFactor PhoneNumber calls deletePhoneNumber with factor id`() =
+        runTest(testDispatcher) {
+            coEvery { api.deletePhoneNumber(any()) } returns StytchDataResponse(mockk(relaxed = true))
+
+            val result = client.deleteFactor(AuthenticationFactor.PhoneNumber("phone-id"))
+
+            coVerify { api.deletePhoneNumber("phone-id") }
+            assertIs<DeleteFactorResponse>(result)
+        }
+
+    @Test
+    fun `deleteFactor WebAuthn calls deleteWebAuthnRegistration with factor id`() =
+        runTest(testDispatcher) {
+            coEvery { api.deleteWebAuthnRegistration(any()) } returns StytchDataResponse(mockk(relaxed = true))
+
+            val result = client.deleteFactor(AuthenticationFactor.WebAuthn("webauthn-id"))
+
+            coVerify { api.deleteWebAuthnRegistration("webauthn-id") }
+            assertIs<DeleteFactorResponse>(result)
+        }
 }

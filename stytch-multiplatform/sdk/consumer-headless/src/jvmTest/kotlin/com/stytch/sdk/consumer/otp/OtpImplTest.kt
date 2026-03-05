@@ -31,110 +31,120 @@ internal class OtpImplTest : ConsumerClientTest() {
     private val client = OtpImpl(dispatchers, networkingClient, sessionManager)
 
     @Test
-    fun `authenticate calls oTPsAuthenticate with correct network model`() = runTest(testDispatcher) {
-        coEvery { api.oTPsAuthenticate(any()) } returns StytchDataResponse(mockk(relaxed = true))
+    fun `authenticate calls oTPsAuthenticate with correct network model`() =
+        runTest(testDispatcher) {
+            coEvery { api.oTPsAuthenticate(any()) } returns StytchDataResponse(mockk(relaxed = true))
 
-        client.authenticate(OTPsAuthenticateParameters(token = "tok", methodId = "mid", sessionDurationMinutes = 30))
+            client.authenticate(OTPsAuthenticateParameters(token = "tok", methodId = "mid", sessionDurationMinutes = 30))
 
-        coVerify { api.oTPsAuthenticate(OTPsAuthenticateRequest(token = "tok", methodId = "mid", sessionDurationMinutes = 30)) }
-    }
+            coVerify { api.oTPsAuthenticate(OTPsAuthenticateRequest(token = "tok", methodId = "mid", sessionDurationMinutes = 30)) }
+        }
 
     // --- SMS ---
 
     @Test
-    fun `sms loginOrCreate calls oTPsSMSLoginOrCreate with correct network model`() = runTest(testDispatcher) {
-        coEvery { api.oTPsSMSLoginOrCreate(any()) } returns StytchDataResponse(mockk(relaxed = true))
+    fun `sms loginOrCreate calls oTPsSMSLoginOrCreate with correct network model`() =
+        runTest(testDispatcher) {
+            coEvery { api.oTPsSMSLoginOrCreate(any()) } returns StytchDataResponse(mockk(relaxed = true))
 
-        client.sms.loginOrCreate(OTPsSMSLoginOrCreateParameters(phoneNumber = "+15551234567"))
+            client.sms.loginOrCreate(OTPsSMSLoginOrCreateParameters(phoneNumber = "+15551234567"))
 
-        coVerify { api.oTPsSMSLoginOrCreate(OTPsSMSLoginOrCreateRequest(phoneNumber = "+15551234567")) }
-    }
-
-    @Test
-    fun `sms send calls primary endpoint when no session token`() = runTest(testDispatcher) {
-        every { sessionManager.currentSessionToken } returns null
-        coEvery { api.oTPsSMSSendPrimary(any()) } returns StytchDataResponse(mockk(relaxed = true))
-
-        client.sms.send(OTPsSMSSendSecondaryParameters(phoneNumber = "+15551234567"))
-
-        coVerify { api.oTPsSMSSendPrimary(OTPsSMSSendSecondaryRequest(phoneNumber = "+15551234567")) }
-        coVerify(exactly = 0) { api.oTPsSMSSendSecondary(any()) }
-    }
+            coVerify { api.oTPsSMSLoginOrCreate(OTPsSMSLoginOrCreateRequest(phoneNumber = "+15551234567")) }
+        }
 
     @Test
-    fun `sms send calls secondary endpoint when session token present`() = runTest(testDispatcher) {
-        every { sessionManager.currentSessionToken } returns "session-tok"
-        coEvery { api.oTPsSMSSendSecondary(any()) } returns StytchDataResponse(mockk(relaxed = true))
+    fun `sms send calls primary endpoint when no session token`() =
+        runTest(testDispatcher) {
+            every { sessionManager.currentSessionToken } returns null
+            coEvery { api.oTPsSMSSendPrimary(any()) } returns StytchDataResponse(mockk(relaxed = true))
 
-        client.sms.send(OTPsSMSSendSecondaryParameters(phoneNumber = "+15551234567"))
+            client.sms.send(OTPsSMSSendSecondaryParameters(phoneNumber = "+15551234567"))
 
-        coVerify { api.oTPsSMSSendSecondary(OTPsSMSSendSecondaryRequest(phoneNumber = "+15551234567")) }
-        coVerify(exactly = 0) { api.oTPsSMSSendPrimary(any()) }
-    }
+            coVerify { api.oTPsSMSSendPrimary(OTPsSMSSendSecondaryRequest(phoneNumber = "+15551234567")) }
+            coVerify(exactly = 0) { api.oTPsSMSSendSecondary(any()) }
+        }
+
+    @Test
+    fun `sms send calls secondary endpoint when session token present`() =
+        runTest(testDispatcher) {
+            every { sessionManager.currentSessionToken } returns "session-tok"
+            coEvery { api.oTPsSMSSendSecondary(any()) } returns StytchDataResponse(mockk(relaxed = true))
+
+            client.sms.send(OTPsSMSSendSecondaryParameters(phoneNumber = "+15551234567"))
+
+            coVerify { api.oTPsSMSSendSecondary(OTPsSMSSendSecondaryRequest(phoneNumber = "+15551234567")) }
+            coVerify(exactly = 0) { api.oTPsSMSSendPrimary(any()) }
+        }
 
     // --- Email ---
 
     @Test
-    fun `email loginOrCreate calls oTPsEmailLoginOrCreate with correct network model`() = runTest(testDispatcher) {
-        coEvery { api.oTPsEmailLoginOrCreate(any()) } returns StytchDataResponse(mockk(relaxed = true))
+    fun `email loginOrCreate calls oTPsEmailLoginOrCreate with correct network model`() =
+        runTest(testDispatcher) {
+            coEvery { api.oTPsEmailLoginOrCreate(any()) } returns StytchDataResponse(mockk(relaxed = true))
 
-        client.email.loginOrCreate(OTPsEmailLoginOrCreateParameters(email = "test@example.com"))
+            client.email.loginOrCreate(OTPsEmailLoginOrCreateParameters(email = "test@example.com"))
 
-        coVerify { api.oTPsEmailLoginOrCreate(OTPsEmailLoginOrCreateRequest(email = "test@example.com")) }
-    }
-
-    @Test
-    fun `email send calls primary endpoint when no session token`() = runTest(testDispatcher) {
-        every { sessionManager.currentSessionToken } returns null
-        coEvery { api.oTPsEmailSendPrimary(any()) } returns StytchDataResponse(mockk(relaxed = true))
-
-        client.email.send(OTPsEmailSendSecondaryParameters(email = "test@example.com"))
-
-        coVerify { api.oTPsEmailSendPrimary(OTPsEmailSendSecondaryRequest(email = "test@example.com")) }
-        coVerify(exactly = 0) { api.oTPsEmailSendSecondary(any()) }
-    }
+            coVerify { api.oTPsEmailLoginOrCreate(OTPsEmailLoginOrCreateRequest(email = "test@example.com")) }
+        }
 
     @Test
-    fun `email send calls secondary endpoint when session token present`() = runTest(testDispatcher) {
-        every { sessionManager.currentSessionToken } returns "session-tok"
-        coEvery { api.oTPsEmailSendSecondary(any()) } returns StytchDataResponse(mockk(relaxed = true))
+    fun `email send calls primary endpoint when no session token`() =
+        runTest(testDispatcher) {
+            every { sessionManager.currentSessionToken } returns null
+            coEvery { api.oTPsEmailSendPrimary(any()) } returns StytchDataResponse(mockk(relaxed = true))
 
-        client.email.send(OTPsEmailSendSecondaryParameters(email = "test@example.com"))
+            client.email.send(OTPsEmailSendSecondaryParameters(email = "test@example.com"))
 
-        coVerify { api.oTPsEmailSendSecondary(OTPsEmailSendSecondaryRequest(email = "test@example.com")) }
-        coVerify(exactly = 0) { api.oTPsEmailSendPrimary(any()) }
-    }
+            coVerify { api.oTPsEmailSendPrimary(OTPsEmailSendSecondaryRequest(email = "test@example.com")) }
+            coVerify(exactly = 0) { api.oTPsEmailSendSecondary(any()) }
+        }
+
+    @Test
+    fun `email send calls secondary endpoint when session token present`() =
+        runTest(testDispatcher) {
+            every { sessionManager.currentSessionToken } returns "session-tok"
+            coEvery { api.oTPsEmailSendSecondary(any()) } returns StytchDataResponse(mockk(relaxed = true))
+
+            client.email.send(OTPsEmailSendSecondaryParameters(email = "test@example.com"))
+
+            coVerify { api.oTPsEmailSendSecondary(OTPsEmailSendSecondaryRequest(email = "test@example.com")) }
+            coVerify(exactly = 0) { api.oTPsEmailSendPrimary(any()) }
+        }
 
     // --- WhatsApp ---
 
     @Test
-    fun `whatsapp loginOrCreate calls oTPsWhatsAppLoginOrCreate with correct network model`() = runTest(testDispatcher) {
-        coEvery { api.oTPsWhatsAppLoginOrCreate(any()) } returns StytchDataResponse(mockk(relaxed = true))
+    fun `whatsapp loginOrCreate calls oTPsWhatsAppLoginOrCreate with correct network model`() =
+        runTest(testDispatcher) {
+            coEvery { api.oTPsWhatsAppLoginOrCreate(any()) } returns StytchDataResponse(mockk(relaxed = true))
 
-        client.whatsapp.loginOrCreate(OTPsWhatsAppLoginOrCreateParameters(phoneNumber = "+15551234567"))
+            client.whatsapp.loginOrCreate(OTPsWhatsAppLoginOrCreateParameters(phoneNumber = "+15551234567"))
 
-        coVerify { api.oTPsWhatsAppLoginOrCreate(OTPsWhatsAppLoginOrCreateRequest(phoneNumber = "+15551234567")) }
-    }
-
-    @Test
-    fun `whatsapp send calls primary endpoint when no session token`() = runTest(testDispatcher) {
-        every { sessionManager.currentSessionToken } returns null
-        coEvery { api.oTPsWhatsAppSendPrimary(any()) } returns StytchDataResponse(mockk(relaxed = true))
-
-        client.whatsapp.send(OTPsWhatsAppSendSecondaryParameters(phoneNumber = "+15551234567"))
-
-        coVerify { api.oTPsWhatsAppSendPrimary(OTPsWhatsAppSendSecondaryRequest(phoneNumber = "+15551234567")) }
-        coVerify(exactly = 0) { api.oTPsWhatsAppSendSecondary(any()) }
-    }
+            coVerify { api.oTPsWhatsAppLoginOrCreate(OTPsWhatsAppLoginOrCreateRequest(phoneNumber = "+15551234567")) }
+        }
 
     @Test
-    fun `whatsapp send calls secondary endpoint when session token present`() = runTest(testDispatcher) {
-        every { sessionManager.currentSessionToken } returns "session-tok"
-        coEvery { api.oTPsWhatsAppSendSecondary(any()) } returns StytchDataResponse(mockk(relaxed = true))
+    fun `whatsapp send calls primary endpoint when no session token`() =
+        runTest(testDispatcher) {
+            every { sessionManager.currentSessionToken } returns null
+            coEvery { api.oTPsWhatsAppSendPrimary(any()) } returns StytchDataResponse(mockk(relaxed = true))
 
-        client.whatsapp.send(OTPsWhatsAppSendSecondaryParameters(phoneNumber = "+15551234567"))
+            client.whatsapp.send(OTPsWhatsAppSendSecondaryParameters(phoneNumber = "+15551234567"))
 
-        coVerify { api.oTPsWhatsAppSendSecondary(OTPsWhatsAppSendSecondaryRequest(phoneNumber = "+15551234567")) }
-        coVerify(exactly = 0) { api.oTPsWhatsAppSendPrimary(any()) }
-    }
+            coVerify { api.oTPsWhatsAppSendPrimary(OTPsWhatsAppSendSecondaryRequest(phoneNumber = "+15551234567")) }
+            coVerify(exactly = 0) { api.oTPsWhatsAppSendSecondary(any()) }
+        }
+
+    @Test
+    fun `whatsapp send calls secondary endpoint when session token present`() =
+        runTest(testDispatcher) {
+            every { sessionManager.currentSessionToken } returns "session-tok"
+            coEvery { api.oTPsWhatsAppSendSecondary(any()) } returns StytchDataResponse(mockk(relaxed = true))
+
+            client.whatsapp.send(OTPsWhatsAppSendSecondaryParameters(phoneNumber = "+15551234567"))
+
+            coVerify { api.oTPsWhatsAppSendSecondary(OTPsWhatsAppSendSecondaryRequest(phoneNumber = "+15551234567")) }
+            coVerify(exactly = 0) { api.oTPsWhatsAppSendPrimary(any()) }
+        }
 }

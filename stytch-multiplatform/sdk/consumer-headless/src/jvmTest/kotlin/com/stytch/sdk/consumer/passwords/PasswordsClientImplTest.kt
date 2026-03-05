@@ -34,102 +34,117 @@ internal class PasswordsClientImplTest : ConsumerClientTest() {
     private val fakePair = PKCECodePair(challenge = "test-challenge", verifier = "test-verifier")
 
     @Test
-    fun `authenticate calls passwordsAuthenticate with correct network model`() = runTest(testDispatcher) {
-        coEvery { api.passwordsAuthenticate(any()) } returns StytchDataResponse(mockk(relaxed = true))
+    fun `authenticate calls passwordsAuthenticate with correct network model`() =
+        runTest(testDispatcher) {
+            coEvery { api.passwordsAuthenticate(any()) } returns StytchDataResponse(mockk(relaxed = true))
 
-        client.authenticate(PasswordsAuthenticateParameters(email = "test@example.com", password = "p@ssw0rd", sessionDurationMinutes = 30))
-
-        coVerify {
-            api.passwordsAuthenticate(
-                PasswordsAuthenticateRequest(email = "test@example.com", password = "p@ssw0rd", sessionDurationMinutes = 30),
+            client.authenticate(
+                PasswordsAuthenticateParameters(email = "test@example.com", password = "p@ssw0rd", sessionDurationMinutes = 30),
             )
+
+            coVerify {
+                api.passwordsAuthenticate(
+                    PasswordsAuthenticateRequest(email = "test@example.com", password = "p@ssw0rd", sessionDurationMinutes = 30),
+                )
+            }
         }
-    }
 
     @Test
-    fun `create calls passwordsCreate with correct network model`() = runTest(testDispatcher) {
-        coEvery { api.passwordsCreate(any()) } returns StytchDataResponse(mockk(relaxed = true))
+    fun `create calls passwordsCreate with correct network model`() =
+        runTest(testDispatcher) {
+            coEvery { api.passwordsCreate(any()) } returns StytchDataResponse(mockk(relaxed = true))
 
-        client.create(PasswordsCreateParameters(email = "test@example.com", password = "p@ssw0rd", sessionDurationMinutes = 30))
+            client.create(PasswordsCreateParameters(email = "test@example.com", password = "p@ssw0rd", sessionDurationMinutes = 30))
 
-        coVerify {
-            api.passwordsCreate(
-                PasswordsCreateRequest(email = "test@example.com", password = "p@ssw0rd", sessionDurationMinutes = 30),
-            )
+            coVerify {
+                api.passwordsCreate(
+                    PasswordsCreateRequest(email = "test@example.com", password = "p@ssw0rd", sessionDurationMinutes = 30),
+                )
+            }
         }
-    }
 
     @Test
-    fun `resetByEmailStart creates PKCE and calls passwordsEmailResetStart with code challenge`() = runTest(testDispatcher) {
-        coEvery { pkceClient.create() } returns fakePair
-        coEvery { api.passwordsEmailResetStart(any()) } returns StytchDataResponse(mockk(relaxed = true))
+    fun `resetByEmailStart creates PKCE and calls passwordsEmailResetStart with code challenge`() =
+        runTest(testDispatcher) {
+            coEvery { pkceClient.create() } returns fakePair
+            coEvery { api.passwordsEmailResetStart(any()) } returns StytchDataResponse(mockk(relaxed = true))
 
-        client.resetByEmailStart(PasswordsEmailResetStartParameters(email = "test@example.com"))
+            client.resetByEmailStart(PasswordsEmailResetStartParameters(email = "test@example.com"))
 
-        coVerify {
-            api.passwordsEmailResetStart(
-                PasswordsEmailResetStartRequest(email = "test@example.com", codeChallenge = "test-challenge"),
-            )
+            coVerify {
+                api.passwordsEmailResetStart(
+                    PasswordsEmailResetStartRequest(email = "test@example.com", codeChallenge = "test-challenge"),
+                )
+            }
         }
-    }
 
     @Test
-    fun `resetByEmail retrieves PKCE and calls passwordsEmailReset with code verifier`() = runTest(testDispatcher) {
-        coEvery { pkceClient.retrieve() } returns fakePair
-        coEvery { api.passwordsEmailReset(any()) } returns StytchDataResponse(mockk(relaxed = true))
+    fun `resetByEmail retrieves PKCE and calls passwordsEmailReset with code verifier`() =
+        runTest(testDispatcher) {
+            coEvery { pkceClient.retrieve() } returns fakePair
+            coEvery { api.passwordsEmailReset(any()) } returns StytchDataResponse(mockk(relaxed = true))
 
-        client.resetByEmail(PasswordsEmailResetParameters(token = "reset-tok", password = "newP@ss", sessionDurationMinutes = 30))
-
-        coVerify {
-            api.passwordsEmailReset(
-                PasswordsEmailResetRequest(token = "reset-tok", password = "newP@ss", sessionDurationMinutes = 30, codeVerifier = "test-verifier"),
-            )
-        }
-    }
-
-    @Test
-    fun `resetByEmail throws IllegalStateException when PKCE is missing`() = runTest(testDispatcher) {
-        coEvery { pkceClient.retrieve() } returns null
-
-        assertFailsWith<IllegalStateException> {
             client.resetByEmail(PasswordsEmailResetParameters(token = "reset-tok", password = "newP@ss", sessionDurationMinutes = 30))
+
+            coVerify {
+                api.passwordsEmailReset(
+                    PasswordsEmailResetRequest(
+                        token = "reset-tok",
+                        password = "newP@ss",
+                        sessionDurationMinutes = 30,
+                        codeVerifier = "test-verifier",
+                    ),
+                )
+            }
         }
-    }
 
     @Test
-    fun `resetByExistingPassword calls passwordsExistingPasswordReset with correct network model`() = runTest(testDispatcher) {
-        coEvery { api.passwordsExistingPasswordReset(any()) } returns StytchDataResponse(mockk(relaxed = true))
+    fun `resetByEmail throws IllegalStateException when PKCE is missing`() =
+        runTest(testDispatcher) {
+            coEvery { pkceClient.retrieve() } returns null
 
-        client.resetByExistingPassword(
-            PasswordsExistingPasswordResetParameters(
-                email = "test@example.com",
-                existingPassword = "old",
-                newPassword = "new",
-            ),
-        )
+            assertFailsWith<IllegalStateException> {
+                client.resetByEmail(PasswordsEmailResetParameters(token = "reset-tok", password = "newP@ss", sessionDurationMinutes = 30))
+            }
+        }
 
-        coVerify {
-            api.passwordsExistingPasswordReset(
-                PasswordsExistingPasswordResetRequest(email = "test@example.com", existingPassword = "old", newPassword = "new"),
+    @Test
+    fun `resetByExistingPassword calls passwordsExistingPasswordReset with correct network model`() =
+        runTest(testDispatcher) {
+            coEvery { api.passwordsExistingPasswordReset(any()) } returns StytchDataResponse(mockk(relaxed = true))
+
+            client.resetByExistingPassword(
+                PasswordsExistingPasswordResetParameters(
+                    email = "test@example.com",
+                    existingPassword = "old",
+                    newPassword = "new",
+                ),
             )
+
+            coVerify {
+                api.passwordsExistingPasswordReset(
+                    PasswordsExistingPasswordResetRequest(email = "test@example.com", existingPassword = "old", newPassword = "new"),
+                )
+            }
         }
-    }
 
     @Test
-    fun `resetBySession calls passwordsSessionReset with correct network model`() = runTest(testDispatcher) {
-        coEvery { api.passwordsSessionReset(any()) } returns StytchDataResponse(mockk(relaxed = true))
+    fun `resetBySession calls passwordsSessionReset with correct network model`() =
+        runTest(testDispatcher) {
+            coEvery { api.passwordsSessionReset(any()) } returns StytchDataResponse(mockk(relaxed = true))
 
-        client.resetBySession(PasswordsSessionResetParameters(password = "newP@ss"))
+            client.resetBySession(PasswordsSessionResetParameters(password = "newP@ss"))
 
-        coVerify { api.passwordsSessionReset(PasswordsSessionResetRequest(password = "newP@ss")) }
-    }
+            coVerify { api.passwordsSessionReset(PasswordsSessionResetRequest(password = "newP@ss")) }
+        }
 
     @Test
-    fun `strengthCheck calls passwordsStrengthCheck with correct network model`() = runTest(testDispatcher) {
-        coEvery { api.passwordsStrengthCheck(any()) } returns StytchDataResponse(mockk(relaxed = true))
+    fun `strengthCheck calls passwordsStrengthCheck with correct network model`() =
+        runTest(testDispatcher) {
+            coEvery { api.passwordsStrengthCheck(any()) } returns StytchDataResponse(mockk(relaxed = true))
 
-        client.strengthCheck(PasswordsStrengthCheckParameters(password = "p@ssw0rd"))
+            client.strengthCheck(PasswordsStrengthCheckParameters(password = "p@ssw0rd"))
 
-        coVerify { api.passwordsStrengthCheck(PasswordsStrengthCheckRequest(password = "p@ssw0rd")) }
-    }
+            coVerify { api.passwordsStrengthCheck(PasswordsStrengthCheckRequest(password = "p@ssw0rd")) }
+        }
 }

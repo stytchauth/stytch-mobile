@@ -18,29 +18,32 @@ internal class SessionImplTest : ConsumerClientTest() {
     private val client = SessionImpl(dispatchers, networkingClient)
 
     @Test
-    fun `authenticate calls sessionsAuthenticate with correct network model`() = runTest(testDispatcher) {
-        coEvery { api.sessionsAuthenticate(any()) } returns StytchDataResponse(mockk(relaxed = true))
+    fun `authenticate calls sessionsAuthenticate with correct network model`() =
+        runTest(testDispatcher) {
+            coEvery { api.sessionsAuthenticate(any()) } returns StytchDataResponse(mockk(relaxed = true))
 
-        client.authenticate(SessionsAuthenticateParameters(sessionDurationMinutes = 30))
+            client.authenticate(SessionsAuthenticateParameters(sessionDurationMinutes = 30))
 
-        coVerify { api.sessionsAuthenticate(SessionsAuthenticateRequest(sessionDurationMinutes = 30)) }
-    }
-
-    @Test
-    fun `revoke calls sessionsRevoke`() = runTest(testDispatcher) {
-        coEvery { api.sessionsRevoke() } returns StytchDataResponse(mockk(relaxed = true))
-
-        client.revoke()
-
-        coVerify { api.sessionsRevoke() }
-    }
+            coVerify { api.sessionsAuthenticate(SessionsAuthenticateRequest(sessionDurationMinutes = 30)) }
+        }
 
     @Test
-    fun `attest calls sessionsAttest with correct network model`() = runTest(testDispatcher) {
-        coEvery { api.sessionsAttest(any()) } returns StytchDataResponse(mockk(relaxed = true))
+    fun `revoke calls sessionsRevoke`() =
+        runTest(testDispatcher) {
+            coEvery { api.sessionsRevoke() } returns StytchDataResponse(mockk(relaxed = true))
 
-        client.attest(SessionsAttestParameters(profileId = "profile-1", token = "tok", sessionDurationMinutes = 10))
+            client.revoke()
 
-        coVerify { api.sessionsAttest(SessionsAttestRequest(profileId = "profile-1", token = "tok", sessionDurationMinutes = 10)) }
-    }
+            coVerify { api.sessionsRevoke() }
+        }
+
+    @Test
+    fun `attest calls sessionsAttest with correct network model`() =
+        runTest(testDispatcher) {
+            coEvery { api.sessionsAttest(any()) } returns StytchDataResponse(mockk(relaxed = true))
+
+            client.attest(SessionsAttestParameters(profileId = "profile-1", token = "tok", sessionDurationMinutes = 10))
+
+            coVerify { api.sessionsAttest(SessionsAttestRequest(profileId = "profile-1", token = "tok", sessionDurationMinutes = 10)) }
+        }
 }
