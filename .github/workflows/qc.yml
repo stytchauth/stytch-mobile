@@ -30,6 +30,15 @@ jobs:
           name: coverage-shared
           path: stytch-multiplatform-shared/sdk/shared/build/reports/kover/reportJvm.xml
 
+      - name: Post coverage comment
+        if: github.event_name == 'pull_request'
+        uses: madrapps/jacoco-report@v1.7.2
+        with:
+          paths: stytch-multiplatform-shared/sdk/shared/build/reports/kover/reportJvm.xml
+          token: ${{ secrets.GITHUB_TOKEN }}
+          title: Coverage — stytch-multiplatform-shared
+          update-comment: true
+
   check-consumer:
     name: Lint & Test (stytch-multiplatform)
     runs-on: macos-latest
@@ -54,3 +63,12 @@ jobs:
         with:
           name: coverage-consumer
           path: stytch-multiplatform/sdk/consumer-headless/build/reports/kover/reportJvm.xml
+
+      - name: Post coverage comment
+        if: github.event_name == 'pull_request'
+        uses: madrapps/jacoco-report@v1.7.2
+        with:
+          paths: stytch-multiplatform/sdk/consumer-headless/build/reports/kover/reportJvm.xml
+          token: ${{ secrets.GITHUB_TOKEN }}
+          title: Coverage — stytch-multiplatform
+          update-comment: true
