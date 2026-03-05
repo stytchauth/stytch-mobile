@@ -30,10 +30,6 @@ struct ContentView: View {
                     }
                 }
             }
-            if let response = viewModel.state.rawResponse {
-                Spacer()
-                Text(response.toFriendlyDisplay())
-            }
         }
         .frame(maxHeight: .infinity, alignment: .top)
         .padding()
@@ -99,11 +95,10 @@ extension ContentView {
         
         func sendSms(phoneNumber: String) async {
             do {
-                let request = OtpSmsLoginOrCreateRequest(phoneNumber: phoneNumber, expirationMinutes: 5, enableAutofill: false)
+                let request = OTPsSMSLoginOrCreateParameters.init(phoneNumber: phoneNumber)
                 let response = try await consumerClient.otp.sms.loginOrCreate(request: request)
                 state.methodId = response.methodId
                 state.step = .token
-                state.rawResponse = response
             } catch(let error)  {
                 state.methodId = nil
                 state.step = .phoneNumber
@@ -116,11 +111,10 @@ extension ContentView {
                 guard let methodId = state.methodId else {
                     return
                 }
-                let request: OtpAuthenticateRequest = .init(token: token, methodId: methodId, sessionDurationMinutes: 5)
+                let request: OTPsAuthenticateParameters = .init(token: token, methodId: methodId, sessionDurationMinutes: 5)
                 let response = try await consumerClient.otp.authenticate(request: request)
                 state.methodId = nil
                 state.step = .phoneNumber
-                state.rawResponse = response
             } catch (let error)  {
                 state.methodId = nil
                 state.step = .token
@@ -131,7 +125,6 @@ extension ContentView {
         func logout() async {
             do {
                 let response = try await consumerClient.session.revoke()
-                state.rawResponse = response
             } catch (let error) {
                 state.error = error as? StytchError
             }
@@ -144,50 +137,10 @@ struct ContentViewState {
     var authenticationState: ConsumerAuthenticationState = .Loading()
     var methodId: String? = nil
     var step: Step = .phoneNumber
-    var rawResponse: StytchAPIResponse? = nil
     var error: StytchError? = nil
 }
 
 enum Step {
     case phoneNumber
     case token
-}
-
-private extension StytchAPIResponse {
-    func toFriendlyDisplay() -> String {
-        var display = if self is OtpSmsLoginOrCreateResponse {
-            "Code Sent\n"
-        } else if (self is AuthenticatedResponse) {
-            "Logged In\n"
-        } else if (self is SessionsRevokeResponse) {
-            "Logged Out\n"
-        } else {
-            "Received Response\n"
-        }
-        if let response = self as? BasicResponse {
-            display += """
-                status_code:
-                \(response.statusCode)
-                
-                request_id:
-                \(response.requestId)
-            """.trimmingCharacters(in: .whitespaces)
-        }
-        if let response = self as? OtpSmsLoginOrCreateResponse {
-            display += """
-                method_id:
-                \(response.methodId)
-            """.trimmingCharacters(in: .whitespaces)
-        }
-        if let response = self as? AuthenticatedResponse {
-            display += """
-                session_token:
-                \(response.sessionToken)
-                
-                session_jwt:
-                \(response.sessionJwt)
-            """.trimmingCharacters(in: .whitespaces)
-        }
-        return display
-    }
 }
