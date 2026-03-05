@@ -60,10 +60,6 @@ class StytchDtoProcessor(
                 if (!tryProcessRequest(it)) {
                     unprocessedSymbols.add(it)
                 }
-            } else if (it.simpleName.getShortName().endsWith("Response")) {
-                if (!tryProcessResponse(it)) {
-                    unprocessedSymbols.add(it)
-                }
             }
         }
 
@@ -129,11 +125,6 @@ class StytchDtoProcessor(
             logger.exception(e)
             return false
         }
-    }
-
-    private fun tryProcessResponse(responseClass: KSClassDeclaration): Boolean {
-        // placeholder for if we need/want to do any response parsing
-        return true
     }
 
     private fun buildInterface(
