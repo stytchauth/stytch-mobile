@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.buildconfig) apply false
     alias(libs.plugins.skie) apply false
     alias(libs.plugins.ktlint) apply false
+    alias(libs.plugins.kover) apply false
 }
 
 group = "com.stytch.sdk"
@@ -23,6 +24,9 @@ subprojects {
     }
     afterEvaluate {
         tasks.matching { it.name.lowercase().contains("ktlint") }.configureEach {
+            mustRunAfter(tasks.matching { it.name.startsWith("ksp") })
+        }
+        tasks.matching { it.name.startsWith("kover") }.configureEach {
             mustRunAfter(tasks.matching { it.name.startsWith("ksp") })
         }
     }

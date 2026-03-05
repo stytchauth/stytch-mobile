@@ -15,6 +15,7 @@ plugins {
     alias(libs.plugins.ktorfit)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.skie)
+    alias(libs.plugins.kover)
     id("maven-publish")
     alias(libs.plugins.openapi)
 }
@@ -122,6 +123,20 @@ tasks.named("sourcesJar").configure {
 
 skie {
     isEnabled = true
+}
+
+kover {
+    reports {
+        filters {
+            excludes {
+                packages(
+                    "com.stytch.sdk.consumer.networking.models",
+                    "com.stytch.sdk.consumer.networking.api",
+                )
+                classes("com.stytch.sdk.consumer.BuildConfig")
+            }
+        }
+    }
 }
 
 val generatedSourcesPath = "$buildDir/generated/openapi"
