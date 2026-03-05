@@ -8,15 +8,20 @@ import com.stytch.sdk.consumer.networking.models.SessionsAuthenticateResponse
 import com.stytch.sdk.consumer.networking.models.SessionsRevokeResponse
 import com.stytch.sdk.consumer.networking.models.toNetworkModel
 import com.stytch.sdk.data.StytchDispatchers
+import com.stytch.sdk.data.StytchError
 import kotlinx.coroutines.withContext
+import kotlin.coroutines.cancellation.CancellationException
 import kotlin.js.JsExport
 
 @JsExport
 public interface SessionClient {
+    @Throws(StytchError::class, CancellationException::class)
     public suspend fun authenticate(request: ISessionsAuthenticateParameters): SessionsAuthenticateResponse
 
+    @Throws(StytchError::class, CancellationException::class)
     public suspend fun revoke(): SessionsRevokeResponse
 
+    @Throws(StytchError::class, CancellationException::class)
     public suspend fun attest(request: ISessionsAttestParameters): SessionsAttestResponse
 }
 

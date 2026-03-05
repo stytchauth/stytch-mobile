@@ -17,8 +17,11 @@ import com.stytch.sdk.consumer.networking.models.OTPsSMSSendSecondaryResponse
 import com.stytch.sdk.consumer.networking.models.OTPsWhatsAppLoginOrCreateResponse
 import com.stytch.sdk.consumer.networking.models.OTPsWhatsAppSendSecondaryResponse
 import com.stytch.sdk.consumer.networking.models.toNetworkModel
+import com.stytch.sdk.data.StytchAPIError
 import com.stytch.sdk.data.StytchDispatchers
+import com.stytch.sdk.data.StytchError
 import kotlinx.coroutines.withContext
+import kotlin.coroutines.cancellation.CancellationException
 import kotlin.js.JsExport
 
 @JsExport
@@ -27,27 +30,34 @@ public interface OtpClient {
     public val email: EmailOtpClient
     public val whatsapp: WhatsAppOtpClient
 
+    @Throws(StytchError::class, CancellationException::class)
     public suspend fun authenticate(request: IOTPsAuthenticateParameters): OTPsAuthenticateResponse
 }
 
 @JsExport
 public interface SmsOtpClient {
+    @Throws(StytchError::class, CancellationException::class)
     public suspend fun loginOrCreate(request: IOTPsSMSLoginOrCreateParameters): OTPsSMSLoginOrCreateResponse
 
+    @Throws(StytchError::class, CancellationException::class)
     public suspend fun send(request: IOTPsSMSSendSecondaryParameters): OTPsSMSSendSecondaryResponse
 }
 
 @JsExport
 public interface EmailOtpClient {
+    @Throws(StytchError::class, CancellationException::class)
     public suspend fun loginOrCreate(request: IOTPsEmailLoginOrCreateParameters): OTPsEmailLoginOrCreateResponse
 
+    @Throws(StytchError::class, CancellationException::class)
     public suspend fun send(request: IOTPsEmailSendSecondaryParameters): OTPsEmailSendSecondaryResponse
 }
 
 @JsExport
 public interface WhatsAppOtpClient {
+    @Throws(StytchError::class, CancellationException::class)
     public suspend fun loginOrCreate(request: IOTPsWhatsAppLoginOrCreateParameters): OTPsWhatsAppLoginOrCreateResponse
 
+    @Throws(StytchError::class, CancellationException::class)
     public suspend fun send(request: IOTPsWhatsAppSendSecondaryParameters): OTPsWhatsAppSendSecondaryResponse
 }
 

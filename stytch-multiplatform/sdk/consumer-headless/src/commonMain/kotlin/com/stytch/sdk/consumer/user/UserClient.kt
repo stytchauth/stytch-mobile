@@ -16,15 +16,20 @@ import com.stytch.sdk.consumer.networking.models.toNetworkModel
 import com.stytch.sdk.data.BasicResponse
 import com.stytch.sdk.data.StytchDataResponse
 import com.stytch.sdk.data.StytchDispatchers
+import com.stytch.sdk.data.StytchError
 import kotlinx.coroutines.withContext
+import kotlin.coroutines.cancellation.CancellationException
 import kotlin.js.JsExport
 
 @JsExport
 public interface UserClient {
+    @Throws(StytchError::class, CancellationException::class)
     public suspend fun getUser(): GetMeResponse
 
+    @Throws(StytchError::class, CancellationException::class)
     public suspend fun deleteFactor(factor: AuthenticationFactor): DeleteFactorResponse
 
+    @Throws(StytchError::class, CancellationException::class)
     public suspend fun update(request: IUpdateMeParameters): UpdateMeResponse
 }
 

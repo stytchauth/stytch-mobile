@@ -35,9 +35,11 @@ import com.stytch.sdk.data.PKCECodePair
 import com.stytch.sdk.data.StytchClientConfiguration
 import com.stytch.sdk.data.StytchClientConfigurationInternal
 import com.stytch.sdk.data.StytchDispatchers
+import com.stytch.sdk.data.StytchError
 import com.stytch.sdk.persistence.StytchPersistenceClient
 import com.stytch.sdk.pkce.PKCEClient
 import io.ktor.http.URLBuilder
+import io.ktor.utils.io.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.StateFlow
@@ -73,6 +75,7 @@ public interface StytchConsumer : StytchClient {
     @JsName("authenticationStateObserver")
     public fun authenticationStateObserver(callback: (authenticationState: ConsumerAuthenticationState) -> Unit): JsCleanup
 
+    @Throws(StytchError::class, CancellationException::class)
     public suspend fun authenticate(
         url: String,
         sessionDurationMinutes: Int?,

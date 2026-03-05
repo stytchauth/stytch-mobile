@@ -17,24 +17,34 @@ import com.stytch.sdk.consumer.networking.models.PasswordsSessionResetResponse
 import com.stytch.sdk.consumer.networking.models.PasswordsStrengthCheckResponse
 import com.stytch.sdk.consumer.networking.models.toNetworkModel
 import com.stytch.sdk.data.StytchDispatchers
+import com.stytch.sdk.data.StytchError
+import com.stytch.sdk.pkce.MissingPKCEException
 import com.stytch.sdk.pkce.PKCEClient
 import kotlinx.coroutines.withContext
+import kotlin.coroutines.cancellation.CancellationException
 import kotlin.js.JsExport
 
 @JsExport
 public interface PasswordsClient {
+    @Throws(StytchError::class, CancellationException::class)
     public suspend fun authenticate(request: IPasswordsAuthenticateParameters): PasswordsAuthenticateResponse
 
+    @Throws(StytchError::class, CancellationException::class)
     public suspend fun create(request: IPasswordsCreateParameters): PasswordsCreateResponse
 
+    @Throws(StytchError::class, CancellationException::class)
     public suspend fun resetByEmailStart(request: IPasswordsEmailResetStartParameters): PasswordsEmailResetStartResponse
 
+    @Throws(StytchError::class, CancellationException::class)
     public suspend fun resetByEmail(request: IPasswordsEmailResetParameters): PasswordsEmailResetResponse
 
+    @Throws(StytchError::class, CancellationException::class)
     public suspend fun resetByExistingPassword(request: IPasswordsExistingPasswordResetParameters): PasswordsExistingPasswordResetResponse
 
+    @Throws(StytchError::class, CancellationException::class)
     public suspend fun resetBySession(request: IPasswordsSessionResetParameters): PasswordsSessionResetResponse
 
+    @Throws(StytchError::class, CancellationException::class)
     public suspend fun strengthCheck(request: IPasswordsStrengthCheckParameters): PasswordsStrengthCheckResponse
 }
 
@@ -68,7 +78,7 @@ internal class PasswordsClientImpl(
     override suspend fun resetByEmail(request: IPasswordsEmailResetParameters): PasswordsEmailResetResponse =
         withContext(dispatchers.ioDispatcher) {
             networkingClient.request {
-                val codePair = pkceClient.retrieve() ?: throw IllegalStateException("PKCE is missing")
+                val codePair = pkceClient.retrieve() ?: throw MissingPKCEException()
                 networkingClient.api.passwordsEmailReset(request.toNetworkModel(codeVerifier = codePair.verifier))
             }
         }

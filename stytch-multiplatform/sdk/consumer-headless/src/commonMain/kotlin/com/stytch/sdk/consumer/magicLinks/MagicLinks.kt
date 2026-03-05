@@ -10,21 +10,27 @@ import com.stytch.sdk.consumer.networking.models.MagicLinksEmailLoginOrCreateRes
 import com.stytch.sdk.consumer.networking.models.MagicLinksEmailSendSecondaryResponse
 import com.stytch.sdk.consumer.networking.models.toNetworkModel
 import com.stytch.sdk.data.StytchDispatchers
+import com.stytch.sdk.data.StytchError
+import com.stytch.sdk.pkce.MissingPKCEException
 import com.stytch.sdk.pkce.PKCEClient
 import kotlinx.coroutines.withContext
+import kotlin.coroutines.cancellation.CancellationException
 import kotlin.js.JsExport
 
 @JsExport
 public interface MagicLinksClient {
     public val email: EmailMagicLinksClient
 
+    @Throws(StytchError::class, CancellationException::class)
     public suspend fun authenticate(request: IMagicLinksAuthenticateParameters): MagicLinksAuthenticateResponse
 }
 
 @JsExport
 public interface EmailMagicLinksClient {
+    @Throws(StytchError::class, CancellationException::class)
     public suspend fun loginOrCreate(request: IMagicLinksEmailLoginOrCreateParameters): MagicLinksEmailLoginOrCreateResponse
 
+    @Throws(StytchError::class, CancellationException::class)
     public suspend fun send(request: IMagicLinksEmailSendSecondaryParameters): MagicLinksEmailSendSecondaryResponse
 }
 
@@ -38,7 +44,7 @@ internal class MagicLinksImpl(
 
     override suspend fun authenticate(request: IMagicLinksAuthenticateParameters): MagicLinksAuthenticateResponse =
         withContext(dispatchers.ioDispatcher) {
-            val codePair = pkceClient.retrieve() ?: throw IllegalStateException("PKCE is missing")
+            val codePair = pkceClient.retrieve() ?: throw MissingPKCEException()
             networkingClient.request {
                 networkingClient.api.magicLinksAuthenticate(request.toNetworkModel(codeVerifier = codePair.verifier)).also {
                     pkceClient.revoke()

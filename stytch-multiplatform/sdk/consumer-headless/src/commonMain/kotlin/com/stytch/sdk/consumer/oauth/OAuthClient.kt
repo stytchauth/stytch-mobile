@@ -17,22 +17,30 @@ import com.stytch.sdk.consumer.networking.models.toNetworkModel
 import com.stytch.sdk.data.EndpointOptions
 import com.stytch.sdk.data.PublicTokenInfo
 import com.stytch.sdk.data.StytchDispatchers
+import com.stytch.sdk.data.StytchError
 import com.stytch.sdk.oauth.IOAuthProvider
+import com.stytch.sdk.oauth.OAuthException
 import com.stytch.sdk.oauth.OAuthProviderType
 import com.stytch.sdk.oauth.OAuthResult
 import com.stytch.sdk.oauth.OAuthStartParameters
+import com.stytch.sdk.pkce.MissingPKCEException
 import com.stytch.sdk.pkce.PKCEClient
 import kotlinx.coroutines.withContext
+import kotlin.coroutines.cancellation.CancellationException
 import kotlin.js.JsExport
 
 @JsExport
 public interface OAuthClient {
+    @Throws(StytchError::class, CancellationException::class)
     public suspend fun authenticate(request: IOAuthAuthenticateParameters): OAuthAuthenticateResponse
 
+    @Throws(StytchError::class, CancellationException::class)
     public suspend fun authenticateGoogleIdToken(request: IOAuthGoogleIDTokenAuthenticateParameters): OAuthGoogleIDTokenAuthenticateResponse
 
+    @Throws(StytchError::class, CancellationException::class)
     public suspend fun authenticateAppleIdToken(request: IOAuthAppleIDTokenAuthenticateParameters): OAuthGoogleIDTokenAuthenticateResponse
 
+    @Throws(StytchError::class, CancellationException::class)
     public suspend fun attach(request: IOAuthAttachParameters): OAuthAttachResponse
 
     public val apple: OAuthType
@@ -76,6 +84,7 @@ public interface OAuthClient {
 
 @JsExport
 public interface OAuthType {
+    @Throws(StytchError::class, CancellationException::class)
     public suspend fun start(startParameters: OAuthStartParameters): AuthenticatedResponse
 }
 
@@ -92,7 +101,7 @@ internal class OAuthClientImpl(
     override suspend fun authenticate(request: IOAuthAuthenticateParameters): OAuthAuthenticateResponse =
         withContext(dispatchers.ioDispatcher) {
             networkingClient.request {
-                val codePair = pkceClient.retrieve() ?: throw IllegalStateException("PKCE is missing")
+                val codePair = pkceClient.retrieve() ?: throw MissingPKCEException()
                 networkingClient.api.oAuthAuthenticate(request.toNetworkModel(codeVerifier = codePair.verifier))
             }
         }
@@ -193,7 +202,7 @@ internal class OAuthClientImpl(
             }
 
             is OAuthResult.Error -> {
-                throw response.error
+                throw OAuthException(response.error)
             }
         }
     }
