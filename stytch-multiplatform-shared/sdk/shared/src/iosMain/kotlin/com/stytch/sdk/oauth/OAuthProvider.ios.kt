@@ -12,8 +12,11 @@ import platform.AuthenticationServices.ASAuthorizationAppleIDCredential
 import platform.AuthenticationServices.ASAuthorizationAppleIDProvider
 import platform.AuthenticationServices.ASAuthorizationController
 import platform.AuthenticationServices.ASAuthorizationControllerDelegateProtocol
+import platform.AuthenticationServices.ASAuthorizationControllerPresentationContextProvidingProtocol
 import platform.AuthenticationServices.ASAuthorizationScopeEmail
 import platform.AuthenticationServices.ASAuthorizationScopeFullName
+import platform.AuthenticationServices.ASPresentationAnchor
+import platform.AuthenticationServices.ASWebAuthenticationPresentationContextProvidingProtocol
 import platform.AuthenticationServices.ASWebAuthenticationSession
 import platform.Foundation.NSError
 import platform.Foundation.NSURL
@@ -53,7 +56,7 @@ public actual class OAuthProvider(
             request.requestedScopes = listOf(ASAuthorizationScopeEmail, ASAuthorizationScopeFullName)
             request.nonce = nonce
             val controller = ASAuthorizationController(authorizationRequests = listOf(request))
-            controller.presentationContextProvider = parameters.applePresentationContextProvider
+            controller.presentationContextProvider = parameters.applePresentationContextProvider ?: DefaultPresenterContext()
             withContext(dispatchers.mainDispatcher) {
                 suspendCancellableCoroutine { continuation ->
                     controller.delegate = AppleIdTokenDelegate(nonce, continuation)
@@ -116,15 +119,15 @@ public actual class OAuthProvider(
                     NSURL.URLWithString(uri)?.let { nsUrl ->
                         val session =
                             ASWebAuthenticationSession(nsUrl, callbackURLScheme = scheme) { nsUrl, nsError ->
-                                if (nsUrl == null) {
-                                    return@ASWebAuthenticationSession continuation.resume(OAuthResult.Error(SSOError.NoURIFound()))
-                                }
                                 if (nsError != null) {
                                     return@ASWebAuthenticationSession continuation.resume(
                                         OAuthResult.Error(
                                             SSOError.UnknownError(nsError.localizedDescription),
                                         ),
                                     )
+                                }
+                                if (nsUrl == null) {
+                                    return@ASWebAuthenticationSession continuation.resume(OAuthResult.Error(SSOError.NoURIFound()))
                                 }
                                 val components = NSURLComponents(nsUrl, true)
                                 val items = components.queryItems?.mapNotNull { it as NSURLQueryItem }
@@ -135,7 +138,7 @@ public actual class OAuthProvider(
                                     continuation.resume(OAuthResult.Error(SSOError.NoTokenFound()))
                                 }
                             }
-                        session.presentationContextProvider = parameters.oauthPresentationContextProvider
+                        session.presentationContextProvider = parameters.oauthPresentationContextProvider ?: DefaultPresenterContext()
                         session.start()
                     } ?: run {
                         continuation.resume(OAuthResult.Error(SSOError.NoURIFound()))
@@ -143,6 +146,17 @@ public actual class OAuthProvider(
                 }
             }
         }
+
+    private class DefaultPresenterContext :
+        NSObject(),
+        ASWebAuthenticationPresentationContextProvidingProtocol,
+        ASAuthorizationControllerPresentationContextProvidingProtocol {
+        override fun presentationAnchorForWebAuthenticationSession(session: ASWebAuthenticationSession): ASPresentationAnchor =
+            ASPresentationAnchor()
+
+        override fun presentationAnchorForAuthorizationController(controller: ASAuthorizationController): ASPresentationAnchor =
+            ASPresentationAnchor()
+    }
 
     private fun getCallbackUrlScheme(parameters: OAuthStartParameters): String {
         val loginScheme = parameters.loginRedirectUrl?.let { NSURL.URLWithString(it)?.scheme() }

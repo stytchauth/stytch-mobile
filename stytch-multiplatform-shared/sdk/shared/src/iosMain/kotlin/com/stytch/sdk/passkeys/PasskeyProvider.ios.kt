@@ -21,6 +21,10 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
 public actual class PasskeyProvider : IPasskeyProvider {
+    private val jsonProvider =
+        Json {
+            ignoreUnknownKeys = true
+        }
     public actual override val isSupported: Boolean = true
 
     public actual override suspend fun createPublicKeyCredential(
@@ -29,12 +33,15 @@ public actual class PasskeyProvider : IPasskeyProvider {
         json: String,
     ): String {
         val platformProvider = ASAuthorizationPlatformPublicKeyCredentialProvider(relyingPartyIdentifier = parameters.domain)
-        val request = Json.decodeFromString<PasskeysStartResponse>(json)
+        val request = jsonProvider.decodeFromString<PasskeysStartResponse>(json)
         val credentialRequest =
             platformProvider.createCredentialRegistrationRequestWithChallenge(
                 challenge = request.challenge.encodeToByteArray().toNSData(),
-                name = request.displayName,
-                userID = request.userId.encodeToByteArray().toNSData(),
+                name = request.user.displayName,
+                userID =
+                    request.user.id
+                        .encodeToByteArray()
+                        .toNSData(),
             )
         val credential =
             getCredentialResponse(
@@ -50,7 +57,7 @@ public actual class PasskeyProvider : IPasskeyProvider {
         json: String,
     ): String {
         val platformProvider = ASAuthorizationPlatformPublicKeyCredentialProvider(relyingPartyIdentifier = parameters.domain)
-        val request = Json.decodeFromString<PasskeysStartResponse>(json)
+        val request = jsonProvider.decodeFromString<PasskeysStartResponse>(json)
         val credentialRequest =
             platformProvider.createCredentialAssertionRequestWithChallenge(
                 challenge = request.challenge.encodeToByteArray().toNSData(),

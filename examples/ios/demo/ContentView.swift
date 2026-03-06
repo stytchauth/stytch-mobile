@@ -24,11 +24,11 @@ struct ContentView: View {
                     Button("Apple OAuth") {
                         viewModel.appleOauth()
                     }
-                    Button("Register Biometrics") {
-                        viewModel.registerBiometrics()
-                    }
                     Button("Auth Biometrics") {
                         viewModel.authBiometrics()
+                    }
+                    Button("Auth Passkey") {
+                        viewModel.authPasskey()
                     }
                 }
             case .authenticated:
@@ -37,6 +37,12 @@ struct ContentView: View {
                     Task {
                         await viewModel.logout()
                     }
+                }
+                Button("Register Biometrics") {
+                    viewModel.registerBiometrics()
+                }
+                Button("Register Passkey") {
+                    viewModel.registerPasskey()
                 }
             }
         }
@@ -135,7 +141,7 @@ extension ContentView {
             do {
                 let response = try await consumerClient.session.revoke()
             } catch (let error) {
-                state.error = error as? StytchError
+                state.error = error.asStytchError
             }
         }
         
@@ -146,9 +152,7 @@ extension ContentView {
                     let response = try await consumerClient.oauth.google.start(startParameters: params)
                     print(response)
                 } catch (let error) {
-                    print(error)
-                    print(error as? StytchError ?? "Not stytch error")
-                    print(error as? OAuthException ?? "Not oauth exception")
+                    print(error.asStytchError?.cause ?? "UNKNOWN")
                 }
             }
         }
@@ -159,8 +163,8 @@ extension ContentView {
                     let params: OAuthStartParameters = .init(loginRedirectUrl: "login", signupRedirectUrl: "signup")
                     let response = try await consumerClient.oauth.apple.start(startParameters: params)
                     print(response)
-                } catch (let error) {
-                    print(error)
+                } catch {
+                    print(error.asStytchError?.cause ?? "UNKNOWN")
                 }
             }
         }
@@ -171,7 +175,7 @@ extension ContentView {
                     let response = try await consumerClient.biometrics.register(parameters: .init(sessionDurationMinutes: 5, promptData: .init(reason: "Test", fallbackTitle: "Cancel", cancelTitle: "Cancel")))
                     print(response)
                 } catch (let error) {
-                    print(error)
+                    print(error.asStytchError?.cause ?? "UNKNOWN")
                 }
             }
         }
@@ -181,7 +185,27 @@ extension ContentView {
                     let response = try await consumerClient.biometrics.authenticate(parameters: .init(sessionDurationMinutes: 5, promptData: .init(reason: "Test", fallbackTitle: "Cancel", cancelTitle: "Cancel")))
                     print(response)
                 } catch (let error) {
-                    print(error)
+                    print(error.asStytchError?.cause ?? "UNKNOWN")
+                }
+            }
+        }
+        func registerPasskey() {
+            Task {
+                do {
+                    let response = try await consumerClient.passkeys.register(parameters: .init(domain: "jordanhaven.dev"))
+                    print(response)
+                } catch (let error) {
+                    print(error.asStytchError?.cause ?? "UNKNOWN")
+                }
+            }
+        }
+        func authPasskey() {
+            Task {
+                do {
+                    let response = try await consumerClient.passkeys.authenticate(parameters: .init(domain: "jordanhaven.dev"))
+                    print(response)
+                } catch (let error) {
+                    print(error.asStytchError?.cause ?? "UNKNOWN")
                 }
             }
         }
