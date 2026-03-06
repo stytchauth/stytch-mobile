@@ -3,6 +3,7 @@ package com.stytch.sdk.pkce
 import com.stytch.sdk.encryption.StytchEncryptionClient
 import com.stytch.sdk.persistence.StytchPersistenceClient
 import com.stytch.sdk.persistence.StytchPlatformPersistenceClient
+import com.stytch.sdk.utils.stytchUrlEncode
 import io.ktor.util.encodeBase64
 import io.mockk.every
 import io.mockk.mockk
@@ -42,20 +43,15 @@ class PKCEClientTest {
     private val persistenceClient = StytchPersistenceClient(dispatcher, encryptionClient, platformClient)
     private val client = PKCEClient(encryptionClient, persistenceClient)
 
-    // Use only positive bytes (0x00–0x7F) to match the production formula
-    // `it.toInt().toString(16).padStart(2,'0')` without signed-int edge cases.
     private val fakeVerifierBytes = byteArrayOf(1, 2, 3, 4)
     private val fakeChallengeBytes = byteArrayOf(0x0A, 0x1B, 0x2C)
 
-    private val expectedVerifier = fakeVerifierBytes.encodeBase64()
-    private val expectedChallenge =
-        fakeChallengeBytes
-            .joinToString("") { it.toInt().toString(16).padStart(2, '0') }
-            .encodeBase64()
+    private val expectedVerifier = fakeVerifierBytes.encodeBase64().stytchUrlEncode()
+    private val expectedChallenge = fakeChallengeBytes.encodeBase64().stytchUrlEncode()
 
     private fun setupEncryption() {
         every { encryptionClient.generateCodeVerifier() } returns fakeVerifierBytes
-        every { encryptionClient.generateCodeChallenge(fakeVerifierBytes) } returns fakeChallengeBytes
+        every { encryptionClient.generateCodeChallenge(expectedVerifier.encodeToByteArray()) } returns fakeChallengeBytes
     }
 
     // --- create ---
@@ -99,21 +95,21 @@ class PKCEClientTest {
 
             client.create()
 
-            verify { encryptionClient.generateCodeChallenge(fakeVerifierBytes) }
+            verify { encryptionClient.generateCodeChallenge(expectedVerifier.encodeToByteArray()) }
         }
 
     // --- challenge encoding ---
 
     @Test
-    fun `challenge encoding zero-pads single hex digit bytes`() =
+    fun `challenge is base64url encoded`() =
         runTest(dispatcher) {
-            // 0x0F -> "0f", 0x00 -> "00"
+            val challengeBytes = byteArrayOf(0x0F, 0x00)
             every { encryptionClient.generateCodeVerifier() } returns fakeVerifierBytes
-            every { encryptionClient.generateCodeChallenge(fakeVerifierBytes) } returns byteArrayOf(0x0F, 0x00)
+            every { encryptionClient.generateCodeChallenge(expectedVerifier.encodeToByteArray()) } returns challengeBytes
 
             val pair = client.create()
 
-            assertEquals("0f00".encodeBase64(), pair.challenge)
+            assertEquals(challengeBytes.encodeBase64().stytchUrlEncode(), pair.challenge)
         }
 
     // --- retrieve ---

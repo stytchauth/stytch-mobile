@@ -18,12 +18,14 @@ internal class GenerateOAuthStartUrlTest {
     private val pkceClient = mockk<PKCEClient>()
 
     private suspend fun generate(
+        packageName: String = "com.example.test",
         baseUrl: String = "https://test.stytch.com/v1/public/oauth/google/start",
         parameters: OAuthStartParameters = OAuthStartParameters(),
     ): Url {
         coEvery { pkceClient.create() } returns fakePair
         val result =
             generateOAuthStartUrl(
+                packageName = packageName,
                 baseUrl = baseUrl,
                 publicTokenInfo = publicTokenInfo,
                 parameters = parameters,
@@ -54,14 +56,15 @@ internal class GenerateOAuthStartUrlTest {
         runTest {
             val url =
                 generate(
+                    packageName = "com.example.test",
                     parameters =
                         OAuthStartParameters(
                             loginRedirectUrl = "myapp://login",
                             signupRedirectUrl = "myapp://signup",
                         ),
                 )
-            assertEquals("myapp://login", url.parameters["login_redirect_url"])
-            assertEquals("myapp://signup", url.parameters["signup_redirect_url"])
+            assertEquals("com.example.test://oauth?url=myapp://login", url.parameters["login_redirect_url"])
+            assertEquals("com.example.test://oauth?url=myapp://signup", url.parameters["signup_redirect_url"])
         }
 
     @Test

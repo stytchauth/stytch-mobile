@@ -16,8 +16,8 @@ internal suspend fun generateOAuthStartUrl(
         mutableMapOf(
             "public_token" to publicTokenInfo.publicToken,
             "code_challenge" to codePair.challenge,
-            "login_redirect_url" to "$packageName://oauth?url=${parameters.loginRedirectUrl}",
-            "signup_redirect_url" to "$packageName://oauth?url=${parameters.signupRedirectUrl}",
+            "login_redirect_url" to parameters.loginRedirectUrl?.takeIf { it.isNotEmpty() }?.let { "$packageName://oauth?url=$it" },
+            "signup_redirect_url" to parameters.signupRedirectUrl?.takeIf { it.isNotEmpty() }?.let { "$packageName://oauth?url=$it" },
             "custom_scopes" to parameters.customScopes?.joinToString(" "),
             "oauth_attach_token" to parameters.oauthAttachToken,
         )
