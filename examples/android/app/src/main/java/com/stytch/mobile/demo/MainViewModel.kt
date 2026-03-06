@@ -1,5 +1,7 @@
 package com.stytch.mobile.demo
 
+import android.app.Activity
+import androidx.activity.ComponentActivity
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -10,12 +12,13 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import com.stytch.sdk.consumer.StytchConsumer
 import com.stytch.sdk.consumer.createStytchConsumer
 import com.stytch.sdk.consumer.data.ConsumerAuthenticationState
-import com.stytch.sdk.consumer.networking.OtpAuthenticateRequest
-import com.stytch.sdk.consumer.networking.OtpSmsLoginOrCreateRequest
-import com.stytch.sdk.consumer.otp.authenticate
+import com.stytch.sdk.consumer.networking.models.OTPsAuthenticateParameters
+import com.stytch.sdk.consumer.networking.models.OTPsSMSLoginOrCreateParameters
 import com.stytch.sdk.data.StytchAPIResponse
 import com.stytch.sdk.data.StytchClientConfiguration
 import com.stytch.sdk.data.StytchError
+import com.stytch.sdk.oauth.OAuthProviderType
+import com.stytch.sdk.oauth.OAuthStartParameters
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -37,7 +40,7 @@ class MainViewModel(
 
     fun sendSms(phoneNumber: String) {
         val request =
-            OtpSmsLoginOrCreateRequest(
+            OTPsSMSLoginOrCreateParameters(
                 phoneNumber = phoneNumber,
                 expirationMinutes = 5,
             )
@@ -66,24 +69,50 @@ class MainViewModel(
     fun authSms(token: String) {
         val methodId = _state.value.methodId ?: return
         val request =
-            OtpAuthenticateRequest(
+            OTPsAuthenticateParameters(
                 token = token,
                 methodId = methodId,
                 sessionDurationMinutes = 5,
             )
-        try {
-            // let's do this one with a callback, instead of the regular coroutine:
-            stytchConsumerClient.otp.authenticate(request) { response ->
-                // reset the state
+        viewModelScope.launch {
+            try {
+                // let's do this one with a callback, instead of the regular coroutine:
+                val response = stytchConsumerClient.otp.authenticate(request)
                 _state.value =
                     DemoAppState(
                         authenticationState = stytchConsumerClient.authenticationStateFlow.value,
                         rawResponse = response,
                         error = null,
                     )
+            } catch (e: StytchError) {
+                _state.value = _state.value.copy(error = e)
             }
-        } catch (e: StytchError) {
-            _state.value = _state.value.copy(error = e)
+        }
+    }
+
+    fun startOAuth(
+        activity: ComponentActivity,
+        provider: OAuthProviderType,
+    ) {
+        val request =
+            OAuthStartParameters(
+                activity = activity,
+                loginRedirectUrl = "my-login-redirect-url",
+                signupRedirectUrl = "my-signup-redirect-url",
+            )
+        viewModelScope.launch {
+            try {
+                val response =
+                    if (provider == OAuthProviderType.GOOGLE) {
+                        stytchConsumerClient.oauth.google.start(request)
+                    } else {
+                        stytchConsumerClient.oauth.apple.start(request)
+                    } as StytchAPIResponse
+                val x = "https://test.stytch.com/v1/public/oauth/google/start?public_token=public-token-test-13197340-f43a-409b-b9dd-e4a10307913a&code_challenge=NTgwMS03ZDBmLTI4NzMtNTUtMmUtMy01MzktNGMwZjRiLTVhMmUtNWYyMDc3NDAxOC0xZTNlNDYtMWYtMTYzNzBiLWQtMWYtMjczMw%3D%3D&login_redirect_url=com.stytch.mobile.demo%3A%2F%2Foauth%3Furl%3Dmy-login-redirect-url&signup_redirect_url=com.stytch.mobile.demo%3A%2F%2Foauth%3Furl%3Dmy-signup-redirect-url"
+                _state.emit(state.value.copy(rawResponse = response))
+            } catch (e: StytchError) {
+                _state.value = _state.value.copy(error = e)
+            }
         }
     }
 

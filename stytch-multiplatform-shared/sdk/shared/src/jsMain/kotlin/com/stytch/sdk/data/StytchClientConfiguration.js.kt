@@ -18,12 +18,13 @@ public actual class StytchClientConfiguration(
     internal val defaultSessionDuration: Int? = null,
     internal val googleCredentialConfiguration: GoogleCredentialConfiguration? = null,
 ) {
-    public actual fun toInternal(): StytchClientConfigurationInternal =
-        StytchClientConfigurationInternal(
+    public actual fun toInternal(): StytchClientConfigurationInternal {
+        val deviceInfo = Json.decodeFromString<DeviceInfo>(StytchBridge.getDeviceInfo())
+        return StytchClientConfigurationInternal(
             publicToken = publicToken,
             endpointOptions = endpointOptions,
             defaultSessionDuration = defaultSessionDuration ?: DEFAULT_SESSION_DURATION_MINUTES,
-            deviceInfo = Json.decodeFromString<DeviceInfo>(StytchBridge.getDeviceInfo()),
+            deviceInfo = deviceInfo,
             platformPersistenceClient = StytchPlatformPersistenceClient(StytchBridge),
             platform = KMPPlatformType.REACTNATIVE,
             encryptionClient = StytchEncryptionClient(),
@@ -31,6 +32,7 @@ public actual class StytchClientConfiguration(
             captchaProvider = CAPTCHAProviderImpl(),
             passkeyProvider = PasskeyProvider(),
             biometricsProvider = BiometricsProvider(),
-            oAuthProvider = OAuthProvider(googleCredentialConfiguration),
+            oAuthProvider = OAuthProvider(deviceInfo.applicationPackageName, googleCredentialConfiguration),
         )
+    }
 }

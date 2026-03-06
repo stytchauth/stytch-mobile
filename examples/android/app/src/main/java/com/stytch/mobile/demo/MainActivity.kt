@@ -2,6 +2,7 @@ package com.stytch.mobile.demo
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
@@ -43,10 +44,11 @@ import androidx.compose.ui.unit.dp
 import com.stytch.mobile.demo.ui.theme.StytchMobileAndroidDemoTheme
 import com.stytch.sdk.consumer.data.ConsumerAuthenticationState
 import com.stytch.sdk.consumer.networking.AuthenticatedResponse
-import com.stytch.sdk.consumer.networking.OtpSmsLoginOrCreateResponse
-import com.stytch.sdk.consumer.networking.SessionsRevokeResponse
+import com.stytch.sdk.consumer.networking.models.OTPsSMSLoginOrCreateResponse
+import com.stytch.sdk.consumer.networking.models.SessionsRevokeResponse
 import com.stytch.sdk.data.BasicResponse
 import com.stytch.sdk.data.StytchAPIResponse
+import com.stytch.sdk.oauth.OAuthProviderType
 
 class MainActivity : ComponentActivity() {
     private val viewModel: MainViewModel by viewModels { MainViewModel.Factory }
@@ -83,11 +85,16 @@ class MainActivity : ComponentActivity() {
                             }
 
                             is ConsumerAuthenticationState.Unauthenticated -> {
-                                UnauthenticatedStateView(
-                                    step = state.value.step,
-                                    onSendSms = viewModel::sendSms,
-                                    onAuthSms = viewModel::authSms,
-                                )
+                                Column {
+                                    SmsOtpView(
+                                        step = state.value.step,
+                                        onSendSms = viewModel::sendSms,
+                                        onAuthSms = viewModel::authSms,
+                                    )
+                                    OAuthView(
+                                        startOAuth = viewModel::startOAuth,
+                                    )
+                                }
                             }
                         }
                         state.value.rawResponse?.let { response ->
@@ -107,7 +114,21 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun UnauthenticatedStateView(
+fun OAuthView(startOAuth: (ComponentActivity, OAuthProviderType) -> Unit) {
+    val activity = LocalActivity.current as ComponentActivity
+    Column {
+        Text("Testing OAuth...")
+        Button(onClick = { startOAuth(activity, OAuthProviderType.GOOGLE) }) {
+            Text("Google")
+        }
+        Button(onClick = { startOAuth(activity, OAuthProviderType.APPLE) }) {
+            Text("Apple")
+        }
+    }
+}
+
+@Composable
+fun SmsOtpView(
     step: Step,
     onSendSms: (String) -> Unit,
     onAuthSms: (String) -> Unit,
@@ -135,7 +156,7 @@ fun UnauthenticatedStateView(
             }
         }
     }
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column {
         Text("Testing SMS OTP...")
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -167,7 +188,7 @@ private fun StytchAPIResponse.toFriendlyDisplay(): String {
     return buildString {
         append(
             when (response) {
-                OtpSmsLoginOrCreateResponse -> "Code Sent\n"
+                OTPsSMSLoginOrCreateResponse -> "Code Sent\n"
                 is AuthenticatedResponse -> "Logged In\n"
                 SessionsRevokeResponse -> "Logged Out\n"
                 else -> "Got Response\n"
@@ -184,7 +205,7 @@ private fun StytchAPIResponse.toFriendlyDisplay(): String {
                 """.trimIndent(),
             )
         }
-        if (response is OtpSmsLoginOrCreateResponse) {
+        if (response is OTPsSMSLoginOrCreateResponse) {
             append(
                 """
                 method_id:

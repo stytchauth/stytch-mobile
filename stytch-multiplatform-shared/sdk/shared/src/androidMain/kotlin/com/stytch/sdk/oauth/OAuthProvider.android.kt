@@ -1,28 +1,23 @@
 package com.stytch.sdk.oauth
 
-import android.app.Activity.RESULT_OK
 import android.app.Application
-import android.content.Intent
-import android.os.Build
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.credentials.CredentialManager
 import androidx.credentials.GetCredentialRequest
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.stytch.sdk.data.GoogleCredentialConfiguration
 import com.stytch.sdk.data.PublicTokenInfo
-import com.stytch.sdk.data.SSOError
 import com.stytch.sdk.data.StytchDispatchers
 import com.stytch.sdk.oauth.SSOManagerActivity.Companion.URI_KEY
 import com.stytch.sdk.pkce.PKCEClient
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
-import java.io.Serializable
 import kotlin.coroutines.resume
 
 public actual class OAuthProvider(
     private val application: Application,
     internal val googleCredentialConfiguration: GoogleCredentialConfiguration? = null,
+    private val packageName: String,
 ) : IOAuthProvider {
     public actual override val isSupported: Boolean = true
 
@@ -83,43 +78,12 @@ public actual class OAuthProvider(
         publicTokenInfo: PublicTokenInfo,
     ): OAuthResult {
         if (parameters.activity == null) throw MissingActivityException()
-        val uri = generateOAuthStartUrl(baseUrl, publicTokenInfo, parameters, pkceClient)
+        val uri = generateOAuthStartUrl(packageName, baseUrl, publicTokenInfo, parameters, pkceClient)
         return suspendCancellableCoroutine { continuation ->
-            val launcher =
-                parameters.activity.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-                    val token = result.data?.data?.getQueryParameter("token")
-                    val response =
-                        if (result.resultCode == RESULT_OK && token != null) {
-                            OAuthResult.ClassicToken(token = token)
-                        } else {
-                            OAuthResult.Error(
-                                OAuthFailedException(
-                                    resultCode = result.resultCode,
-                                    message =
-                                        if (token == null) {
-                                            "Missing Token"
-                                        } else {
-                                            "SSO/OAuth Failed"
-                                        },
-                                    cause = result.data?.getSerializable("StytchSSOError", SSOError::class.java),
-                                ),
-                            )
-                        }
-                    continuation.resume(response)
-                }
+            SSOManagerActivity.pendingResult = { result -> continuation.resume(result) }
             val intent = SSOManagerActivity.createBaseIntent(parameters.activity)
             intent.putExtra(URI_KEY, uri)
-            launcher.launch(intent)
+            parameters.activity.startActivity(intent)
         }
     }
 }
-
-private fun <T : Serializable?> Intent.getSerializable(
-    key: String,
-    clazz: Class<T>,
-): T? =
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-        this.getSerializableExtra(key, clazz)
-    } else {
-        this.getSerializableExtra(key) as T
-    }

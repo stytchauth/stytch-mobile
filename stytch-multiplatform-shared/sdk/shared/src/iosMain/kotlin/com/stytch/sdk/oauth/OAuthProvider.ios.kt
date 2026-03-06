@@ -22,7 +22,9 @@ import platform.Foundation.NSURLQueryItem
 import platform.darwin.NSObject
 import kotlin.coroutines.resume
 
-public actual class OAuthProvider : IOAuthProvider {
+public actual class OAuthProvider(
+    private val packageName: String,
+) : IOAuthProvider {
     public actual override val isSupported: Boolean = true
 
     public actual override suspend fun getOAuthToken(
@@ -107,7 +109,7 @@ public actual class OAuthProvider : IOAuthProvider {
         publicTokenInfo: PublicTokenInfo,
     ): OAuthResult =
         withContext(dispatchers.ioDispatcher) {
-            val uri = generateOAuthStartUrl(baseUrl, publicTokenInfo, parameters, pkceClient)
+            val uri = generateOAuthStartUrl(packageName, baseUrl, publicTokenInfo, parameters, pkceClient)
             val scheme = getCallbackUrlScheme(parameters)
             withContext(dispatchers.mainDispatcher) {
                 suspendCancellableCoroutine { continuation ->

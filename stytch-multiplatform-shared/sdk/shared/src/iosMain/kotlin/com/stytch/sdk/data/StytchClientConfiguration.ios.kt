@@ -46,7 +46,7 @@ public actual class StytchClientConfiguration(
             captchaProvider = CAPTCHAProviderImpl(),
             passkeyProvider = PasskeyProvider(),
             biometricsProvider = BiometricsProvider(encryptionClient, platformPersistenceClient),
-            oAuthProvider = OAuthProvider(),
+            oAuthProvider = OAuthProvider(NSBundle.mainBundle.bundleIdentifier ?: "unknown_bundle_id"),
         )
     }
 }

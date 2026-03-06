@@ -9,6 +9,7 @@ import kotlinx.coroutines.await
 import kotlinx.serialization.json.Json
 
 public actual class OAuthProvider(
+    private val packageName: String,
     private val googleCredentialConfiguration: GoogleCredentialConfiguration? = null,
 ) : IOAuthProvider {
     public actual override val isSupported: Boolean = true
@@ -33,6 +34,7 @@ public actual class OAuthProvider(
                     type = Json.encodeToString(type),
                     baseUrl = baseUrl,
                     publicToken = publicTokenInfo.publicToken,
+                    packageName = packageName,
                     googleCredentialConfiguration = Json.encodeToString(googleCredentialConfiguration),
                 ).await()
         return Json.decodeFromString(result)

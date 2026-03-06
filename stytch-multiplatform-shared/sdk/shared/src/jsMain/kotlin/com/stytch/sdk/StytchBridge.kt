@@ -115,6 +115,7 @@ public external object StytchBridge {
         type: String,
         baseUrl: String,
         publicToken: String,
+        packageName: String,
         googleCredentialConfiguration: String?,
     ): Promise<String>
 }
