@@ -108,7 +108,6 @@ class MainViewModel(
                     } else {
                         stytchConsumerClient.oauth.apple.start(request)
                     } as StytchAPIResponse
-                val x = "https://test.stytch.com/v1/public/oauth/google/start?public_token=public-token-test-13197340-f43a-409b-b9dd-e4a10307913a&code_challenge=NTgwMS03ZDBmLTI4NzMtNTUtMmUtMy01MzktNGMwZjRiLTVhMmUtNWYyMDc3NDAxOC0xZTNlNDYtMWYtMTYzNzBiLWQtMWYtMjczMw%3D%3D&login_redirect_url=com.stytch.mobile.demo%3A%2F%2Foauth%3Furl%3Dmy-login-redirect-url&signup_redirect_url=com.stytch.mobile.demo%3A%2F%2Foauth%3Furl%3Dmy-signup-redirect-url"
                 _state.emit(state.value.copy(rawResponse = response))
             } catch (e: StytchError) {
                 _state.value = _state.value.copy(error = e)

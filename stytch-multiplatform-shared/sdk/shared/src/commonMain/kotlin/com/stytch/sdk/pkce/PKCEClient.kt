@@ -10,18 +10,17 @@ public class PKCEClient(
     private val persistenceClient: StytchPersistenceClient,
 ) {
     public suspend fun create(): PKCECodePair {
-        val codeVerifierData = encryptionClient.generateCodeVerifier()
-        val codeVerifierString = codeVerifierData.encodeBase64()
+        val codeVerifier = encryptionClient.generateCodeVerifier().encodeBase64().stytchUrlEncode()
         val codeChallenge =
             encryptionClient
-                .generateCodeChallenge(codeVerifierData)
-                .joinToString("") { it.toInt().toString(16).padStart(2, '0') }
+                .generateCodeChallenge(codeVerifier.encodeToByteArray())
                 .encodeBase64()
+                .stytchUrlEncode()
         persistenceClient.save(PKCE_CODE_CHALLENGE_KEY, codeChallenge)
-        persistenceClient.save(PKCE_CODE_VERIFIER_KEY, codeVerifierString)
+        persistenceClient.save(PKCE_CODE_VERIFIER_KEY, codeVerifier)
         return PKCECodePair(
             challenge = codeChallenge,
-            verifier = codeVerifierString,
+            verifier = codeVerifier,
         )
     }
 
@@ -41,3 +40,9 @@ public class PKCEClient(
         private const val PKCE_CODE_VERIFIER_KEY = "PKCE_CODE_VERIFIER"
     }
 }
+
+private fun String.stytchUrlEncode(): String =
+    this
+        .replace("+", "-")
+        .replace("/", "_")
+        .replace("=", "")
