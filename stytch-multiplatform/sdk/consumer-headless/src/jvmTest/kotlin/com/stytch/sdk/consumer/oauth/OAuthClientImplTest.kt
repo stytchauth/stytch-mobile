@@ -17,8 +17,8 @@ import com.stytch.sdk.data.StytchDataResponse
 import com.stytch.sdk.oauth.IOAuthProvider
 import com.stytch.sdk.oauth.OAuthException
 import com.stytch.sdk.oauth.OAuthResult
-import com.stytch.sdk.pkce.MissingPKCEException
 import com.stytch.sdk.oauth.OAuthStartParameters
+import com.stytch.sdk.pkce.MissingPKCEException
 import com.stytch.sdk.pkce.PKCEClient
 import io.mockk.coEvery
 import io.mockk.coVerify

@@ -3,7 +3,6 @@ package com.stytch.sdk.dfp
 import com.stytch.sdk.data.DFPConfiguration
 import com.stytch.sdk.data.DFPProtectedAuthMode
 import com.stytch.sdk.data.StytchAPIError
-import com.stytch.sdk.data.StytchDataResponse
 import de.jensklingenberg.ktorfit.annotations
 import io.ktor.client.call.HttpClientCall
 import io.ktor.client.call.body

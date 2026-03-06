@@ -17,7 +17,6 @@ import com.stytch.sdk.consumer.networking.models.OTPsSMSSendSecondaryResponse
 import com.stytch.sdk.consumer.networking.models.OTPsWhatsAppLoginOrCreateResponse
 import com.stytch.sdk.consumer.networking.models.OTPsWhatsAppSendSecondaryResponse
 import com.stytch.sdk.consumer.networking.models.toNetworkModel
-import com.stytch.sdk.data.StytchAPIError
 import com.stytch.sdk.data.StytchDispatchers
 import com.stytch.sdk.data.StytchError
 import kotlinx.coroutines.withContext

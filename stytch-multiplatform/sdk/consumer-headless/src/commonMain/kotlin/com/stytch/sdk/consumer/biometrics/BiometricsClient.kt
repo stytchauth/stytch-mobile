@@ -16,7 +16,6 @@ import com.stytch.sdk.consumer.networking.models.toNetworkModel
 import com.stytch.sdk.data.StytchDispatchers
 import com.stytch.sdk.data.StytchError
 import com.stytch.sdk.encryption.StytchEncryptionClient
-import com.stytch.sdk.utils.stytchUrlEncode
 import io.ktor.util.encodeBase64
 import kotlinx.coroutines.withContext
 import kotlin.coroutines.cancellation.CancellationException

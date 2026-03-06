@@ -19,6 +19,7 @@ public class StytchAPIError(
     init {
         fixJsErrorMessage(errorMessage)
     }
+
     public fun isUnrecoverableError(): Boolean =
         errorType in
             listOf(
