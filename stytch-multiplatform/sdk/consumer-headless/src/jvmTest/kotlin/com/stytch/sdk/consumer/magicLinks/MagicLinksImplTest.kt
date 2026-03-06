@@ -10,6 +10,7 @@ import com.stytch.sdk.consumer.networking.models.MagicLinksEmailSendSecondaryPar
 import com.stytch.sdk.consumer.networking.models.MagicLinksEmailSendSecondaryRequest
 import com.stytch.sdk.data.PKCECodePair
 import com.stytch.sdk.data.StytchDataResponse
+import com.stytch.sdk.pkce.MissingPKCEException
 import com.stytch.sdk.pkce.PKCEClient
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -51,7 +52,7 @@ internal class MagicLinksImplTest : ConsumerClientTest() {
         runTest(testDispatcher) {
             coEvery { pkceClient.retrieve() } returns null
 
-            assertFailsWith<IllegalStateException> {
+            assertFailsWith<MissingPKCEException> {
                 client.authenticate(MagicLinksAuthenticateParameters(token = "tok", sessionDurationMinutes = 30))
             }
         }

@@ -17,6 +17,7 @@ import com.stytch.sdk.consumer.networking.models.PasswordsStrengthCheckParameter
 import com.stytch.sdk.consumer.networking.models.PasswordsStrengthCheckRequest
 import com.stytch.sdk.data.PKCECodePair
 import com.stytch.sdk.data.StytchDataResponse
+import com.stytch.sdk.pkce.MissingPKCEException
 import com.stytch.sdk.pkce.PKCEClient
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -103,7 +104,7 @@ internal class PasswordsClientImplTest : ConsumerClientTest() {
         runTest(testDispatcher) {
             coEvery { pkceClient.retrieve() } returns null
 
-            assertFailsWith<IllegalStateException> {
+            assertFailsWith<MissingPKCEException> {
                 client.resetByEmail(PasswordsEmailResetParameters(token = "reset-tok", password = "newP@ss", sessionDurationMinutes = 30))
             }
         }
