@@ -3,6 +3,7 @@ package com.stytch.sdk.pkce
 import com.stytch.sdk.data.PKCECodePair
 import com.stytch.sdk.encryption.StytchEncryptionClient
 import com.stytch.sdk.persistence.StytchPersistenceClient
+import com.stytch.sdk.utils.stytchUrlEncode
 import io.ktor.util.encodeBase64
 
 public class PKCEClient(
@@ -40,9 +41,3 @@ public class PKCEClient(
         private const val PKCE_CODE_VERIFIER_KEY = "PKCE_CODE_VERIFIER"
     }
 }
-
-private fun String.stytchUrlEncode(): String =
-    this
-        .replace("+", "-")
-        .replace("/", "_")
-        .replace("=", "")

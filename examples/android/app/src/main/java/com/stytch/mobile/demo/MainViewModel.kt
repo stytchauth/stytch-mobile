@@ -1,7 +1,7 @@
 package com.stytch.mobile.demo
 
-import android.app.Activity
 import androidx.activity.ComponentActivity
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.AP
 import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
+import com.stytch.sdk.biometrics.BiometricsParameters
 import com.stytch.sdk.consumer.StytchConsumer
 import com.stytch.sdk.consumer.createStytchConsumer
 import com.stytch.sdk.consumer.data.ConsumerAuthenticationState
@@ -128,6 +129,20 @@ class MainViewModel(
             } catch (e: StytchError) {
                 _state.emit(_state.value.copy(error = e))
             }
+        }
+    }
+
+    fun registerBiometrics(context: FragmentActivity) {
+        viewModelScope.launch {
+            val request = BiometricsParameters(context = context, sessionDurationMinutes = 30)
+            stytchConsumerClient.biometrics.register(request)
+        }
+    }
+
+    fun authenticateBiometrics(context: FragmentActivity) {
+        viewModelScope.launch {
+            val request = BiometricsParameters(context = context, sessionDurationMinutes = 30)
+            stytchConsumerClient.biometrics.authenticate(request)
         }
     }
 

@@ -17,11 +17,20 @@ struct ContentView: View {
             case .loading:
                 Text("Loading...")
             case .unauthenticated:
-                UnauthenticatedStateView(
-                    step: viewModel.state.step,
-                    sendSms: viewModel.sendSms(phoneNumber:),
-                    authSms: viewModel.authSms(token:)
-                )
+                VStack {
+                    Button("Google OAuth") {
+                        viewModel.googleOauth()
+                    }
+                    Button("Apple OAuth") {
+                        viewModel.appleOauth()
+                    }
+                    Button("Register Biometrics") {
+                        viewModel.registerBiometrics()
+                    }
+                    Button("Auth Biometrics") {
+                        viewModel.authBiometrics()
+                    }
+                }
             case .authenticated:
                 Text("Authenticated!")
                 Button("Logout") {
@@ -127,6 +136,53 @@ extension ContentView {
                 let response = try await consumerClient.session.revoke()
             } catch (let error) {
                 state.error = error as? StytchError
+            }
+        }
+        
+        func googleOauth() {
+            Task {
+                do {
+                    let params: OAuthStartParameters = .init(loginRedirectUrl: "login", signupRedirectUrl: "signup")
+                    let response = try await consumerClient.oauth.google.start(startParameters: params)
+                    print(response)
+                } catch (let error) {
+                    print(error)
+                    print(error as? StytchError ?? "Not stytch error")
+                    print(error as? OAuthException ?? "Not oauth exception")
+                }
+            }
+        }
+        
+        func appleOauth() {
+            Task {
+                do {
+                    let params: OAuthStartParameters = .init(loginRedirectUrl: "login", signupRedirectUrl: "signup")
+                    let response = try await consumerClient.oauth.apple.start(startParameters: params)
+                    print(response)
+                } catch (let error) {
+                    print(error)
+                }
+            }
+        }
+        
+        func registerBiometrics() {
+            Task {
+                do {
+                    let response = try await consumerClient.biometrics.register(parameters: .init(sessionDurationMinutes: 5, promptData: .init(reason: "Test", fallbackTitle: "Cancel", cancelTitle: "Cancel")))
+                    print(response)
+                } catch (let error) {
+                    print(error)
+                }
+            }
+        }
+        func authBiometrics() {
+            Task {
+                do {
+                    let response = try await consumerClient.biometrics.authenticate(parameters: .init(sessionDurationMinutes: 5, promptData: .init(reason: "Test", fallbackTitle: "Cancel", cancelTitle: "Cancel")))
+                    print(response)
+                } catch (let error) {
+                    print(error)
+                }
             }
         }
     }

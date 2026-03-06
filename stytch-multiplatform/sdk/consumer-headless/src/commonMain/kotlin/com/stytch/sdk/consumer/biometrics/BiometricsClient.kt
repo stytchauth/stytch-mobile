@@ -16,6 +16,7 @@ import com.stytch.sdk.consumer.networking.models.toNetworkModel
 import com.stytch.sdk.data.StytchDispatchers
 import com.stytch.sdk.data.StytchError
 import com.stytch.sdk.encryption.StytchEncryptionClient
+import com.stytch.sdk.utils.stytchUrlEncode
 import io.ktor.util.encodeBase64
 import kotlinx.coroutines.withContext
 import kotlin.coroutines.cancellation.CancellationException
@@ -96,7 +97,9 @@ internal class BiometricsClientImpl(
             networkingClient.request {
                 val startResponse =
                     networkingClient.api.biometricsAuthenticateStart(
-                        BiometricsAuthenticateStartParameters().toNetworkModel(publicKey = keyPair.publicKey.encodeBase64()),
+                        BiometricsAuthenticateStartParameters().toNetworkModel(
+                            publicKey = keyPair.publicKey.encodeBase64(),
+                        ),
                     )
                 val signature =
                     encryptionClient

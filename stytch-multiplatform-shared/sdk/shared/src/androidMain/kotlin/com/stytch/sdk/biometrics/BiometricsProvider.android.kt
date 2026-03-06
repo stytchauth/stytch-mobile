@@ -57,7 +57,7 @@ public actual class BiometricsProvider(
                 if (errorEncounteredWhenGeneratingKey) {
                     return BiometricsAvailability.Unavailable("Error encountered when attempting to generate secret key")
                 }
-                when (keyStore.containsAlias(BIOMETRIC_KEY_NAME)) {
+                when (persistenceClient.getData(BIOMETRIC_REGISTRATION_PRIVATE_KEY_KEY) != null) {
                     true -> BiometricsAvailability.AlreadyRegistered
                     false -> BiometricsAvailability.Available
                 }

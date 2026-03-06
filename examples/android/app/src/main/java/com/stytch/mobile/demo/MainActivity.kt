@@ -41,6 +41,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.fragment.app.FragmentActivity
 import com.stytch.mobile.demo.ui.theme.StytchMobileAndroidDemoTheme
 import com.stytch.sdk.consumer.data.ConsumerAuthenticationState
 import com.stytch.sdk.consumer.networking.AuthenticatedResponse
@@ -50,7 +51,7 @@ import com.stytch.sdk.data.BasicResponse
 import com.stytch.sdk.data.StytchAPIResponse
 import com.stytch.sdk.oauth.OAuthProviderType
 
-class MainActivity : ComponentActivity() {
+class MainActivity : FragmentActivity() {
     private val viewModel: MainViewModel by viewModels { MainViewModel.Factory }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -58,6 +59,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             val state = viewModel.state.collectAsState()
+            val fragmentActivity = LocalActivity.current as FragmentActivity
 
             StytchMobileAndroidDemoTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
@@ -81,6 +83,12 @@ class MainActivity : ComponentActivity() {
                                 Text("Authenticated!")
                                 Button(onClick = viewModel::logout) {
                                     Text("Logout")
+                                }
+                                Button(onClick = { viewModel.registerBiometrics(fragmentActivity) }) {
+                                    Text("Register Biometrics")
+                                }
+                                Button(onClick = { viewModel.authenticateBiometrics(fragmentActivity) }) {
+                                    Text("Authenticate Biometrics")
                                 }
                             }
 
