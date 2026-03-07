@@ -31,44 +31,50 @@ public actual class PasskeyProvider : IPasskeyProvider {
         parameters: PasskeysParameters,
         dispatchers: StytchDispatchers,
         json: String,
-    ): String {
-        val platformProvider = ASAuthorizationPlatformPublicKeyCredentialProvider(relyingPartyIdentifier = parameters.domain)
-        val request = jsonProvider.decodeFromString<PasskeysRegisterResponse>(json)
-        val credentialRequest =
-            platformProvider.createCredentialRegistrationRequestWithChallenge(
-                challenge = request.challenge.encodeToByteArray().toNSData(),
-                name = request.user.displayName,
-                userID =
-                    request.user.id
-                        .encodeToByteArray()
-                        .toNSData(),
-            )
-        val credential =
-            getCredentialResponse(
-                listOf(credentialRequest),
-                parameters.preferImmediatelyAvailableCredentials,
-            ) as ASAuthorizationPublicKeyCredentialRegistrationProtocol ?: throw InvalidPasskeyCredentialError()
-        return credential.rawClientDataJSON.base64Encoding()
-    }
+    ): String =
+        try {
+            val platformProvider = ASAuthorizationPlatformPublicKeyCredentialProvider(relyingPartyIdentifier = parameters.domain)
+            val request = jsonProvider.decodeFromString<PasskeysRegisterResponse>(json)
+            val credentialRequest =
+                platformProvider.createCredentialRegistrationRequestWithChallenge(
+                    challenge = request.challenge.encodeToByteArray().toNSData(),
+                    name = request.user.displayName,
+                    userID =
+                        request.user.id
+                            .encodeToByteArray()
+                            .toNSData(),
+                )
+            val credential =
+                getCredentialResponse(
+                    listOf(credentialRequest),
+                    parameters.preferImmediatelyAvailableCredentials,
+                ) as ASAuthorizationPublicKeyCredentialRegistrationProtocol ?: throw InvalidPasskeyCredentialError()
+            credential.rawClientDataJSON.base64Encoding()
+        } catch (e: Throwable) {
+            throw PasskeysException(e)
+        }
 
     public actual override suspend fun getPublicKeyCredential(
         parameters: PasskeysParameters,
         dispatchers: StytchDispatchers,
         json: String,
-    ): String {
-        val platformProvider = ASAuthorizationPlatformPublicKeyCredentialProvider(relyingPartyIdentifier = parameters.domain)
-        val request = jsonProvider.decodeFromString<PasskeysAuthenticateResponse>(json)
-        val credentialRequest =
-            platformProvider.createCredentialAssertionRequestWithChallenge(
-                challenge = request.challenge.encodeToByteArray().toNSData(),
-            )
-        val credential =
-            getCredentialResponse(
-                listOf(credentialRequest),
-                parameters.preferImmediatelyAvailableCredentials,
-            ) as ASAuthorizationPublicKeyCredentialAssertionProtocol ?: throw InvalidPasskeyCredentialError()
-        return credential.rawClientDataJSON.base64Encoding()
-    }
+    ): String =
+        try {
+            val platformProvider = ASAuthorizationPlatformPublicKeyCredentialProvider(relyingPartyIdentifier = parameters.domain)
+            val request = jsonProvider.decodeFromString<PasskeysAuthenticateResponse>(json)
+            val credentialRequest =
+                platformProvider.createCredentialAssertionRequestWithChallenge(
+                    challenge = request.challenge.encodeToByteArray().toNSData(),
+                )
+            val credential =
+                getCredentialResponse(
+                    listOf(credentialRequest),
+                    parameters.preferImmediatelyAvailableCredentials,
+                ) as ASAuthorizationPublicKeyCredentialAssertionProtocol ?: throw InvalidPasskeyCredentialError()
+            credential.rawClientDataJSON.base64Encoding()
+        } catch (e: Throwable) {
+            throw PasskeysException(e)
+        }
 
     private suspend fun getCredentialResponse(
         requests: List<ASAuthorizationRequest>,

@@ -122,6 +122,7 @@ internal class OAuthClientImpl(
         request: IOAuthAppleIDTokenAuthenticateParameters,
     ): OAuthGoogleIDTokenAuthenticateResponse =
         withContext(dispatchers.ioDispatcher) {
+            println("JORDAN >>>> attempting apple authentication")
             networkingClient.request {
                 networkingClient.api.oAuthAppleIDTokenAuthenticate(request.toNetworkModel())
             }
@@ -163,6 +164,7 @@ internal class OAuthClientImpl(
             val host =
                 "https://${cnameDomain() ?: if (publicTokenInfo.isTestToken) endpointOptions.testDomain else endpointOptions.liveDomain}/v1/"
             val baseUrl = "${host}public/oauth/${provider.hostName}/start"
+            println("JORDAN >>>> about to launch OUATH")
             val response =
                 oauthProvider.getOAuthToken(
                     pkceClient = pkceClient,
@@ -172,6 +174,7 @@ internal class OAuthClientImpl(
                     baseUrl = baseUrl,
                     publicTokenInfo = publicTokenInfo,
                 )
+            println("JORDAN >>> OAUTH RESPONSE = $response")
             return@withContext when (response) {
                 is OAuthResult.ClassicToken -> {
                     authenticate(

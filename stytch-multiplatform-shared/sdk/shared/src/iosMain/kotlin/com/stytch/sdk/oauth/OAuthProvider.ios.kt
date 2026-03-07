@@ -39,6 +39,7 @@ public actual class OAuthProvider(
         publicTokenInfo: PublicTokenInfo,
     ): OAuthResult =
         if (type == OAuthProviderType.APPLE) {
+            println("JORDAN >>>> LAUNCH SIWA")
             attemptAppleIdTokenAuthentication(pkceClient, parameters, dispatchers)
         } else {
             attemptStandardOAuthAuthentication(pkceClient, parameters, dispatchers, baseUrl, publicTokenInfo)
@@ -55,11 +56,14 @@ public actual class OAuthProvider(
             val request = provider.createRequest()
             request.requestedScopes = listOf(ASAuthorizationScopeEmail, ASAuthorizationScopeFullName)
             request.nonce = nonce
-            val controller = ASAuthorizationController(authorizationRequests = listOf(request))
-            controller.presentationContextProvider = parameters.applePresentationContextProvider ?: DefaultPresenterContext()
             withContext(dispatchers.mainDispatcher) {
+                println("JORDAN ON MAIN THREAD")
                 suspendCancellableCoroutine { continuation ->
+                    val controller = ASAuthorizationController(authorizationRequests = listOf(request))
+                    controller.presentationContextProvider = parameters.applePresentationContextProvider ?: DefaultPresenterContext()
+                    println("JORDAN SET DELEGATE")
                     controller.delegate = AppleIdTokenDelegate(nonce, continuation)
+                    println("JORDAN DO IT TO EM")
                     controller.performRequests()
                 }
             }
@@ -74,19 +78,23 @@ public actual class OAuthProvider(
             controller: ASAuthorizationController,
             didCompleteWithAuthorization: ASAuthorization,
         ) {
+            println("JORDAN >>>>>> SIWA SUCCESS 1")
             val credential =
                 didCompleteWithAuthorization.credential as? ASAuthorizationAppleIDCredential ?: return continuation.resume(
                     OAuthResult.Error(InvalidAuthorizationCredential()),
                 )
+            println("JORDAN >>>>>> SIWA SUCCESS 2")
             val idToken =
                 credential.identityToken?.toString()
                     ?: return continuation.resume(OAuthResult.Error(MissingAuthorizationCredentialIDToken()))
+            println("JORDAN >>>>>> SIWA SUCCESS 3")
             val name =
                 listOf(
                     credential.fullName?.givenName,
                     credential.fullName?.middleName,
                     credential.fullName?.familyName,
                 ).joinToString(" ")
+            println("JORDAN >>>>>> SIWA SUCCESS 4")
             continuation.resume(
                 OAuthResult.IDToken(
                     token = idToken,
@@ -100,6 +108,7 @@ public actual class OAuthProvider(
             controller: ASAuthorizationController,
             didCompleteWithError: NSError,
         ) {
+            println("JORDAN >>>>>>>>> SIWA ERROR 1")
             continuation.resume(OAuthResult.Error(SSOError.UnknownError(didCompleteWithError.localizedDescription)))
         }
     }
