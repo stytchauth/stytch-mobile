@@ -33,7 +33,7 @@ public actual class PasskeyProvider : IPasskeyProvider {
         json: String,
     ): String {
         val platformProvider = ASAuthorizationPlatformPublicKeyCredentialProvider(relyingPartyIdentifier = parameters.domain)
-        val request = jsonProvider.decodeFromString<PasskeysStartResponse>(json)
+        val request = jsonProvider.decodeFromString<PasskeysRegisterResponse>(json)
         val credentialRequest =
             platformProvider.createCredentialRegistrationRequestWithChallenge(
                 challenge = request.challenge.encodeToByteArray().toNSData(),
@@ -57,7 +57,7 @@ public actual class PasskeyProvider : IPasskeyProvider {
         json: String,
     ): String {
         val platformProvider = ASAuthorizationPlatformPublicKeyCredentialProvider(relyingPartyIdentifier = parameters.domain)
-        val request = jsonProvider.decodeFromString<PasskeysStartResponse>(json)
+        val request = jsonProvider.decodeFromString<PasskeysAuthenticateResponse>(json)
         val credentialRequest =
             platformProvider.createCredentialAssertionRequestWithChallenge(
                 challenge = request.challenge.encodeToByteArray().toNSData(),

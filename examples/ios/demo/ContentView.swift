@@ -30,6 +30,9 @@ struct ContentView: View {
                     Button("Auth Passkey") {
                         viewModel.authPasskey()
                     }
+                    Button("Delete biometrics") {
+                        viewModel.deleteBiometrics()
+                    }
                 }
             case .authenticated:
                 Text("Authenticated!")
@@ -192,7 +195,7 @@ extension ContentView {
         func registerPasskey() {
             Task {
                 do {
-                    let response = try await consumerClient.passkeys.register(parameters: .init(domain: "jordanhaven.dev"))
+                    let response = try await consumerClient.passkeys.register(parameters: .init(domain: "stytch.com"))
                     print(response)
                 } catch (let error) {
                     print(error.asStytchError?.cause ?? "UNKNOWN")
@@ -202,7 +205,17 @@ extension ContentView {
         func authPasskey() {
             Task {
                 do {
-                    let response = try await consumerClient.passkeys.authenticate(parameters: .init(domain: "jordanhaven.dev"))
+                    let response = try await consumerClient.passkeys.authenticate(parameters: .init(domain: "stytch.com"))
+                    print(response)
+                } catch (let error) {
+                    print(error.asStytchError?.cause ?? "UNKNOWN")
+                }
+            }
+        }
+        func deleteBiometrics() {
+            Task {
+                do {
+                    let response = try await consumerClient.biometrics.removeRegistration()
                     print(response)
                 } catch (let error) {
                     print(error.asStytchError?.cause ?? "UNKNOWN")

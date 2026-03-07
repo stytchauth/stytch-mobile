@@ -3,7 +3,7 @@ package com.stytch.sdk.passkeys
 import kotlinx.serialization.Serializable
 
 @Serializable
-public data class PasskeysStartResponse(
+public data class PasskeysRegisterResponse(
     public val challenge: String,
     public val user: PasskeysUser,
 )

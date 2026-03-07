@@ -93,11 +93,4 @@ main() {
     echo "Done."
 }
 
-test() {
-    cd $SHARED_WORKING_DIR
-    ./gradlew :sdk:shared:publishToMavenLocal
-    cd $MAIN_WORKING_DIR
-    ./gradlew :sdk:consumer-headless:publishToMavenLocal --rerun-tasks
-}
-
-test
+main
