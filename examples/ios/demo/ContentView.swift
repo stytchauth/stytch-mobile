@@ -7,6 +7,7 @@
 import Combine
 import SwiftUI
 import StytchConsumerSDK
+import Security
 
 struct ContentView: View {
     @State private var viewModel = ViewModel()
@@ -32,6 +33,9 @@ struct ContentView: View {
                     }
                     Button("Delete biometrics") {
                         viewModel.deleteBiometrics()
+                    }
+                    Button("Dump keychain") {
+                        viewModel.dump()
                     }
                 }
             case .authenticated:
@@ -101,7 +105,7 @@ extension ContentView {
         private let config: StytchClientConfiguration = .init(publicToken: ProcessInfo.processInfo.environment["STYTCH_PUBLIC_TOKEN"] ?? "")
         private let consumerClient: StytchConsumer
         var state: ContentViewState = .init()
-
+        
         init() {
             consumerClient = createStytchConsumer(configuration: config)
             Task {
@@ -109,6 +113,10 @@ extension ContentView {
                     state.authenticationState = authenticationState
                 }
             }
+        }
+        
+        func dump() {
+            printKeychainItems()
         }
         
         func sendSms(phoneNumber: String) async {
@@ -236,4 +244,62 @@ struct ContentViewState {
 enum Step {
     case phoneNumber
     case token
+}
+
+
+
+enum SecClass: String, CaseIterable {
+    // Available keychain item classes:
+    // https://developer.apple.com/documentation/security/keychain_services/keychain_items/item_class_keys_and_values#1678477
+    
+    case genericPassword
+    case internetPassword
+    case certificate
+    case key
+    case identity
+    
+    var cfString: CFString {
+        switch self {
+        case .genericPassword:
+            return kSecClassGenericPassword
+        case .internetPassword:
+            return kSecClassInternetPassword
+        case .certificate:
+            return kSecClassCertificate
+        case .key:
+            return kSecClassKey
+        case .identity:
+            return kSecClassIdentity
+        }
+    }
+}
+
+func printKeychainItems() {
+    SecClass.allCases.forEach { secClass in
+        let searchQuery = [
+            kSecClass: secClass.cfString,
+            kSecMatchLimit: kSecMatchLimitAll,
+            kSecReturnAttributes: true,
+        ] as CFDictionary
+        
+        var result: CFTypeRef?
+        let status = SecItemCopyMatching(searchQuery, &result)
+        
+        switch status {
+        case errSecItemNotFound:
+            print("No items of class \(secClass.rawValue) in keychain")
+        case errSecSuccess:
+            let items = result as? [[CFString : Any]] ?? []
+            print("\(items.count) items of class \(secClass.rawValue):")
+            items.forEach { item in
+                print("Access group:", item[kSecAttrAccessGroup] ?? "")
+                print("Service:", item[kSecAttrService] ?? "")
+                print("Account:", item[kSecAttrAccount] ?? "")
+                print("Description:", item[kSecAttrDescription] ?? "")
+                print("Available attributes:", item.keys)
+            }
+        default:
+            print("Something went wrong")
+        }
+    }
 }

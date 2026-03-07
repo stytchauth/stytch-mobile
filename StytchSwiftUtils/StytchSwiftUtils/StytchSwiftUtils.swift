@@ -7,13 +7,13 @@ internal import StytchDFP
 public class StytchEncryptionManagerSwift: NSObject {
     @MainActor @objc public static let shared = StytchEncryptionManagerSwift()
 
-    @objc public func getEncryptionKey(name: String) -> Data {
+    @objc public func getEncryptionKey(name: String) throws -> Data {
         let existingKeyData = getKeyDataFromKeychain(name: name)
         guard let existingKeyData = existingKeyData else {
             let newKeyData = SymmetricKey(size: .bits256).withUnsafeBytes {
                 Data(Array($0))
             }
-            persistNewKeyDataToKeychain(name: name, newKeyData: newKeyData)
+            try persistNewKeyDataToKeychain(name: name, newKeyData: newKeyData)
             return newKeyData
         }
         return existingKeyData
@@ -45,22 +45,44 @@ public class StytchEncryptionManagerSwift: NSObject {
         // TODO: validate status, handle failures
     }
 
-    @objc public func persistBiometricKeyData(name: String, keyData: Data) {
+    @objc public func persistBiometricKeyData(name: String, keyData: Data) throws {
         var error: Unmanaged<CFError>?
-        defer {
-            error?.release()
+        guard let accessControl = SecAccessControlCreateWithFlags(
+          nil,
+          kSecAttrAccessibleWhenPasscodeSetThisDeviceOnly,
+          [.biometryCurrentSet],
+          &error
+        ) else {
+          throw error?.takeRetainedValue() ?? NSError(
+              domain: "com.stytch.swift.encryption", code: 0,
+              userInfo: ["Error": "Failed to create access control"]
+          )
         }
-        let accessControl = SecAccessControlCreateWithFlags(nil, kSecAttrAccessibleWhenPasscodeSetThisDeviceOnly, [.biometryCurrentSet], &error)
-        persistNewKeyDataToKeychain(name: name, newKeyData: keyData, accessControl: accessControl)
+        var query = baseKeyQuery(name: name)
+        query[kSecValueData] = keyData
+        query[kSecAttrAccessControl] = accessControl
+        let status = SecItemAdd(query as CFDictionary, nil)
+        if status != errSecSuccess {
+          throw NSError(
+              domain: "com.stytch.swift.encryption", code: Int(status),
+              userInfo: ["Error Saving Key": "Status=\(status)"]
+          )
+        }
     }
 
-    @objc public func getBiometricKeyData(name: String) -> Data? {
-        var error: Unmanaged<CFError>?
-        defer {
-            error?.release()
+    @objc public func getBiometricKeyData(name: String) throws -> Data {
+        var query = baseKeyQuery(name: name)
+        query[kSecReturnData] = true
+        query[kSecMatchLimit] = kSecMatchLimitOne
+        var ref: CFTypeRef?
+        let status = SecItemCopyMatching(query as CFDictionary, &ref)
+        guard status == errSecSuccess, let data = ref as? Data else {
+          throw NSError(
+              domain: "com.stytch.swift.encryption", code: Int(status),
+              userInfo: ["BiometricKeyException": status == errSecItemNotFound ? "Key not found" : "Status=\(status)"]
+          )
         }
-        let accessControl = SecAccessControlCreateWithFlags(nil, kSecAttrAccessibleWhenPasscodeSetThisDeviceOnly, [.biometryCurrentSet], &error)
-        return getKeyDataFromKeychain(name: name, accessControl: accessControl)
+        return data
     }
 
     @objc public func generateCodeVerifier() -> Data {
@@ -89,8 +111,8 @@ public class StytchEncryptionManagerSwift: NSObject {
         return try Curve25519.Signing.PrivateKey(rawRepresentation: privateKeyData).publicKey.rawRepresentation
     }
 
-    private func getKeyDataFromKeychain(name: String, accessControl: SecAccessControl? = nil) -> Data? {
-        var query = baseKeyQuery(name: name).merging(
+    private func getKeyDataFromKeychain(name: String) -> Data? {
+        let query = baseKeyQuery(name: name).merging(
             [
                 kSecReturnData: true,
                 kSecReturnAttributes: true,
@@ -98,12 +120,9 @@ public class StytchEncryptionManagerSwift: NSObject {
                 kSecAttrSynchronizable: kSecAttrSynchronizableAny,
                 kSecUseAuthenticationUI: kSecUseAuthenticationUISkip,
             ]
-        ) { $1 } as [CFString: Any]
-        if let accessControl = accessControl {
-            query[kSecAttrAccessControl] = accessControl
-        }
+        ) { $1 } as CFDictionary
         var ref: CFTypeRef?
-        let status = SecItemCopyMatching(query as CFDictionary, &ref)
+        let status = SecItemCopyMatching(query, &ref)
         return if status == errSecSuccess, let result = ref, CFGetTypeID(result) == CFDictionaryGetTypeID() {
             result[kSecValueData] as? Data
         } else {
@@ -111,18 +130,17 @@ public class StytchEncryptionManagerSwift: NSObject {
         }
     }
 
-    private func persistNewKeyDataToKeychain(name: String, newKeyData: Data, accessControl: SecAccessControl? = nil) {
-        var query = baseKeyQuery(name: name).merging(
+    private func persistNewKeyDataToKeychain(name: String, newKeyData: Data) throws {
+        let query = baseKeyQuery(name: name).merging(
             [
                 kSecValueData: newKeyData,
                 kSecAttrAccessible: kSecAttrAccessibleAfterFirstUnlock,
             ]
-        ) { $1 } as [CFString: Any]
-        if let accessControl = accessControl {
-            query[kSecAttrAccessControl] = accessControl
+        ) { $1 } as CFDictionary
+        let status = SecItemAdd(query, nil)
+        if status != errSecSuccess {
+            throw NSError(domain: "com.stytch.swift.encryption", code: 0, userInfo: ["Error Saving Key": "Status=\(status)"])
         }
-        let status = SecItemAdd(query as CFDictionary, nil)
-        // TODO: validate status, handle failures
     }
 
     private func baseKeyQuery(name: String) -> [CFString: Any] {

@@ -1,6 +1,7 @@
 package com.stytch.sdk.encryption
 
 import com.stytch.sdk.StytchEncryptionManagerSwift
+import com.stytch.sdk.biometrics.UnhandledCryptographyError
 import com.stytch.sdk.data.Ed25519KeyPair
 import kotlinx.cinterop.BetaInteropApi
 import kotlinx.cinterop.ExperimentalForeignApi
@@ -20,7 +21,15 @@ import platform.posix.memcpy
 @OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
 public actual class StytchEncryptionClient {
     private val swiftEncryptionManager = StytchEncryptionManagerSwift.shared()
-    private var encryptionKeyData: NSData = swiftEncryptionManager.getEncryptionKeyWithName(STYTCH_MASTER_KEY_ALIAS)
+    private var encryptionKeyData: NSData =
+        memScoped {
+            val error = alloc<ObjCObjectVar<NSError?>>()
+            val key = swiftEncryptionManager.getEncryptionKeyWithName(STYTCH_MASTER_KEY_ALIAS, error.ptr)
+            if (error.value != null || key == null) {
+                throw IllegalStateException("Error getting master encryption key: ${error.value?.localizedDescription ?: "empty result"}")
+            }
+            key
+        }
 
     public actual fun encrypt(data: ByteArray): ByteArray =
         swiftEncryptionManager
@@ -42,10 +51,24 @@ public actual class StytchEncryptionClient {
         name: String,
         data: ByteArray,
     ) {
-        swiftEncryptionManager.persistBiometricKeyDataWithName(name, data.toNSData())
+        memScoped {
+            val error = alloc<ObjCObjectVar<NSError?>>()
+            swiftEncryptionManager.persistBiometricKeyDataWithName(name, data.toNSData(), error.ptr)
+            if (error.value != null) {
+                throw IllegalStateException("Error creating biometric key: ${error.value?.localizedDescription}")
+            }
+        }
     }
 
-    public fun retrieveBiometricKey(name: String): ByteArray? = swiftEncryptionManager.getBiometricKeyDataWithName(name)?.toByteArray()
+    public fun retrieveBiometricKey(name: String): ByteArray =
+        memScoped {
+            val error = alloc<ObjCObjectVar<NSError?>>()
+            val key = swiftEncryptionManager.getBiometricKeyDataWithName(name, error.ptr)
+            if (error.value != null) {
+                throw IllegalStateException("Error retrieving biometric key: ${error.value?.localizedDescription}")
+            }
+            return key.toByteArray()
+        }
 
     public fun deleteBiometricKey(name: String) {
         swiftEncryptionManager.deleteEncryptionKeyWithName(name)
