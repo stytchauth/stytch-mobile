@@ -15,6 +15,7 @@ import com.stytch.sdk.consumer.createStytchConsumer
 import com.stytch.sdk.consumer.data.ConsumerAuthenticationState
 import com.stytch.sdk.consumer.networking.models.OTPsAuthenticateParameters
 import com.stytch.sdk.consumer.networking.models.OTPsSMSLoginOrCreateParameters
+import com.stytch.sdk.data.GoogleCredentialConfiguration
 import com.stytch.sdk.data.StytchAPIResponse
 import com.stytch.sdk.data.StytchClientConfiguration
 import com.stytch.sdk.data.StytchError
@@ -135,8 +136,12 @@ class MainViewModel(
 
     fun registerBiometrics(context: FragmentActivity) {
         viewModelScope.launch {
-            val request = BiometricsParameters(context = context, sessionDurationMinutes = 30)
-            stytchConsumerClient.biometrics.register(request)
+            try {
+                val request = BiometricsParameters(context = context, sessionDurationMinutes = 30)
+                stytchConsumerClient.biometrics.register(request)
+            } catch (e: StytchError) {
+                _state.value = _state.value.copy(error = e)
+            }
         }
     }
 
@@ -148,22 +153,34 @@ class MainViewModel(
 
     fun authenticateBiometrics(context: FragmentActivity) {
         viewModelScope.launch {
-            val request = BiometricsParameters(context = context, sessionDurationMinutes = 30)
-            stytchConsumerClient.biometrics.authenticate(request)
+            try {
+                val request = BiometricsParameters(context = context, sessionDurationMinutes = 30)
+                stytchConsumerClient.biometrics.authenticate(request)
+            } catch (e: StytchError) {
+                _state.value = _state.value.copy(error = e)
+            }
         }
     }
 
     fun registerPasskey(context: FragmentActivity) {
         viewModelScope.launch {
-            val request = PasskeysParameters(activity = context, domain = "stytch.com")
-            stytchConsumerClient.passkeys.register(request)
+            try {
+                val request = PasskeysParameters(activity = context, domain = "stytch.com")
+                stytchConsumerClient.passkeys.register(request)
+            } catch (e: StytchError) {
+                _state.value = _state.value.copy(error = e)
+            }
         }
     }
 
     fun authenticatePasskey(context: FragmentActivity) {
         viewModelScope.launch {
-            val request = PasskeysParameters(activity = context, domain = "stytch.com")
-            stytchConsumerClient.passkeys.authenticate(request)
+            try {
+                val request = PasskeysParameters(activity = context, domain = "stytch.com")
+                stytchConsumerClient.passkeys.authenticate(request)
+            } catch (e: StytchError) {
+                _state.value = _state.value.copy(error = e)
+            }
         }
     }
 
@@ -182,6 +199,10 @@ class MainViewModel(
                             StytchClientConfiguration(
                                 context = application.applicationContext,
                                 publicToken = BuildConfig.STYTCH_PUBLIC_TOKEN,
+                                googleCredentialConfiguration =
+                                    GoogleCredentialConfiguration(
+                                        googleClientId = "447472228390-4pc1tf2tbj7iccu7sj2vfjs69ftmp4el.apps.googleusercontent.com",
+                                    ),
                             ),
                         )
                     return MainViewModel(stytchConsumer, savedStateHandle) as T

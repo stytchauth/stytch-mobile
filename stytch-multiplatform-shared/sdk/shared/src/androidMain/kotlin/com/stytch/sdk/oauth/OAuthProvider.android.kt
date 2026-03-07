@@ -29,10 +29,14 @@ public actual class OAuthProvider(
         baseUrl: String,
         publicTokenInfo: PublicTokenInfo,
     ): OAuthResult =
-        if (type == OAuthProviderType.GOOGLE && googleCredentialConfiguration != null) {
-            attemptGoogleIdTokenAuthentication(application, pkceClient, googleCredentialConfiguration, dispatchers)
-        } else {
-            attemptStandardOAuthAuthentication(pkceClient, parameters, baseUrl, publicTokenInfo)
+        try {
+            if (type == OAuthProviderType.GOOGLE && googleCredentialConfiguration != null) {
+                attemptGoogleIdTokenAuthentication(application, pkceClient, googleCredentialConfiguration, dispatchers)
+            } else {
+                attemptStandardOAuthAuthentication(pkceClient, parameters, baseUrl, publicTokenInfo)
+            }
+        } catch (e: Throwable) {
+            OAuthResult.Error(e)
         }
 
     private suspend fun attemptGoogleIdTokenAuthentication(

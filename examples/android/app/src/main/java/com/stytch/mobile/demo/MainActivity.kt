@@ -90,6 +90,12 @@ class MainActivity : FragmentActivity() {
                                 Button(onClick = { viewModel.registerPasskey(fragmentActivity) }) {
                                     Text("Register Passkey")
                                 }
+                                Button(onClick = { viewModel.authenticateBiometrics(fragmentActivity) }) {
+                                    Text("Authenticate Biometrics")
+                                }
+                                Button(onClick = { viewModel.deleteBiometrics() }) {
+                                    Text("DELETE Biometrics")
+                                }
                             }
 
                             is ConsumerAuthenticationState.Unauthenticated -> {

@@ -16,41 +16,47 @@ public actual class PasskeyProvider : IPasskeyProvider {
         parameters: PasskeysParameters,
         dispatchers: StytchDispatchers,
         json: String,
-    ): String {
-        val createPublicKeyCredentialRequest =
-            CreatePublicKeyCredentialRequest(
-                requestJson = json,
-                preferImmediatelyAvailableCredentials = parameters.preferImmediatelyAvailableCredentials,
-            )
-        val credentialManager = CredentialManager.create(parameters.activity)
-        val response =
-            withContext(dispatchers.mainDispatcher) {
-                credentialManager.createCredential(
-                    context = parameters.activity,
-                    request = createPublicKeyCredentialRequest,
+    ): String =
+        try {
+            val createPublicKeyCredentialRequest =
+                CreatePublicKeyCredentialRequest(
+                    requestJson = json,
+                    preferImmediatelyAvailableCredentials = parameters.preferImmediatelyAvailableCredentials,
                 )
-            } as CreatePublicKeyCredentialResponse
-        return response.registrationResponseJson
-    }
+            val credentialManager = CredentialManager.create(parameters.activity)
+            val response =
+                withContext(dispatchers.mainDispatcher) {
+                    credentialManager.createCredential(
+                        context = parameters.activity,
+                        request = createPublicKeyCredentialRequest,
+                    )
+                } as CreatePublicKeyCredentialResponse
+            response.registrationResponseJson
+        } catch (e: Throwable) {
+            throw PasskeysException(e)
+        }
 
     public actual override suspend fun getPublicKeyCredential(
         parameters: PasskeysParameters,
         dispatchers: StytchDispatchers,
         json: String,
-    ): String {
-        val getPublicKeyCredentialOption = GetPublicKeyCredentialOption(requestJson = json)
-        val credentialManager = CredentialManager.create(parameters.activity)
-        val response =
-            withContext(dispatchers.mainDispatcher) {
-                credentialManager.getCredential(
-                    context = parameters.activity,
-                    request =
-                        GetCredentialRequest(
-                            credentialOptions = listOf(getPublicKeyCredentialOption),
-                            preferImmediatelyAvailableCredentials = parameters.preferImmediatelyAvailableCredentials,
-                        ),
-                )
-            }.credential as PublicKeyCredential
-        return response.authenticationResponseJson
-    }
+    ): String =
+        try {
+            val getPublicKeyCredentialOption = GetPublicKeyCredentialOption(requestJson = json)
+            val credentialManager = CredentialManager.create(parameters.activity)
+            val response =
+                withContext(dispatchers.mainDispatcher) {
+                    credentialManager.getCredential(
+                        context = parameters.activity,
+                        request =
+                            GetCredentialRequest(
+                                credentialOptions = listOf(getPublicKeyCredentialOption),
+                                preferImmediatelyAvailableCredentials = parameters.preferImmediatelyAvailableCredentials,
+                            ),
+                    )
+                }.credential as PublicKeyCredential
+            response.authenticationResponseJson
+        } catch (e: Throwable) {
+            throw PasskeysException(e)
+        }
 }
