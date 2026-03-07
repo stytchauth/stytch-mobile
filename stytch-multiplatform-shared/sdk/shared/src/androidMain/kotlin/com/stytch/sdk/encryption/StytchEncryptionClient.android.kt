@@ -72,7 +72,7 @@ public actual class StytchEncryptionClient {
         return keyGenerator.generateKey()
     }
 
-    internal companion object {
+    private companion object {
         private const val ANDROID_KEYSTORE = "AndroidKeyStore"
         private const val ALGORITHM = KeyProperties.KEY_ALGORITHM_AES
         private const val BLOCK_MODE = KeyProperties.BLOCK_MODE_GCM
@@ -80,7 +80,7 @@ public actual class StytchEncryptionClient {
         private const val CIPHER_TRANSFORMATION = "$ALGORITHM/$BLOCK_MODE/$PADDING"
         private const val KEY_SIZE = 256
         private const val GCM_TAG_LENGTH = 128
-        internal const val GCM_IV_LENGTH = 12
+        private const val GCM_IV_LENGTH = 12
     }
 
     public actual fun generateCodeVerifier(): ByteArray {

@@ -16,6 +16,7 @@ import com.stytch.sdk.consumer.networking.models.toNetworkModel
 import com.stytch.sdk.data.StytchDispatchers
 import com.stytch.sdk.data.StytchError
 import com.stytch.sdk.encryption.StytchEncryptionClient
+import io.ktor.util.decodeBase64Bytes
 import io.ktor.util.encodeBase64
 import kotlinx.coroutines.withContext
 import kotlin.coroutines.cancellation.CancellationException
@@ -66,7 +67,7 @@ internal class BiometricsClientImpl(
                     encryptionClient
                         .signEd25519(
                             key = keyPair.privateKey,
-                            data = startResponse.data.challenge.encodeToByteArray(),
+                            data = startResponse.data.challenge.decodeBase64Bytes(),
                         ).encodeBase64()
                 val response =
                     networkingClient.api.biometricsRegister(
@@ -96,15 +97,13 @@ internal class BiometricsClientImpl(
             networkingClient.request {
                 val startResponse =
                     networkingClient.api.biometricsAuthenticateStart(
-                        BiometricsAuthenticateStartParameters().toNetworkModel(
-                            publicKey = keyPair.publicKey.encodeBase64(),
-                        ),
+                        BiometricsAuthenticateStartParameters().toNetworkModel(publicKey = keyPair.publicKey.encodeBase64()),
                     )
                 val signature =
                     encryptionClient
                         .signEd25519(
                             key = keyPair.privateKey,
-                            data = startResponse.data.challenge.encodeToByteArray(),
+                            data = startResponse.data.challenge.decodeBase64Bytes(),
                         ).encodeBase64()
                 networkingClient.api.biometricsAuthenticate(
                     BiometricsAuthenticateParameters(sessionDurationMinutes = parameters.sessionDurationMinutes).toNetworkModel(
@@ -118,6 +117,11 @@ internal class BiometricsClientImpl(
 
     @Throws(StytchError::class, CancellationException::class)
     override suspend fun removeRegistration(): Boolean {
+        /* TODO: limit this to logged in users
+        if (sessionManager.currentSessionToken.isNullOrEmpty()) {
+            throw NoSessionExists()
+        }
+         */
         biometricsProvider.removeRegistration()
         return true
     }

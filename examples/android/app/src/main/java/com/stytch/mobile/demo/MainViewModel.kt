@@ -20,6 +20,7 @@ import com.stytch.sdk.data.StytchClientConfiguration
 import com.stytch.sdk.data.StytchError
 import com.stytch.sdk.oauth.OAuthProviderType
 import com.stytch.sdk.oauth.OAuthStartParameters
+import com.stytch.sdk.passkeys.PasskeysParameters
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -139,10 +140,30 @@ class MainViewModel(
         }
     }
 
+    fun deleteBiometrics() {
+        viewModelScope.launch {
+            stytchConsumerClient.biometrics.removeRegistration()
+        }
+    }
+
     fun authenticateBiometrics(context: FragmentActivity) {
         viewModelScope.launch {
             val request = BiometricsParameters(context = context, sessionDurationMinutes = 30)
             stytchConsumerClient.biometrics.authenticate(request)
+        }
+    }
+
+    fun registerPasskey(context: FragmentActivity) {
+        viewModelScope.launch {
+            val request = PasskeysParameters(activity = context, domain = "stytch.com")
+            stytchConsumerClient.passkeys.register(request)
+        }
+    }
+
+    fun authenticatePasskey(context: FragmentActivity) {
+        viewModelScope.launch {
+            val request = PasskeysParameters(activity = context, domain = "stytch.com")
+            stytchConsumerClient.passkeys.authenticate(request)
         }
     }
 

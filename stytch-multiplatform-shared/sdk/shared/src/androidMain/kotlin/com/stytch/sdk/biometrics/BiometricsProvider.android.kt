@@ -11,9 +11,9 @@ import androidx.biometric.BiometricPrompt
 import androidx.fragment.app.FragmentActivity
 import com.stytch.sdk.data.Ed25519KeyPair
 import com.stytch.sdk.encryption.StytchEncryptionClient
-import com.stytch.sdk.encryption.StytchEncryptionClient.Companion.GCM_IV_LENGTH
 import com.stytch.sdk.persistence.StytchPlatformPersistenceClient
 import io.ktor.util.decodeBase64Bytes
+import io.ktor.util.encodeBase64
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
@@ -95,8 +95,8 @@ public actual class BiometricsProvider(
             val encodedPrivateKeyBytes =
                 persistenceClient.getData(BIOMETRIC_REGISTRATION_PRIVATE_KEY_KEY)?.decodeBase64Bytes()
                     ?: throw MissingBiometricKeyDataError()
-            val encodedPrivateKeyIv = encodedPrivateKeyBytes.sliceArray(0 until GCM_IV_LENGTH)
-            val encodedPrivateKeyData = encodedPrivateKeyBytes.sliceArray(GCM_IV_LENGTH until encodedPrivateKeyBytes.size)
+            val encodedPrivateKeyIv = encodedPrivateKeyBytes.sliceArray(0 until CBC_IV_LENGTH)
+            val encodedPrivateKeyData = encodedPrivateKeyBytes.sliceArray(CBC_IV_LENGTH until encodedPrivateKeyBytes.size)
             val cipher =
                 showBiometricPromptForAuthentication(
                     context = parameters.context,
@@ -259,8 +259,13 @@ public actual class BiometricsProvider(
     }
 
     public actual override suspend fun removeRegistration() {
+        ensureKeystoreIsLoaded()
         persistenceClient.removeData(BIOMETRIC_REGISTRATION_ID_KEY)
         persistenceClient.removeData(BIOMETRIC_REGISTRATION_PRIVATE_KEY_KEY)
         keyStore.deleteEntry(BIOMETRIC_KEY_NAME)
+    }
+
+    private companion object {
+        private const val CBC_IV_LENGTH = 16
     }
 }

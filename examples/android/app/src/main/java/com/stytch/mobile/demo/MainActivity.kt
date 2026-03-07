@@ -87,8 +87,8 @@ class MainActivity : FragmentActivity() {
                                 Button(onClick = { viewModel.registerBiometrics(fragmentActivity) }) {
                                     Text("Register Biometrics")
                                 }
-                                Button(onClick = { viewModel.authenticateBiometrics(fragmentActivity) }) {
-                                    Text("Authenticate Biometrics")
+                                Button(onClick = { viewModel.registerPasskey(fragmentActivity) }) {
+                                    Text("Register Passkey")
                                 }
                             }
 
@@ -102,6 +102,15 @@ class MainActivity : FragmentActivity() {
                                     OAuthView(
                                         startOAuth = viewModel::startOAuth,
                                     )
+                                    Button(onClick = { viewModel.authenticateBiometrics(fragmentActivity) }) {
+                                        Text("Authenticate Biometrics")
+                                    }
+                                    Button(onClick = { viewModel.deleteBiometrics() }) {
+                                        Text("DELETE Biometrics")
+                                    }
+                                    Button(onClick = { viewModel.authenticatePasskey(fragmentActivity) }) {
+                                        Text("Authenticate Passkey")
+                                    }
                                 }
                             }
                         }

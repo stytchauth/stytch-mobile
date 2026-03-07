@@ -9,6 +9,7 @@ import io.ktor.client.call.body
 import io.ktor.client.plugins.ResponseException
 import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
+import kotlin.time.Instant
 
 internal interface IErrorResponseParser {
     suspend fun parseAPIError(response: HttpResponse): StytchAPIError
@@ -24,13 +25,13 @@ internal class DefaultErrorResponseParser : IErrorResponseParser {
 
 internal class ConsumerNetworkingClientMiddleware(
     private val sessionManager: StytchConsumerAuthenticationStateManager,
-    private val onSessionAuthenticated: () -> Unit,
+    private val onSessionAuthenticated: (Instant) -> Unit,
     private val errorParser: IErrorResponseParser = DefaultErrorResponseParser(),
 ) : StytchNetworkResponseMiddleware {
     override suspend fun <T> onSuccess(data: T) {
         if (data is AuthenticatedResponse) {
             sessionManager.update(data)
-            onSessionAuthenticated()
+            onSessionAuthenticated(data.session.expiresAt ?: Instant.DISTANT_PAST)
         } else if (data is SessionsRevokeResponse) {
             sessionManager.revoke()
         }

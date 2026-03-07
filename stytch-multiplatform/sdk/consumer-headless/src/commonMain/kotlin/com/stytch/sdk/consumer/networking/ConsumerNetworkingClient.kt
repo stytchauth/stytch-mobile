@@ -11,6 +11,7 @@ import com.stytch.sdk.networking.StytchNetworkingClient
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
+import kotlin.math.min
 import kotlin.time.Clock
 import kotlin.time.Instant
 
@@ -39,10 +40,15 @@ internal class ConsumerNetworkingClient(
                     session = session,
                     now = Clock.System.now(),
                     onExpired = { sessionManager.revoke() },
-                    onValid = ::startSessionUpdateJob,
+                    onValid = { triggerSessionUpdateJobWithDelay(session.expiresAt ?: Instant.DISTANT_PAST) },
                 )
             }
         }
+    }
+
+    internal fun triggerSessionUpdateJobWithDelay(sessionExpiresAt: Instant) {
+        val timeUntilSessionExpires = (sessionExpiresAt - Clock.System.now()).inWholeMilliseconds
+        startSessionUpdateJob(min(timeUntilSessionExpires, HEARTBEAT_INTERVAL_MS))
     }
 
     override suspend fun updateSessionAndReturnExpiration(): Instant {
@@ -53,6 +59,6 @@ internal class ConsumerNetworkingClient(
     override val middleware: StytchNetworkResponseMiddleware =
         ConsumerNetworkingClientMiddleware(
             sessionManager = sessionManager,
-            onSessionAuthenticated = ::startSessionUpdateJob,
+            onSessionAuthenticated = ::triggerSessionUpdateJobWithDelay,
         )
 }

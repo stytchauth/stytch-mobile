@@ -46,20 +46,20 @@ buildAndPublishSharedSdkFirst() {
 buildAndCopyAndroid() {
     cd $MAIN_WORKING_DIR
     echo "Building android artifact..."
-    ./gradlew clean :sdk:consumer-headless:publishToMavenLocal
+    ./gradlew clean :sdk:consumer-headless:publishToMavenLocal --rerun-tasks
 }
 
 buildAndCopyIos() {
     echo "Building iOS artifacts..."
     cd $MAIN_WORKING_DIR
-    ./gradlew clean assembleStytchConsumerSDKXCFramework
+    ./gradlew clean assembleStytchConsumerSDKXCFramework --rerun-tasks
     cp -r sdk/consumer-headless/build/XCFrameworks/release/StytchConsumerSDK.xcframework $ROOT_DIR/stytch-ios
 }
 
 buildAndCopyRn() {
     cd $MAIN_WORKING_DIR
     echo "Building RN artifacts..."
-    ./gradlew clean kotlinUpgradeYarnLock :sdk:consumer-headless:assemble :sdk:consumer-headless:jsBrowserProductionLibraryDistribution
+    ./gradlew clean kotlinUpgradeYarnLock :sdk:consumer-headless:assemble :sdk:consumer-headless:jsBrowserProductionLibraryDistribution --rerun-tasks
     mkdir -p $ROOT_DIR/react-native/consumer/lib
     cp -r sdk/consumer-headless/build/dist/js/productionLibrary/consumer-headless* $ROOT_DIR/react-native/consumer/lib
     cd $ROOT_DIR/react-native/consumer
@@ -93,4 +93,11 @@ main() {
     echo "Done."
 }
 
-main
+test() {
+    cd $SHARED_WORKING_DIR
+    ./gradlew :sdk:shared:publishToMavenLocal
+    cd $MAIN_WORKING_DIR
+    ./gradlew :sdk:consumer-headless:publishToMavenLocal --rerun-tasks
+}
+
+test
