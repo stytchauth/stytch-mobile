@@ -79,21 +79,25 @@ public actual class PasskeyProvider : IPasskeyProvider {
     private suspend fun getCredentialResponse(
         requests: List<ASAuthorizationRequest>,
         preferImmediatelyAvailableCredentials: Boolean,
-    ): ASAuthorizationCredentialProtocol {
-        val controller = ASAuthorizationController(authorizationRequests = requests)
-        val credential =
-            suspendCancellableCoroutine { continuation ->
-                controller.delegate = PasskeysDelegate(continuation)
-                if (preferImmediatelyAvailableCredentials) {
-                    controller.performRequestsWithOptions(
-                        ASAuthorizationControllerRequestOptionPreferImmediatelyAvailableCredentials,
-                    )
-                } else {
-                    controller.performRequests()
-                }
+    ): ASAuthorizationCredentialProtocol =
+        suspendCancellableCoroutine { continuation ->
+            val controller = ASAuthorizationController(authorizationRequests = requests)
+            val delegate = PasskeysDelegate(continuation)
+            controller.delegate = delegate
+            // Keep a strong reference alive for the duration of the suspension —
+            // ASAuthorizationController.delegate is a weak ObjC reference.
+            continuation.invokeOnCancellation {
+                delegate
+                controller.cancel()
             }
-        return credential
-    }
+            if (preferImmediatelyAvailableCredentials) {
+                controller.performRequestsWithOptions(
+                    ASAuthorizationControllerRequestOptionPreferImmediatelyAvailableCredentials,
+                )
+            } else {
+                controller.performRequests()
+            }
+        }
 
     private class PasskeysDelegate(
         private val continuation: Continuation<ASAuthorizationCredentialProtocol>,
