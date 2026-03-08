@@ -24,24 +24,72 @@ export default function HomeScreen() {
   return <UnauthenticatedView />
 }
 
+
+const biometricsOptions = {
+  sessionDurationMinutes: 30,
+  androidBiometricOptions: {
+    allowDeviceCredentials: false,
+    allowFallbackToCleartext: false,
+    title: "Hello",
+    subTitle: "Use your finger!",
+    negativeButtonText: "NO"
+  },
+  iosBiometricOptions: {
+    reason: "",
+    fallbackTitle: "",
+    cancelTitle: ""
+  },
+};
+
+const passkeysOptions = { domain: "stytch.com", preferImmediatelyAvailableCredentials: true, sessionDurationMinutes: 30};
+
 const AuthenticatedView = () => {
   const stytch = useStytch()
   const logout = async () => {
     await stytch.session.revoke()
   }
+  const authenticateWithBiometrics = async () => {
+    stytch.biometrics.authenticate(biometricsOptions).then(console.log).catch(console.error)
+  };
+  const registerBiometrics = async () => {
+    stytch.biometrics.register(biometricsOptions).then(console.log).catch(console.error)
+  };
+  const registerPasskeys = async () => {
+    stytch.passkeys.register(passkeysOptions).then(console.log).catch(console.error)
+  };
+  const authenticatePasskeys = async () => {
+    stytch.passkeys.authenticate(passkeysOptions).then(console.log).catch(console.error)
+  };
   return (
     <SafeAreaView>
         <Text>Authenticated!</Text>
+        <Button onPress={registerBiometrics} title="Register Biometrics"></Button>
+        <Button onPress={authenticateWithBiometrics} title="Authenticate Biometrics"></Button>
+        <Button onPress={registerPasskeys} title="Register Passkey"></Button>
+        <Button onPress={authenticatePasskeys} title="Authenticate Passkey"></Button>
         <Button onPress={logout} title='Logout'></Button>
     </SafeAreaView>
     )
 }
 
 const UnauthenticatedView = () => {
+  const stytch = useStytch()
+  const authenticateWithBiometrics = async () => {
+    stytch.biometrics.authenticate(biometricsOptions).then(console.log).catch(console.error)
+  };
+  const deleteBiometrics = async () => {
+    stytch.biometrics.removeRegistration().then(console.log).catch(console.error);
+  };
+  const authenticatePasskeys = async () => {
+    stytch.passkeys.authenticate(passkeysOptions).then(console.log).catch(console.error)
+  };
   return (
     <SafeAreaView>
         <SMSOTPVIew />
         <OAuthView />
+        <Button onPress={authenticateWithBiometrics} title="Authenticate Biometrics"></Button>
+        <Button onPress={deleteBiometrics} title="Delete Biometrics"></Button>
+        <Button onPress={authenticatePasskeys} title="Authenticate Passkey"></Button>
     </SafeAreaView>
   );
 }
