@@ -3,7 +3,11 @@ package com.stytch.sdk.oauth
 import com.stytch.sdk.data.PublicTokenInfo
 import com.stytch.sdk.data.SSOError
 import com.stytch.sdk.data.StytchDispatchers
+import com.stytch.sdk.encryption.StytchEncryptionClient
+import com.stytch.sdk.encryption.toByteArray
 import com.stytch.sdk.pkce.PKCEClient
+import io.ktor.util.encodeBase64
+import io.ktor.utils.io.core.toByteArray
 import kotlinx.coroutines.CancellableContinuation
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
@@ -27,6 +31,7 @@ import kotlin.coroutines.resume
 
 public actual class OAuthProvider(
     private val packageName: String,
+    private val encryptionClient: StytchEncryptionClient,
 ) : IOAuthProvider {
     public actual override val isSupported: Boolean = true
 
@@ -39,25 +44,32 @@ public actual class OAuthProvider(
         publicTokenInfo: PublicTokenInfo,
     ): OAuthResult =
         if (type == OAuthProviderType.APPLE) {
-            attemptAppleIdTokenAuthentication(pkceClient, parameters, dispatchers)
+            attemptAppleIdTokenAuthentication(parameters, dispatchers)
         } else {
             attemptStandardOAuthAuthentication(pkceClient, parameters, dispatchers, baseUrl, publicTokenInfo)
         }
 
     private suspend fun attemptAppleIdTokenAuthentication(
-        pkceClient: PKCEClient,
         parameters: OAuthStartParameters,
         dispatchers: StytchDispatchers,
     ): OAuthResult =
         withContext(dispatchers.ioDispatcher) {
-            val nonce = pkceClient.create().challenge
+            /* Google and Apple nonces are handled differently by the API, and it ALWAYS messes me up
+             * For Google, we do nonce => S256 hash => B64, send the same string to Google and the API, and compare them
+             * For Apple, we do nonce => hex string, and send THAT to API; but send the S256+B64 string to Apple. Then API does the same S256+B64 for comparison
+             * API implementations:
+             * https://github.com/stytchauth/api/blob/main/pkg/oauth/internal/consumer/google.go#L130
+             * https://github.com/stytchauth/api/blob/main/pkg/oauth/internal/consumer/apple.go#L133
+             */
+            val rawNonce = encryptionClient.generateCodeVerifier().toHexString() // send to API
+            val encodedNonce = encryptionClient.generateCodeChallenge(rawNonce.toByteArray()).encodeBase64() // send to Apple
             val provider = ASAuthorizationAppleIDProvider()
             val request = provider.createRequest()
             request.requestedScopes = listOf(ASAuthorizationScopeEmail, ASAuthorizationScopeFullName)
-            request.nonce = nonce
+            request.nonce = encodedNonce
             withContext(dispatchers.mainDispatcher) {
                 suspendCancellableCoroutine { continuation ->
-                    val delegate = AppleIdTokenDelegate(nonce, continuation)
+                    val delegate = AppleIdTokenDelegate(rawNonce, continuation)
                     val controller = ASAuthorizationController(authorizationRequests = listOf(request))
                     controller.presentationContextProvider = parameters.applePresentationContextProvider ?: DefaultPresenterContext()
                     controller.delegate = delegate
@@ -87,8 +99,7 @@ public actual class OAuthProvider(
                     OAuthResult.Error(InvalidAuthorizationCredential()),
                 )
             val idToken =
-                credential.identityToken?.toString()
-                    ?: return continuation.resume(OAuthResult.Error(MissingAuthorizationCredentialIDToken()))
+                credential.identityToken ?: return continuation.resume(OAuthResult.Error(MissingAuthorizationCredentialIDToken()))
             val name =
                 listOf(
                     credential.fullName?.givenName,
@@ -97,7 +108,7 @@ public actual class OAuthProvider(
                 ).joinToString(" ")
             continuation.resume(
                 OAuthResult.IDToken(
-                    token = idToken,
+                    token = idToken.toByteArray().decodeToString(),
                     name = name,
                     nonce = nonce,
                 ),
@@ -172,3 +183,5 @@ public actual class OAuthProvider(
         return loginScheme ?: signupScheme ?: "https"
     }
 }
+
+private fun ByteArray.toHexString(): String = joinToString("") { (it.toInt() and 0xff).toString(16).padStart(2, '0') }
