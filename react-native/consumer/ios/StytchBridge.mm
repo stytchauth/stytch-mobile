@@ -11,7 +11,7 @@ SCSDKKotlinx_coroutines_coreCoroutineDispatcher *ioDispatcher = [ioDispatcher in
 SCSDKKotlinx_coroutines_coreCoroutineDispatcher *mainDispatcher = [mainDispatcher init];
 SCSDKStytchPersistenceClient *persistenceClient = [[SCSDKStytchPersistenceClient alloc] initWithDispatcher:ioDispatcher encryptionClient:encryptionClient platformPersistenceClient:platformPersistenceClient];
 SCSDKPKCEClient *pkceClient = [[SCSDKPKCEClient alloc] initWithEncryptionClient:encryptionClient persistenceClient:persistenceClient];
-SCSDKOAuthProvider *oauthProvider = [[SCSDKOAuthProvider alloc] init];
+SCSDKOAuthProvider *oauthProvider = [[SCSDKOAuthProvider alloc] initWithPackageName:[[NSBundle mainBundle] bundleIdentifier] encryptionClient:encryptionClient];
 
 @implementation StytchBridge
 
@@ -270,7 +270,7 @@ SCSDKOAuthProvider *oauthProvider = [[SCSDKOAuthProvider alloc] init];
             [providerParamsDict setObject:elements[1] forKey:elements[0]];
         }
     }
-    SCSDKOAuthStartParameters *params = [[SCSDKOAuthStartParameters alloc] initWithApplePresentationContextProvider:nil oauthPresentationContextProvider:nil loginRedirectUrl:loginRedirectUrl signupRedirectUrl:signupRedirectUrl customScopes:customScopes providerParams:providerParamsDict oauthAttachToken:oauthAttachToken sessionDurationMinutes:sessionDurationMinutes];
+    SCSDKOAuthStartParameters *params = [[SCSDKOAuthStartParameters alloc] initWithLoginRedirectUrl:loginRedirectUrl signupRedirectUrl:signupRedirectUrl customScopes:customScopes providerParams:providerParamsDict oauthAttachToken:oauthAttachToken sessionDurationMinutes:[sessionDurationMinutes intValue]];
     SCSDKPublicTokenInfo *publicTokenInfo = [SCSDKStytchClientConfigurationKt getPublicTokenInfoPublicToken:publicToken];
     [oauthProvider getOAuthTokenParameters:params pkceClient:pkceClient dispatchers:dispatchers type:oauthProviderType baseUrl:baseUrl publicTokenInfo:publicTokenInfo completionHandler:^(SCSDKOAuthResult * _Nullable result, NSError * _Nullable error) {
         if (error == nil) {

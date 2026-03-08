@@ -356,6 +356,7 @@ class StytchBridgeModule(reactContext: ReactApplicationContext) :
       runCatching {
         val oauthProvider = OAuthProvider(
           application = reactApplicationContext.applicationContext as Application,
+          packageName = deviceInfo.applicationPackageName,
           googleCredentialConfiguration = googleCredentialConfiguration?.let { Json.decodeFromString(it) }
         )
         val providerParamsMap = mutableMapOf<String, String>()
