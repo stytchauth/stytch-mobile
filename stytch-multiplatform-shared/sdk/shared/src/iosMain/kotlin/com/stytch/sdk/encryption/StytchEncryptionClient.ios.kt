@@ -1,7 +1,6 @@
 package com.stytch.sdk.encryption
 
 import com.stytch.sdk.StytchEncryptionManagerSwift
-import com.stytch.sdk.biometrics.UnhandledCryptographyError
 import com.stytch.sdk.data.Ed25519KeyPair
 import kotlinx.cinterop.BetaInteropApi
 import kotlinx.cinterop.ExperimentalForeignApi
