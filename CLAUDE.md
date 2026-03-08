@@ -86,6 +86,8 @@ All consumer code is `commonMain` only — no platform source sets here.
 2. **`@NetworkModel` annotation** → custom KSP processor generates public-facing DTO classes + `toNetworkModel()` extension functions
 3. **`buildconfig` plugin** → generates `BuildConfig` with SDK name/version for User-Agent headers
 
+> **IMPORTANT:** When running any Gradle command in `stytch-multiplatform-shared`, you MUST include the `--rerun-tasks` flag to ensure all KSP/code-generation tasks execute. Without it, Gradle may skip them as up-to-date.
+
 ## React Native Architecture
 
 JS `actual` classes call methods on a `StytchBridge` JS object (declared as Kotlin `external`). The RN TurboModule implements this bridge, routing calls across the native bridge to platform-specific methods. The RN artifact depends on the published Android/iOS artifacts from `stytch-multiplatform-shared`.
