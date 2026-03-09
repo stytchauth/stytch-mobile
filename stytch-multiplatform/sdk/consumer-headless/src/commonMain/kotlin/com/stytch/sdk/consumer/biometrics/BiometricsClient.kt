@@ -117,11 +117,9 @@ internal class BiometricsClientImpl(
 
     @Throws(StytchError::class, CancellationException::class)
     override suspend fun removeRegistration(): Boolean {
-        /* TODO: limit this to logged in users
         if (sessionManager.currentSessionToken.isNullOrEmpty()) {
             throw NoSessionExists()
         }
-         */
         biometricsProvider.removeRegistration()
         return true
     }
