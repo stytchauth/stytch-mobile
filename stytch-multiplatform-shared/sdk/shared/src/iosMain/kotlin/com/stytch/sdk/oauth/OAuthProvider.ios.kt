@@ -96,10 +96,10 @@ public actual class OAuthProvider(
         ) {
             val credential =
                 didCompleteWithAuthorization.credential as? ASAuthorizationAppleIDCredential ?: return continuation.resume(
-                    OAuthResult.Error(InvalidAuthorizationCredential()),
+                    OAuthResult.Error("Invalid authorization credential"),
                 )
             val idToken =
-                credential.identityToken ?: return continuation.resume(OAuthResult.Error(MissingAuthorizationCredentialIDToken()))
+                credential.identityToken ?: return continuation.resume(OAuthResult.Error("Missing authorization credential ID token"))
             val name =
                 listOf(
                     credential.fullName?.givenName,
@@ -119,7 +119,7 @@ public actual class OAuthProvider(
             controller: ASAuthorizationController,
             didCompleteWithError: NSError,
         ) {
-            continuation.resume(OAuthResult.Error(SSOError.UnknownError(didCompleteWithError.localizedDescription)))
+            continuation.resume(OAuthResult.Error(didCompleteWithError.localizedDescription))
         }
     }
 
@@ -140,13 +140,11 @@ public actual class OAuthProvider(
                             ASWebAuthenticationSession(nsUrl, callbackURLScheme = scheme) { nsUrl, nsError ->
                                 if (nsError != null) {
                                     return@ASWebAuthenticationSession continuation.resume(
-                                        OAuthResult.Error(
-                                            SSOError.UnknownError(nsError.localizedDescription),
-                                        ),
+                                        OAuthResult.Error(nsError.localizedDescription),
                                     )
                                 }
                                 if (nsUrl == null) {
-                                    return@ASWebAuthenticationSession continuation.resume(OAuthResult.Error(SSOError.NoURIFound()))
+                                    return@ASWebAuthenticationSession continuation.resume(OAuthResult.Error(SSOError.NoURIFound().message))
                                 }
                                 val components = NSURLComponents(nsUrl, true)
                                 val items = components.queryItems?.mapNotNull { it as NSURLQueryItem }
@@ -154,13 +152,13 @@ public actual class OAuthProvider(
                                 if (token != null) {
                                     continuation.resume(OAuthResult.ClassicToken(token = token))
                                 } else {
-                                    continuation.resume(OAuthResult.Error(SSOError.NoTokenFound()))
+                                    continuation.resume(OAuthResult.Error(SSOError.NoTokenFound().message))
                                 }
                             }
                         session.presentationContextProvider = parameters.oauthPresentationContextProvider ?: DefaultPresenterContext()
                         session.start()
                     } ?: run {
-                        continuation.resume(OAuthResult.Error(SSOError.NoURIFound()))
+                        continuation.resume(OAuthResult.Error(SSOError.NoURIFound().message))
                     }
                 }
             }

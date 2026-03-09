@@ -232,7 +232,8 @@ internal class OAuthClientImplTest : ConsumerClientTest() {
     fun `start with Error result propagates the error`() =
         runTest(testDispatcher) {
             val error = RuntimeException("OAuth failed")
-            coEvery { oauthProvider.getOAuthToken(any(), any(), any(), any(), any(), any()) } returns OAuthResult.Error(error)
+            coEvery { oauthProvider.getOAuthToken(any(), any(), any(), any(), any(), any()) } returns
+                OAuthResult.Error(error.message ?: error.toString())
 
             val thrown = assertFailsWith<OAuthException> { makeClient().apple.start(startParams) }
             assertEquals("OAuth failed", thrown.cause?.message)

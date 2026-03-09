@@ -116,36 +116,24 @@ internal class SSOManagerActivity : Activity() {
             if (token != null) {
                 OAuthResult.ClassicToken(token = token)
             } else {
-                OAuthResult.Error(OAuthFailedException(resultCode = RESULT_OK, message = "Missing Token"))
+                OAuthResult.Error("Missing Token")
             }
         pendingResult?.invoke(result)
         pendingResult = null
     }
 
     private fun authorizationCanceled() {
-        pendingResult?.invoke(
-            OAuthResult.Error(
-                OAuthFailedException(resultCode = RESULT_CANCELED, message = "SSO/OAuth Failed", cause = SSOError.UserCanceled()),
-            ),
-        )
+        pendingResult?.invoke(OAuthResult.Error(SSOError.UserCanceled().message))
         pendingResult = null
     }
 
     private fun noBrowserFound() {
-        pendingResult?.invoke(
-            OAuthResult.Error(
-                OAuthFailedException(resultCode = RESULT_CANCELED, message = "SSO/OAuth Failed", cause = SSOError.NoBrowserFound()),
-            ),
-        )
+        pendingResult?.invoke(OAuthResult.Error(SSOError.NoBrowserFound().message))
         pendingResult = null
     }
 
     private fun noUriFound() {
-        pendingResult?.invoke(
-            OAuthResult.Error(
-                OAuthFailedException(resultCode = RESULT_CANCELED, message = "SSO/OAuth Failed", cause = SSOError.NoURIFound()),
-            ),
-        )
+        pendingResult?.invoke(OAuthResult.Error(SSOError.NoURIFound().message))
         pendingResult = null
     }
 

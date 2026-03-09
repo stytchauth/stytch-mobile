@@ -59,7 +59,14 @@ buildAndCopyIos() {
 buildAndCopyRn() {
     cd $MAIN_WORKING_DIR
     echo "Building RN artifacts..."
-    ./gradlew clean kotlinUpgradeYarnLock :sdk:consumer-headless:assemble :sdk:consumer-headless:jsBrowserProductionLibraryDistribution --rerun-tasks
+
+
+    cd $SHARED_WORKING_DIR
+    ./gradlew :sdk:shared:publishToMavenLocal
+    cd $MAIN_WORKING_DIR
+    ./gradlew :sdk:consumer-headless:publishToMavenLocal :sdk:consumer-headless:jsBrowserProductionLibraryDistribution --rerun-tasks
+
+    #./gradlew clean kotlinUpgradeYarnLock :sdk:consumer-headless:assemble :sdk:consumer-headless:jsBrowserProductionLibraryDistribution --rerun-tasks
     mkdir -p $ROOT_DIR/react-native/consumer/lib
     cp -r sdk/consumer-headless/build/dist/js/productionLibrary/consumer-headless* $ROOT_DIR/react-native/consumer/lib
     cd $ROOT_DIR/react-native/consumer
@@ -74,7 +81,7 @@ updateRnDemoApp() {
 }
 
 main() {
-    buildAndPublishSharedSdkFirst
+    #buildAndPublishSharedSdkFirst
     if [ -z "$PLATFORM" ]; then
         echo "Building for all platforms"
         buildAndCopyAndroid
@@ -93,11 +100,4 @@ main() {
     echo "Done."
 }
 
-
-
-
-cd $SHARED_WORKING_DIR
-./gradlew :sdk:shared:publishToMavenLocal
-cd $MAIN_WORKING_DIR
-./gradlew :sdk:consumer-headless:publishToMavenLocal --rerun-tasks
-buildAndCopyRn
+main

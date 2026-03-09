@@ -35,12 +35,14 @@ public actual class OAuthProvider(
                         type = Json.encodeToString(type),
                         baseUrl = baseUrl,
                         publicToken = publicTokenInfo.publicToken,
-                        packageName = packageName,
-                        googleCredentialConfiguration = Json.encodeToString(googleCredentialConfiguration),
+                        googleCredentialConfiguration =
+                            googleCredentialConfiguration?.let {
+                                """{"googleClientId":"${it.googleClientId}","autoSelectEnabled":${it.autoSelectEnabled}}"""
+                            },
                     ).await()
             Json.decodeFromString(result)
         } catch (e: Throwable) {
             e.printStackTrace()
-            OAuthResult.Error(e)
+            OAuthResult.Error(e.message ?: e.toString())
         }
 }

@@ -207,7 +207,7 @@ internal class OAuthClientImpl(
                 }
 
                 is OAuthResult.Error -> {
-                    throw OAuthException(response.error)
+                    throw OAuthException(RuntimeException(response.message))
                 }
             }
         }

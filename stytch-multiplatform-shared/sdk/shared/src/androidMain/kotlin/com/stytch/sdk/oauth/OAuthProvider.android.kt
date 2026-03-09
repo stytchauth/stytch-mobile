@@ -31,12 +31,17 @@ public actual class OAuthProvider(
     ): OAuthResult =
         try {
             if (type == OAuthProviderType.GOOGLE && googleCredentialConfiguration != null) {
-                attemptGoogleIdTokenAuthentication(application, pkceClient, googleCredentialConfiguration, dispatchers)
+                try {
+                    attemptGoogleIdTokenAuthentication(application, pkceClient, googleCredentialConfiguration, dispatchers)
+                } catch (e: Throwable) {
+                    // If GCM fails, fallback to regular redirect OAuth
+                    attemptStandardOAuthAuthentication(pkceClient, parameters, baseUrl, publicTokenInfo)
+                }
             } else {
                 attemptStandardOAuthAuthentication(pkceClient, parameters, baseUrl, publicTokenInfo)
             }
         } catch (e: Throwable) {
-            OAuthResult.Error(e)
+            OAuthResult.Error(e.message ?: e.toString())
         }
 
     private suspend fun attemptGoogleIdTokenAuthentication(
@@ -66,7 +71,9 @@ public actual class OAuthProvider(
                     credentialManager.getCredential(application, request)
                 }
             if (credentialResponse.credential.type != GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
-                return@withContext OAuthResult.Error(UnexpectedCredentialType(credentialResponse.credential.type))
+                return@withContext OAuthResult.Error(
+                    UnexpectedCredentialType(credentialResponse.credential.type).message ?: credentialResponse.credential.type,
+                )
             }
             val idTokenResponse = GoogleIdTokenCredential.createFrom(credentialResponse.credential.data)
             OAuthResult.IDToken(

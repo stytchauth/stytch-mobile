@@ -1,9 +1,7 @@
 package com.stytch.sdk.biometrics
 
 import kotlinx.serialization.Serializable
-import kotlin.js.JsExport
 
-@JsExport
 @Serializable
 public sealed class BiometricsAvailability {
     @Serializable public data object Available : BiometricsAvailability()

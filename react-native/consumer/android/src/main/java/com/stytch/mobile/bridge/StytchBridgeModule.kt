@@ -12,13 +12,13 @@ import com.facebook.react.module.annotations.ReactModule
 import com.stytch.sdk.biometrics.BiometricPromptData
 import com.stytch.sdk.biometrics.BiometricsParameters
 import com.stytch.sdk.biometrics.BiometricsProvider
-import com.stytch.sdk.data.PublicTokenInfo
 import com.stytch.sdk.data.StytchDispatchers
 import com.stytch.sdk.data.getDeviceInfo
 import com.stytch.sdk.data.getPublicTokenInfo
 import com.stytch.sdk.dfp.CAPTCHAProviderImpl
 import com.stytch.sdk.dfp.DFPProviderImpl
 import com.stytch.sdk.encryption.StytchEncryptionClient
+import com.stytch.sdk.data.GoogleCredentialConfiguration
 import com.stytch.sdk.oauth.OAuthProvider
 import com.stytch.sdk.oauth.OAuthStartParameters
 import com.stytch.sdk.passkeys.PasskeyProvider
@@ -32,6 +32,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.boolean
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.coroutines.*
 
 
@@ -48,7 +51,8 @@ class StytchBridgeModule(reactContext: ReactApplicationContext) :
   private val dfpProvider = DFPProviderImpl(reactContext)
   private val captchaProvider = CAPTCHAProviderImpl(reactContext.applicationContext as Application)
   private val deviceInfo = reactContext.getDeviceInfo()
-  private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+  private val ioScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+  private val mainScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
 
   private val biometricsProvider = BiometricsProvider(encryptionClient, platformPersistenceClient)
   private val passkeysProvider = PasskeyProvider()
@@ -96,19 +100,19 @@ class StytchBridgeModule(reactContext: ReactApplicationContext) :
   }
 
   override fun getTelemetryId(promise: Promise) {
-    scope.launch {
+    ioScope.launch {
       promise.resolve(dfpProvider.getTelemetryId())
     }
   }
 
   override fun configureCaptcha(siteKey: String) {
-    scope.launch {
+    ioScope.launch {
       captchaProvider.initialize(siteKey)
     }
   }
   
   override fun getCAPTCHAToken(promise: Promise) {
-    scope.launch {
+    ioScope.launch {
       promise.resolve(captchaProvider.getCAPTCHAToken())
     }
   }
@@ -153,7 +157,7 @@ class StytchBridgeModule(reactContext: ReactApplicationContext) :
     iosCancelTitle: String?,
     promise: Promise,
   ) {
-    scope.launch {
+    mainScope.launch {
       runCatching {
         biometricsProvider.getAvailability(
           BiometricsParameters(
@@ -191,7 +195,7 @@ class StytchBridgeModule(reactContext: ReactApplicationContext) :
     iosCancelTitle: String?,
     promise: Promise,
   ) {
-    scope.launch {
+    mainScope.launch {
       runCatching {
         biometricsProvider.register(
           BiometricsParameters(
@@ -228,7 +232,7 @@ class StytchBridgeModule(reactContext: ReactApplicationContext) :
     iosCancelTitle: String?,
     promise: Promise,
   ) {
-    scope.launch {
+    mainScope.launch {
       runCatching {
         biometricsProvider.authenticate(
           BiometricsParameters(
@@ -254,12 +258,12 @@ class StytchBridgeModule(reactContext: ReactApplicationContext) :
   }
 
   override fun persistBiometricRegistration(registrationId: String, privateKeyData: String, promise: Promise) {
-    scope.launch {
+    ioScope.launch {
       runCatching {
         biometricsProvider.persistRegistration(registrationId, privateKeyData)
       }
       .onSuccess {
-        promise.resolve(Unit)
+        promise.resolve(null)
       }
       .onFailure { exception ->
         promise.reject(exception)
@@ -268,12 +272,12 @@ class StytchBridgeModule(reactContext: ReactApplicationContext) :
   }
 
   override fun removeBiometricRegistration(promise: Promise) {
-    scope.launch {
+    ioScope.launch {
       runCatching {
         biometricsProvider.removeRegistration()
       }
       .onSuccess {
-        promise.resolve(Unit)
+        promise.resolve(null)
       }
       .onFailure { exception ->
         promise.reject(exception)
@@ -288,7 +292,7 @@ class StytchBridgeModule(reactContext: ReactApplicationContext) :
     sessionDurationMinutes: Double?,
     promise: Promise
   ) {
-    scope.launch {
+    ioScope.launch {
       runCatching {
         passkeysProvider.createPublicKeyCredential(
             parameters = PasskeysParameters(
@@ -317,7 +321,7 @@ class StytchBridgeModule(reactContext: ReactApplicationContext) :
     sessionDurationMinutes: Double?,
     promise: Promise
   ) {
-    scope.launch {
+    ioScope.launch {
       runCatching {
         passkeysProvider.getPublicKeyCredential(
           parameters = PasskeysParameters(
@@ -352,12 +356,18 @@ class StytchBridgeModule(reactContext: ReactApplicationContext) :
     googleCredentialConfiguration: String?,
     promise: Promise
   ) {
-    scope.launch {
+    mainScope.launch {
       runCatching {
         val oauthProvider = OAuthProvider(
           application = reactApplicationContext.applicationContext as Application,
           packageName = deviceInfo.applicationPackageName,
-          googleCredentialConfiguration = googleCredentialConfiguration?.let { Json.decodeFromString(it) }
+          googleCredentialConfiguration = googleCredentialConfiguration?.let {
+            val obj = Json.parseToJsonElement(it).jsonObject
+            GoogleCredentialConfiguration(
+              googleClientId = obj["googleClientId"]!!.jsonPrimitive.content,
+              autoSelectEnabled = obj["autoSelectEnabled"]?.jsonPrimitive?.boolean ?: true,
+            )
+          }
         )
         val providerParamsMap = mutableMapOf<String, String>()
         providerParams?.split("&")?.forEach {
