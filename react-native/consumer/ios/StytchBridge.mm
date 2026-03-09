@@ -7,9 +7,8 @@ SCSDKCAPTCHAProviderImpl *captchaClient = [[SCSDKCAPTCHAProviderImpl alloc] init
 SCSDKDFPProviderImpl *dfpClient;
 SCSDKBiometricsProvider *biometricsProvider = [[SCSDKBiometricsProvider alloc] initWithEncryptionClient:encryptionClient persistenceClient:platformPersistenceClient];
 SCSDKPasskeyProvider *passkeysProvider = [[SCSDKPasskeyProvider alloc] init];
-SCSDKKotlinx_coroutines_coreCoroutineDispatcher *ioDispatcher = [ioDispatcher init];
-SCSDKKotlinx_coroutines_coreCoroutineDispatcher *mainDispatcher = [mainDispatcher init];
-SCSDKStytchPersistenceClient *persistenceClient = [[SCSDKStytchPersistenceClient alloc] initWithDispatcher:ioDispatcher encryptionClient:encryptionClient platformPersistenceClient:platformPersistenceClient];
+SCSDKStytchDispatchers *stytchDispatchers = [SCSDKStytchDispatcherFactory_iosKt createStytchDispatchers];
+SCSDKStytchPersistenceClient *persistenceClient = [[SCSDKStytchPersistenceClient alloc] initWithDispatcher:[stytchDispatchers ioDispatcher] encryptionClient:encryptionClient platformPersistenceClient:platformPersistenceClient];
 SCSDKPKCEClient *pkceClient = [[SCSDKPKCEClient alloc] initWithEncryptionClient:encryptionClient persistenceClient:persistenceClient];
 SCSDKOAuthProvider *oauthProvider = [[SCSDKOAuthProvider alloc] initWithPackageName:[[NSBundle mainBundle] bundleIdentifier] encryptionClient:encryptionClient];
 
@@ -240,8 +239,7 @@ SCSDKOAuthProvider *oauthProvider = [[SCSDKOAuthProvider alloc] initWithPackageN
 // Begin Passkeys stuff
 - (void)createPublicKeyCredential:(nonnull NSString *)domain preferImmediatelyAvailableCredentials:(BOOL)preferImmediatelyAvailableCredentials json:(nonnull NSString *)json sessionDurationMinutes:(nonnull NSNumber *)sessionDurationMinutes resolve:(nonnull RCTPromiseResolveBlock)resolve reject:(nonnull RCTPromiseRejectBlock)reject {
     SCSDKPasskeysParameters *params = [[SCSDKPasskeysParameters alloc] initWithDomain:domain sessionDurationMinutes:sessionDurationMinutes preferImmediatelyAvailableCredentials:preferImmediatelyAvailableCredentials];
-    SCSDKStytchDispatchers *dispatchers = [[SCSDKStytchDispatchers alloc] initWithIoDispatcher:ioDispatcher mainDispatcher:mainDispatcher];
-    [passkeysProvider createPublicKeyCredentialParameters:params dispatchers:dispatchers json:json completionHandler:^(NSString * _Nullable credentials, NSError * _Nullable error) {
+    [passkeysProvider createPublicKeyCredentialParameters:params dispatchers:stytchDispatchers json:json completionHandler:^(NSString * _Nullable credentials, NSError * _Nullable error) {
         if (error == nil) {
             resolve(credentials);
         } else {
@@ -253,8 +251,7 @@ SCSDKOAuthProvider *oauthProvider = [[SCSDKOAuthProvider alloc] initWithPackageN
 
 - (void)getPublicKeyCredential:(nonnull NSString *)domain preferImmediatelyAvailableCredentials:(BOOL)preferImmediatelyAvailableCredentials json:(nonnull NSString *)json sessionDurationMinutes:(nonnull NSNumber *)sessionDurationMinutes resolve:(nonnull RCTPromiseResolveBlock)resolve reject:(nonnull RCTPromiseRejectBlock)reject {
     SCSDKPasskeysParameters *params = [[SCSDKPasskeysParameters alloc] initWithDomain:domain sessionDurationMinutes:sessionDurationMinutes preferImmediatelyAvailableCredentials:preferImmediatelyAvailableCredentials];
-    SCSDKStytchDispatchers *dispatchers = [[SCSDKStytchDispatchers alloc] initWithIoDispatcher:ioDispatcher mainDispatcher:mainDispatcher];
-    [passkeysProvider getPublicKeyCredentialParameters:params dispatchers:dispatchers json:json completionHandler:^(NSString * _Nullable credentials, NSError * _Nullable error) {
+    [passkeysProvider getPublicKeyCredentialParameters:params dispatchers:stytchDispatchers json:json completionHandler:^(NSString * _Nullable credentials, NSError * _Nullable error) {
         if (error == nil) {
             resolve(credentials);
         } else {
@@ -266,7 +263,6 @@ SCSDKOAuthProvider *oauthProvider = [[SCSDKOAuthProvider alloc] initWithPackageN
 
 // Begin OAuth stuff
 - (void)getOAuthToken:(nonnull NSString *)type baseUrl:(nonnull NSString *)baseUrl publicToken:(nonnull NSString *)publicToken loginRedirectUrl:(nonnull NSString *)loginRedirectUrl signupRedirectUrl:(nonnull NSString *)signupRedirectUrl customScopes:(nonnull NSArray *)customScopes providerParams:(nonnull NSString *)providerParams oauthAttachToken:(nonnull NSString *)oauthAttachToken sessionDurationMinutes:(nonnull NSNumber *)sessionDurationMinutes googleCredentialConfiguration:(nonnull NSString *)googleCredentialConfiguration resolve:(nonnull RCTPromiseResolveBlock)resolve reject:(nonnull RCTPromiseRejectBlock)reject {
-    SCSDKStytchDispatchers *dispatchers = [[SCSDKStytchDispatchers alloc] initWithIoDispatcher:ioDispatcher mainDispatcher:mainDispatcher];
     NSError *decodeError = nil;
     SCSDKOAuthProviderType *oauthProviderType = [[SCSDKJsonSerDeHelper alloc] decodeOAuthProviderTypeData:type error:&decodeError];
     if (decodeError != nil) { reject(@"", [decodeError description], decodeError); return; }
@@ -280,7 +276,7 @@ SCSDKOAuthProvider *oauthProvider = [[SCSDKOAuthProvider alloc] initWithPackageN
     }
     SCSDKOAuthStartParameters *params = [[SCSDKOAuthStartParameters alloc] initWithLoginRedirectUrl:loginRedirectUrl signupRedirectUrl:signupRedirectUrl customScopes:customScopes providerParams:providerParamsDict oauthAttachToken:oauthAttachToken sessionDurationMinutes:[sessionDurationMinutes intValue]];
     SCSDKPublicTokenInfo *publicTokenInfo = [SCSDKStytchClientConfigurationKt getPublicTokenInfoPublicToken:publicToken];
-    [oauthProvider getOAuthTokenParameters:params pkceClient:pkceClient dispatchers:dispatchers type:oauthProviderType baseUrl:baseUrl publicTokenInfo:publicTokenInfo completionHandler:^(SCSDKOAuthResult * _Nullable result, NSError * _Nullable error) {
+    [oauthProvider getOAuthTokenParameters:params pkceClient:pkceClient dispatchers:stytchDispatchers type:oauthProviderType baseUrl:baseUrl publicTokenInfo:publicTokenInfo completionHandler:^(SCSDKOAuthResult * _Nullable result, NSError * _Nullable error) {
         if (error == nil) {
             NSError *encodeError = nil;
             NSString *tokenResult = [[SCSDKJsonSerDeHelper alloc] encodeOAuthResultData:result error:&encodeError];
