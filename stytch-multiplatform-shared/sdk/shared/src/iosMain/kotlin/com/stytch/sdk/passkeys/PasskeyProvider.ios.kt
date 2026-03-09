@@ -29,6 +29,13 @@ public actual class PasskeyProvider : IPasskeyProvider {
         }
     public actual override val isSupported: Boolean = true
 
+    // Strong references to keep passkey objects alive past coroutine cancellation.
+    // ASAuthorizationController.delegate is a weak ObjC ref, and React Native's
+    // app-inactive lifecycle event can cancel the coroutine right as the callback
+    // fires — releasing the delegate before it lands.
+    private var activeDelegate: PasskeysDelegate? = null
+    private var activeController: ASAuthorizationController? = null
+
     @Throws(StytchError::class, CancellationException::class)
     public actual override suspend fun createPublicKeyCredential(
         parameters: PasskeysParameters,
@@ -88,11 +95,10 @@ public actual class PasskeyProvider : IPasskeyProvider {
             val controller = ASAuthorizationController(authorizationRequests = requests)
             val delegate = PasskeysDelegate(continuation)
             controller.delegate = delegate
-            // Keep a strong reference alive for the duration of the suspension —
-            // ASAuthorizationController.delegate is a weak ObjC reference.
+            activeDelegate = delegate
+            activeController = controller
             continuation.invokeOnCancellation {
-                delegate
-                controller.cancel()
+                activeController?.cancel()
             }
             if (preferImmediatelyAvailableCredentials) {
                 controller.performRequestsWithOptions(
@@ -101,6 +107,9 @@ public actual class PasskeyProvider : IPasskeyProvider {
             } else {
                 controller.performRequests()
             }
+        }.also {
+            activeDelegate = null
+            activeController = null
         }
 
     private class PasskeysDelegate(
