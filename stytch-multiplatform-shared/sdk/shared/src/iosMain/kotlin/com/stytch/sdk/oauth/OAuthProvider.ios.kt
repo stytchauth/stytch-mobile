@@ -36,6 +36,13 @@ public actual class OAuthProvider(
 ) : IOAuthProvider {
     public actual override val isSupported: Boolean = true
 
+    // Strong references to keep SIWA objects alive past coroutine cancellation.
+    // ASAuthorizationController.delegate is a weak ObjC ref, and React Native's
+    // app-inactive lifecycle event can cancel the coroutine right as Apple fires
+    // the callback — releasing the delegate before the callback lands.
+    private var activeAppleDelegate: AppleIdTokenDelegate? = null
+    private var activeAppleController: ASAuthorizationController? = null
+
     public actual override suspend fun getOAuthToken(
         parameters: OAuthStartParameters,
         pkceClient: PKCEClient,
@@ -78,15 +85,16 @@ public actual class OAuthProvider(
                     val controller = ASAuthorizationController(authorizationRequests = listOf(request))
                     controller.presentationContextProvider = parameters.applePresentationContextProvider ?: DefaultPresenterContext()
                     controller.delegate = delegate
-                    // Keep strong references alive until the coroutine completes —
-                    // ASAuthorizationController.delegate is a weak ObjC reference, so without
-                    // this the delegate gets GC'd before the callback fires.
+                    activeAppleDelegate = delegate
+                    activeAppleController = controller
                     continuation.invokeOnCancellation {
-                        delegate
-                        controller.cancel()
+                        activeAppleController?.cancel()
                     }
                     controller.performRequests()
                 }
+            }.also {
+                activeAppleDelegate = null
+                activeAppleController = null
             }
         }
 

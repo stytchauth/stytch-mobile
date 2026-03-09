@@ -74,6 +74,7 @@ updateRnDemoApp() {
 }
 
 main() {
+    rm -rf stytch-ios/*.xcframework
     buildAndPublishSharedSdkFirst
     if [ -z "$PLATFORM" ]; then
         echo "Building for all platforms"
