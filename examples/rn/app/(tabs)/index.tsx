@@ -35,9 +35,9 @@ const biometricsOptions = {
     negativeButtonText: "NO"
   },
   iosBiometricOptions: {
-    reason: "",
-    fallbackTitle: "",
-    cancelTitle: ""
+    reason: "Use your face!",
+    fallbackTitle: "Or pin?",
+    cancelTitle: "Or don't"
   },
 };
 

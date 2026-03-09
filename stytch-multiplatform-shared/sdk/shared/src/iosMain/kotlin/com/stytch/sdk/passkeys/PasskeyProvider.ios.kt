@@ -1,6 +1,7 @@
 package com.stytch.sdk.passkeys
 
 import com.stytch.sdk.data.StytchDispatchers
+import com.stytch.sdk.data.StytchError
 import com.stytch.sdk.encryption.toNSData
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.serialization.json.Json
@@ -17,6 +18,7 @@ import platform.Foundation.NSError
 import platform.Foundation.base64Encoding
 import platform.darwin.NSObject
 import kotlin.coroutines.Continuation
+import kotlin.coroutines.cancellation.CancellationException
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
@@ -27,6 +29,7 @@ public actual class PasskeyProvider : IPasskeyProvider {
         }
     public actual override val isSupported: Boolean = true
 
+    @Throws(StytchError::class, CancellationException::class)
     public actual override suspend fun createPublicKeyCredential(
         parameters: PasskeysParameters,
         dispatchers: StytchDispatchers,
@@ -54,6 +57,7 @@ public actual class PasskeyProvider : IPasskeyProvider {
             throw PasskeysException(e)
         }
 
+    @Throws(StytchError::class, CancellationException::class)
     public actual override suspend fun getPublicKeyCredential(
         parameters: PasskeysParameters,
         dispatchers: StytchDispatchers,

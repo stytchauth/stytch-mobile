@@ -28,6 +28,7 @@ import platform.Foundation.NSURLComponents
 import platform.Foundation.NSURLQueryItem
 import platform.darwin.NSObject
 import kotlin.coroutines.resume
+import kotlin.toString
 
 public actual class OAuthProvider(
     private val packageName: String,
@@ -43,10 +44,14 @@ public actual class OAuthProvider(
         baseUrl: String,
         publicTokenInfo: PublicTokenInfo,
     ): OAuthResult =
-        if (type == OAuthProviderType.APPLE) {
-            attemptAppleIdTokenAuthentication(parameters, dispatchers)
-        } else {
-            attemptStandardOAuthAuthentication(pkceClient, parameters, dispatchers, baseUrl, publicTokenInfo)
+        try {
+            if (type == OAuthProviderType.APPLE) {
+                attemptAppleIdTokenAuthentication(parameters, dispatchers)
+            } else {
+                attemptStandardOAuthAuthentication(pkceClient, parameters, dispatchers, baseUrl, publicTokenInfo)
+            }
+        } catch (e: Throwable) {
+            OAuthResult.Error(e.message ?: e.toString())
         }
 
     private suspend fun attemptAppleIdTokenAuthentication(
