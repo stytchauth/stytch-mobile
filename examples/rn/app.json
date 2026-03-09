@@ -63,6 +63,7 @@
           }
         }
       ],
+      ["expo-apple-authentication"],
       ["./node_modules/@stytch/react-native-consumer/src/app.plugin.cjs", {}]
     ],
     "experiments": {
