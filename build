@@ -93,4 +93,11 @@ main() {
     echo "Done."
 }
 
-main
+
+
+
+cd $SHARED_WORKING_DIR
+./gradlew :sdk:shared:publishToMavenLocal
+cd $MAIN_WORKING_DIR
+./gradlew :sdk:consumer-headless:publishToMavenLocal --rerun-tasks
+buildAndCopyRn

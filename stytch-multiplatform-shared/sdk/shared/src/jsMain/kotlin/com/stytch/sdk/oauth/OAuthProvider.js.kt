@@ -21,22 +21,26 @@ public actual class OAuthProvider(
         type: OAuthProviderType,
         baseUrl: String,
         publicTokenInfo: PublicTokenInfo,
-    ): OAuthResult {
-        val result =
-            StytchBridge
-                .getOAuthToken(
-                    loginRedirectUrl = parameters.loginRedirectUrl,
-                    signupRedirectUrl = parameters.signupRedirectUrl,
-                    customScopes = parameters.customScopes,
-                    providerParams = parameters.providerParams?.map { "${it.key}=${it.value}" }?.joinToString("&"),
-                    oauthAttachToken = parameters.oauthAttachToken,
-                    sessionDurationMinutes = parameters.sessionDurationMinutes,
-                    type = Json.encodeToString(type),
-                    baseUrl = baseUrl,
-                    publicToken = publicTokenInfo.publicToken,
-                    packageName = packageName,
-                    googleCredentialConfiguration = Json.encodeToString(googleCredentialConfiguration),
-                ).await()
-        return Json.decodeFromString(result)
-    }
+    ): OAuthResult =
+        try {
+            val result =
+                StytchBridge
+                    .getOAuthToken(
+                        loginRedirectUrl = parameters.loginRedirectUrl,
+                        signupRedirectUrl = parameters.signupRedirectUrl,
+                        customScopes = parameters.customScopes,
+                        providerParams = parameters.providerParams?.map { "${it.key}=${it.value}" }?.joinToString("&"),
+                        oauthAttachToken = parameters.oauthAttachToken,
+                        sessionDurationMinutes = parameters.sessionDurationMinutes,
+                        type = Json.encodeToString(type),
+                        baseUrl = baseUrl,
+                        publicToken = publicTokenInfo.publicToken,
+                        packageName = packageName,
+                        googleCredentialConfiguration = Json.encodeToString(googleCredentialConfiguration),
+                    ).await()
+            Json.decodeFromString(result)
+        } catch (e: Throwable) {
+            e.printStackTrace()
+            OAuthResult.Error(e)
+        }
 }
