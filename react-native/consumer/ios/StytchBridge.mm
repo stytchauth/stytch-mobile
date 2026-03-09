@@ -173,7 +173,9 @@ SCSDKOAuthProvider *oauthProvider = [[SCSDKOAuthProvider alloc] initWithPackageN
     SCSDKBiometricsParameters *params = [[SCSDKBiometricsParameters alloc] initWithSessionDurationMinutes:sessionDurationMinutes promptData:promptData];
     [biometricsProvider authenticateParameters:params completionHandler:^(SCSDKEd25519KeyPair * _Nullable keyPair, NSError * _Nullable error) {
         if (error == nil) {
-            NSString *asString = [[SCSDKJsonSerDeHelper alloc] encodeToStringData:keyPair];
+            NSError *encodeError = nil;
+            NSString *asString = [[SCSDKJsonSerDeHelper alloc] encodeEd25519KeyPairData:keyPair error:&encodeError];
+            if (encodeError != nil) { reject(@"", [encodeError description], encodeError); return; }
             resolve(asString);
         } else {
             reject(@"", [error description], error);
@@ -187,7 +189,9 @@ SCSDKOAuthProvider *oauthProvider = [[SCSDKOAuthProvider alloc] initWithPackageN
     SCSDKBiometricsParameters *params = [[SCSDKBiometricsParameters alloc] initWithSessionDurationMinutes:sessionDurationMinutes promptData:promptData];
     [biometricsProvider getAvailabilityParameters:params completionHandler:^(SCSDKBiometricsAvailability * _Nullable availability, NSError * _Nullable error) {
         if (error == nil) {
-            NSString *asString = [[SCSDKJsonSerDeHelper alloc] encodeToStringData:availability];
+            NSError *encodeError = nil;
+            NSString *asString = [[SCSDKJsonSerDeHelper alloc] encodeBiometricsAvailabilityData:availability error:&encodeError];
+            if (encodeError != nil) { reject(@"", [encodeError description], encodeError); return; }
             resolve(asString);
         } else {
             reject(@"", [error description], error);
@@ -212,7 +216,9 @@ SCSDKOAuthProvider *oauthProvider = [[SCSDKOAuthProvider alloc] initWithPackageN
     SCSDKBiometricsParameters *params = [[SCSDKBiometricsParameters alloc] initWithSessionDurationMinutes:sessionDurationMinutes promptData:promptData];
     [biometricsProvider registerParameters:params completionHandler:^(SCSDKEd25519KeyPair * _Nullable keyPair, NSError * _Nullable error) {
         if (error == nil) {
-            NSString *asString = [[SCSDKJsonSerDeHelper alloc] encodeToStringData:keyPair];
+            NSError *encodeError = nil;
+            NSString *asString = [[SCSDKJsonSerDeHelper alloc] encodeEd25519KeyPairData:keyPair error:&encodeError];
+            if (encodeError != nil) { reject(@"", [encodeError description], encodeError); return; }
             resolve(asString);
         } else {
             reject(@"", [error description], error);
@@ -261,7 +267,9 @@ SCSDKOAuthProvider *oauthProvider = [[SCSDKOAuthProvider alloc] initWithPackageN
 // Begin OAuth stuff
 - (void)getOAuthToken:(nonnull NSString *)type baseUrl:(nonnull NSString *)baseUrl publicToken:(nonnull NSString *)publicToken loginRedirectUrl:(nonnull NSString *)loginRedirectUrl signupRedirectUrl:(nonnull NSString *)signupRedirectUrl customScopes:(nonnull NSArray *)customScopes providerParams:(nonnull NSString *)providerParams oauthAttachToken:(nonnull NSString *)oauthAttachToken sessionDurationMinutes:(nonnull NSNumber *)sessionDurationMinutes googleCredentialConfiguration:(nonnull NSString *)googleCredentialConfiguration resolve:(nonnull RCTPromiseResolveBlock)resolve reject:(nonnull RCTPromiseRejectBlock)reject {
     SCSDKStytchDispatchers *dispatchers = [[SCSDKStytchDispatchers alloc] initWithIoDispatcher:ioDispatcher mainDispatcher:mainDispatcher];
-    SCSDKOAuthProviderType *oauthProviderType = [[SCSDKJsonSerDeHelper alloc] decodeFromStringData:type];
+    NSError *decodeError = nil;
+    SCSDKOAuthProviderType *oauthProviderType = [[SCSDKJsonSerDeHelper alloc] decodeOAuthProviderTypeData:type error:&decodeError];
+    if (decodeError != nil) { reject(@"", [decodeError description], decodeError); return; }
     NSMutableDictionary *providerParamsDict = [[NSMutableDictionary alloc] init];
     NSArray *pairs = [providerParams componentsSeparatedByString:@"&"];
     for (NSString *pair in pairs) {
@@ -274,7 +282,9 @@ SCSDKOAuthProvider *oauthProvider = [[SCSDKOAuthProvider alloc] initWithPackageN
     SCSDKPublicTokenInfo *publicTokenInfo = [SCSDKStytchClientConfigurationKt getPublicTokenInfoPublicToken:publicToken];
     [oauthProvider getOAuthTokenParameters:params pkceClient:pkceClient dispatchers:dispatchers type:oauthProviderType baseUrl:baseUrl publicTokenInfo:publicTokenInfo completionHandler:^(SCSDKOAuthResult * _Nullable result, NSError * _Nullable error) {
         if (error == nil) {
-            NSString *tokenResult = [[SCSDKJsonSerDeHelper alloc] encodeToStringData:result];
+            NSError *encodeError = nil;
+            NSString *tokenResult = [[SCSDKJsonSerDeHelper alloc] encodeOAuthResultData:result error:&encodeError];
+            if (encodeError != nil) { reject(@"", [encodeError description], encodeError); return; }
             resolve(tokenResult);
         } else {
             reject(@"", [error description], error);

@@ -81,7 +81,7 @@ updateRnDemoApp() {
 }
 
 main() {
-    #buildAndPublishSharedSdkFirst
+    buildAndPublishSharedSdkFirst
     if [ -z "$PLATFORM" ]; then
         echo "Building for all platforms"
         buildAndCopyAndroid
