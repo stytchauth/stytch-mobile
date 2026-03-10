@@ -42,7 +42,9 @@ public interface B2BDiscoveryOrganizationsClient {
 @JsExport
 public interface B2BDiscoveryIntermediateSessionsClient {
     @Throws(StytchError::class, CancellationException::class)
-    public suspend fun exchange(request: IB2BDiscoveryIntermediateSessionsExchangeParameters): B2BDiscoveryIntermediateSessionsExchangeResponse
+    public suspend fun exchange(
+        request: IB2BDiscoveryIntermediateSessionsExchangeParameters,
+    ): B2BDiscoveryIntermediateSessionsExchangeResponse
 }
 
 @JsExport
@@ -103,7 +105,9 @@ internal class B2BDiscoveryIntermediateSessionsClientImpl(
     private val sessionManager: StytchB2BAuthenticationStateManager,
 ) : B2BDiscoveryIntermediateSessionsClient {
     @Throws(StytchError::class, CancellationException::class)
-    override suspend fun exchange(request: IB2BDiscoveryIntermediateSessionsExchangeParameters): B2BDiscoveryIntermediateSessionsExchangeResponse =
+    override suspend fun exchange(
+        request: IB2BDiscoveryIntermediateSessionsExchangeParameters,
+    ): B2BDiscoveryIntermediateSessionsExchangeResponse =
         withContext(dispatchers.ioDispatcher) {
             networkingClient.request {
                 networkingClient.api.b2BDiscoveryIntermediateSessionsExchange(
@@ -142,9 +146,10 @@ internal class B2BDiscoveryPasswordsClientImpl(
         withContext(dispatchers.ioDispatcher) {
             networkingClient.request {
                 val codePair = pkceClient.retrieve() ?: throw MissingPKCEException()
-                networkingClient.api.b2BDiscoveryPasswordReset(
-                    request.toNetworkModel(pkceCodeVerifier = codePair.verifier),
-                ).also { pkceClient.revoke() }
+                networkingClient.api
+                    .b2BDiscoveryPasswordReset(
+                        request.toNetworkModel(pkceCodeVerifier = codePair.verifier),
+                    ).also { pkceClient.revoke() }
             }
         }
 }

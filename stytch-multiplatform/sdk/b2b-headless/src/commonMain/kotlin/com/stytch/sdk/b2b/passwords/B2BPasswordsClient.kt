@@ -109,12 +109,13 @@ internal class B2BPasswordsEmailClientImpl(
         withContext(dispatchers.ioDispatcher) {
             networkingClient.request {
                 val codePair = pkceClient.retrieve() ?: throw MissingPKCEException()
-                networkingClient.api.b2BPasswordEmailReset(
-                    request.toNetworkModel(
-                        codeVerifier = codePair.verifier,
-                        intermediateSessionToken = sessionManager.intermediateSessionToken,
-                    ),
-                ).also { pkceClient.revoke() }
+                networkingClient.api
+                    .b2BPasswordEmailReset(
+                        request.toNetworkModel(
+                            codeVerifier = codePair.verifier,
+                            intermediateSessionToken = sessionManager.intermediateSessionToken,
+                        ),
+                    ).also { pkceClient.revoke() }
             }
         }
 }
