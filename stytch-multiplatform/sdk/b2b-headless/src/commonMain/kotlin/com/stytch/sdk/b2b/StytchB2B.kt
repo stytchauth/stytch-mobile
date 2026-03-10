@@ -5,7 +5,17 @@ import com.stytch.sdk.b2b.data.B2BAuthenticationState
 import com.stytch.sdk.b2b.data.B2BTokenType
 import com.stytch.sdk.b2b.data.DeeplinkAuthenticationStatus
 import com.stytch.sdk.b2b.data.DeeplinkToken
+import com.stytch.sdk.b2b.magicLinks.B2BMagicLinksClient
+import com.stytch.sdk.b2b.magicLinks.B2BMagicLinksClientImpl
+import com.stytch.sdk.b2b.networking.AuthenticatedResponse
 import com.stytch.sdk.b2b.networking.B2BNetworkingClient
+import com.stytch.sdk.b2b.networking.models.B2BMagicLinksAuthenticateParameters
+import com.stytch.sdk.b2b.otp.B2BOtpClient
+import com.stytch.sdk.b2b.otp.B2BOtpClientImpl
+import com.stytch.sdk.b2b.session.B2BSessionsClient
+import com.stytch.sdk.b2b.session.B2BSessionsClientImpl
+import com.stytch.sdk.b2b.totp.B2BTOTPClient
+import com.stytch.sdk.b2b.totp.B2BTOTPClientImpl
 import com.stytch.sdk.data.BootstrapResponse
 import com.stytch.sdk.data.JsCleanup
 import com.stytch.sdk.data.PKCECodePair
@@ -27,6 +37,11 @@ import kotlin.js.JsName
 @JsExport
 @JsName("StytchB2B")
 public interface StytchB2B : StytchClient {
+    public val session: B2BSessionsClient
+    public val magicLinks: B2BMagicLinksClient
+    public val otp: B2BOtpClient
+    public val totp: B2BTOTPClient
+
     public val authenticationStateFlow: StateFlow<B2BAuthenticationState>
 
     @JsName("authenticationStateObserver")
@@ -64,6 +79,14 @@ internal class DefaultStytchB2B(
 
     private val pkceClient = PKCEClient(configuration.encryptionClient, persistenceClient)
 
+    override val session: B2BSessionsClient = B2BSessionsClientImpl(dispatchers, networkingClient)
+
+    override val magicLinks: B2BMagicLinksClient = B2BMagicLinksClientImpl(dispatchers, networkingClient, pkceClient, sessionManager)
+
+    override val otp: B2BOtpClient = B2BOtpClientImpl(dispatchers, networkingClient, sessionManager)
+
+    override val totp: B2BTOTPClient = B2BTOTPClientImpl(dispatchers, networkingClient, sessionManager)
+
     override val authenticationStateFlow: StateFlow<B2BAuthenticationState> = sessionManager.authenticationStateFlow
 
     override fun authenticationStateObserver(callback: (authenticationState: B2BAuthenticationState) -> Unit): JsCleanup {
@@ -90,12 +113,23 @@ internal class DefaultStytchB2B(
                     DeeplinkAuthenticationStatus.UnknownDeeplink(url)
                 }
 
+                B2BTokenType.MULTI_TENANT_MAGIC_LINKS -> {
+                    DeeplinkAuthenticationStatus.Authenticated(
+                        magicLinks.authenticate(
+                            B2BMagicLinksAuthenticateParameters(
+                                magicLinksToken = token.token,
+                                sessionDurationMinutes = sessionDurationMinutes ?: configuration.defaultSessionDuration,
+                            ),
+                        ) as AuthenticatedResponse,
+                    )
+                }
+
                 B2BTokenType.MULTI_TENANT_PASSWORDS -> {
                     DeeplinkAuthenticationStatus.ManualHandlingRequired(token.token)
                 }
 
                 else -> {
-                    // TODO: Handle the cases
+                    // TODO: Handle SSO, OAuth, Discovery token types
                     DeeplinkAuthenticationStatus.UnknownDeeplink(url)
                 }
             }
