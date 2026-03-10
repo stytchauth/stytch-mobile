@@ -2,14 +2,14 @@ package com.stytch.sdk.b2b.members
 
 import com.stytch.sdk.b2b.networking.B2BNetworkingClient
 import com.stytch.sdk.b2b.networking.models.B2BGetMeResponse
+import com.stytch.sdk.b2b.networking.models.IOrganizationsAdminMemberStartEmailUpdateParameters
+import com.stytch.sdk.b2b.networking.models.IOrganizationsAdminMemberUnlinkRetiredEmailParameters
+import com.stytch.sdk.b2b.networking.models.IOrganizationsAdminMemberUpdateParameters
 import com.stytch.sdk.b2b.networking.models.IOrganizationsMemberCreateParameters
 import com.stytch.sdk.b2b.networking.models.IOrganizationsMemberSearchParameters
 import com.stytch.sdk.b2b.networking.models.IOrganizationsMemberStartEmailUpdateParameters
 import com.stytch.sdk.b2b.networking.models.IOrganizationsMemberUnlinkRetiredEmailParameters
 import com.stytch.sdk.b2b.networking.models.IOrganizationsMemberUpdateParameters
-import com.stytch.sdk.b2b.networking.models.IOrganizationsAdminMemberStartEmailUpdateParameters
-import com.stytch.sdk.b2b.networking.models.IOrganizationsAdminMemberUnlinkRetiredEmailParameters
-import com.stytch.sdk.b2b.networking.models.IOrganizationsAdminMemberUpdateParameters
 import com.stytch.sdk.b2b.networking.models.OrganizationsAdminMemberDeleteMFAPhoneNumberResponse
 import com.stytch.sdk.b2b.networking.models.OrganizationsAdminMemberDeleteMFATOTPResponse
 import com.stytch.sdk.b2b.networking.models.OrganizationsAdminMemberDeletePasswordResponse
@@ -55,10 +55,14 @@ public interface B2BMembersClient {
     public suspend fun deleteMFATOTP(): OrganizationsMemberDeleteMFATOTPResponse
 
     @Throws(StytchError::class, CancellationException::class)
-    public suspend fun startEmailUpdate(request: IOrganizationsMemberStartEmailUpdateParameters): OrganizationsMemberStartEmailUpdateResponse
+    public suspend fun startEmailUpdate(
+        request: IOrganizationsMemberStartEmailUpdateParameters,
+    ): OrganizationsMemberStartEmailUpdateResponse
 
     @Throws(StytchError::class, CancellationException::class)
-    public suspend fun unlinkRetiredEmail(request: IOrganizationsMemberUnlinkRetiredEmailParameters): OrganizationsMemberUnlinkRetiredEmailResponse
+    public suspend fun unlinkRetiredEmail(
+        request: IOrganizationsMemberUnlinkRetiredEmailParameters,
+    ): OrganizationsMemberUnlinkRetiredEmailResponse
 }
 
 @JsExport
@@ -133,14 +137,18 @@ internal class B2BMembersClientImpl(
             networkingClient.request { networkingClient.api.organizationsMemberDeleteMFATOTP() }
         }
 
-    override suspend fun startEmailUpdate(request: IOrganizationsMemberStartEmailUpdateParameters): OrganizationsMemberStartEmailUpdateResponse =
+    override suspend fun startEmailUpdate(
+        request: IOrganizationsMemberStartEmailUpdateParameters,
+    ): OrganizationsMemberStartEmailUpdateResponse =
         withContext(dispatchers.ioDispatcher) {
             networkingClient.request {
                 networkingClient.api.organizationsMemberStartEmailUpdate(request.toNetworkModel())
             }
         }
 
-    override suspend fun unlinkRetiredEmail(request: IOrganizationsMemberUnlinkRetiredEmailParameters): OrganizationsMemberUnlinkRetiredEmailResponse =
+    override suspend fun unlinkRetiredEmail(
+        request: IOrganizationsMemberUnlinkRetiredEmailParameters,
+    ): OrganizationsMemberUnlinkRetiredEmailResponse =
         withContext(dispatchers.ioDispatcher) {
             networkingClient.request {
                 networkingClient.api.organizationsMemberUnlinkRetiredEmail(request.toNetworkModel())
