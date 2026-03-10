@@ -5,6 +5,8 @@ import com.stytch.sdk.b2b.data.B2BAuthenticationState
 import com.stytch.sdk.b2b.data.B2BTokenType
 import com.stytch.sdk.b2b.data.DeeplinkAuthenticationStatus
 import com.stytch.sdk.b2b.data.DeeplinkToken
+import com.stytch.sdk.b2b.discovery.B2BDiscoveryClient
+import com.stytch.sdk.b2b.discovery.B2BDiscoveryClientImpl
 import com.stytch.sdk.b2b.magicLinks.B2BMagicLinksClient
 import com.stytch.sdk.b2b.magicLinks.B2BMagicLinksClientImpl
 import com.stytch.sdk.b2b.networking.AuthenticatedResponse
@@ -12,6 +14,8 @@ import com.stytch.sdk.b2b.networking.B2BNetworkingClient
 import com.stytch.sdk.b2b.networking.models.B2BMagicLinksAuthenticateParameters
 import com.stytch.sdk.b2b.otp.B2BOtpClient
 import com.stytch.sdk.b2b.otp.B2BOtpClientImpl
+import com.stytch.sdk.b2b.passwords.B2BPasswordsClient
+import com.stytch.sdk.b2b.passwords.B2BPasswordsClientImpl
 import com.stytch.sdk.b2b.session.B2BSessionsClient
 import com.stytch.sdk.b2b.session.B2BSessionsClientImpl
 import com.stytch.sdk.b2b.totp.B2BTOTPClient
@@ -40,7 +44,9 @@ public interface StytchB2B : StytchClient {
     public val session: B2BSessionsClient
     public val magicLinks: B2BMagicLinksClient
     public val otp: B2BOtpClient
+    public val passwords: B2BPasswordsClient
     public val totp: B2BTOTPClient
+    public val discovery: B2BDiscoveryClient
 
     public val authenticationStateFlow: StateFlow<B2BAuthenticationState>
 
@@ -85,7 +91,11 @@ internal class DefaultStytchB2B(
 
     override val otp: B2BOtpClient = B2BOtpClientImpl(dispatchers, networkingClient, sessionManager)
 
+    override val passwords: B2BPasswordsClient = B2BPasswordsClientImpl(dispatchers, networkingClient, pkceClient, sessionManager)
+
     override val totp: B2BTOTPClient = B2BTOTPClientImpl(dispatchers, networkingClient, sessionManager)
+
+    override val discovery: B2BDiscoveryClient = B2BDiscoveryClientImpl(dispatchers, networkingClient, pkceClient, sessionManager)
 
     override val authenticationStateFlow: StateFlow<B2BAuthenticationState> = sessionManager.authenticationStateFlow
 
