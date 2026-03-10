@@ -203,7 +203,6 @@ public actual class OAuthProvider(
         override fun presentationAnchorForAuthorizationController(controller: ASAuthorizationController): ASPresentationAnchor =
             ASPresentationAnchor()
     }
-
 }
 
 private fun ByteArray.toHexString(): String = joinToString("") { (it.toInt() and 0xff).toString(16).padStart(2, '0') }
