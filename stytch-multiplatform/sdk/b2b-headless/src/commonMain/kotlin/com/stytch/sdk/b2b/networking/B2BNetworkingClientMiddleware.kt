@@ -31,7 +31,7 @@ internal class B2BNetworkingClientMiddleware(
     override suspend fun <T> onSuccess(data: T) {
         if (data is AuthenticatedResponse) {
             sessionManager.update(data)
-            onSessionAuthenticated(data.session.expiresAt ?: Instant.DISTANT_PAST)
+            onSessionAuthenticated(data.memberSession.expiresAt ?: Instant.DISTANT_PAST)
         } else if (data is SessionsRevokeResponse) {
             sessionManager.revoke()
         }

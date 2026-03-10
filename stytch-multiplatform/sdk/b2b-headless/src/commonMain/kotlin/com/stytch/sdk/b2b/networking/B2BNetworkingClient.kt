@@ -2,9 +2,8 @@ package com.stytch.sdk.b2b.networking
 
 import com.stytch.sdk.b2b.StytchB2BAuthenticationStateManager
 import com.stytch.sdk.b2b.networking.api.SdkExternalApi
-import com.stytch.sdk.b2b.networking.models.ApiB2bSessionV1MemberSession as MemberSession
-import com.stytch.sdk.b2b.networking.models.ApiOrganizationV1Member as Member
-import com.stytch.sdk.b2b.networking.models.ApiOrganizationV1Organization as Organization
+import com.stytch.sdk.b2b.networking.models.B2BSessionsAuthenticateRequest
+import com.stytch.sdk.b2b.networking.models.SessionsAuthenticateRequest
 import com.stytch.sdk.data.StytchClientConfigurationInternal
 import com.stytch.sdk.data.StytchDispatchers
 import com.stytch.sdk.networking.StytchNetworkResponseMiddleware
@@ -15,14 +14,15 @@ import kotlinx.coroutines.launch
 import kotlin.math.min
 import kotlin.time.Clock
 import kotlin.time.Instant
+import com.stytch.sdk.b2b.networking.models.ApiB2bSessionV1MemberSession as MemberSession
 
 internal suspend fun checkAndHandleInitialSession(
-    session: ApiSessionV1Session,
+    session: MemberSession,
     now: Instant,
     onExpired: suspend () -> Unit,
     onValid: () -> Unit,
 ) {
-    if ((session.expiresAt ?: Instant.DISTANT_PAST) < now) onExpired() else onValid()
+    if (session.expiresAt < now) onExpired() else onValid()
 }
 
 internal class B2BNetworkingClient(
@@ -41,7 +41,7 @@ internal class B2BNetworkingClient(
                     session = session,
                     now = Clock.System.now(),
                     onExpired = { sessionManager.revoke() },
-                    onValid = { triggerSessionUpdateJobWithDelay(session.expiresAt ?: Instant.DISTANT_PAST) },
+                    onValid = { triggerSessionUpdateJobWithDelay(session.expiresAt) },
                 )
             }
         }
@@ -53,8 +53,8 @@ internal class B2BNetworkingClient(
     }
 
     override suspend fun updateSessionAndReturnExpiration(): Instant {
-        val response = api.sessionsAuthenticate(SessionsAuthenticateRequest(configuration.defaultSessionDuration))
-        return response.data.session.expiresAt ?: Instant.DISTANT_PAST
+        val response = api.b2BSessionsAuthenticate(B2BSessionsAuthenticateRequest(configuration.defaultSessionDuration))
+        return response.data.memberSession.expiresAt
     }
 
     override val middleware: StytchNetworkResponseMiddleware =

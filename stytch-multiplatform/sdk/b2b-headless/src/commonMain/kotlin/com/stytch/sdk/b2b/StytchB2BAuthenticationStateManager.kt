@@ -1,6 +1,11 @@
 package com.stytch.sdk.b2b
 
 import com.stytch.sdk.StytchAuthenticationStateManager
+import com.stytch.sdk.b2b.data.B2BAuthenticationState
+import com.stytch.sdk.b2b.networking.AuthenticatedResponse
+import com.stytch.sdk.b2b.networking.models.ApiB2bSessionV1MemberSession
+import com.stytch.sdk.b2b.networking.models.ApiOrganizationV1Member
+import com.stytch.sdk.b2b.networking.models.ApiOrganizationV1Organization
 import com.stytch.sdk.data.StytchDispatchers
 import com.stytch.sdk.persistence.StytchPersistenceClient
 import kotlinx.coroutines.CoroutineScope
@@ -13,27 +18,30 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import com.stytch.sdk.b2b.networking.models.ApiB2bSessionV1MemberSession as MemberSession
-import com.stytch.sdk.b2b.networking.models.ApiOrganizationV1Member as Member
-import com.stytch.sdk.b2b.networking.models.ApiOrganizationV1Organization as Organization
 
 internal class StytchB2BAuthenticationStateManager(
     private val dispatchers: StytchDispatchers,
     private val persistenceClient: StytchPersistenceClient,
 ) : StytchAuthenticationStateManager {
-    /* TODO
-    internal val sessionFlow: MutableStateFlow<Session?> = MutableStateFlow(null)
-    internal val userFlow: MutableStateFlow<User?> = MutableStateFlow(null)
+    internal val sessionFlow: MutableStateFlow<ApiB2bSessionV1MemberSession?> = MutableStateFlow(null)
+    internal val memberFlow: MutableStateFlow<ApiOrganizationV1Member?> = MutableStateFlow(null)
+    internal val organizationFlow: MutableStateFlow<ApiOrganizationV1Organization?> = MutableStateFlow(null)
     internal var sessionTokenFlow: MutableStateFlow<String?> = MutableStateFlow(null)
     internal var sessionJwtFlow: MutableStateFlow<String?> = MutableStateFlow(null)
 
     private val loadingStateFlow: MutableStateFlow<Boolean> = MutableStateFlow(false)
 
     override val authenticationStateFlow: StateFlow<B2BAuthenticationState> =
-        combine(loadingStateFlow, sessionFlow, userFlow, sessionTokenFlow, sessionJwtFlow) { isLoaded, session, user, token, jwt ->
-            if (!isLoaded) return@combine B2BAuthenticationState.Loading()
-            if (session != null && user != null && token != null && jwt != null) {
-                return@combine B2BAuthenticationState.Authenticated(user, session, token, jwt)
+        combine(
+            sessionFlow,
+            memberFlow,
+            organizationFlow,
+            sessionTokenFlow,
+            sessionJwtFlow,
+        ) { session, member, organization, token, jwt ->
+            if (!loadingStateFlow.value) return@combine B2BAuthenticationState.Loading()
+            if (session != null && member != null && organization != null && token != null && jwt != null) {
+                return@combine B2BAuthenticationState.Authenticated(member, session, organization, token, jwt)
             }
             B2BAuthenticationState.Unauthenticated()
         }.stateIn(CoroutineScope(dispatchers.mainDispatcher), SharingStarted.WhileSubscribed(5000L), B2BAuthenticationState.Loading())
@@ -44,13 +52,13 @@ internal class StytchB2BAuthenticationStateManager(
     override suspend fun <T> update(response: T) {
         if (response is AuthenticatedResponse) {
             coroutineScope {
-                userFlow.value = response.user
-                sessionFlow.value = response.session
+                memberFlow.value = response.member
+                sessionFlow.value = response.memberSession
                 sessionTokenFlow.value = response.sessionToken
                 sessionJwtFlow.value = response.sessionJwt
                 listOf(
-                    async(dispatchers.ioDispatcher) { persistenceClient.save(USER_IDENTIFIER, response.user) },
-                    async(dispatchers.ioDispatcher) { persistenceClient.save(SESSION_IDENTIFIER, response.session) },
+                    async(dispatchers.ioDispatcher) { persistenceClient.save(MEMBER_IDENTIFIER, response.member) },
+                    async(dispatchers.ioDispatcher) { persistenceClient.save(SESSION_IDENTIFIER, response.memberSession) },
                     async(dispatchers.ioDispatcher) { persistenceClient.save(SESSION_TOKEN_IDENTIFIER, response.sessionToken) },
                     async(dispatchers.ioDispatcher) { persistenceClient.save(SESSION_JWT_IDENTIFIER, response.sessionJwt) },
                 ).awaitAll()
@@ -60,12 +68,12 @@ internal class StytchB2BAuthenticationStateManager(
 
     override suspend fun revoke() {
         coroutineScope {
-            userFlow.value = null
+            memberFlow.value = null
             sessionFlow.value = null
             sessionTokenFlow.value = null
             sessionJwtFlow.value = null
             listOf(
-                async(dispatchers.ioDispatcher) { persistenceClient.remove(USER_IDENTIFIER) },
+                async(dispatchers.ioDispatcher) { persistenceClient.remove(MEMBER_IDENTIFIER) },
                 async(dispatchers.ioDispatcher) { persistenceClient.remove(SESSION_IDENTIFIER) },
                 async(dispatchers.ioDispatcher) { persistenceClient.remove(SESSION_TOKEN_IDENTIFIER) },
                 async(dispatchers.ioDispatcher) { persistenceClient.remove(SESSION_JWT_IDENTIFIER) },
@@ -76,7 +84,7 @@ internal class StytchB2BAuthenticationStateManager(
     init {
         CoroutineScope(dispatchers.ioDispatcher).launch {
             listOf(
-                async(dispatchers.ioDispatcher) { userFlow.value = persistenceClient.get(USER_IDENTIFIER, null) },
+                async(dispatchers.ioDispatcher) { memberFlow.value = persistenceClient.get(MEMBER_IDENTIFIER, null) },
                 async(dispatchers.ioDispatcher) { sessionFlow.value = persistenceClient.get(SESSION_IDENTIFIER, null) },
                 async(dispatchers.ioDispatcher) { sessionTokenFlow.value = persistenceClient.get(SESSION_TOKEN_IDENTIFIER, null) },
                 async(dispatchers.ioDispatcher) { sessionJwtFlow.value = persistenceClient.get(SESSION_JWT_IDENTIFIER, null) },
@@ -89,7 +97,6 @@ internal class StytchB2BAuthenticationStateManager(
         private const val SESSION_IDENTIFIER = "stytch_session"
         private const val SESSION_TOKEN_IDENTIFIER = "stytch_session_token"
         private const val SESSION_JWT_IDENTIFIER = "stytch_session_jwt"
-        private const val USER_IDENTIFIER = "stytch_user"
+        private const val MEMBER_IDENTIFIER = "stytch_member"
     }
-    */
 }

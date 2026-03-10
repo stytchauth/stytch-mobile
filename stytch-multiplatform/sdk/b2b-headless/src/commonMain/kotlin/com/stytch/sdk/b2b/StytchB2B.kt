@@ -1,6 +1,11 @@
 package com.stytch.sdk.b2b
 
 import com.stytch.sdk.StytchClient
+import com.stytch.sdk.b2b.data.B2BAuthenticationState
+import com.stytch.sdk.b2b.data.B2BTokenType
+import com.stytch.sdk.b2b.data.DeeplinkAuthenticationStatus
+import com.stytch.sdk.b2b.data.DeeplinkToken
+import com.stytch.sdk.b2b.networking.B2BNetworkingClient
 import com.stytch.sdk.data.BootstrapResponse
 import com.stytch.sdk.data.JsCleanup
 import com.stytch.sdk.data.PKCECodePair
@@ -81,39 +86,18 @@ internal class DefaultStytchB2B(
         withContext(dispatchers.ioDispatcher) {
             val token = parseDeeplink(url) ?: return@withContext DeeplinkAuthenticationStatus.UnknownDeeplink(url)
             when (token.type) {
-                /* TODO
-                ConsumerTokenType.UNKNOWN -> {
+                B2BTokenType.UNKNOWN -> {
                     DeeplinkAuthenticationStatus.UnknownDeeplink(url)
                 }
 
-                ConsumerTokenType.RESET_PASSWORD -> {
+                B2BTokenType.MULTI_TENANT_PASSWORDS -> {
                     DeeplinkAuthenticationStatus.ManualHandlingRequired(token.token)
                 }
 
-                ConsumerTokenType.MAGIC_LINKS -> {
-                    DeeplinkAuthenticationStatus.Authenticated(
-                        magicLinks.authenticate(
-                            MagicLinksAuthenticateParameters(
-                                token = token.token,
-                                sessionDurationMinutes =
-                                    sessionDurationMinutes ?: configuration.defaultSessionDuration,
-                            ),
-                        ) as AuthenticatedResponse,
-                    )
+                else -> {
+                    // TODO: Handle the cases
+                    DeeplinkAuthenticationStatus.UnknownDeeplink(url)
                 }
-
-                ConsumerTokenType.OAUTH -> {
-                    DeeplinkAuthenticationStatus.Authenticated(
-                        oauth.authenticate(
-                            OAuthAuthenticateParameters(
-                                token = token.token,
-                                sessionDurationMinutes =
-                                    sessionDurationMinutes ?: configuration.defaultSessionDuration,
-                            ),
-                        ),
-                    )
-                }
-                */
             }
         }
 
