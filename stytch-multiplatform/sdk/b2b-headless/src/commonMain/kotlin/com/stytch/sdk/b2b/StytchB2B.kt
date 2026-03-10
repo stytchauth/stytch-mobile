@@ -9,13 +9,21 @@ import com.stytch.sdk.b2b.discovery.B2BDiscoveryClient
 import com.stytch.sdk.b2b.discovery.B2BDiscoveryClientImpl
 import com.stytch.sdk.b2b.magicLinks.B2BMagicLinksClient
 import com.stytch.sdk.b2b.magicLinks.B2BMagicLinksClientImpl
+import com.stytch.sdk.b2b.members.B2BMembersClient
+import com.stytch.sdk.b2b.members.B2BMembersClientImpl
 import com.stytch.sdk.b2b.networking.AuthenticatedResponse
 import com.stytch.sdk.b2b.networking.B2BNetworkingClient
 import com.stytch.sdk.b2b.networking.models.B2BMagicLinksAuthenticateParameters
+import com.stytch.sdk.b2b.organizations.B2BOrganizationsClient
+import com.stytch.sdk.b2b.organizations.B2BOrganizationsClientImpl
 import com.stytch.sdk.b2b.otp.B2BOtpClient
 import com.stytch.sdk.b2b.otp.B2BOtpClientImpl
 import com.stytch.sdk.b2b.passwords.B2BPasswordsClient
 import com.stytch.sdk.b2b.passwords.B2BPasswordsClientImpl
+import com.stytch.sdk.b2b.recoveryCodes.B2BRecoveryCodesClient
+import com.stytch.sdk.b2b.recoveryCodes.B2BRecoveryCodesClientImpl
+import com.stytch.sdk.b2b.scim.B2BSCIMClient
+import com.stytch.sdk.b2b.scim.B2BSCIMClientImpl
 import com.stytch.sdk.b2b.session.B2BSessionsClient
 import com.stytch.sdk.b2b.session.B2BSessionsClientImpl
 import com.stytch.sdk.b2b.totp.B2BTOTPClient
@@ -47,6 +55,10 @@ public interface StytchB2B : StytchClient {
     public val passwords: B2BPasswordsClient
     public val totp: B2BTOTPClient
     public val discovery: B2BDiscoveryClient
+    public val members: B2BMembersClient
+    public val organizations: B2BOrganizationsClient
+    public val recoveryCodes: B2BRecoveryCodesClient
+    public val scim: B2BSCIMClient
 
     public val authenticationStateFlow: StateFlow<B2BAuthenticationState>
 
@@ -96,6 +108,14 @@ internal class DefaultStytchB2B(
     override val totp: B2BTOTPClient = B2BTOTPClientImpl(dispatchers, networkingClient, sessionManager)
 
     override val discovery: B2BDiscoveryClient = B2BDiscoveryClientImpl(dispatchers, networkingClient, pkceClient, sessionManager)
+
+    override val members: B2BMembersClient = B2BMembersClientImpl(dispatchers, networkingClient)
+
+    override val organizations: B2BOrganizationsClient = B2BOrganizationsClientImpl(dispatchers, networkingClient)
+
+    override val recoveryCodes: B2BRecoveryCodesClient = B2BRecoveryCodesClientImpl(dispatchers, networkingClient, sessionManager)
+
+    override val scim: B2BSCIMClient = B2BSCIMClientImpl(dispatchers, networkingClient)
 
     override val authenticationStateFlow: StateFlow<B2BAuthenticationState> = sessionManager.authenticationStateFlow
 
