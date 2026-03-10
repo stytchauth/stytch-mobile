@@ -18,6 +18,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlin.time.Clock
+import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Instant
 
 internal class StytchB2BAuthenticationStateManager(
     private val dispatchers: StytchDispatchers,
@@ -28,6 +31,8 @@ internal class StytchB2BAuthenticationStateManager(
     internal val organizationFlow: MutableStateFlow<ApiOrganizationV1Organization?> = MutableStateFlow(null)
     internal var sessionTokenFlow: MutableStateFlow<String?> = MutableStateFlow(null)
     internal var sessionJwtFlow: MutableStateFlow<String?> = MutableStateFlow(null)
+    internal var intermediateSessionTokenFlow: MutableStateFlow<String?> = MutableStateFlow(null)
+    internal var istExpiration: Instant? = null
 
     private val loadingStateFlow: MutableStateFlow<Boolean> = MutableStateFlow(false)
 
@@ -49,6 +54,14 @@ internal class StytchB2BAuthenticationStateManager(
     override val currentSessionToken: String?
         get() = sessionTokenFlow.value
 
+    val intermediateSessionToken: String?
+        get() =
+            if (istExpiration?.let { it < Clock.System.now() } ?: false) {
+                return null
+            } else {
+                return intermediateSessionTokenFlow.value
+            }
+
     override suspend fun <T> update(response: T) {
         if (response is AuthenticatedResponse) {
             coroutineScope {
@@ -56,11 +69,20 @@ internal class StytchB2BAuthenticationStateManager(
                 sessionFlow.value = response.memberSession
                 sessionTokenFlow.value = response.sessionToken
                 sessionJwtFlow.value = response.sessionJwt
+                intermediateSessionTokenFlow.value = response.intermediateSessionToken
+                istExpiration =
+                    if (response.intermediateSessionToken == null) {
+                        null
+                    } else {
+                        Clock.System.now() + 10.minutes
+                    }
                 listOf(
                     async(dispatchers.ioDispatcher) { persistenceClient.save(MEMBER_IDENTIFIER, response.member) },
                     async(dispatchers.ioDispatcher) { persistenceClient.save(SESSION_IDENTIFIER, response.memberSession) },
                     async(dispatchers.ioDispatcher) { persistenceClient.save(SESSION_TOKEN_IDENTIFIER, response.sessionToken) },
                     async(dispatchers.ioDispatcher) { persistenceClient.save(SESSION_JWT_IDENTIFIER, response.sessionJwt) },
+                    async(dispatchers.ioDispatcher) { persistenceClient.save(IST_IDENTIFIER, response.intermediateSessionToken) },
+                    async(dispatchers.ioDispatcher) { persistenceClient.save(IST_EXPIRATION, istExpiration) },
                 ).awaitAll()
             }
         }
@@ -77,6 +99,8 @@ internal class StytchB2BAuthenticationStateManager(
                 async(dispatchers.ioDispatcher) { persistenceClient.remove(SESSION_IDENTIFIER) },
                 async(dispatchers.ioDispatcher) { persistenceClient.remove(SESSION_TOKEN_IDENTIFIER) },
                 async(dispatchers.ioDispatcher) { persistenceClient.remove(SESSION_JWT_IDENTIFIER) },
+                async(dispatchers.ioDispatcher) { persistenceClient.remove(IST_IDENTIFIER) },
+                async(dispatchers.ioDispatcher) { persistenceClient.remove(IST_EXPIRATION) },
             ).awaitAll()
         }
     }
@@ -88,6 +112,8 @@ internal class StytchB2BAuthenticationStateManager(
                 async(dispatchers.ioDispatcher) { sessionFlow.value = persistenceClient.get(SESSION_IDENTIFIER, null) },
                 async(dispatchers.ioDispatcher) { sessionTokenFlow.value = persistenceClient.get(SESSION_TOKEN_IDENTIFIER, null) },
                 async(dispatchers.ioDispatcher) { sessionJwtFlow.value = persistenceClient.get(SESSION_JWT_IDENTIFIER, null) },
+                async(dispatchers.ioDispatcher) { intermediateSessionTokenFlow.value = persistenceClient.get(IST_IDENTIFIER, null) },
+                async(dispatchers.ioDispatcher) { istExpiration = persistenceClient.get(IST_EXPIRATION, null) },
             ).awaitAll()
             loadingStateFlow.value = true
         }
@@ -98,5 +124,7 @@ internal class StytchB2BAuthenticationStateManager(
         private const val SESSION_TOKEN_IDENTIFIER = "stytch_session_token"
         private const val SESSION_JWT_IDENTIFIER = "stytch_session_jwt"
         private const val MEMBER_IDENTIFIER = "stytch_member"
+        private const val IST_IDENTIFIER = "stytch_ist_identifier"
+        private const val IST_EXPIRATION = "stytch_ist_expiration"
     }
 }
