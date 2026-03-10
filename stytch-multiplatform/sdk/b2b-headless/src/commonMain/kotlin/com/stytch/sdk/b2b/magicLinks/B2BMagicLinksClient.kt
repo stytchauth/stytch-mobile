@@ -62,14 +62,15 @@ internal class B2BMagicLinksClientImpl(
         withContext(dispatchers.ioDispatcher) {
             networkingClient.request {
                 val codePair = pkceClient.retrieve() ?: throw MissingPKCEException()
-                networkingClient.api.b2BMagicLinksAuthenticate(
-                    request.toNetworkModel(
-                        pkceCodeVerifier = codePair.verifier,
-                        intermediateSessionToken = sessionManager.intermediateSessionToken,
-                    ),
-                ).also {
-                    pkceClient.revoke()
-                }
+                networkingClient.api
+                    .b2BMagicLinksAuthenticate(
+                        request.toNetworkModel(
+                            pkceCodeVerifier = codePair.verifier,
+                            intermediateSessionToken = sessionManager.intermediateSessionToken,
+                        ),
+                    ).also {
+                        pkceClient.revoke()
+                    }
             }
         }
 }
