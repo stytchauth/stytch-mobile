@@ -1,11 +1,11 @@
 package com.stytch.sdk.b2b.data
 
-import com.stytch.sdk.data.AuthenticationState
-import kotlin.js.JsExport
-import kotlin.js.JsName
 import com.stytch.sdk.b2b.networking.models.ApiB2bSessionV1MemberSession
 import com.stytch.sdk.b2b.networking.models.ApiOrganizationV1Member
 import com.stytch.sdk.b2b.networking.models.ApiOrganizationV1Organization
+import com.stytch.sdk.data.AuthenticationState
+import kotlin.js.JsExport
+import kotlin.js.JsName
 
 @JsExport
 @JsName("B2BAuthenticationState")

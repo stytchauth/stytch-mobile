@@ -3,7 +3,6 @@ package com.stytch.sdk.b2b.networking
 import com.stytch.sdk.b2b.StytchB2BAuthenticationStateManager
 import com.stytch.sdk.b2b.networking.api.SdkExternalApi
 import com.stytch.sdk.b2b.networking.models.B2BSessionsAuthenticateRequest
-import com.stytch.sdk.b2b.networking.models.SessionsAuthenticateRequest
 import com.stytch.sdk.data.StytchClientConfigurationInternal
 import com.stytch.sdk.data.StytchDispatchers
 import com.stytch.sdk.networking.StytchNetworkResponseMiddleware
