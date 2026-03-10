@@ -16,6 +16,12 @@ public interface IOAuthProvider {
         baseUrl: String,
         publicTokenInfo: PublicTokenInfo,
     ): OAuthResult
+
+    public suspend fun startBrowserFlow(
+        url: String,
+        parameters: OAuthStartParameters,
+        dispatchers: StytchDispatchers,
+    ): OAuthResult
 }
 
 public expect class OAuthProvider : IOAuthProvider {
@@ -28,6 +34,12 @@ public expect class OAuthProvider : IOAuthProvider {
         type: OAuthProviderType,
         baseUrl: String,
         publicTokenInfo: PublicTokenInfo,
+    ): OAuthResult
+
+    public override suspend fun startBrowserFlow(
+        url: String,
+        parameters: OAuthStartParameters,
+        dispatchers: StytchDispatchers,
     ): OAuthResult
 }
 

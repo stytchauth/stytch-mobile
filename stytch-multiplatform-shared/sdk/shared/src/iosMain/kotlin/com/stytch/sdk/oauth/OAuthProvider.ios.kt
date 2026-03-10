@@ -136,6 +136,51 @@ public actual class OAuthProvider(
         }
     }
 
+    public actual override suspend fun startBrowserFlow(
+        url: String,
+        parameters: OAuthStartParameters,
+        dispatchers: StytchDispatchers,
+    ): OAuthResult =
+        withContext(dispatchers.ioDispatcher) {
+            launchWebAuthSession(url, packageName, parameters.oauthPresentationContextProvider ?: DefaultPresenterContext(), dispatchers)
+        }
+
+    private suspend fun launchWebAuthSession(
+        url: String,
+        scheme: String,
+        presentationContextProvider: ASWebAuthenticationPresentationContextProvidingProtocol,
+        dispatchers: StytchDispatchers,
+    ): OAuthResult =
+        withContext(dispatchers.mainDispatcher) {
+            suspendCancellableCoroutine { continuation ->
+                NSURL.URLWithString(url)?.let { nsUrl ->
+                    val session =
+                        ASWebAuthenticationSession(nsUrl, callbackURLScheme = scheme) { nsUrl, nsError ->
+                            if (nsError != null) {
+                                return@ASWebAuthenticationSession continuation.resume(
+                                    OAuthResult.Error(nsError.localizedDescription),
+                                )
+                            }
+                            if (nsUrl == null) {
+                                return@ASWebAuthenticationSession continuation.resume(OAuthResult.Error(SSOError.NoURIFound().message))
+                            }
+                            val components = NSURLComponents(nsUrl, true)
+                            val items = components.queryItems?.mapNotNull { it as NSURLQueryItem }
+                            val token = items?.firstOrNull { it.name == "token" }?.value
+                            if (token != null) {
+                                continuation.resume(OAuthResult.ClassicToken(token = token))
+                            } else {
+                                continuation.resume(OAuthResult.Error(SSOError.NoTokenFound().message))
+                            }
+                        }
+                    session.presentationContextProvider = presentationContextProvider
+                    session.start()
+                } ?: run {
+                    continuation.resume(OAuthResult.Error(SSOError.NoURIFound().message))
+                }
+            }
+        }
+
     private suspend fun attemptStandardOAuthAuthentication(
         pkceClient: PKCEClient,
         parameters: OAuthStartParameters,
@@ -145,36 +190,7 @@ public actual class OAuthProvider(
     ): OAuthResult =
         withContext(dispatchers.ioDispatcher) {
             val uri = generateOAuthStartUrl(packageName, baseUrl, publicTokenInfo, parameters, pkceClient)
-            val scheme = getCallbackUrlScheme(parameters)
-            withContext(dispatchers.mainDispatcher) {
-                suspendCancellableCoroutine { continuation ->
-                    NSURL.URLWithString(uri)?.let { nsUrl ->
-                        val session =
-                            ASWebAuthenticationSession(nsUrl, callbackURLScheme = scheme) { nsUrl, nsError ->
-                                if (nsError != null) {
-                                    return@ASWebAuthenticationSession continuation.resume(
-                                        OAuthResult.Error(nsError.localizedDescription),
-                                    )
-                                }
-                                if (nsUrl == null) {
-                                    return@ASWebAuthenticationSession continuation.resume(OAuthResult.Error(SSOError.NoURIFound().message))
-                                }
-                                val components = NSURLComponents(nsUrl, true)
-                                val items = components.queryItems?.mapNotNull { it as NSURLQueryItem }
-                                val token = items?.firstOrNull { it.name == "token" }?.value
-                                if (token != null) {
-                                    continuation.resume(OAuthResult.ClassicToken(token = token))
-                                } else {
-                                    continuation.resume(OAuthResult.Error(SSOError.NoTokenFound().message))
-                                }
-                            }
-                        session.presentationContextProvider = parameters.oauthPresentationContextProvider ?: DefaultPresenterContext()
-                        session.start()
-                    } ?: run {
-                        continuation.resume(OAuthResult.Error(SSOError.NoURIFound().message))
-                    }
-                }
-            }
+            launchWebAuthSession(uri, packageName, parameters.oauthPresentationContextProvider ?: DefaultPresenterContext(), dispatchers)
         }
 
     private class DefaultPresenterContext :
@@ -188,11 +204,6 @@ public actual class OAuthProvider(
             ASPresentationAnchor()
     }
 
-    private fun getCallbackUrlScheme(parameters: OAuthStartParameters): String {
-        val loginScheme = parameters.loginRedirectUrl?.let { NSURL.URLWithString(it)?.scheme() }
-        val signupScheme = parameters.signupRedirectUrl?.let { NSURL.URLWithString(it)?.scheme() }
-        return loginScheme ?: signupScheme ?: "https"
-    }
 }
 
 private fun ByteArray.toHexString(): String = joinToString("") { (it.toInt() and 0xff).toString(16).padStart(2, '0') }
