@@ -13,7 +13,10 @@ export const unstable_settings = {
 
 
 const STYTCH_PUBLIC_TOKEN = process.env.EXPO_PUBLIC_STYTCH_PUBLIC_TOKEN as string;
-const stytchConfig = new StytchClientConfiguration(STYTCH_PUBLIC_TOKEN);
+const stytchConfig = new StytchClientConfiguration(STYTCH_PUBLIC_TOKEN, undefined, 5, {
+  googleClientId: '447472228390-4pc1tf2tbj7iccu7sj2vfjs69ftmp4el.apps.googleusercontent.com',
+  autoSelectEnabled: false,
+});
 const stytchConsumerClient = createStytchConsumer(stytchConfig);
 
 export default function RootLayout() {

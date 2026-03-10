@@ -1,5 +1,5 @@
 import { createContext } from 'react';
-import { StytchConsumer, ApiUserV1User, ApiSessionV1Session, ConsumerAuthenticationState } from '../lib/@stytch/react-native-consumer.mjs'
+import { StytchConsumer, ApiUserV1User, ApiSessionV1Session, ConsumerAuthenticationState } from '../lib/consumer-headless.mjs'
 
 export const StytchUserContext = createContext<ApiUserV1User | undefined>(undefined);
 export const StytchSessionContext = createContext<ApiSessionV1Session | undefined>(undefined);

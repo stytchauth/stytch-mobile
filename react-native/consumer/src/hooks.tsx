@@ -1,6 +1,6 @@
 import {useContext} from 'react';
 import { StytchUserContext, StytchSessionContext, StytchContext, StytchAuthenticationStateContext } from './contexts';
-import { ApiUserV1User, ApiSessionV1Session, StytchConsumer, ConsumerAuthenticationState } from '../lib/@stytch/react-native-consumer.mjs';
+import { ApiUserV1User, ApiSessionV1Session, StytchConsumer, ConsumerAuthenticationState } from '../lib/consumer-headless.mjs';
 
 export const useStytchUser = (): ApiUserV1User | undefined => {
   return useContext(StytchUserContext);

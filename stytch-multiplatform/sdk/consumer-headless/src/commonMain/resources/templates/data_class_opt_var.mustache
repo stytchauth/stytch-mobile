@@ -12,7 +12,7 @@
     @get:JsonProperty("{{{vendorExtensions.x-base-name-literal}}}")
     {{/jackson}}
     {{#kotlinx_serialization}}
-    {{^isEnum}}{{^isArray}}{{^isPrimitiveType}}{{^isModel}}@Contextual {{/isModel}}{{/isPrimitiveType}}{{/isArray}}{{/isEnum}}@SerialName(value = "{{{vendorExtensions.x-base-name-literal}}}")
+    {{^isEnum}}{{^isArray}}{{^isMap}}{{^isPrimitiveType}}{{^isModel}}@Contextual {{/isModel}}{{/isPrimitiveType}}{{/isMap}}{{/isArray}}{{/isEnum}}@SerialName(value = "{{{vendorExtensions.x-base-name-literal}}}")
     {{/kotlinx_serialization}}
     {{/multiplatform}}
     {{#vendorExtensions.x-field-extra-annotation}}

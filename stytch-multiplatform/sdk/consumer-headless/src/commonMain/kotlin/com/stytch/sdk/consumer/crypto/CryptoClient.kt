@@ -7,11 +7,14 @@ import com.stytch.sdk.consumer.networking.models.CryptoWalletsAuthenticateRespon
 import com.stytch.sdk.consumer.networking.models.CryptoWalletsAuthenticateStartSecondaryRequest
 import com.stytch.sdk.consumer.networking.models.ICryptoWalletsAuthenticateParameters
 import com.stytch.sdk.data.StytchDispatchers
+import com.stytch.sdk.data.StytchError
 import kotlinx.coroutines.withContext
+import kotlin.coroutines.cancellation.CancellationException
 import kotlin.js.JsExport
 
 @JsExport
 public interface CryptoClient {
+    @Throws(StytchError::class, CancellationException::class)
     public suspend fun authenticate(
         request: ICryptoWalletsAuthenticateParameters,
         signChallenge: suspend (String) -> String,
@@ -23,6 +26,7 @@ internal class CryptoClientImpl(
     private val networkingClient: ConsumerNetworkingClient,
     private val sessionManager: StytchConsumerAuthenticationStateManager,
 ) : CryptoClient {
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun authenticate(
         request: ICryptoWalletsAuthenticateParameters,
         signChallenge: suspend (String) -> String,

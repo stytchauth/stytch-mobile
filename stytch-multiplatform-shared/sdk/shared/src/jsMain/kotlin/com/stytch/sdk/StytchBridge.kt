@@ -106,15 +106,15 @@ public external object StytchBridge {
     ): Promise<String>
 
     public fun getOAuthToken(
+        type: String,
+        baseUrl: String,
+        publicToken: String,
         loginRedirectUrl: String?,
         signupRedirectUrl: String?,
         customScopes: List<String>?,
         providerParams: String?,
         oauthAttachToken: String?,
         sessionDurationMinutes: Int?,
-        type: String,
-        baseUrl: String,
-        publicToken: String,
         googleCredentialConfiguration: String?,
     ): Promise<String>
 }

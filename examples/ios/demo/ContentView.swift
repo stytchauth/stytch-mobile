@@ -7,6 +7,7 @@
 import Combine
 import SwiftUI
 import StytchConsumerSDK
+import Security
 
 struct ContentView: View {
     @State private var viewModel = ViewModel()
@@ -17,11 +18,23 @@ struct ContentView: View {
             case .loading:
                 Text("Loading...")
             case .unauthenticated:
-                UnauthenticatedStateView(
-                    step: viewModel.state.step,
-                    sendSms: viewModel.sendSms(phoneNumber:),
-                    authSms: viewModel.authSms(token:)
-                )
+                VStack {
+                    Button("Google OAuth") {
+                        viewModel.googleOauth()
+                    }
+                    Button("Apple OAuth") {
+                        viewModel.appleOauth()
+                    }
+                    Button("Auth Biometrics") {
+                        viewModel.authBiometrics()
+                    }
+                    Button("Auth Passkey") {
+                        viewModel.authPasskey()
+                    }
+                    Button("Delete biometrics") {
+                        viewModel.deleteBiometrics()
+                    }
+                }
             case .authenticated:
                 Text("Authenticated!")
                 Button("Logout") {
@@ -29,10 +42,12 @@ struct ContentView: View {
                         await viewModel.logout()
                     }
                 }
-            }
-            if let response = viewModel.state.rawResponse {
-                Spacer()
-                Text(response.toFriendlyDisplay())
+                Button("Register Biometrics") {
+                    viewModel.registerBiometrics()
+                }
+                Button("Register Passkey") {
+                    viewModel.registerPasskey()
+                }
             }
         }
         .frame(maxHeight: .infinity, alignment: .top)
@@ -87,7 +102,7 @@ extension ContentView {
         private let config: StytchClientConfiguration = .init(publicToken: ProcessInfo.processInfo.environment["STYTCH_PUBLIC_TOKEN"] ?? "")
         private let consumerClient: StytchConsumer
         var state: ContentViewState = .init()
-
+        
         init() {
             consumerClient = createStytchConsumer(configuration: config)
             Task {
@@ -99,11 +114,10 @@ extension ContentView {
         
         func sendSms(phoneNumber: String) async {
             do {
-                let request = OtpSmsLoginOrCreateRequest(phoneNumber: phoneNumber, expirationMinutes: 5, enableAutofill: false)
+                let request = OTPsSMSLoginOrCreateParameters.init(phoneNumber: phoneNumber)
                 let response = try await consumerClient.otp.sms.loginOrCreate(request: request)
                 state.methodId = response.methodId
                 state.step = .token
-                state.rawResponse = response
             } catch(let error)  {
                 state.methodId = nil
                 state.step = .phoneNumber
@@ -116,11 +130,10 @@ extension ContentView {
                 guard let methodId = state.methodId else {
                     return
                 }
-                let request: OtpAuthenticateRequest = .init(token: token, methodId: methodId, sessionDurationMinutes: 5)
+                let request: OTPsAuthenticateParameters = .init(token: token, methodId: methodId, sessionDurationMinutes: 5)
                 let response = try await consumerClient.otp.authenticate(request: request)
                 state.methodId = nil
                 state.step = .phoneNumber
-                state.rawResponse = response
             } catch (let error)  {
                 state.methodId = nil
                 state.step = .token
@@ -131,9 +144,83 @@ extension ContentView {
         func logout() async {
             do {
                 let response = try await consumerClient.session.revoke()
-                state.rawResponse = response
             } catch (let error) {
-                state.error = error as? StytchError
+                state.error = error.asStytchError
+            }
+        }
+        
+        func googleOauth() {
+            Task {
+                do {
+                    let params: OAuthStartParameters = .init(loginRedirectUrl: "login", signupRedirectUrl: "signup")
+                    let response = try await consumerClient.oauth.google.start(startParameters: params)
+                    print(response)
+                } catch (let error) {
+                    print(error.asStytchError?.cause ?? "UNKNOWN")
+                }
+            }
+        }
+        
+        func appleOauth() {
+            Task {
+                do {
+                    let params: OAuthStartParameters = .init(loginRedirectUrl: "login", signupRedirectUrl: "signup")
+                    let response = try await consumerClient.oauth.apple.start(startParameters: params)
+                    print(response)
+                } catch {
+                    print(error.asStytchError?.cause ?? "UNKNOWN")
+                }
+            }
+        }
+        
+        func registerBiometrics() {
+            Task {
+                do {
+                    let response = try await consumerClient.biometrics.register(parameters: .init(sessionDurationMinutes: 5, promptData: .init(reason: "Test", fallbackTitle: "Cancel", cancelTitle: "Cancel")))
+                    print(response)
+                } catch (let error) {
+                    print(error.asStytchError?.cause ?? "UNKNOWN")
+                }
+            }
+        }
+        func authBiometrics() {
+            Task {
+                do {
+                    let response = try await consumerClient.biometrics.authenticate(parameters: .init(sessionDurationMinutes: 5, promptData: .init(reason: "Test", fallbackTitle: "Cancel", cancelTitle: "Cancel")))
+                    print(response)
+                } catch (let error) {
+                    print(error.asStytchError?.cause ?? "UNKNOWN")
+                }
+            }
+        }
+        func registerPasskey() {
+            Task {
+                do {
+                    let response = try await consumerClient.passkeys.register(parameters: .init(domain: "stytch.com"))
+                    print(response)
+                } catch (let error) {
+                    print(error.asStytchError?.cause ?? "UNKNOWN")
+                }
+            }
+        }
+        func authPasskey() {
+            Task {
+                do {
+                    let response = try await consumerClient.passkeys.authenticate(parameters: .init(domain: "stytch.com"))
+                    print(response)
+                } catch (let error) {
+                    print(error.asStytchError?.cause ?? "UNKNOWN")
+                }
+            }
+        }
+        func deleteBiometrics() {
+            Task {
+                do {
+                    let response = try await consumerClient.biometrics.removeRegistration()
+                    print(response)
+                } catch (let error) {
+                    print(error.asStytchError?.cause ?? "UNKNOWN")
+                }
             }
         }
     }
@@ -144,50 +231,10 @@ struct ContentViewState {
     var authenticationState: ConsumerAuthenticationState = .Loading()
     var methodId: String? = nil
     var step: Step = .phoneNumber
-    var rawResponse: StytchAPIResponse? = nil
     var error: StytchError? = nil
 }
 
 enum Step {
     case phoneNumber
     case token
-}
-
-private extension StytchAPIResponse {
-    func toFriendlyDisplay() -> String {
-        var display = if self is OtpSmsLoginOrCreateResponse {
-            "Code Sent\n"
-        } else if (self is AuthenticatedResponse) {
-            "Logged In\n"
-        } else if (self is SessionsRevokeResponse) {
-            "Logged Out\n"
-        } else {
-            "Received Response\n"
-        }
-        if let response = self as? BasicResponse {
-            display += """
-                status_code:
-                \(response.statusCode)
-                
-                request_id:
-                \(response.requestId)
-            """.trimmingCharacters(in: .whitespaces)
-        }
-        if let response = self as? OtpSmsLoginOrCreateResponse {
-            display += """
-                method_id:
-                \(response.methodId)
-            """.trimmingCharacters(in: .whitespaces)
-        }
-        if let response = self as? AuthenticatedResponse {
-            display += """
-                session_token:
-                \(response.sessionToken)
-                
-                session_jwt:
-                \(response.sessionJwt)
-            """.trimmingCharacters(in: .whitespaces)
-        }
-        return display
-    }
 }

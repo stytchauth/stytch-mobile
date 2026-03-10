@@ -3,9 +3,7 @@ package com.stytch.sdk.oauth
 import com.stytch.sdk.data.PublicTokenInfo
 import com.stytch.sdk.data.StytchDispatchers
 import com.stytch.sdk.pkce.PKCEClient
-import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
-import kotlin.js.JsExport
 
 public interface IOAuthProvider {
     public val isSupported: Boolean
@@ -33,7 +31,6 @@ public expect class OAuthProvider : IOAuthProvider {
     ): OAuthResult
 }
 
-@JsExport
 @Serializable
 public enum class OAuthProviderType(
     public val hostName: String,
@@ -59,7 +56,6 @@ public enum class OAuthProviderType(
     YAHOO("yahoo"),
 }
 
-@JsExport
 @Serializable
 public sealed class OAuthResult {
     @Serializable public data class ClassicToken(
@@ -73,6 +69,6 @@ public sealed class OAuthResult {
     ) : OAuthResult()
 
     @Serializable public data class Error(
-        val error: @Contextual Throwable,
+        val message: String,
     ) : OAuthResult()
 }

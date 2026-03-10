@@ -14,19 +14,26 @@ import com.stytch.sdk.consumer.networking.models.BiometricsRegisterResponse
 import com.stytch.sdk.consumer.networking.models.BiometricsRegisterStartParameters
 import com.stytch.sdk.consumer.networking.models.toNetworkModel
 import com.stytch.sdk.data.StytchDispatchers
+import com.stytch.sdk.data.StytchError
 import com.stytch.sdk.encryption.StytchEncryptionClient
+import io.ktor.util.decodeBase64Bytes
 import io.ktor.util.encodeBase64
 import kotlinx.coroutines.withContext
+import kotlin.coroutines.cancellation.CancellationException
 import kotlin.js.JsExport
 
 @JsExport
 public interface BiometricsClient {
+    @Throws(StytchError::class, CancellationException::class)
     public suspend fun register(parameters: BiometricsParameters): BiometricsRegisterResponse
 
+    @Throws(StytchError::class, CancellationException::class)
     public suspend fun authenticate(parameters: BiometricsParameters): BiometricsAuthenticateResponse
 
+    @Throws(StytchError::class, CancellationException::class)
     public suspend fun removeRegistration(): Boolean
 
+    @Throws(StytchError::class, CancellationException::class)
     public suspend fun getAvailability(parameters: BiometricsParameters): BiometricsAvailability
 }
 
@@ -37,6 +44,7 @@ internal class BiometricsClientImpl(
     private val encryptionClient: StytchEncryptionClient,
     private val biometricsProvider: IBiometricsProvider,
 ) : BiometricsClient {
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun register(parameters: BiometricsParameters): BiometricsRegisterResponse {
         val availability = getAvailability(parameters)
         if (availability is BiometricsAvailability.Unavailable) {
@@ -59,7 +67,7 @@ internal class BiometricsClientImpl(
                     encryptionClient
                         .signEd25519(
                             key = keyPair.privateKey,
-                            data = startResponse.data.challenge.encodeToByteArray(),
+                            data = startResponse.data.challenge.decodeBase64Bytes(),
                         ).encodeBase64()
                 val response =
                     networkingClient.api.biometricsRegister(
@@ -79,6 +87,7 @@ internal class BiometricsClientImpl(
         }
     }
 
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun authenticate(parameters: BiometricsParameters): BiometricsAuthenticateResponse {
         if (getAvailability(parameters) != BiometricsAvailability.AlreadyRegistered) {
             throw NoBiometricsRegistered()
@@ -94,7 +103,7 @@ internal class BiometricsClientImpl(
                     encryptionClient
                         .signEd25519(
                             key = keyPair.privateKey,
-                            data = startResponse.data.challenge.encodeToByteArray(),
+                            data = startResponse.data.challenge.decodeBase64Bytes(),
                         ).encodeBase64()
                 networkingClient.api.biometricsAuthenticate(
                     BiometricsAuthenticateParameters(sessionDurationMinutes = parameters.sessionDurationMinutes).toNetworkModel(
@@ -106,11 +115,16 @@ internal class BiometricsClientImpl(
         }
     }
 
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun removeRegistration(): Boolean {
+        if (sessionManager.currentSessionToken.isNullOrEmpty()) {
+            throw NoSessionExists()
+        }
         biometricsProvider.removeRegistration()
         return true
     }
 
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun getAvailability(parameters: BiometricsParameters): BiometricsAvailability =
         biometricsProvider.getAvailability(parameters)
 }

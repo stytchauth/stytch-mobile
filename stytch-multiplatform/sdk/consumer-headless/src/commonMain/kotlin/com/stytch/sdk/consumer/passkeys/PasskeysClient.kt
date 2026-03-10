@@ -12,20 +12,25 @@ import com.stytch.sdk.consumer.networking.models.WebAuthnRegisterStartParameters
 import com.stytch.sdk.consumer.networking.models.WebAuthnUpdateResponse
 import com.stytch.sdk.consumer.networking.models.toNetworkModel
 import com.stytch.sdk.data.StytchDispatchers
+import com.stytch.sdk.data.StytchError
 import com.stytch.sdk.passkeys.IPasskeyProvider
 import com.stytch.sdk.passkeys.PasskeysParameters
 import com.stytch.sdk.passkeys.PasskeysUnsupportedError
 import kotlinx.coroutines.withContext
+import kotlin.coroutines.cancellation.CancellationException
 import kotlin.js.JsExport
 
 @JsExport
 public interface PasskeysClient {
     public val isSupported: Boolean
 
+    @Throws(StytchError::class, CancellationException::class)
     public suspend fun register(parameters: PasskeysParameters): WebAuthnRegisterResponse
 
+    @Throws(StytchError::class, CancellationException::class)
     public suspend fun authenticate(parameters: PasskeysParameters): WebAuthnAuthenticateResponse
 
+    @Throws(StytchError::class, CancellationException::class)
     public suspend fun update(
         id: String,
         request: IWebAuthnUpdateParameters,
@@ -40,6 +45,7 @@ internal class PasskeysClientImpl(
 ) : PasskeysClient {
     override val isSupported: Boolean = passkeyProvider.isSupported
 
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun register(parameters: PasskeysParameters): WebAuthnRegisterResponse {
         if (!isSupported) throw PasskeysUnsupportedError()
         return withContext(dispatchers.ioDispatcher) {
@@ -67,6 +73,7 @@ internal class PasskeysClientImpl(
         }
     }
 
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun authenticate(parameters: PasskeysParameters): WebAuthnAuthenticateResponse {
         if (!isSupported) throw PasskeysUnsupportedError()
         return withContext(dispatchers.ioDispatcher) {
@@ -101,6 +108,7 @@ internal class PasskeysClientImpl(
         }
     }
 
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun update(
         id: String,
         request: IWebAuthnUpdateParameters,

@@ -1,9 +1,7 @@
 package com.stytch.sdk.data
 
 import kotlinx.serialization.Serializable
-import kotlin.js.JsExport
 
-@JsExport
 @Serializable
 public class Ed25519KeyPair(
     public val publicKey: ByteArray,

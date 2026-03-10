@@ -41,7 +41,7 @@ public abstract class StytchNetworkingClient(
             getDfpConfiguration = { dfpConfiguration },
         )
 
-    public fun startSessionUpdateJob() {
+    public fun startSessionUpdateJob(delay: Long) {
         // This is a little more complicated than the existing android/iOS logic
         // previously, we only triggered the auto update every ~= 3 minutes, which could result
         // in sessions persisting locally for up to 3 minutes after expiration. Not a security issue, because
@@ -51,14 +51,14 @@ public abstract class StytchNetworkingClient(
         sessionUpdateJob =
             CoroutineScope(dispatchers.ioDispatcher).launch {
                 try {
+                    delay(delay)
                     val nextSessionExpiration =
                         stytchNetworkRequestWithRetryAndBackoff(
                             block = ::updateSessionAndReturnExpiration,
                         )
                     val timeUntilSessionExpires = (nextSessionExpiration - Clock.System.now()).inWholeMilliseconds
                     val delay = min(timeUntilSessionExpires, HEARTBEAT_INTERVAL_MS)
-                    delay(delay)
-                    startSessionUpdateJob()
+                    startSessionUpdateJob(delay)
                 } catch (e: Exception) {
                     if (e is ResponseException) {
                         if (e.response.body<StytchAPIError>().isUnrecoverableError()) {
@@ -115,7 +115,7 @@ public abstract class StytchNetworkingClient(
             }
         }
 
-    private companion object {
-        private const val HEARTBEAT_INTERVAL_MS = 3 * 60 * 1000L // 3 minutes
+    public companion object {
+        public const val HEARTBEAT_INTERVAL_MS: Long = 3 * 60 * 1000L // 3 minutes
     }
 }

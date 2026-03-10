@@ -15,8 +15,10 @@ import com.stytch.sdk.data.PKCECodePair
 import com.stytch.sdk.data.PublicTokenInfo
 import com.stytch.sdk.data.StytchDataResponse
 import com.stytch.sdk.oauth.IOAuthProvider
+import com.stytch.sdk.oauth.OAuthException
 import com.stytch.sdk.oauth.OAuthResult
 import com.stytch.sdk.oauth.OAuthStartParameters
+import com.stytch.sdk.pkce.MissingPKCEException
 import com.stytch.sdk.pkce.PKCEClient
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -72,7 +74,7 @@ internal class OAuthClientImplTest : ConsumerClientTest() {
         runTest(testDispatcher) {
             coEvery { pkceClient.retrieve() } returns null
 
-            assertFailsWith<IllegalStateException> {
+            assertFailsWith<MissingPKCEException> {
                 makeClient().authenticate(OAuthAuthenticateParameters(token = "tok", sessionDurationMinutes = 30))
             }
         }
@@ -230,10 +232,11 @@ internal class OAuthClientImplTest : ConsumerClientTest() {
     fun `start with Error result propagates the error`() =
         runTest(testDispatcher) {
             val error = RuntimeException("OAuth failed")
-            coEvery { oauthProvider.getOAuthToken(any(), any(), any(), any(), any(), any()) } returns OAuthResult.Error(error)
+            coEvery { oauthProvider.getOAuthToken(any(), any(), any(), any(), any(), any()) } returns
+                OAuthResult.Error(error.message ?: error.toString())
 
-            val thrown = assertFailsWith<RuntimeException> { makeClient().apple.start(startParams) }
-            assertEquals("OAuth failed", thrown.message)
+            val thrown = assertFailsWith<OAuthException> { makeClient().apple.start(startParams) }
+            assertEquals("OAuth failed", thrown.cause?.message)
         }
 
     // --- start: session duration fallback ---

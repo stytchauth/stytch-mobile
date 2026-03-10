@@ -1,6 +1,7 @@
 package com.stytch.sdk.networking
 
 import com.stytch.sdk.data.StytchDataResponse
+import com.stytch.sdk.data.StytchError
 import com.stytch.sdk.data.StytchNetworkError
 import io.ktor.client.plugins.ResponseException
 import kotlinx.coroutines.delay
@@ -16,6 +17,9 @@ public suspend fun <T> stytchNetworkRequest(
     } catch (e: Exception) {
         if (e is ResponseException) {
             throw middleware.onError(e)
+        }
+        if (e is StytchError) {
+            throw e
         }
         throw StytchNetworkError("Unknown error occurred", e)
     }

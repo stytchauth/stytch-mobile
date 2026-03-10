@@ -1,5 +1,7 @@
 package com.stytch.mobile.demo
 
+import androidx.activity.ComponentActivity
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -7,15 +9,19 @@ import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.AP
 import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
+import com.stytch.sdk.biometrics.BiometricsParameters
 import com.stytch.sdk.consumer.StytchConsumer
 import com.stytch.sdk.consumer.createStytchConsumer
 import com.stytch.sdk.consumer.data.ConsumerAuthenticationState
-import com.stytch.sdk.consumer.networking.OtpAuthenticateRequest
-import com.stytch.sdk.consumer.networking.OtpSmsLoginOrCreateRequest
-import com.stytch.sdk.consumer.otp.authenticate
+import com.stytch.sdk.consumer.networking.models.OTPsAuthenticateParameters
+import com.stytch.sdk.consumer.networking.models.OTPsSMSLoginOrCreateParameters
+import com.stytch.sdk.data.GoogleCredentialConfiguration
 import com.stytch.sdk.data.StytchAPIResponse
 import com.stytch.sdk.data.StytchClientConfiguration
 import com.stytch.sdk.data.StytchError
+import com.stytch.sdk.oauth.OAuthProviderType
+import com.stytch.sdk.oauth.OAuthStartParameters
+import com.stytch.sdk.passkeys.PasskeysParameters
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -37,7 +43,7 @@ class MainViewModel(
 
     fun sendSms(phoneNumber: String) {
         val request =
-            OtpSmsLoginOrCreateRequest(
+            OTPsSMSLoginOrCreateParameters(
                 phoneNumber = phoneNumber,
                 expirationMinutes = 5,
             )
@@ -66,24 +72,49 @@ class MainViewModel(
     fun authSms(token: String) {
         val methodId = _state.value.methodId ?: return
         val request =
-            OtpAuthenticateRequest(
+            OTPsAuthenticateParameters(
                 token = token,
                 methodId = methodId,
                 sessionDurationMinutes = 5,
             )
-        try {
-            // let's do this one with a callback, instead of the regular coroutine:
-            stytchConsumerClient.otp.authenticate(request) { response ->
-                // reset the state
+        viewModelScope.launch {
+            try {
+                // let's do this one with a callback, instead of the regular coroutine:
+                val response = stytchConsumerClient.otp.authenticate(request)
                 _state.value =
                     DemoAppState(
                         authenticationState = stytchConsumerClient.authenticationStateFlow.value,
                         rawResponse = response,
                         error = null,
                     )
+            } catch (e: StytchError) {
+                _state.value = _state.value.copy(error = e)
             }
-        } catch (e: StytchError) {
-            _state.value = _state.value.copy(error = e)
+        }
+    }
+
+    fun startOAuth(
+        activity: ComponentActivity,
+        provider: OAuthProviderType,
+    ) {
+        val request =
+            OAuthStartParameters(
+                activity = activity,
+                loginRedirectUrl = "my-login-redirect-url",
+                signupRedirectUrl = "my-signup-redirect-url",
+            )
+        viewModelScope.launch {
+            try {
+                val response =
+                    if (provider == OAuthProviderType.GOOGLE) {
+                        stytchConsumerClient.oauth.google.start(request)
+                    } else {
+                        stytchConsumerClient.oauth.apple.start(request)
+                    } as StytchAPIResponse
+                _state.emit(state.value.copy(rawResponse = response))
+            } catch (e: StytchError) {
+                _state.value = _state.value.copy(error = e)
+            }
         }
     }
 
@@ -103,6 +134,56 @@ class MainViewModel(
         }
     }
 
+    fun registerBiometrics(context: FragmentActivity) {
+        viewModelScope.launch {
+            try {
+                val request = BiometricsParameters(context = context, sessionDurationMinutes = 30)
+                stytchConsumerClient.biometrics.register(request)
+            } catch (e: StytchError) {
+                _state.value = _state.value.copy(error = e)
+            }
+        }
+    }
+
+    fun deleteBiometrics() {
+        viewModelScope.launch {
+            stytchConsumerClient.biometrics.removeRegistration()
+        }
+    }
+
+    fun authenticateBiometrics(context: FragmentActivity) {
+        viewModelScope.launch {
+            try {
+                val request = BiometricsParameters(context = context, sessionDurationMinutes = 30)
+                stytchConsumerClient.biometrics.authenticate(request)
+            } catch (e: StytchError) {
+                _state.value = _state.value.copy(error = e)
+            }
+        }
+    }
+
+    fun registerPasskey(context: FragmentActivity) {
+        viewModelScope.launch {
+            try {
+                val request = PasskeysParameters(activity = context, domain = "stytch.com")
+                stytchConsumerClient.passkeys.register(request)
+            } catch (e: StytchError) {
+                _state.value = _state.value.copy(error = e)
+            }
+        }
+    }
+
+    fun authenticatePasskey(context: FragmentActivity) {
+        viewModelScope.launch {
+            try {
+                val request = PasskeysParameters(activity = context, domain = "stytch.com")
+                stytchConsumerClient.passkeys.authenticate(request)
+            } catch (e: StytchError) {
+                _state.value = _state.value.copy(error = e)
+            }
+        }
+    }
+
     companion object {
         val Factory: ViewModelProvider.Factory =
             object : ViewModelProvider.Factory {
@@ -118,6 +199,10 @@ class MainViewModel(
                             StytchClientConfiguration(
                                 context = application.applicationContext,
                                 publicToken = BuildConfig.STYTCH_PUBLIC_TOKEN,
+                                googleCredentialConfiguration =
+                                    GoogleCredentialConfiguration(
+                                        googleClientId = "447472228390-4pc1tf2tbj7iccu7sj2vfjs69ftmp4el.apps.googleusercontent.com",
+                                    ),
                             ),
                         )
                     return MainViewModel(stytchConsumer, savedStateHandle) as T

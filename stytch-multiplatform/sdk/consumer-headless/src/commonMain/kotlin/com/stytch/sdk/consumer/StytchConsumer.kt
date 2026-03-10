@@ -34,12 +34,12 @@ import com.stytch.sdk.data.JsCleanup
 import com.stytch.sdk.data.PKCECodePair
 import com.stytch.sdk.data.StytchClientConfiguration
 import com.stytch.sdk.data.StytchClientConfigurationInternal
-import com.stytch.sdk.data.StytchDispatchers
+import com.stytch.sdk.data.StytchError
 import com.stytch.sdk.persistence.StytchPersistenceClient
 import com.stytch.sdk.pkce.PKCEClient
 import io.ktor.http.URLBuilder
+import io.ktor.utils.io.CancellationException
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -73,6 +73,7 @@ public interface StytchConsumer : StytchClient {
     @JsName("authenticationStateObserver")
     public fun authenticationStateObserver(callback: (authenticationState: ConsumerAuthenticationState) -> Unit): JsCleanup
 
+    @Throws(StytchError::class, CancellationException::class)
     public suspend fun authenticate(
         url: String,
         sessionDurationMinutes: Int?,
@@ -90,11 +91,7 @@ public fun createStytchConsumer(configuration: StytchClientConfiguration): Stytc
 internal class DefaultStytchConsumer(
     private val configuration: StytchClientConfigurationInternal,
 ) : StytchConsumer {
-    private val dispatchers =
-        StytchDispatchers(
-            ioDispatcher = Dispatchers.Default,
-            mainDispatcher = Dispatchers.Main,
-        )
+    private val dispatchers = createStytchDispatchers()
     private val persistenceClient =
         StytchPersistenceClient(
             dispatcher = dispatchers.ioDispatcher,
@@ -158,6 +155,7 @@ internal class DefaultStytchConsumer(
         }
     }
 
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun authenticate(
         url: String,
         sessionDurationMinutes: Int?,

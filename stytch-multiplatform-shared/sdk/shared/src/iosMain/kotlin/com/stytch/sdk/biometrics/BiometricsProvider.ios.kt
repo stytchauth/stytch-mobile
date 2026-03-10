@@ -3,6 +3,7 @@ package com.stytch.sdk.biometrics
 import com.stytch.sdk.data.Ed25519KeyPair
 import com.stytch.sdk.encryption.StytchEncryptionClient
 import com.stytch.sdk.persistence.StytchPlatformPersistenceClient
+import io.ktor.util.decodeBase64Bytes
 import kotlinx.cinterop.BetaInteropApi
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.ObjCObjectVar
@@ -40,65 +41,75 @@ public actual class BiometricsProvider(
             BiometricsAvailability.Available
         }
 
-    public actual override suspend fun register(parameters: BiometricsParameters): Ed25519KeyPair {
-        val laContext = LAContext()
-        val canEvaluate = laContext.canEvaluatePolicy(LAPolicyDeviceOwnerAuthenticationWithBiometrics, null)
-        if (!canEvaluate) {
-            throw BiometricsUnsupportedError()
-        }
-        setPromptData(laContext, parameters.promptData)
-        return suspendCancellableCoroutine { continuation ->
-            laContext.evaluatePolicy(LAPolicyDeviceOwnerAuthenticationWithBiometrics, parameters.promptData.reason) { passed, error ->
-                if (!passed || error != null) {
-                    continuation.resumeWithException(BiometricAuthenticationFailed("Failed policy evaluation"))
-                    return@evaluatePolicy
-                }
-                val keyPair = encryptionClient.generateEd25519KeyPair()
-                val encryptedPrivateKey = encryptionClient.encrypt(keyPair.privateKey)
-                continuation.resumeIgnoringCancellation(
-                    Ed25519KeyPair(
-                        publicKey = keyPair.publicKey,
-                        privateKey = keyPair.privateKey,
-                        encryptedPrivateKey = encryptedPrivateKey,
-                    ),
-                )
+    public actual override suspend fun register(parameters: BiometricsParameters): Ed25519KeyPair =
+        try {
+            val laContext = LAContext()
+            val canEvaluate = laContext.canEvaluatePolicy(LAPolicyDeviceOwnerAuthenticationWithBiometrics, null)
+            if (!canEvaluate) {
+                throw BiometricsUnsupportedError()
             }
+            setPromptData(laContext, parameters.promptData)
+            suspendCancellableCoroutine { continuation ->
+                laContext.evaluatePolicy(LAPolicyDeviceOwnerAuthenticationWithBiometrics, parameters.promptData.reason) { passed, error ->
+                    if (!passed || error != null) {
+                        continuation.resumeWithException(BiometricAuthenticationFailed("Failed policy evaluation"))
+                        return@evaluatePolicy
+                    }
+                    val keyPair = encryptionClient.generateEd25519KeyPair()
+                    val encryptedPrivateKey = encryptionClient.encrypt(keyPair.privateKey)
+                    continuation.resumeIgnoringCancellation(
+                        Ed25519KeyPair(
+                            publicKey = keyPair.publicKey,
+                            privateKey = keyPair.privateKey,
+                            encryptedPrivateKey = encryptedPrivateKey,
+                        ),
+                    )
+                }
+            }
+        } catch (e: Throwable) {
+            throw UnhandledCryptographyError(e)
         }
-    }
 
-    public actual override suspend fun authenticate(parameters: BiometricsParameters): Ed25519KeyPair {
-        val laContext = LAContext()
-        val canEvaluate = laContext.canEvaluatePolicy(LAPolicyDeviceOwnerAuthenticationWithBiometrics, null)
-        if (!canEvaluate) {
-            throw BiometricsUnsupportedError()
-        }
-        setPromptData(laContext, parameters.promptData)
-        return suspendCancellableCoroutine { continuation ->
-            laContext.evaluatePolicy(LAPolicyDeviceOwnerAuthenticationWithBiometrics, parameters.promptData.reason) { passed, error ->
-                if (!passed || error != null) {
-                    continuation.resumeWithException(BiometricAuthenticationFailed("Failed policy evaluation"))
-                    return@evaluatePolicy
-                }
-                val encryptedPrivateKey =
-                    encryptionClient.retrieveBiometricKey(BIOMETRIC_REGISTRATION_PRIVATE_KEY_KEY) ?: throw MissingBiometricKeyDataError()
-                val decryptedPrivateKey = encryptionClient.decrypt(encryptedPrivateKey)
-                val publicKey = encryptionClient.deriveEd25519PublicKeyFromPrivateKeyBytes(decryptedPrivateKey)
-                continuation.resumeIgnoringCancellation(
-                    Ed25519KeyPair(
-                        publicKey = publicKey,
-                        privateKey = decryptedPrivateKey,
-                    ),
-                )
+    public actual override suspend fun authenticate(parameters: BiometricsParameters): Ed25519KeyPair =
+        try {
+            val laContext = LAContext()
+            val canEvaluate = laContext.canEvaluatePolicy(LAPolicyDeviceOwnerAuthenticationWithBiometrics, null)
+            if (!canEvaluate) {
+                throw BiometricsUnsupportedError()
             }
+            setPromptData(laContext, parameters.promptData)
+            suspendCancellableCoroutine { continuation ->
+                laContext.evaluatePolicy(LAPolicyDeviceOwnerAuthenticationWithBiometrics, parameters.promptData.reason) { passed, error ->
+                    if (!passed || error != null) {
+                        continuation.resumeWithException(BiometricAuthenticationFailed("Failed policy evaluation"))
+                        return@evaluatePolicy
+                    }
+                    val encryptedEncodedPrivateKey = encryptionClient.retrieveBiometricKey(BIOMETRIC_REGISTRATION_PRIVATE_KEY_KEY)
+                    val encryptedDecodedPrivateKey = encryptedEncodedPrivateKey.decodeToString().decodeBase64Bytes()
+                    val decryptedPrivateKey = encryptionClient.decrypt(encryptedDecodedPrivateKey)
+                    val publicKey = encryptionClient.deriveEd25519PublicKeyFromPrivateKeyBytes(decryptedPrivateKey)
+                    continuation.resumeIgnoringCancellation(
+                        Ed25519KeyPair(
+                            publicKey = publicKey,
+                            privateKey = decryptedPrivateKey,
+                        ),
+                    )
+                }
+            }
+        } catch (e: Throwable) {
+            throw UnhandledCryptographyError(e)
         }
-    }
 
     public actual override suspend fun persistRegistration(
         registrationId: String,
         privateKeyData: String,
     ) {
-        persistenceClient.saveData(BIOMETRIC_REGISTRATION_ID_KEY, registrationId)
-        encryptionClient.createBiometricKey(BIOMETRIC_REGISTRATION_PRIVATE_KEY_KEY, privateKeyData.encodeToByteArray())
+        try {
+            persistenceClient.saveData(BIOMETRIC_REGISTRATION_ID_KEY, registrationId)
+            encryptionClient.createBiometricKey(BIOMETRIC_REGISTRATION_PRIVATE_KEY_KEY, privateKeyData.encodeToByteArray())
+        } catch (e: Throwable) {
+            throw UnhandledCryptographyError(e)
+        }
     }
 
     public actual override suspend fun removeRegistration() {

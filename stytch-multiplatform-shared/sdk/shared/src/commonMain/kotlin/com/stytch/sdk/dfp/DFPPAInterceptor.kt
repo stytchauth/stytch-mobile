@@ -12,6 +12,7 @@ import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.ContentType
 import io.ktor.http.content.TextContent
+import io.ktor.http.isSuccess
 import io.ktor.utils.io.InternalAPI
 import kotlinx.coroutines.CompletableJob
 import kotlinx.serialization.json.Json
@@ -26,7 +27,13 @@ internal val DFPPAInterceptor =
         val configuration = pluginConfig
 
         on(Send) { request ->
-            return@on handlePotentialDFPPARequest(request, configuration, { proceed(it) }) { it.body() }
+            return@on handlePotentialDFPPARequest(request, configuration, { proceed(it) }) {
+                try {
+                    it.body<StytchAPIError>()
+                } catch (_: Exception) {
+                    null
+                }
+            }
         }
     }
 
@@ -83,7 +90,7 @@ internal suspend fun handlePotentialDFPPARequest(
     request: HttpRequestBuilder,
     configuration: DFPPAInterceptorConfiguration,
     proceed: suspend (HttpRequestBuilder) -> HttpClientCall,
-    parseResponseAsError: suspend (HttpResponse) -> StytchAPIError,
+    parseResponseAsError: suspend (HttpResponse) -> StytchAPIError?,
 ): HttpClientCall {
     if (!request.annotations.contains(DFPPAEnabled())) {
         // Not a DFPPA endpoint; do nothing
@@ -115,7 +122,7 @@ internal suspend fun handlePotentialDFPPARequest(
         DFPProtectedAuthMode.DECISIONING -> {
             newRequest.body = body.setTelemetryID(configuration.dfpProvider)
             var call = proceed(newRequest)
-            if (parseResponseAsError(call.response).errorType == "captcha_required") {
+            if (!call.response.status.isSuccess() && parseResponseAsError(call.response)?.errorType == "captcha_required") {
                 val retryRequest = prepareRequest(request)
                 // add new tokens
                 retryRequest.body =

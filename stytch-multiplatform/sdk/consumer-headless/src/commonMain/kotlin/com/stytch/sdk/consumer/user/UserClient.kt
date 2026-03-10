@@ -16,15 +16,20 @@ import com.stytch.sdk.consumer.networking.models.toNetworkModel
 import com.stytch.sdk.data.BasicResponse
 import com.stytch.sdk.data.StytchDataResponse
 import com.stytch.sdk.data.StytchDispatchers
+import com.stytch.sdk.data.StytchError
 import kotlinx.coroutines.withContext
+import kotlin.coroutines.cancellation.CancellationException
 import kotlin.js.JsExport
 
 @JsExport
 public interface UserClient {
+    @Throws(StytchError::class, CancellationException::class)
     public suspend fun getUser(): GetMeResponse
 
+    @Throws(StytchError::class, CancellationException::class)
     public suspend fun deleteFactor(factor: AuthenticationFactor): DeleteFactorResponse
 
+    @Throws(StytchError::class, CancellationException::class)
     public suspend fun update(request: IUpdateMeParameters): UpdateMeResponse
 }
 
@@ -72,6 +77,7 @@ internal class UserClientImpl(
     private val dispatchers: StytchDispatchers,
     private val networkingClient: ConsumerNetworkingClient,
 ) : UserClient {
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun getUser(): GetMeResponse =
         withContext(dispatchers.ioDispatcher) {
             networkingClient.request {
@@ -79,6 +85,7 @@ internal class UserClientImpl(
             }
         }
 
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun deleteFactor(factor: AuthenticationFactor) =
         withContext(dispatchers.ioDispatcher) {
             networkingClient.request {
@@ -137,6 +144,7 @@ internal class UserClientImpl(
             }
         }
 
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun update(request: IUpdateMeParameters): UpdateMeResponse =
         withContext(dispatchers.ioDispatcher) {
             networkingClient.request {

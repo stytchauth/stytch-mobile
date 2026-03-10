@@ -76,7 +76,7 @@ kotlin {
 
     js {
         browser()
-        outputModuleName = "@stytch/react-native-consumer"
+        outputModuleName = "consumer-headless"
         binaries.library()
         generateTypeScriptDefinitions()
         compilerOptions {
@@ -91,7 +91,7 @@ kotlin {
     sourceSets {
         commonMain {
             kotlin.srcDir(layout.buildDirectory.dir("generated/openapi/src/main/kotlin"))
-            kotlin.srcDir(layout.buildDirectory.dir("generated/ksp/metadata/commonMain/src/main/kotlin"))
+            kotlin.srcDir(layout.buildDirectory.dir("generated/ksp/metadata/commonMain/kotlin"))
             dependencies {
                 api("com.stytch.sdk:shared:$version")
                 implementation(libs.kotlinx.coroutines.core)
@@ -111,6 +111,12 @@ kotlin {
 
 dependencies {
     add("kspCommonMainMetadata", project(":buildSrc"))
+    add("kspAndroid", project(":buildSrc"))
+    add("kspIosArm64", project(":buildSrc"))
+    add("kspIosX64", project(":buildSrc"))
+    add("kspIosSimulatorArm64", project(":buildSrc"))
+    add("kspJs", project(":buildSrc"))
+    add("kspJvm", project(":buildSrc"))
 }
 
 ktorfit {
@@ -182,6 +188,8 @@ openApiGenerate {
             "apis" to "",
         ),
     )
+    typeMappings.set(mapOf("AnyType" to "JsonElement"))
+    importMappings.set(mapOf("JsonElement" to "kotlinx.serialization.json.JsonElement"))
 }
 
 tasks.withType<KspAATask>().configureEach {
@@ -193,6 +201,9 @@ tasks.withType<KotlinCompileCommon>().configureEach {
     dependsOn("openApiGenerate")
 }
 tasks.withType<ProcessLibraryArtProfileTask>().configureEach {
+    dependsOn("openApiGenerate")
+}
+tasks.matching { it.name == "kspCommonMainKotlinMetadata" }.configureEach {
     dependsOn("openApiGenerate")
 }
 tasks.named("compileKotlinMetadata") {

@@ -34,16 +34,14 @@ import com.stytch.sdk.data.SSOError
  *
  * Cancellation (C) flow:
  * If the user cancels the authorization, we are returned to this Activity at the top of the backstack (C1). Since no
- * return URI is provided, we know the user cancelled, and return a RESULT_CANCELED result for the original intent (C2)
- * and finish the activity. The calling activity will listen for this result and either provide messaging for the user
- * if the error returned is one of NO_BROWSER_FOUND or NO_URI_FOUND, or (most likely) do nothing if it is USER_CANCELED.
+ * return URI is provided, we know the user cancelled. The pending result callback (C2) is invoked with an error and
+ * the activity finishes.
  *
  * Success (S) flow:
  * When the user completes authorization, the SSOReceiverActivity is launched (S1), as specified in the manifest. That
  * activity will launch this activity (S2) via an intent with CLEAR_TOP set, so that the authorization activity and
- * receiver activity are destroyed leaving this activity at the top of the backstack. This activity will then return a
- * RESULT_OK status for the original intent and pass along the returned URI, then finish itself (S3). The calling
- * activity will listen for this result and use the returned URI to make the authorization call to the Stytch API.
+ * receiver activity are destroyed leaving this activity at the top of the backstack. This activity then extracts the
+ * token from the redirect URI, invokes the pending result callback (S3), and finishes.
  */
 internal class SSOManagerActivity : Activity() {
     private var authorizationStarted = false
@@ -113,29 +111,35 @@ internal class SSOManagerActivity : Activity() {
         }
 
     private fun authorizationComplete(uri: Uri) {
-        val response = Intent().apply { data = uri }
-        setResult(RESULT_OK, response)
+        val token = uri.getQueryParameter("token")
+        val result =
+            if (token != null) {
+                OAuthResult.ClassicToken(token = token)
+            } else {
+                OAuthResult.Error("Missing Token")
+            }
+        pendingResult?.invoke(result)
+        pendingResult = null
     }
 
     private fun authorizationCanceled() {
-        val response = Intent()
-        response.putExtra("StytchSSOError", SSOError.UserCanceled())
-        setResult(RESULT_CANCELED, response)
+        pendingResult?.invoke(OAuthResult.Error(SSOError.UserCanceled().message))
+        pendingResult = null
     }
 
     private fun noBrowserFound() {
-        val response = Intent()
-        response.putExtra("StytchSSOError", SSOError.NoBrowserFound())
-        setResult(RESULT_CANCELED, response)
+        pendingResult?.invoke(OAuthResult.Error(SSOError.NoBrowserFound().message))
+        pendingResult = null
     }
 
     private fun noUriFound() {
-        val response = Intent()
-        response.putExtra("StytchSSOError", SSOError.NoURIFound())
-        setResult(RESULT_CANCELED, response)
+        pendingResult?.invoke(OAuthResult.Error(SSOError.NoURIFound().message))
+        pendingResult = null
     }
 
     internal companion object {
+        internal var pendingResult: ((OAuthResult) -> Unit)? = null
+
         internal fun createResponseHandlingIntent(
             context: Context,
             responseUri: Uri?,

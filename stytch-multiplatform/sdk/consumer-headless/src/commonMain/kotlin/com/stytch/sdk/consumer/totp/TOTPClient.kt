@@ -10,17 +10,23 @@ import com.stytch.sdk.consumer.networking.models.TOTPsGetRecoveryCodesResponse
 import com.stytch.sdk.consumer.networking.models.TOTPsRecoverResponse
 import com.stytch.sdk.consumer.networking.models.toNetworkModel
 import com.stytch.sdk.data.StytchDispatchers
+import com.stytch.sdk.data.StytchError
 import kotlinx.coroutines.withContext
+import kotlin.coroutines.cancellation.CancellationException
 import kotlin.js.JsExport
 
 @JsExport
 public interface TOTPClient {
+    @Throws(StytchError::class, CancellationException::class)
     public suspend fun create(request: ITOTPsCreateParameters): TOTPsCreateResponse
 
+    @Throws(StytchError::class, CancellationException::class)
     public suspend fun authenticate(request: ITOTPsAuthenticateParameters): TOTPsAuthenticateResponse
 
+    @Throws(StytchError::class, CancellationException::class)
     public suspend fun recover(request: ITOTPsRecoverParameters): TOTPsRecoverResponse
 
+    @Throws(StytchError::class, CancellationException::class)
     public suspend fun recoveryCodes(): TOTPsGetRecoveryCodesResponse
 }
 
@@ -28,6 +34,7 @@ internal class TOTPClientImpl(
     private val dispatchers: StytchDispatchers,
     private val networkingClient: ConsumerNetworkingClient,
 ) : TOTPClient {
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun create(request: ITOTPsCreateParameters): TOTPsCreateResponse =
         withContext(dispatchers.ioDispatcher) {
             networkingClient.request {
@@ -35,6 +42,7 @@ internal class TOTPClientImpl(
             }
         }
 
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun authenticate(request: ITOTPsAuthenticateParameters): TOTPsAuthenticateResponse =
         withContext(dispatchers.ioDispatcher) {
             networkingClient.request {
@@ -42,6 +50,7 @@ internal class TOTPClientImpl(
             }
         }
 
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun recover(request: ITOTPsRecoverParameters): TOTPsRecoverResponse =
         withContext(dispatchers.ioDispatcher) {
             networkingClient.request {
@@ -49,6 +58,7 @@ internal class TOTPClientImpl(
             }
         }
 
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun recoveryCodes() =
         withContext(dispatchers.ioDispatcher) {
             networkingClient.request {

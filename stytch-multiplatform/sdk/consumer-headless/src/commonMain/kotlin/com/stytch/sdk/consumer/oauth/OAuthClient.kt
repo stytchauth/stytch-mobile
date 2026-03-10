@@ -17,22 +17,30 @@ import com.stytch.sdk.consumer.networking.models.toNetworkModel
 import com.stytch.sdk.data.EndpointOptions
 import com.stytch.sdk.data.PublicTokenInfo
 import com.stytch.sdk.data.StytchDispatchers
+import com.stytch.sdk.data.StytchError
 import com.stytch.sdk.oauth.IOAuthProvider
+import com.stytch.sdk.oauth.OAuthException
 import com.stytch.sdk.oauth.OAuthProviderType
 import com.stytch.sdk.oauth.OAuthResult
 import com.stytch.sdk.oauth.OAuthStartParameters
+import com.stytch.sdk.pkce.MissingPKCEException
 import com.stytch.sdk.pkce.PKCEClient
 import kotlinx.coroutines.withContext
+import kotlin.coroutines.cancellation.CancellationException
 import kotlin.js.JsExport
 
 @JsExport
 public interface OAuthClient {
+    @Throws(StytchError::class, CancellationException::class)
     public suspend fun authenticate(request: IOAuthAuthenticateParameters): OAuthAuthenticateResponse
 
+    @Throws(StytchError::class, CancellationException::class)
     public suspend fun authenticateGoogleIdToken(request: IOAuthGoogleIDTokenAuthenticateParameters): OAuthGoogleIDTokenAuthenticateResponse
 
+    @Throws(StytchError::class, CancellationException::class)
     public suspend fun authenticateAppleIdToken(request: IOAuthAppleIDTokenAuthenticateParameters): OAuthGoogleIDTokenAuthenticateResponse
 
+    @Throws(StytchError::class, CancellationException::class)
     public suspend fun attach(request: IOAuthAttachParameters): OAuthAttachResponse
 
     public val apple: OAuthType
@@ -76,6 +84,7 @@ public interface OAuthClient {
 
 @JsExport
 public interface OAuthType {
+    @Throws(StytchError::class, CancellationException::class)
     public suspend fun start(startParameters: OAuthStartParameters): AuthenticatedResponse
 }
 
@@ -89,14 +98,16 @@ internal class OAuthClientImpl(
     private val oauthProvider: IOAuthProvider,
     private val defaultSessionDuration: Int,
 ) : OAuthClient {
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun authenticate(request: IOAuthAuthenticateParameters): OAuthAuthenticateResponse =
         withContext(dispatchers.ioDispatcher) {
             networkingClient.request {
-                val codePair = pkceClient.retrieve() ?: throw IllegalStateException("PKCE is missing")
+                val codePair = pkceClient.retrieve() ?: throw MissingPKCEException()
                 networkingClient.api.oAuthAuthenticate(request.toNetworkModel(codeVerifier = codePair.verifier))
             }
         }
 
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun authenticateGoogleIdToken(
         request: IOAuthGoogleIDTokenAuthenticateParameters,
     ): OAuthGoogleIDTokenAuthenticateResponse =
@@ -106,6 +117,7 @@ internal class OAuthClientImpl(
             }
         }
 
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun authenticateAppleIdToken(
         request: IOAuthAppleIDTokenAuthenticateParameters,
     ): OAuthGoogleIDTokenAuthenticateResponse =
@@ -115,6 +127,7 @@ internal class OAuthClientImpl(
             }
         }
 
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun attach(request: IOAuthAttachParameters): OAuthAttachResponse =
         withContext(dispatchers.ioDispatcher) {
             networkingClient.request {
@@ -145,64 +158,66 @@ internal class OAuthClientImpl(
     private suspend fun start(
         provider: OAuthProviderType,
         parameters: OAuthStartParameters,
-    ) = withContext(dispatchers.ioDispatcher) {
-        val host =
-            "https://${cnameDomain() ?: if (publicTokenInfo.isTestToken) endpointOptions.testDomain else endpointOptions.liveDomain}/v1/"
-        val baseUrl = "${host}public/oauth/${provider.hostName}/start"
-        val response =
-            oauthProvider.getOAuthToken(
-                pkceClient = pkceClient,
-                dispatchers = dispatchers,
-                type = provider,
-                parameters = parameters,
-                baseUrl = baseUrl,
-                publicTokenInfo = publicTokenInfo,
-            )
-        return@withContext when (response) {
-            is OAuthResult.ClassicToken -> {
-                authenticate(
-                    OAuthAuthenticateParameters(
-                        token = response.token,
-                        sessionDurationMinutes = parameters.sessionDurationMinutes ?: defaultSessionDuration,
-                    ),
+    ): AuthenticatedResponse =
+        withContext(dispatchers.ioDispatcher) {
+            val host =
+                "https://${cnameDomain() ?: if (publicTokenInfo.isTestToken) endpointOptions.testDomain else endpointOptions.liveDomain}/v1/"
+            val baseUrl = "${host}public/oauth/${provider.hostName}/start"
+            val response =
+                oauthProvider.getOAuthToken(
+                    pkceClient = pkceClient,
+                    dispatchers = dispatchers,
+                    type = provider,
+                    parameters = parameters,
+                    baseUrl = baseUrl,
+                    publicTokenInfo = publicTokenInfo,
                 )
-            }
-
-            is OAuthResult.IDToken -> {
-                // IDTokens only come back for Google (on Android) or Apple (on iOS)
-                if (provider == OAuthProviderType.GOOGLE) {
-                    authenticateGoogleIdToken(
-                        OAuthGoogleIDTokenAuthenticateParameters(
-                            idToken = response.token,
-                            nonce = response.nonce,
+            return@withContext when (response) {
+                is OAuthResult.ClassicToken -> {
+                    authenticate(
+                        OAuthAuthenticateParameters(
+                            token = response.token,
                             sessionDurationMinutes = parameters.sessionDurationMinutes ?: defaultSessionDuration,
-                            oauthAttachToken = parameters.oauthAttachToken,
-                        ),
-                    )
-                } else {
-                    authenticateAppleIdToken(
-                        OAuthAppleIDTokenAuthenticateParameters(
-                            idToken = response.token,
-                            nonce = response.nonce,
-                            name = response.name?.toApiUserV1Name(),
-                            sessionDurationMinutes = parameters.sessionDurationMinutes ?: defaultSessionDuration,
-                            oauthAttachToken = parameters.oauthAttachToken,
                         ),
                     )
                 }
-            }
 
-            is OAuthResult.Error -> {
-                throw response.error
+                is OAuthResult.IDToken -> {
+                    // IDTokens only come back for Google (on Android) or Apple (on iOS)
+                    if (provider == OAuthProviderType.GOOGLE) {
+                        authenticateGoogleIdToken(
+                            OAuthGoogleIDTokenAuthenticateParameters(
+                                idToken = response.token,
+                                nonce = response.nonce,
+                                sessionDurationMinutes = parameters.sessionDurationMinutes ?: defaultSessionDuration,
+                                oauthAttachToken = parameters.oauthAttachToken,
+                            ),
+                        )
+                    } else {
+                        authenticateAppleIdToken(
+                            OAuthAppleIDTokenAuthenticateParameters(
+                                idToken = response.token,
+                                nonce = response.nonce,
+                                name = response.name?.toApiUserV1Name(),
+                                sessionDurationMinutes = parameters.sessionDurationMinutes ?: defaultSessionDuration,
+                                oauthAttachToken = parameters.oauthAttachToken,
+                            ),
+                        )
+                    }
+                }
+
+                is OAuthResult.Error -> {
+                    throw OAuthException(RuntimeException(response.message))
+                }
             }
         }
-    }
 }
 
 internal class OAuthTypeImpl(
     private val provider: OAuthProviderType,
     private val handler: suspend (OAuthProviderType, OAuthStartParameters) -> AuthenticatedResponse,
 ) : OAuthType {
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun start(startParameters: OAuthStartParameters): AuthenticatedResponse = handler(provider, startParameters)
 }
 

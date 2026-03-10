@@ -1,5 +1,5 @@
 import { Button, Text, TextInput, View } from 'react-native';
-import { ConsumerAuthenticationState, OtpAuthenticateRequest, OtpSmsLoginOrCreateRequest, useStytch, useStytchAuthenticationState } from "@stytch/react-native-consumer"
+import { ConsumerAuthenticationState, useStytch, useStytchAuthenticationState } from "@stytch/react-native-consumer"
 import { useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -24,28 +24,84 @@ export default function HomeScreen() {
   return <UnauthenticatedView />
 }
 
+
+const biometricsOptions = {
+  sessionDurationMinutes: 30,
+  androidBiometricOptions: {
+    allowDeviceCredentials: false,
+    allowFallbackToCleartext: false,
+    title: "Hello",
+    subTitle: "Use your finger!",
+    negativeButtonText: "NO"
+  },
+  iosBiometricOptions: {
+    reason: "Use your face!",
+    fallbackTitle: "Or pin?",
+    cancelTitle: "Or don't"
+  },
+};
+
+const passkeysOptions = { domain: "stytch.com", preferImmediatelyAvailableCredentials: true, sessionDurationMinutes: 30};
+
 const AuthenticatedView = () => {
   const stytch = useStytch()
   const logout = async () => {
     await stytch.session.revoke()
   }
+  const authenticateWithBiometrics = async () => {
+    stytch.biometrics.authenticate(biometricsOptions).then(console.log).catch(console.error)
+  };
+  const registerBiometrics = async () => {
+    stytch.biometrics.register(biometricsOptions).then(console.log).catch(console.error)
+  };
+  const registerPasskeys = async () => {
+    stytch.passkeys.register(passkeysOptions).then(console.log).catch(console.error)
+  };
+  const authenticatePasskeys = async () => {
+    stytch.passkeys.authenticate(passkeysOptions).then(console.log).catch(console.error)
+  };
   return (
     <SafeAreaView>
         <Text>Authenticated!</Text>
+        <Button onPress={registerBiometrics} title="Register Biometrics"></Button>
+        <Button onPress={authenticateWithBiometrics} title="Authenticate Biometrics"></Button>
+        <Button onPress={registerPasskeys} title="Register Passkey"></Button>
+        <Button onPress={authenticatePasskeys} title="Authenticate Passkey"></Button>
         <Button onPress={logout} title='Logout'></Button>
     </SafeAreaView>
     )
 }
 
 const UnauthenticatedView = () => {
+  const stytch = useStytch()
+  const authenticateWithBiometrics = async () => {
+    stytch.biometrics.authenticate(biometricsOptions).then(console.log).catch(console.error)
+  };
+  const deleteBiometrics = async () => {
+    stytch.biometrics.removeRegistration().then(console.log).catch(console.error);
+  };
+  const authenticatePasskeys = async () => {
+    stytch.passkeys.authenticate(passkeysOptions).then(console.log).catch(console.error)
+  };
+  return (
+    <SafeAreaView>
+        <SMSOTPVIew />
+        <OAuthView />
+        <Button onPress={authenticateWithBiometrics} title="Authenticate Biometrics"></Button>
+        <Button onPress={deleteBiometrics} title="Delete Biometrics"></Button>
+        <Button onPress={authenticatePasskeys} title="Authenticate Passkey"></Button>
+    </SafeAreaView>
+  );
+}
+
+const SMSOTPVIew = () => {
   const [step, setStep] = useState<Step>(Step.SUBMIT_PHONE_NUMBER);
   const [inputValue, setInputValue] = useState("");
   const [methodId, setMethodId] = useState("");
   const stytch = useStytch()
   const handleSubmit = async () => {
     if (step == Step.SUBMIT_PHONE_NUMBER) {
-      const request = new OtpSmsLoginOrCreateRequest(inputValue, 5);
-      stytch.otp.sms.loginOrCreate(request)
+      stytch.otp.sms.loginOrCreate({ phoneNumber: inputValue })
         .then((response) => {
           console.log(response)
           setMethodId(response.methodId)
@@ -54,8 +110,7 @@ const UnauthenticatedView = () => {
         .catch(console.error)
         .finally(() => setInputValue(''))
     } else {
-      const request = new OtpAuthenticateRequest(inputValue, methodId, 5);
-      stytch.otp.authenticate(request)
+      stytch.otp.authenticate({ token: inputValue, methodId: methodId, sessionDurationMinutes: 5})
         .then(console.log)
         .catch(console.error)
         .finally(() => setInputValue(''))
@@ -66,10 +121,31 @@ const UnauthenticatedView = () => {
     placeholderText = "Code"
   }
   return (
-    <SafeAreaView>
-        <Text>Testing SMS OTP...</Text>
-        <TextInput onChangeText={setInputValue} value={inputValue} placeholder={placeholderText} style={{ margin: 8, borderWidth: 1 }} placeholderTextColor={'#000'} />
-        <Button onPress={handleSubmit} title="Submit"></Button>
-    </SafeAreaView>
-  );
+    <>
+      <Text>Testing SMS OTP...</Text>
+      <TextInput onChangeText={setInputValue} value={inputValue} placeholder={placeholderText} style={{ margin: 8, borderWidth: 1 }} placeholderTextColor={'#000'} />
+      <Button onPress={handleSubmit} title="Submit"></Button>
+    </>
+  )
+}
+
+const OAuthView = () => {
+  const stytch = useStytch()
+  const oauthStartParameters = {
+    loginRedirectUrl: "com.stytch.mobile.demo://oauth",
+    signupRedirectUrl: "com.stytch.mobile.demo://oauth",
+    customScopes: null,
+    providerParams: null,
+    oauthAttachToken: null,
+    sessionDurationMinutes: 5
+  };
+  const triggerGoogleOAuth = async () => stytch.oauth.google.start(oauthStartParameters).then(console.log).catch(console.error);
+  const triggerAppleOAuth = async () => stytch.oauth.apple.start(oauthStartParameters).then(console.log).catch(console.error);
+  return (
+    <>
+      <Text>Testing OAuth...</Text>
+      <Button onPress={triggerGoogleOAuth} title="Google OAuth"></Button>
+      <Button onPress={triggerAppleOAuth} title="Apple OAuth"></Button>
+    </>
+  )
 }

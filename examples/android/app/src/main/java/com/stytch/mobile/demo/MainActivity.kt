@@ -2,6 +2,7 @@ package com.stytch.mobile.demo
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
@@ -40,15 +41,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.fragment.app.FragmentActivity
 import com.stytch.mobile.demo.ui.theme.StytchMobileAndroidDemoTheme
 import com.stytch.sdk.consumer.data.ConsumerAuthenticationState
 import com.stytch.sdk.consumer.networking.AuthenticatedResponse
-import com.stytch.sdk.consumer.networking.OtpSmsLoginOrCreateResponse
-import com.stytch.sdk.consumer.networking.SessionsRevokeResponse
+import com.stytch.sdk.consumer.networking.models.OTPsSMSLoginOrCreateResponse
+import com.stytch.sdk.consumer.networking.models.SessionsRevokeResponse
 import com.stytch.sdk.data.BasicResponse
 import com.stytch.sdk.data.StytchAPIResponse
+import com.stytch.sdk.oauth.OAuthProviderType
 
-class MainActivity : ComponentActivity() {
+class MainActivity : FragmentActivity() {
     private val viewModel: MainViewModel by viewModels { MainViewModel.Factory }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,6 +59,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             val state = viewModel.state.collectAsState()
+            val fragmentActivity = LocalActivity.current as FragmentActivity
 
             StytchMobileAndroidDemoTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
@@ -80,14 +84,40 @@ class MainActivity : ComponentActivity() {
                                 Button(onClick = viewModel::logout) {
                                     Text("Logout")
                                 }
+                                Button(onClick = { viewModel.registerBiometrics(fragmentActivity) }) {
+                                    Text("Register Biometrics")
+                                }
+                                Button(onClick = { viewModel.registerPasskey(fragmentActivity) }) {
+                                    Text("Register Passkey")
+                                }
+                                Button(onClick = { viewModel.authenticateBiometrics(fragmentActivity) }) {
+                                    Text("Authenticate Biometrics")
+                                }
+                                Button(onClick = { viewModel.deleteBiometrics() }) {
+                                    Text("DELETE Biometrics")
+                                }
                             }
 
                             is ConsumerAuthenticationState.Unauthenticated -> {
-                                UnauthenticatedStateView(
-                                    step = state.value.step,
-                                    onSendSms = viewModel::sendSms,
-                                    onAuthSms = viewModel::authSms,
-                                )
+                                Column {
+                                    SmsOtpView(
+                                        step = state.value.step,
+                                        onSendSms = viewModel::sendSms,
+                                        onAuthSms = viewModel::authSms,
+                                    )
+                                    OAuthView(
+                                        startOAuth = viewModel::startOAuth,
+                                    )
+                                    Button(onClick = { viewModel.authenticateBiometrics(fragmentActivity) }) {
+                                        Text("Authenticate Biometrics")
+                                    }
+                                    Button(onClick = { viewModel.deleteBiometrics() }) {
+                                        Text("DELETE Biometrics")
+                                    }
+                                    Button(onClick = { viewModel.authenticatePasskey(fragmentActivity) }) {
+                                        Text("Authenticate Passkey")
+                                    }
+                                }
                             }
                         }
                         state.value.rawResponse?.let { response ->
@@ -107,7 +137,21 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun UnauthenticatedStateView(
+fun OAuthView(startOAuth: (ComponentActivity, OAuthProviderType) -> Unit) {
+    val activity = LocalActivity.current as ComponentActivity
+    Column {
+        Text("Testing OAuth...")
+        Button(onClick = { startOAuth(activity, OAuthProviderType.GOOGLE) }) {
+            Text("Google")
+        }
+        Button(onClick = { startOAuth(activity, OAuthProviderType.APPLE) }) {
+            Text("Apple")
+        }
+    }
+}
+
+@Composable
+fun SmsOtpView(
     step: Step,
     onSendSms: (String) -> Unit,
     onAuthSms: (String) -> Unit,
@@ -135,7 +179,7 @@ fun UnauthenticatedStateView(
             }
         }
     }
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column {
         Text("Testing SMS OTP...")
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -167,7 +211,7 @@ private fun StytchAPIResponse.toFriendlyDisplay(): String {
     return buildString {
         append(
             when (response) {
-                OtpSmsLoginOrCreateResponse -> "Code Sent\n"
+                OTPsSMSLoginOrCreateResponse -> "Code Sent\n"
                 is AuthenticatedResponse -> "Logged In\n"
                 SessionsRevokeResponse -> "Logged Out\n"
                 else -> "Got Response\n"
@@ -184,7 +228,7 @@ private fun StytchAPIResponse.toFriendlyDisplay(): String {
                 """.trimIndent(),
             )
         }
-        if (response is OtpSmsLoginOrCreateResponse) {
+        if (response is OTPsSMSLoginOrCreateResponse) {
             append(
                 """
                 method_id:

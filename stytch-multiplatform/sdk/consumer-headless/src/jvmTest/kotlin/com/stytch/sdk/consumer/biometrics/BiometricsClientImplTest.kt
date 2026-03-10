@@ -143,8 +143,18 @@ internal class BiometricsClientImplTest : ConsumerClientTest() {
     // --- removeRegistration ---
 
     @Test
-    fun `removeRegistration delegates to biometricsProvider`() =
+    fun `removeRegistration throws NoSessionExists when no session token`() =
         runTest(testDispatcher) {
+            every { sessionManager.currentSessionToken } returns null
+
+            assertFailsWith<NoSessionExists> { client.removeRegistration() }
+        }
+
+    @Test
+    fun `removeRegistration delegates to biometricsProvider when session exists`() =
+        runTest(testDispatcher) {
+            every { sessionManager.currentSessionToken } returns "session-tok"
+
             client.removeRegistration()
 
             coVerify { biometricsProvider.removeRegistration() }

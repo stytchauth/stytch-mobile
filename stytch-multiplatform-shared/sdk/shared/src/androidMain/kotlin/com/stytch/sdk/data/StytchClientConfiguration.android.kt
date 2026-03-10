@@ -39,6 +39,7 @@ public actual class StytchClientConfiguration(
             oAuthProvider =
                 OAuthProvider(
                     application = context.applicationContext as Application,
+                    packageName = context.applicationContext.packageName as String,
                     googleCredentialConfiguration = googleCredentialConfiguration,
                 ),
         )

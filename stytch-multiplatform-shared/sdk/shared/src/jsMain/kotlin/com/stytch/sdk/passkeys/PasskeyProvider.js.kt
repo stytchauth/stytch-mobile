@@ -12,24 +12,32 @@ public actual class PasskeyProvider : IPasskeyProvider {
         dispatchers: StytchDispatchers,
         json: String,
     ): String =
-        StytchBridge
-            .createPublicKeyCredential(
-                domain = parameters.domain,
-                preferImmediatelyAvailableCredentials = parameters.preferImmediatelyAvailableCredentials,
-                json = json,
-                sessionDurationMinutes = parameters.sessionDurationMinutes,
-            ).await()
+        try {
+            StytchBridge
+                .createPublicKeyCredential(
+                    domain = parameters.domain,
+                    preferImmediatelyAvailableCredentials = parameters.preferImmediatelyAvailableCredentials,
+                    json = json,
+                    sessionDurationMinutes = parameters.sessionDurationMinutes,
+                ).await()
+        } catch (e: Throwable) {
+            throw PasskeysException(e)
+        }
 
     public actual override suspend fun getPublicKeyCredential(
         parameters: PasskeysParameters,
         dispatchers: StytchDispatchers,
         json: String,
     ): String =
-        StytchBridge
-            .getPublicKeyCredential(
-                domain = parameters.domain,
-                preferImmediatelyAvailableCredentials = parameters.preferImmediatelyAvailableCredentials,
-                json = json,
-                sessionDurationMinutes = parameters.sessionDurationMinutes,
-            ).await()
+        try {
+            StytchBridge
+                .getPublicKeyCredential(
+                    domain = parameters.domain,
+                    preferImmediatelyAvailableCredentials = parameters.preferImmediatelyAvailableCredentials,
+                    json = json,
+                    sessionDurationMinutes = parameters.sessionDurationMinutes,
+                ).await()
+        } catch (e: Throwable) {
+            throw PasskeysException(e)
+        }
 }

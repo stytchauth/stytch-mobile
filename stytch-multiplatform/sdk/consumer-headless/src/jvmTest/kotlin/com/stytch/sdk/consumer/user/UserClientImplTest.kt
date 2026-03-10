@@ -9,6 +9,7 @@ import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
+import kotlinx.serialization.json.JsonPrimitive
 import kotlin.test.Test
 import kotlin.test.assertIs
 
@@ -31,9 +32,9 @@ internal class UserClientImplTest : ConsumerClientTest() {
         runTest(testDispatcher) {
             coEvery { api.updateMe(any()) } returns StytchDataResponse(mockk(relaxed = true))
 
-            client.update(UpdateMeParameters(trustedMetadata = """{"role":"admin"}"""))
+            client.update(UpdateMeParameters(trustedMetadata = mapOf("role" to "admin")))
 
-            coVerify { api.updateMe(UpdateMeRequest(trustedMetadata = """{"role":"admin"}""")) }
+            coVerify { api.updateMe(UpdateMeRequest(trustedMetadata = mapOf("role" to JsonPrimitive("admin")))) }
         }
 
     // --- deleteFactor routing ---

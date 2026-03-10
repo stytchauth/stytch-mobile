@@ -30,6 +30,8 @@
 		390A87CF2F2975EF00989579 /* StytchConsumerSDK in Frameworks */ = {isa = PBXBuildFile; productRef = 390A87CE2F2975EF00989579 /* StytchConsumerSDK */; };
 		3948E8FC2F296133007CABD4 /* StytchConsumerSDK in Frameworks */ = {isa = PBXBuildFile; productRef = 3948E8FB2F296133007CABD4 /* StytchConsumerSDK */; };
 		394DF5A92F21ED3300F7E7EA /* StytchConsumerSDK in Frameworks */ = {isa = PBXBuildFile; productRef = 394DF5A82F21ED3300F7E7EA /* StytchConsumerSDK */; };
+		3964B91B2F5B72D200E4C6A7 /* StytchConsumerSDK in Frameworks */ = {isa = PBXBuildFile; productRef = 3964B91A2F5B72D200E4C6A7 /* StytchConsumerSDK */; };
+		3964B91E2F5B7ACA00E4C6A7 /* StytchConsumerSDK in Frameworks */ = {isa = PBXBuildFile; productRef = 3964B91D2F5B7ACA00E4C6A7 /* StytchConsumerSDK */; };
 		397D9A9F2F339E8200748266 /* StytchConsumerSDK in Frameworks */ = {isa = PBXBuildFile; productRef = 397D9A9E2F339E8200748266 /* StytchConsumerSDK */; };
 		39A4B0172F1A9B4B00D3262B /* StytchConsumerSDK in Frameworks */ = {isa = PBXBuildFile; productRef = 39A4B0162F1A9B4B00D3262B /* StytchConsumerSDK */; };
 		39FC5D922F181B8200B455A4 /* StytchConsumerSDK in Frameworks */ = {isa = PBXBuildFile; productRef = 39FC5D912F181B8200B455A4 /* StytchConsumerSDK */; };
@@ -39,9 +41,22 @@
 		390BF9652F0F15C300B83179 /* demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = demo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		3964B9202F5B7C5000E4C6A7 /* Exceptions for "demo" folder in "demo" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 390BF9642F0F15C300B83179 /* demo */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		390BF9672F0F15C300B83179 /* demo */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				3964B9202F5B7C5000E4C6A7 /* Exceptions for "demo" folder in "demo" target */,
+			);
 			path = demo;
 			sourceTree = "<group>";
 		};
@@ -52,6 +67,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3964B91B2F5B72D200E4C6A7 /* StytchConsumerSDK in Frameworks */,
 				3907282A2F2BC8FD007A0E0B /* StytchConsumerSDK in Frameworks */,
 				3907281C2F2B143F007A0E0B /* StytchConsumerSDK in Frameworks */,
 				390727C12F2AABFE007A0E0B /* StytchConsumerSDK in Frameworks */,
@@ -77,6 +93,7 @@
 				390A87CF2F2975EF00989579 /* StytchConsumerSDK in Frameworks */,
 				390728102F2AC3B3007A0E0B /* StytchConsumerSDK in Frameworks */,
 				390728162F2B11D6007A0E0B /* StytchConsumerSDK in Frameworks */,
+				3964B91E2F5B7ACA00E4C6A7 /* StytchConsumerSDK in Frameworks */,
 				390A87C62F29640500989579 /* StytchConsumerSDK in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -154,6 +171,8 @@
 				3907284D2F2BD920007A0E0B /* StytchConsumerSDK */,
 				390728502F2BD982007A0E0B /* StytchConsumerSDK */,
 				397D9A9E2F339E8200748266 /* StytchConsumerSDK */,
+				3964B91A2F5B72D200E4C6A7 /* StytchConsumerSDK */,
+				3964B91D2F5B7ACA00E4C6A7 /* StytchConsumerSDK */,
 			);
 			productName = demo;
 			productReference = 390BF9652F0F15C300B83179 /* demo.app */;
@@ -184,7 +203,7 @@
 			mainGroup = 390BF95C2F0F15C300B83179;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				397D9A9D2F339E8200748266 /* XCLocalSwiftPackageReference "../../stytch-ios" */,
+				3964B91C2F5B7ACA00E4C6A7 /* XCLocalSwiftPackageReference "../../stytch-ios" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 390BF9662F0F15C300B83179 /* Products */;
@@ -347,11 +366,13 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = demo/demo.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 22B584A5Q6;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = demo/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -384,11 +405,13 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = demo/demo.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 22B584A5Q6;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = demo/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -440,7 +463,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		397D9A9D2F339E8200748266 /* XCLocalSwiftPackageReference "../../stytch-ios" */ = {
+		3964B91C2F5B7ACA00E4C6A7 /* XCLocalSwiftPackageReference "../../stytch-ios" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = "../../stytch-ios";
 		};
@@ -536,6 +559,14 @@
 			productName = StytchConsumerSDK;
 		};
 		394DF5A82F21ED3300F7E7EA /* StytchConsumerSDK */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = StytchConsumerSDK;
+		};
+		3964B91A2F5B72D200E4C6A7 /* StytchConsumerSDK */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = StytchConsumerSDK;
+		};
+		3964B91D2F5B7ACA00E4C6A7 /* StytchConsumerSDK */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = StytchConsumerSDK;
 		};

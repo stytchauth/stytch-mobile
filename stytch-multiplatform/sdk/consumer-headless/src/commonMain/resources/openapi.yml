@@ -8113,7 +8113,8 @@ components:
         operands:
           type: array
           items:
-            type: string
+            type: object
+            additionalProperties: true
       required:
       - operator
       - operands
@@ -8167,9 +8168,11 @@ components:
           items:
             $ref: '#/components/schemas/api_organization_v1_MemberRole'
         trusted_metadata:
-          type: string
+          type: object
+          additionalProperties: true
         untrusted_metadata:
-          type: string
+          type: object
+          additionalProperties: true
         created_at:
           type: string
           format: date-time
@@ -8245,7 +8248,8 @@ components:
         type:
           type: string
         details:
-          type: string
+          type: object
+          additionalProperties: true
       required:
       - type
     api_organization_v1_OAuthRegistration:
@@ -8335,7 +8339,8 @@ components:
           items:
             $ref: '#/components/schemas/api_organization_v1_CustomRole'
         trusted_metadata:
-          type: string
+          type: object
+          additionalProperties: true
         created_at:
           type: string
           format: date-time
@@ -8349,7 +8354,8 @@ components:
         scim_active_connection:
           $ref: '#/components/schemas/api_organization_v1_ActiveSCIMConnection'
         allowed_oauth_tenants:
-          type: string
+          type: object
+          additionalProperties: true
       required:
       - organization_id
       - organization_name
@@ -8448,7 +8454,8 @@ components:
         registration_id:
           type: string
         sso_attributes:
-          type: string
+          type: object
+          additionalProperties: true
       required:
       - connection_id
       - external_id
@@ -8644,9 +8651,11 @@ components:
         password:
           $ref: '#/components/schemas/api_user_v1_Password'
         trusted_metadata:
-          type: string
+          type: object
+          additionalProperties: true
         untrusted_metadata:
-          type: string
+          type: object
+          additionalProperties: true
         external_id:
           type: string
         lock_created_at:
@@ -9143,7 +9152,8 @@ components:
         attributes:
           $ref: '#/components/schemas/api_attribute_v1_Attributes'
         custom_claims:
-          type: string
+          type: object
+          additionalProperties: true
       required:
       - session_id
       - user_id
@@ -9436,7 +9446,8 @@ components:
         organization_slug:
           type: string
         custom_claims:
-          type: string
+          type: object
+          additionalProperties: true
       required:
       - member_session_id
       - member_id
@@ -9565,6 +9576,8 @@ components:
           format: date-time
         message_request_id:
           type: string
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - domain
       - uri
@@ -9592,7 +9605,8 @@ components:
         type:
           type: string
         details:
-          type: string
+          type: object
+          additionalProperties: true
         member:
           $ref: '#/components/schemas/api_organization_v1_Member'
       required:
@@ -9775,6 +9789,7 @@ components:
           format: int32
       description: Response type
       x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       - com.stytch.sdk.b2b.networking.AuthenticatedResponse
       required:
       - request_id
@@ -9830,7 +9845,8 @@ components:
         oauth_tenant_jit_provisioning:
           type: string
         allowed_oauth_tenants:
-          type: string
+          type: object
+          additionalProperties: true
       description: Request type
       required:
       - intermediate_session_token
@@ -9873,6 +9889,7 @@ components:
           format: int32
       description: Response type
       x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       - com.stytch.sdk.b2b.networking.AuthenticatedResponse
       required:
       - request_id
@@ -9910,6 +9927,8 @@ components:
         organization_id_hint:
           type: string
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - email_address
@@ -9953,6 +9972,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - consent_required
@@ -10002,6 +10023,8 @@ components:
         authorization_code:
           type: string
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - redirect_uri
@@ -10053,6 +10076,7 @@ components:
           format: int32
       description: Response type
       x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       - com.stytch.sdk.b2b.networking.AuthenticatedResponse
       required:
       - request_id
@@ -10147,6 +10171,7 @@ components:
           format: int32
       description: Response type
       x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       - com.stytch.sdk.b2b.networking.AuthenticatedResponse
       required:
       - request_id
@@ -10196,6 +10221,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - intermediate_session_token
@@ -10235,6 +10262,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - status_code
@@ -10254,7 +10283,8 @@ components:
         name:
           type: string
         untrusted_metadata:
-          type: string
+          type: object
+          additionalProperties: true
         locale:
           type: string
       description: Request type
@@ -10276,6 +10306,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - member_id
@@ -10314,6 +10346,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - status_code
@@ -10385,6 +10419,7 @@ components:
           format: int32
       description: Response type
       x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       - com.stytch.sdk.b2b.networking.AuthenticatedResponse
       required:
       - request_id
@@ -10442,6 +10477,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - intermediate_session_token
@@ -10518,6 +10555,7 @@ components:
           format: int32
       description: Response type
       x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       - com.stytch.sdk.b2b.networking.AuthenticatedResponse
       required:
       - request_id
@@ -10567,6 +10605,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - intermediate_session_token
@@ -10602,6 +10642,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - status_code
@@ -10643,6 +10685,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - status_code
@@ -10701,6 +10745,7 @@ components:
           format: int32
       description: Response type
       x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       - com.stytch.sdk.b2b.networking.AuthenticatedResponse
       required:
       - request_id
@@ -10744,6 +10789,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - status_code
@@ -10781,6 +10828,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - intermediate_session_token
@@ -10823,6 +10872,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - status_code
@@ -10891,6 +10942,7 @@ components:
           format: int32
       description: Response type
       x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       - com.stytch.sdk.b2b.networking.AuthenticatedResponse
       required:
       - request_id
@@ -10939,6 +10991,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - email_address
@@ -11011,6 +11065,7 @@ components:
           format: int32
       description: Response type
       x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       - com.stytch.sdk.b2b.networking.AuthenticatedResponse
       required:
       - request_id
@@ -11067,6 +11122,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - status_code
@@ -11134,6 +11191,7 @@ components:
           format: int32
       description: Response type
       x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       - com.stytch.sdk.b2b.networking.AuthenticatedResponse
       required:
       - request_id
@@ -11196,6 +11254,7 @@ components:
           format: int32
       description: Response type
       x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       - com.stytch.sdk.b2b.networking.AuthenticatedResponse
       required:
       - request_id
@@ -11244,6 +11303,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - valid_password
@@ -11277,6 +11338,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - member_id
@@ -11340,6 +11403,7 @@ components:
           format: int32
       description: Response type
       x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       - com.stytch.sdk.b2b.networking.AuthenticatedResponse
       required:
       - request_id
@@ -11379,6 +11443,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - member_id
@@ -11409,6 +11475,8 @@ components:
         next_cursor:
           type: string
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - scim_groups
       - status_code
@@ -11427,6 +11495,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - connection
@@ -11452,6 +11522,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - connection
@@ -11467,6 +11539,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - connection_id
@@ -11494,6 +11568,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - connection
@@ -11517,6 +11593,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - connection
@@ -11540,6 +11618,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - connection
@@ -11563,6 +11643,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - connection
@@ -11606,6 +11688,7 @@ components:
           format: int32
       description: Response type
       x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       - com.stytch.sdk.b2b.networking.AuthenticatedResponse
       required:
       - request_id
@@ -11659,6 +11742,7 @@ components:
           format: int32
       description: Response type
       x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       - com.stytch.sdk.b2b.networking.AuthenticatedResponse
       required:
       - request_id
@@ -11703,6 +11787,7 @@ components:
           format: int32
       description: Response type
       x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       - com.stytch.sdk.b2b.networking.AuthenticatedResponse
       required:
       - request_id
@@ -11762,6 +11847,7 @@ components:
           format: int32
       description: Response type
       x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       - com.stytch.sdk.b2b.networking.AuthenticatedResponse
       required:
       - request_id
@@ -11789,6 +11875,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - status_code
@@ -11805,6 +11893,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - status_code
@@ -11865,6 +11955,7 @@ components:
           format: int32
       description: Response type
       x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       - com.stytch.sdk.b2b.networking.AuthenticatedResponse
       required:
       - request_id
@@ -11921,6 +12012,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - member_id
@@ -11978,6 +12071,7 @@ components:
           format: int32
       description: Response type
       x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       - com.stytch.sdk.consumer.networking.AuthenticatedResponse
       required:
       - request_id
@@ -12012,6 +12106,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - user_id
@@ -12059,6 +12155,7 @@ components:
           format: int32
       description: Response type
       x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       - com.stytch.sdk.consumer.networking.AuthenticatedResponse
       required:
       - request_id
@@ -12092,6 +12189,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - user_id
@@ -12171,6 +12270,7 @@ components:
           format: int32
       description: Response type
       x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       - com.stytch.sdk.consumer.networking.AuthenticatedResponse
       required:
       - request_id
@@ -12193,6 +12293,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - challenge
@@ -12225,6 +12327,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - user_id
@@ -12273,6 +12377,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - user_id
@@ -12328,6 +12434,8 @@ components:
         authorization_code:
           type: string
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - redirect_uri
@@ -12368,6 +12476,7 @@ components:
           format: int32
       description: Response type
       x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       - com.stytch.sdk.consumer.networking.AuthenticatedResponse
       required:
       - request_id
@@ -12419,6 +12528,7 @@ components:
           format: int32
       description: Response type
       x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       - com.stytch.sdk.consumer.networking.AuthenticatedResponse
       required:
       - request_id
@@ -12469,6 +12579,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - status_code
@@ -12511,6 +12623,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - status_code
@@ -12551,6 +12665,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - oauth_attach_token
@@ -12605,6 +12721,7 @@ components:
           format: int32
       description: Response type
       x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       - com.stytch.sdk.consumer.networking.AuthenticatedResponse
       required:
       - request_id
@@ -12666,6 +12783,7 @@ components:
           format: int32
       description: Response type
       x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       - com.stytch.sdk.consumer.networking.AuthenticatedResponse
       required:
       - request_id
@@ -12693,6 +12811,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - member
@@ -12708,6 +12828,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - organization_id
@@ -12727,6 +12849,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - organization
@@ -12777,7 +12901,8 @@ components:
         oauth_tenant_jit_provisioning:
           type: string
         allowed_oauth_tenants:
-          type: string
+          type: object
+          additionalProperties: true
         first_party_connected_apps_allowed_type:
           type: string
         allowed_first_party_connected_apps:
@@ -12804,6 +12929,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - organization
@@ -12823,6 +12950,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - member_id
@@ -12844,6 +12973,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - member_id
@@ -12865,6 +12996,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - member_id
@@ -12882,6 +13015,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - member_id
@@ -12903,6 +13038,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - connected_apps
@@ -12926,6 +13063,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - member_id
@@ -12945,6 +13084,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - status_code
@@ -12979,6 +13120,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - member_id
@@ -13008,6 +13151,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - member_id
@@ -13026,7 +13171,8 @@ components:
         mfa_phone_number:
           type: string
         untrusted_metadata:
-          type: string
+          type: object
+          additionalProperties: true
         is_breakglass:
           type: boolean
         roles:
@@ -13057,6 +13203,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - member_id
@@ -13090,6 +13238,8 @@ components:
         logo_url:
           type: string
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - connected_app_id
@@ -13115,6 +13265,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - connected_apps
@@ -13139,7 +13291,8 @@ components:
         mfa_phone_number:
           type: string
         untrusted_metadata:
-          type: string
+          type: object
+          additionalProperties: true
       description: Request type
       required:
       - email_address
@@ -13161,6 +13314,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - member_id
@@ -13182,6 +13337,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - member_id
@@ -13203,6 +13360,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - member_id
@@ -13226,6 +13385,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - connected_apps
@@ -13243,6 +13404,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - status_code
@@ -13279,6 +13442,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - members
@@ -13316,6 +13481,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - member_id
@@ -13345,6 +13512,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - member_id
@@ -13361,7 +13530,8 @@ components:
         mfa_phone_number:
           type: string
         untrusted_metadata:
-          type: string
+          type: object
+          additionalProperties: true
         default_mfa_method:
           type: string
       description: Request type
@@ -13380,6 +13550,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - member_id
@@ -13435,6 +13607,7 @@ components:
           format: int32
       description: Response type
       x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       - com.stytch.sdk.consumer.networking.AuthenticatedResponse
       required:
       - request_id
@@ -13479,6 +13652,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - method_id
@@ -13513,6 +13688,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - method_id
@@ -13547,6 +13724,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - method_id
@@ -13581,6 +13760,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - method_id
@@ -13613,6 +13794,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - method_id
@@ -13645,6 +13828,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - method_id
@@ -13694,6 +13879,7 @@ components:
           format: int32
       description: Response type
       x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       - com.stytch.sdk.consumer.networking.AuthenticatedResponse
       required:
       - request_id
@@ -13751,6 +13937,7 @@ components:
           format: int32
       description: Response type
       x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       - com.stytch.sdk.consumer.networking.AuthenticatedResponse
       required:
       - request_id
@@ -13809,6 +13996,7 @@ components:
           format: int32
       description: Response type
       x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       - com.stytch.sdk.consumer.networking.AuthenticatedResponse
       required:
       - request_id
@@ -13851,6 +14039,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - status_code
@@ -13901,6 +14091,7 @@ components:
           format: int32
       description: Response type
       x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       - com.stytch.sdk.consumer.networking.AuthenticatedResponse
       required:
       - request_id
@@ -13952,6 +14143,7 @@ components:
           format: int32
       description: Response type
       x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       - com.stytch.sdk.consumer.networking.AuthenticatedResponse
       required:
       - request_id
@@ -13994,6 +14186,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - valid_password
@@ -14037,6 +14231,7 @@ components:
           format: int32
       description: Response type
       x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       - com.stytch.sdk.consumer.networking.AuthenticatedResponse
       required:
       - request_id
@@ -14083,6 +14278,7 @@ components:
           format: int32
       description: Response type
       x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       - com.stytch.sdk.consumer.networking.AuthenticatedResponse
       required:
       - request_id
@@ -14121,6 +14317,7 @@ components:
           format: int32
       description: Response type
       x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       - com.stytch.sdk.consumer.networking.AuthenticatedResponse
       required:
       - request_id
@@ -14142,6 +14339,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - status_code
@@ -14239,7 +14438,8 @@ components:
         custom_scopes:
           type: string
         attribute_mapping:
-          type: string
+          type: object
+          additionalProperties: true
       required:
       - organization_id
       - connection_id
@@ -14307,7 +14507,8 @@ components:
         allow_gateway_callback:
           type: boolean
         attribute_mapping:
-          type: string
+          type: object
+          additionalProperties: true
       required:
       - organization_id
       - connection_id
@@ -14392,6 +14593,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - connection
@@ -14417,6 +14620,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - connection
@@ -14442,6 +14647,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - connection
@@ -14457,6 +14664,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - private_key_id
@@ -14472,6 +14681,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - certificate_id
@@ -14487,6 +14698,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - connection_id
@@ -14516,6 +14729,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - saml_connections
@@ -14585,6 +14800,7 @@ components:
           format: int32
       description: Response type
       x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       - com.stytch.sdk.b2b.networking.AuthenticatedResponse
       required:
       - request_id
@@ -14629,6 +14845,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - connection
@@ -14657,7 +14875,8 @@ components:
         identity_provider:
           type: string
         attribute_mapping:
-          type: string
+          type: object
+          additionalProperties: true
       description: Request type
       required:
       - display_name
@@ -14681,6 +14900,8 @@ components:
         warning:
           type: string
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - connection
@@ -14704,6 +14925,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - connection
@@ -14720,7 +14943,8 @@ components:
         idp_sso_url:
           type: string
         attribute_mapping:
-          type: string
+          type: object
+          additionalProperties: true
         saml_connection_implicit_role_assignments:
           type: array
           items:
@@ -14754,6 +14978,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - connection
@@ -14817,6 +15043,7 @@ components:
           format: int32
       description: Response type
       x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       - com.stytch.sdk.consumer.networking.AuthenticatedResponse
       required:
       - request_id
@@ -14858,6 +15085,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - totp_id
@@ -14886,6 +15115,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - user_id
@@ -14935,6 +15166,7 @@ components:
           format: int32
       description: Response type
       x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       - com.stytch.sdk.consumer.networking.AuthenticatedResponse
       required:
       - request_id
@@ -14959,6 +15191,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - user_id
@@ -14977,6 +15211,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - user_id
@@ -14995,6 +15231,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - user_id
@@ -15013,6 +15251,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - user_id
@@ -15031,6 +15271,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - user_id
@@ -15049,6 +15291,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - user_id
@@ -15067,6 +15311,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - user_id
@@ -15089,6 +15335,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - connected_apps
@@ -15145,10 +15393,14 @@ components:
           type: string
           format: date-time
         trusted_metadata:
-          type: string
+          type: object
+          additionalProperties: true
         untrusted_metadata:
-          type: string
+          type: object
+          additionalProperties: true
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - user_id
@@ -15176,6 +15428,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - status_code
@@ -15197,9 +15451,11 @@ components:
           items:
             $ref: '#/components/schemas/api_user_v1_CryptoWalletString'
         trusted_metadata:
-          type: string
+          type: object
+          additionalProperties: true
         untrusted_metadata:
-          type: string
+          type: object
+          additionalProperties: true
       description: Request type
     UpdateMeResponse:
       type: object
@@ -15226,6 +15482,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - user_id
@@ -15277,6 +15535,7 @@ components:
           format: int32
       description: Response type
       x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       - com.stytch.sdk.consumer.networking.AuthenticatedResponse
       required:
       - request_id
@@ -15311,6 +15570,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - user_id
@@ -15353,6 +15614,7 @@ components:
           format: int32
       description: Response type
       x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       - com.stytch.sdk.consumer.networking.AuthenticatedResponse
       required:
       - request_id
@@ -15396,6 +15658,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - user_id
@@ -15420,6 +15684,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - webauthn_registration
@@ -15431,9 +15697,12 @@ components:
           type: string
         display_name:
           type: string
+        identity_provider:
+          type: string
       required:
       - connection_id
       - display_name
+      - identity_provider
     B2BOrganizationConfig:
       type: object
       properties:
@@ -15572,6 +15841,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - sso_config
       - scim_config
@@ -15619,6 +15890,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - redirect_url
@@ -15659,6 +15932,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - consent_required
@@ -15689,6 +15964,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - redirect_url
@@ -15708,6 +15985,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - google_client_id
@@ -15740,6 +16019,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - redirect_url
@@ -15761,6 +16042,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - connections
@@ -15816,6 +16099,8 @@ components:
         vertical:
           $ref: '#/components/schemas/api_attribute_v1_Vertical'
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - disable_sdk_watermark
@@ -15855,6 +16140,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - member
@@ -15901,6 +16188,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - redirect_url
@@ -15941,6 +16230,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - consent_required
@@ -15975,6 +16266,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - consent_required
       - redirect_uri
@@ -15998,6 +16291,8 @@ components:
           type: integer
           format: int32
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - organization
@@ -16021,6 +16316,8 @@ components:
         userType:
           $ref: '#/components/schemas/UserSearchByEmailResponseUserType'
       description: Response type
+      x-implements:
+      - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - status_code

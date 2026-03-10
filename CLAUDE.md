@@ -5,30 +5,36 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Build
 
 ```bash
-./build [platform]   # platform: android | ios | rn (omit for all)
+./build [platform]   # platform: android | ios | rn | shared (omit for all)
 ```
 
-This script builds `StytchSwiftUtils.xcframework`, publishes `stytch-multiplatform-shared` to mavenLocal, then builds the consumer SDK for the target platform and copies artifacts to `examples/`.
+Full build order: `StytchSwiftUtils.xcframework` → publish `stytch-multiplatform-shared` to mavenLocal → build consumer SDK for target platform → copy artifacts to `stytch-ios/` and `examples/`.
+
+- `shared` — builds only SwiftUtils + shared SDK (no consumer SDK)
+- `android` / `ios` / `rn` — builds shared first, then the specified platform
+- omit — builds everything
 
 To test manually, run the relevant app in `examples/` after building.
 
 ## Tests
 
-No tests exist yet. The plan is:
+Tests live in `jvmTest` source sets in both projects (not `commonTest` — that runs on every platform).
 
-- **Target**: `jvmTest` source sets in both projects (not `commonTest` — that would run on every platform)
 - **Frameworks**: `kotlin.test`, `MockK`, `kotlinx-coroutines-test`
-- **Mocking strategy**: Mock at the `ConsumerNetworkingClient` level; do not test real HTTP. Use MockK for `expect class` instances (providers, encryption client, persistence) since they can't be subclassed.
-- **Scope**: Pure logic unit tests only. Platform `actual` implementations are assumed correct for now.
+- **Mocking strategy**: Mock at `ConsumerNetworkingClient.api` (the Ktorfit interface), not at the full client level. `ConsumerClientTest` is the base class for consumer unit tests — it stubs `networkingClient.request` to execute its lambda so API calls flow through normally.
+- Use MockK for `expect class` instances (providers, encryption client, persistence) since they can't be subclassed.
+- **Scope**: Pure logic unit tests only. Platform `actual` implementations are assumed correct.
+
+Run tests: `./gradlew :sdk:consumer-headless:jvmTest` (or `:sdk:shared:jvmTest` for shared).
 
 ## Two-Project Architecture
 
-The repo contains two separate KMP Gradle projects — this split exists because React Native requires Kotlin ≤ 2.1.0 but exporting `suspend` functions to JS requires Kotlin ≥ 2.3.0:
+Two separate KMP Gradle projects — the split exists because React Native requires Kotlin ≤ 2.1.0 but exporting `suspend` functions to JS requires Kotlin ≥ 2.3.0:
 
 | Project | Kotlin | Role |
 |---|---|---|
-| `stytch-multiplatform-shared/` | 2.1.0 | Platform abstractions: networking, encryption, persistence, biometrics/passkeys/OAuth providers |
-| `stytch-multiplatform/` | 2.3.0 | Consumer SDK: all auth modules (OTP, OAuth, Passwords, Magic Links, TOTP, Passkeys, Biometrics, Sessions, User) |
+| `stytch-multiplatform-shared/` | 2.1.0 | Platform abstractions: networking, encryption, persistence, biometrics/passkeys/OAuth providers, DFP/CAPTCHA |
+| `stytch-multiplatform/` | 2.3.0 | Consumer SDK: all auth modules (OTP, OAuth, Passwords, Magic Links, TOTP, Passkeys, Biometrics, Sessions, User, Crypto) |
 
 `stytch-multiplatform` depends on `stytch-multiplatform-shared` via mavenLocal. Build shared first.
 
@@ -51,44 +57,83 @@ Applied to: `IBiometricsProvider`, `IPasskeyProvider`, `IOAuthProvider`. Consume
 
 ## Key Source Locations
 
-**Shared SDK** (`stytch-multiplatform-shared`):
+**Shared SDK** (`stytch-multiplatform-shared/sdk/shared/src/commonMain/kotlin/com/stytch/sdk/`):
 ```
-sdk/shared/src/commonMain/kotlin/com/stytch/sdk/
-  biometrics/    — IBiometricsProvider interface + types
-  passkeys/      — IPasskeyProvider interface + types
-  oauth/         — IOAuthProvider interface + types
-  encryption/    — StytchEncryptionClient (expect)
-  persistence/   — StytchPlatformPersistenceClient (expect), StytchPersistenceClient (typed wrapper)
-  networking/    — StytchNetworkingClient base, HTTP client factory, auth plugin
-  data/          — StytchClientConfiguration (expect), DeviceInfo, StytchDispatchers, AuthenticationState
+biometrics/    — IBiometricsProvider interface + types
+passkeys/      — IPasskeyProvider interface + types
+oauth/         — IOAuthProvider interface + types
+dfp/           — DFPProvider, CAPTCHAProvider, DFPPAInterceptor
+encryption/    — StytchEncryptionClient (expect)
+persistence/   — StytchPlatformPersistenceClient (expect), StytchPersistenceClient (typed wrapper)
+pkce/          — PKCEClient
+networking/    — StytchNetworkingClient base, HTTP client factory, SharedAPI (bootstrap)
+data/          — StytchClientConfiguration (expect + actuals), StytchClientConfigurationInternal,
+                 KMPPlatformType, DeviceInfo, StytchDispatchers, EndpointOptions, BootstrapResponse
+StytchClient.kt                    — base marker interface
+StytchAuthenticationStateManager.kt — base session state interface
 ```
 
 Platform-specific `actual` implementations live in `androidMain/`, `iosMain/`, `jvmMain/`, `jsMain/` in the same project.
 
-**Consumer SDK** (`stytch-multiplatform`):
+**Consumer SDK** (`stytch-multiplatform/sdk/consumer-headless/src/commonMain/kotlin/com/stytch/sdk/consumer/`):
 ```
-sdk/consumer-headless/src/commonMain/kotlin/com/stytch/sdk/consumer/
-  StytchConsumer.kt          — entry point: createStytchConsumer()
-  biometrics/                — BiometricsClientImpl
-  passkeys/                  — PasskeysClientImpl
-  oauth/                     — OAuthClientImpl
-  passwords/                 — PasswordsClientImpl
-  otp/, totp/, magicLinks/   — auth method clients
-  session/, user/, crypto/   — session/user/crypto clients
-  networking/                — ConsumerNetworkingClient (extends StytchNetworkingClient)
+StytchConsumer.kt          — public interface + createStytchConsumer() factory + DefaultStytchConsumer
+StytchConsumerAuthenticationStateManager.kt — session/user state management
+biometrics/                — BiometricsClientImpl
+passkeys/                  — PasskeysClientImpl
+oauth/                     — OAuthClientImpl
+passwords/                 — PasswordsClientImpl
+otp/, totp/, magicLinks/   — auth method clients
+session/, user/, crypto/   — session/user/crypto clients
+networking/                — ConsumerNetworkingClient (extends StytchNetworkingClient), SdkExternalApi
 ```
 
-All consumer code is `commonMain` only — no platform source sets here.
+All consumer code is `commonMain` only — no platform source sets except `StytchDispatcherFactory.{platform}.kt`.
 
-## Code Generation Pipeline
+## iOS Distribution (`stytch-ios/`)
 
-1. **OpenAPI spec** (`src/commonMain/resources/openapi.yml`) → Ktorfit generates Ktor HTTP interfaces + serializable models
-2. **`@NetworkModel` annotation** → custom KSP processor generates public-facing DTO classes + `toNetworkModel()` extension functions
-3. **`buildconfig` plugin** → generates `BuildConfig` with SDK name/version for User-Agent headers
+A Swift Package at `stytch-ios/Package.swift` wraps the three xcframeworks for native iOS consumption:
+- `StytchConsumerSDK.xcframework` — from `stytch-multiplatform`
+- `StytchSharedSDK.xcframework` — from `stytch-multiplatform-shared`
+- `StytchSwiftUtils.xcframework` — from `StytchSwiftUtils/`
+
+The build script copies all three here. The package product is `StytchConsumerSDK` (target `StytchConsumerTarget`). The `Sources/StytchConsumerTarget/dummy.swift` stub is required by SPM.
 
 ## React Native Architecture
 
-JS `actual` classes call methods on a `StytchBridge` JS object (declared as Kotlin `external`). The RN TurboModule implements this bridge, routing calls across the native bridge to platform-specific methods. The RN artifact depends on the published Android/iOS artifacts from `stytch-multiplatform-shared`.
+`react-native/consumer/` is the full RN npm package (`@stytch/react-native-consumer`):
 
-## Known Issues / Big TODOs
+```
+src/
+  NativeStytchBridge.ts   — TurboModule TypeScript spec
+  contexts.tsx            — React contexts (StytchContext, StytchUserContext, etc.)
+  hooks.tsx               — useStytch, useStytchUser, useStytchSession, etc.
+  providers.tsx           — withStytch, StytchProvider, etc.
+ios/
+  StytchBridge.mm/.h      — iOS TurboModule implementation (ObjC, calls into shared xcframework)
+android/
+  StytchBridgeModule.kt   — Android TurboModule implementation
+lib/
+  consumer-headless.mjs   — KMP JS build output (copied here by ./build rn)
+dist/                     — TypeScript compiled output (yarn build)
+```
+
+**Data flow**: JS code imports from `lib/consumer-headless.mjs` (KMP-compiled). The KMP JS `actual` classes call methods on a `StytchBridge` global JS object. `NativeStytchBridge.ts` exposes the native TurboModule as that global, bridging to `StytchBridge.mm` (iOS) or `StytchBridgeModule.kt` (Android). All complex types are encoded/decoded as JSON strings across the bridge.
+
+The RN native bridges depend on the shared xcframework (iOS) / mavenLocal artifact (Android) from `stytch-multiplatform-shared`, not on `stytch-multiplatform`.
+
+The demo app at `examples/rn/` uses `yarn add file:../../react-native/consumer` (updated automatically by `./build rn`).
+
+## Code Generation Pipeline
+
+1. **OpenAPI spec** (`src/commonMain/resources/openapi.yml`) → `openapi` plugin → Ktorfit HTTP interfaces + serializable network models
+2. **`@NetworkModel` annotation** → custom KSP processor → public-facing DTO classes + `toNetworkModel()` extension functions
+3. **`buildconfig` plugin** → `BuildConfig` with SDK name/version for User-Agent headers
+4. **SKIE** → generates Swift-friendly wrappers around Kotlin/Native APIs (async/await, sealed classes, flows)
+
+> **IMPORTANT:** When running any Gradle command in either project, include `--rerun-tasks` to ensure KSP/code-generation tasks run. Without it, Gradle may skip them as up-to-date.
+
+## Known Issues / Notes
 - `StytchSwiftUtils.xcframework` bridges Swift-only APIs (e.g., CryptoKit) to Kotlin via C interop — `StytchEncryptionClient` on iOS calls `StytchEncryptionManagerSwift` from this framework
+- `ASAuthorizationController.delegate` is a weak ObjC ref — `OAuthProvider` stores active SIWA delegate/controller as instance properties to survive React Native app-inactive lifecycle events
+- The next major piece of work is the B2B SDK — same structure as consumer, different API endpoints, no new native code needed (reuses all shared providers)
