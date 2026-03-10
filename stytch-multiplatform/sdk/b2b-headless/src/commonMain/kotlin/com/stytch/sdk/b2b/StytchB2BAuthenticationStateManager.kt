@@ -3,6 +3,7 @@ package com.stytch.sdk.b2b
 import com.stytch.sdk.StytchAuthenticationStateManager
 import com.stytch.sdk.b2b.data.B2BAuthenticationState
 import com.stytch.sdk.b2b.networking.AuthenticatedResponse
+import com.stytch.sdk.b2b.networking.B2BResponse
 import com.stytch.sdk.b2b.networking.models.ApiB2bSessionV1MemberSession
 import com.stytch.sdk.b2b.networking.models.ApiOrganizationV1Member
 import com.stytch.sdk.b2b.networking.models.ApiOrganizationV1Organization
@@ -69,22 +70,29 @@ internal class StytchB2BAuthenticationStateManager(
                 sessionFlow.value = response.memberSession
                 sessionTokenFlow.value = response.sessionToken
                 sessionJwtFlow.value = response.sessionJwt
-                intermediateSessionTokenFlow.value = response.intermediateSessionToken
-                istExpiration =
-                    if (response.intermediateSessionToken == null) {
-                        null
-                    } else {
-                        Clock.System.now() + 10.minutes
-                    }
                 listOf(
                     async(dispatchers.ioDispatcher) { persistenceClient.save(MEMBER_IDENTIFIER, response.member) },
                     async(dispatchers.ioDispatcher) { persistenceClient.save(SESSION_IDENTIFIER, response.memberSession) },
                     async(dispatchers.ioDispatcher) { persistenceClient.save(SESSION_TOKEN_IDENTIFIER, response.sessionToken) },
                     async(dispatchers.ioDispatcher) { persistenceClient.save(SESSION_JWT_IDENTIFIER, response.sessionJwt) },
-                    async(dispatchers.ioDispatcher) { persistenceClient.save(IST_IDENTIFIER, response.intermediateSessionToken) },
-                    async(dispatchers.ioDispatcher) { persistenceClient.save(IST_EXPIRATION, istExpiration) },
                 ).awaitAll()
             }
+        }
+    }
+
+    suspend fun potentiallyUpdateIST(response: B2BResponse) {
+        coroutineScope {
+            intermediateSessionTokenFlow.value = response.intermediateSessionToken
+            istExpiration =
+                if (response.intermediateSessionToken?.isNotEmpty() == true) {
+                    Clock.System.now() + 10.minutes
+                } else {
+                    null
+                }
+            listOf(
+                async(dispatchers.ioDispatcher) { persistenceClient.save(IST_IDENTIFIER, response.intermediateSessionToken) },
+                async(dispatchers.ioDispatcher) { persistenceClient.save(IST_EXPIRATION, istExpiration) },
+            ).awaitAll()
         }
     }
 
@@ -94,6 +102,8 @@ internal class StytchB2BAuthenticationStateManager(
             sessionFlow.value = null
             sessionTokenFlow.value = null
             sessionJwtFlow.value = null
+            intermediateSessionTokenFlow.value = null
+            istExpiration = null
             listOf(
                 async(dispatchers.ioDispatcher) { persistenceClient.remove(MEMBER_IDENTIFIER) },
                 async(dispatchers.ioDispatcher) { persistenceClient.remove(SESSION_IDENTIFIER) },

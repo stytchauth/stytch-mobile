@@ -9777,11 +9777,13 @@ components:
           type: boolean
         intermediate_session_token:
           type: string
+          x-overridden-field: true
         member_session:
           $ref: '#/components/schemas/api_b2b_session_v1_MemberSession'
           x-overridden-field: true
         mfa_required:
           $ref: '#/components/schemas/api_b2b_mfa_v1_MfaRequired'
+          x-overridden-field: true
         primary_required:
           $ref: '#/components/schemas/api_b2b_session_v1_PrimaryRequired'
         status_code:
@@ -9791,6 +9793,7 @@ components:
       x-implements:
       - com.stytch.sdk.data.StytchAPIResponse
       - com.stytch.sdk.b2b.networking.AuthenticatedResponse
+      - com.stytch.sdk.b2b.networking.B2BResponse
       required:
       - request_id
       - member_id
@@ -9874,6 +9877,7 @@ components:
           type: boolean
         intermediate_session_token:
           type: string
+          x-overridden-field: true
         member_session:
           $ref: '#/components/schemas/api_b2b_session_v1_MemberSession'
           x-overridden-field: true
@@ -9882,6 +9886,7 @@ components:
           x-overridden-field: true
         mfa_required:
           $ref: '#/components/schemas/api_b2b_mfa_v1_MfaRequired'
+          x-overridden-field: true
         primary_required:
           $ref: '#/components/schemas/api_b2b_session_v1_PrimaryRequired'
         status_code:
@@ -9891,6 +9896,7 @@ components:
       x-implements:
       - com.stytch.sdk.data.StytchAPIResponse
       - com.stytch.sdk.b2b.networking.AuthenticatedResponse
+      - com.stytch.sdk.b2b.networking.B2BResponse
       required:
       - request_id
       - member_id
@@ -10067,10 +10073,12 @@ components:
           x-overridden-field: true
         intermediate_session_token:
           type: string
+          x-overridden-field: true
         member_authenticated:
           type: boolean
         mfa_required:
           $ref: '#/components/schemas/api_b2b_mfa_v1_MfaRequired'
+          x-overridden-field: true
         status_code:
           type: integer
           format: int32
@@ -10078,6 +10086,7 @@ components:
       x-implements:
       - com.stytch.sdk.data.StytchAPIResponse
       - com.stytch.sdk.b2b.networking.AuthenticatedResponse
+      - com.stytch.sdk.b2b.networking.B2BResponse
       required:
       - request_id
       - member_id
@@ -10158,10 +10167,12 @@ components:
           x-overridden-field: true
         intermediate_session_token:
           type: string
+          x-overridden-field: true
         member_authenticated:
           type: boolean
         mfa_required:
           $ref: '#/components/schemas/api_b2b_mfa_v1_MfaRequired'
+          x-overridden-field: true
         primary_required:
           $ref: '#/components/schemas/api_b2b_session_v1_PrimaryRequired'
         member_device:
@@ -10173,6 +10184,7 @@ components:
       x-implements:
       - com.stytch.sdk.data.StytchAPIResponse
       - com.stytch.sdk.b2b.networking.AuthenticatedResponse
+      - com.stytch.sdk.b2b.networking.B2BResponse
       required:
       - request_id
       - member_id
@@ -10211,6 +10223,7 @@ components:
           type: string
         intermediate_session_token:
           type: string
+          x-overridden-field: true
         email_address:
           type: string
         discovered_organizations:
@@ -10223,6 +10236,7 @@ components:
       description: Response type
       x-implements:
       - com.stytch.sdk.data.StytchAPIResponse
+      - com.stytch.sdk.b2b.networking.B2BResponse
       required:
       - request_id
       - intermediate_session_token
@@ -10408,8 +10422,10 @@ components:
           type: boolean
         intermediate_session_token:
           type: string
+          x-overridden-field: true
         mfa_required:
           $ref: '#/components/schemas/api_b2b_mfa_v1_MfaRequired'
+          x-overridden-field: true
         primary_required:
           $ref: '#/components/schemas/api_b2b_session_v1_PrimaryRequired'
         member_device:
@@ -10421,6 +10437,7 @@ components:
       x-implements:
       - com.stytch.sdk.data.StytchAPIResponse
       - com.stytch.sdk.b2b.networking.AuthenticatedResponse
+      - com.stytch.sdk.b2b.networking.B2BResponse
       required:
       - request_id
       - member_id
@@ -10461,6 +10478,7 @@ components:
           type: string
         intermediate_session_token:
           type: string
+          x-overridden-field: true
         email_address:
           type: string
         discovered_organizations:
@@ -10479,6 +10497,7 @@ components:
       description: Response type
       x-implements:
       - com.stytch.sdk.data.StytchAPIResponse
+      - com.stytch.sdk.b2b.networking.B2BResponse
       required:
       - request_id
       - intermediate_session_token
@@ -10542,10 +10561,12 @@ components:
           x-overridden-field: true
         intermediate_session_token:
           type: string
+          x-overridden-field: true
         member_authenticated:
           type: boolean
         mfa_required:
           $ref: '#/components/schemas/api_b2b_mfa_v1_MfaRequired'
+          x-overridden-field: true
         primary_required:
           $ref: '#/components/schemas/api_b2b_session_v1_PrimaryRequired'
         member_device:
@@ -10557,6 +10578,7 @@ components:
       x-implements:
       - com.stytch.sdk.data.StytchAPIResponse
       - com.stytch.sdk.b2b.networking.AuthenticatedResponse
+      - com.stytch.sdk.b2b.networking.B2BResponse
       required:
       - request_id
       - member_id
@@ -10595,6 +10617,7 @@ components:
           type: string
         intermediate_session_token:
           type: string
+          x-overridden-field: true
         email_address:
           type: string
         discovered_organizations:
@@ -10607,6 +10630,7 @@ components:
       description: Response type
       x-implements:
       - com.stytch.sdk.data.StytchAPIResponse
+      - com.stytch.sdk.b2b.networking.B2BResponse
       required:
       - request_id
       - intermediate_session_token
@@ -10818,6 +10842,7 @@ components:
           type: string
         intermediate_session_token:
           type: string
+          x-overridden-field: true
         email_address:
           type: string
         discovered_organizations:
@@ -10830,6 +10855,7 @@ components:
       description: Response type
       x-implements:
       - com.stytch.sdk.data.StytchAPIResponse
+      - com.stytch.sdk.b2b.networking.B2BResponse
       required:
       - request_id
       - intermediate_session_token
@@ -10929,10 +10955,12 @@ components:
           x-overridden-field: true
         intermediate_session_token:
           type: string
+          x-overridden-field: true
         member_authenticated:
           type: boolean
         mfa_required:
           $ref: '#/components/schemas/api_b2b_mfa_v1_MfaRequired'
+          x-overridden-field: true
         primary_required:
           $ref: '#/components/schemas/api_b2b_session_v1_PrimaryRequired'
         member_device:
@@ -10944,6 +10972,7 @@ components:
       x-implements:
       - com.stytch.sdk.data.StytchAPIResponse
       - com.stytch.sdk.b2b.networking.AuthenticatedResponse
+      - com.stytch.sdk.b2b.networking.B2BResponse
       required:
       - request_id
       - member_id
@@ -10983,6 +11012,7 @@ components:
           type: string
         intermediate_session_token:
           type: string
+          x-overridden-field: true
         discovered_organizations:
           type: array
           items:
@@ -10993,6 +11023,7 @@ components:
       description: Response type
       x-implements:
       - com.stytch.sdk.data.StytchAPIResponse
+      - com.stytch.sdk.b2b.networking.B2BResponse
       required:
       - request_id
       - email_address
@@ -11052,10 +11083,12 @@ components:
           x-overridden-field: true
         intermediate_session_token:
           type: string
+          x-overridden-field: true
         member_authenticated:
           type: boolean
         mfa_required:
           $ref: '#/components/schemas/api_b2b_mfa_v1_MfaRequired'
+          x-overridden-field: true
         primary_required:
           $ref: '#/components/schemas/api_b2b_session_v1_PrimaryRequired'
         member_device:
@@ -11067,6 +11100,7 @@ components:
       x-implements:
       - com.stytch.sdk.data.StytchAPIResponse
       - com.stytch.sdk.b2b.networking.AuthenticatedResponse
+      - com.stytch.sdk.b2b.networking.B2BResponse
       required:
       - request_id
       - member_id
@@ -11178,10 +11212,12 @@ components:
           x-overridden-field: true
         intermediate_session_token:
           type: string
+          x-overridden-field: true
         member_authenticated:
           type: boolean
         mfa_required:
           $ref: '#/components/schemas/api_b2b_mfa_v1_MfaRequired'
+          x-overridden-field: true
         primary_required:
           $ref: '#/components/schemas/api_b2b_session_v1_PrimaryRequired'
         member_device:
@@ -11193,6 +11229,7 @@ components:
       x-implements:
       - com.stytch.sdk.data.StytchAPIResponse
       - com.stytch.sdk.b2b.networking.AuthenticatedResponse
+      - com.stytch.sdk.b2b.networking.B2BResponse
       required:
       - request_id
       - member_id
@@ -11243,10 +11280,12 @@ components:
           x-overridden-field: true
         intermediate_session_token:
           type: string
+          x-overridden-field: true
         member_authenticated:
           type: boolean
         mfa_required:
           $ref: '#/components/schemas/api_b2b_mfa_v1_MfaRequired'
+          x-overridden-field: true
         member_device:
           $ref: '#/components/schemas/SDKDeviceInfo'
         status_code:
@@ -11256,6 +11295,7 @@ components:
       x-implements:
       - com.stytch.sdk.data.StytchAPIResponse
       - com.stytch.sdk.b2b.networking.AuthenticatedResponse
+      - com.stytch.sdk.b2b.networking.B2BResponse
       required:
       - request_id
       - member_id
@@ -11838,8 +11878,10 @@ components:
           type: boolean
         intermediate_session_token:
           type: string
+          x-overridden-field: true
         mfa_required:
           $ref: '#/components/schemas/api_b2b_mfa_v1_MfaRequired'
+          x-overridden-field: true
         primary_required:
           $ref: '#/components/schemas/api_b2b_session_v1_PrimaryRequired'
         status_code:
@@ -11849,6 +11891,7 @@ components:
       x-implements:
       - com.stytch.sdk.data.StytchAPIResponse
       - com.stytch.sdk.b2b.networking.AuthenticatedResponse
+      - com.stytch.sdk.b2b.networking.B2BResponse
       required:
       - request_id
       - member_id
@@ -14787,10 +14830,12 @@ components:
           x-overridden-field: true
         intermediate_session_token:
           type: string
+          x-overridden-field: true
         member_authenticated:
           type: boolean
         mfa_required:
           $ref: '#/components/schemas/api_b2b_mfa_v1_MfaRequired'
+          x-overridden-field: true
         primary_required:
           $ref: '#/components/schemas/api_b2b_session_v1_PrimaryRequired'
         member_device:
@@ -14802,6 +14847,7 @@ components:
       x-implements:
       - com.stytch.sdk.data.StytchAPIResponse
       - com.stytch.sdk.b2b.networking.AuthenticatedResponse
+      - com.stytch.sdk.b2b.networking.B2BResponse
       required:
       - request_id
       - member_id

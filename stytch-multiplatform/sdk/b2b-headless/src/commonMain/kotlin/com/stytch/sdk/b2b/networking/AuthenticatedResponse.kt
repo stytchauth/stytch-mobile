@@ -10,5 +10,4 @@ public interface AuthenticatedResponse {
     public val organization: ApiOrganizationV1Organization
     public val sessionToken: String
     public val sessionJwt: String
-    public val intermediateSessionToken: String?
 }

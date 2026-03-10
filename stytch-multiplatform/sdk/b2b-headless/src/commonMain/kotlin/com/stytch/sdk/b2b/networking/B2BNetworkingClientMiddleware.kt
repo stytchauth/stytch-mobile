@@ -29,6 +29,9 @@ internal class B2BNetworkingClientMiddleware(
     private val errorParser: IErrorResponseParser = DefaultErrorResponseParser(),
 ) : StytchNetworkResponseMiddleware {
     override suspend fun <T> onSuccess(data: T) {
+        if (data is B2BResponse) {
+            sessionManager.potentiallyUpdateIST(data)
+        }
         if (data is AuthenticatedResponse) {
             sessionManager.update(data)
             onSessionAuthenticated(data.memberSession.expiresAt ?: Instant.DISTANT_PAST)
