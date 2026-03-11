@@ -59,6 +59,8 @@ class StytchBridgeModule(reactContext: ReactApplicationContext) :
   private val persistenceClient = StytchPersistenceClient(Dispatchers.IO, encryptionClient, platformPersistenceClient)
   private val pkceClient = PKCEClient(encryptionClient, persistenceClient)
 
+  private val dispatchers = StytchDispatchers(ioDispatcher = Dispatchers.IO, mainDispatcher = Dispatchers.Main)
+
   override fun getName(): String {
     return NAME
   }
@@ -301,7 +303,7 @@ class StytchBridgeModule(reactContext: ReactApplicationContext) :
                 sessionDurationMinutes = sessionDurationMinutes?.toInt(),
                 preferImmediatelyAvailableCredentials = preferImmediatelyAvailableCredentials,
             ),
-            dispatchers = StytchDispatchers(ioDispatcher = Dispatchers.IO, mainDispatcher = Dispatchers.Main),
+            dispatchers = dispatchers,
             json = json,
         )
       }
@@ -330,7 +332,7 @@ class StytchBridgeModule(reactContext: ReactApplicationContext) :
             sessionDurationMinutes = sessionDurationMinutes?.toInt(),
             preferImmediatelyAvailableCredentials = preferImmediatelyAvailableCredentials,
           ),
-          dispatchers = StytchDispatchers(ioDispatcher = Dispatchers.IO, mainDispatcher = Dispatchers.Main),
+          dispatchers = dispatchers,
           json = json,
         )
       }
@@ -389,7 +391,7 @@ class StytchBridgeModule(reactContext: ReactApplicationContext) :
               sessionDurationMinutes = sessionDurationMinutes?.toInt(),
             ),
             pkceClient = pkceClient,
-            dispatchers = StytchDispatchers(ioDispatcher = Dispatchers.IO, mainDispatcher = Dispatchers.Main),
+            dispatchers = dispatchers,
             type = Json.decodeFromString(type),
             baseUrl = baseUrl,
             publicTokenInfo = getPublicTokenInfo(publicToken),
@@ -397,6 +399,31 @@ class StytchBridgeModule(reactContext: ReactApplicationContext) :
       }
         .onSuccess { token ->
           val asString = Json.encodeToString(token)
+          promise.resolve(asString)
+        }
+        .onFailure { exception ->
+          promise.reject(exception)
+        }
+    }
+  }
+
+  override fun startBrowserFlow(
+    url: String,
+    promise: Promise,
+  ) {
+    mainScope.launch {
+      runCatching {
+        val oauthProvider = OAuthProvider(
+          application = reactApplicationContext.applicationContext as Application,
+          packageName = deviceInfo.applicationPackageName,
+        )
+        // The only parameter we need to send to startBrowserFlow() is the activity; all the real parameters were already encoded into the url
+        val parameters = OAuthStartParameters(
+            activity = reactApplicationContext.currentActivity!! as ComponentActivity,
+        )
+        oauthProvider.startBrowserFlow(url, parameters, dispatchers)
+      }.onSuccess { result ->
+          val asString = Json.encodeToString(result)
           promise.resolve(asString)
         }
         .onFailure { exception ->
