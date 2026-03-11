@@ -50,9 +50,66 @@ class StytchB2BAuthenticationStateManagerTest {
 
     private fun createManager() = StytchB2BAuthenticationStateManager(dispatchers, persistenceClient)
 
-    private val fakeMember = mockk<ApiOrganizationV1Member>(relaxed = true)
-    private val fakeSession = mockk<ApiB2bSessionV1MemberSession>(relaxed = true)
-    private val fakeOrganization = mockk<ApiOrganizationV1Organization>(relaxed = true)
+    private val fakeMember =
+        ApiOrganizationV1Member(
+            organizationId = "org-id",
+            memberId = "member-id",
+            emailAddress = "member@example.com",
+            status = "active",
+            name = "Test Member",
+            ssoRegistrations = emptyList(),
+            isBreakglass = false,
+            memberPasswordId = "pwd-id",
+            oauthRegistrations = emptyList(),
+            emailAddressVerified = true,
+            mfaPhoneNumberVerified = false,
+            isAdmin = false,
+            totpRegistrationId = "",
+            retiredEmailAddresses = emptyList(),
+            isLocked = false,
+            mfaEnrolled = false,
+            mfaPhoneNumber = "",
+            defaultMfaMethod = "",
+            roles = emptyList(),
+        )
+    private val fakeSession =
+        ApiB2bSessionV1MemberSession(
+            memberSessionId = "session-id",
+            memberId = "member-id",
+            startedAt = Clock.System.now(),
+            lastAccessedAt = Clock.System.now(),
+            expiresAt = Clock.System.now(),
+            authenticationFactors = emptyList(),
+            organizationId = "org-id",
+            roles = emptyList(),
+            organizationSlug = "test-org",
+        )
+    private val fakeOrganization =
+        ApiOrganizationV1Organization(
+            organizationId = "org-id",
+            organizationName = "Test Org",
+            organizationLogoUrl = "",
+            organizationSlug = "test-org",
+            ssoJitProvisioning = "NOT_ALLOWED",
+            ssoJitProvisioningAllowedConnections = emptyList(),
+            ssoActiveConnections = emptyList(),
+            emailAllowedDomains = emptyList(),
+            emailJitProvisioning = "NOT_ALLOWED",
+            emailInvites = "ALL_ALLOWED",
+            authMethods = "ALL_ALLOWED",
+            allowedAuthMethods = emptyList(),
+            mfaPolicy = "OPTIONAL",
+            rbacEmailImplicitRoleAssignments = emptyList(),
+            mfaMethods = "ALL_ALLOWED",
+            allowedMfaMethods = emptyList(),
+            oauthTenantJitProvisioning = "NOT_ALLOWED",
+            claimedEmailDomains = emptyList(),
+            firstPartyConnectedAppsAllowedType = "ALL_ALLOWED",
+            allowedFirstPartyConnectedApps = emptyList(),
+            thirdPartyConnectedAppsAllowedType = "ALL_ALLOWED",
+            allowedThirdPartyConnectedApps = emptyList(),
+            customRoles = emptyList(),
+        )
     private val fakeToken = "fake-session-token"
     private val fakeJwt = "fake-session-jwt"
 
@@ -155,6 +212,7 @@ class StytchB2BAuthenticationStateManagerTest {
 
             verify { platformClient.saveData(eq("stytch_member"), any()) }
             verify { platformClient.saveData(eq("stytch_session"), any()) }
+            verify { platformClient.saveData(eq("stytch_organization"), any()) }
             verify { platformClient.saveData(eq("stytch_session_token"), any()) }
             verify { platformClient.saveData(eq("stytch_session_jwt"), any()) }
         }
@@ -206,6 +264,7 @@ class StytchB2BAuthenticationStateManagerTest {
 
             verify { platformClient.removeData("stytch_member") }
             verify { platformClient.removeData("stytch_session") }
+            verify { platformClient.removeData("stytch_organization") }
             verify { platformClient.removeData("stytch_session_token") }
             verify { platformClient.removeData("stytch_session_jwt") }
             verify { platformClient.removeData("stytch_ist_identifier") }
