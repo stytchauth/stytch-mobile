@@ -1,16 +1,16 @@
 import {useContext} from 'react';
-import { StytchUserContext, StytchSessionContext, StytchContext, StytchAuthenticationStateContext } from './contexts';
-import { ApiUserV1User, ApiSessionV1Session, StytchConsumer, ConsumerAuthenticationState } from '../lib/consumer-headless.mjs';
+import { StytchMemberContext, StytchMemberSessionContext, StytchB2BContext, StytchB2BAuthenticationStateContext } from './contexts';
+import { ApiOrganizationV1Member, ApiB2bSessionV1MemberSession, StytchB2B, B2BAuthenticationState } from '../lib/b2b-headless.mjs';
 
-export const useStytchUser = (): ApiUserV1User | undefined => {
-  return useContext(StytchUserContext);
+export const useStytchMember = (): ApiOrganizationV1Member | undefined => {
+  return useContext(StytchMemberContext);
 };
-export const useStytchSession = (): ApiSessionV1Session | undefined => {
-  return useContext(StytchSessionContext);
+export const useStytchMemberSession = (): ApiB2bSessionV1MemberSession | undefined => {
+  return useContext(StytchMemberSessionContext);
 };
-export const useStytch = (): StytchConsumer => {
-  return useContext(StytchContext);
+export const useStytchB2B = (): StytchB2B => {
+  return useContext(StytchB2BContext);
 };
-export const useStytchAuthenticationState = (): ConsumerAuthenticationState => {
-  return useContext(StytchAuthenticationStateContext);
+export const useStytchB2BAuthenticationState = (): B2BAuthenticationState => {
+  return useContext(StytchB2BAuthenticationStateContext);
 }

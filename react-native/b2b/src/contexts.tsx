@@ -1,7 +1,7 @@
 import { createContext } from 'react';
-import { StytchConsumer, ApiUserV1User, ApiSessionV1Session, ConsumerAuthenticationState } from '../lib/consumer-headless.mjs'
+import { StytchB2B, ApiOrganizationV1Member, ApiB2bSessionV1MemberSession, B2BAuthenticationState } from '../lib/b2b-headless.mjs'
 
-export const StytchUserContext = createContext<ApiUserV1User | undefined>(undefined);
-export const StytchSessionContext = createContext<ApiSessionV1Session | undefined>(undefined);
-export const StytchContext = createContext<StytchConsumer>({} as StytchConsumer);
-export const StytchAuthenticationStateContext = createContext<ConsumerAuthenticationState>(ConsumerAuthenticationState.Loading);
+export const StytchMemberContext = createContext<ApiOrganizationV1Member | undefined>(undefined);
+export const StytchMemberSessionContext = createContext<ApiB2bSessionV1MemberSession | undefined>(undefined);
+export const StytchB2BContext = createContext<StytchB2B>({} as StytchB2B);
+export const StytchB2BAuthenticationStateContext = createContext<B2BAuthenticationState>(B2BAuthenticationState.Loading);

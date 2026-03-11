@@ -1,62 +1,62 @@
 import React, { useState, useEffect } from 'react';
-import { StytchConsumer, ApiUserV1User, ApiSessionV1Session, ConsumerAuthenticationState } from '../lib/consumer-headless.mjs'
+import { StytchB2B, ApiOrganizationV1Member, ApiB2bSessionV1MemberSession, B2BAuthenticationState } from '../lib/b2b-headless.mjs'
 import { AppState, AppStateStatus } from 'react-native';
-import { useStytch, useStytchUser, useStytchSession, useStytchAuthenticationState } from './hooks';
-import { StytchContext, StytchUserContext, StytchSessionContext, StytchAuthenticationStateContext } from './contexts';
+import { useStytchB2B, useStytchMember, useStytchMemberSession, useStytchB2BAuthenticationState } from './hooks';
+import { StytchB2BContext, StytchMemberContext, StytchMemberSessionContext, StytchB2BAuthenticationStateContext } from './contexts';
 import { mergeWithStableProps } from './utils';
 
-export const withStytch = <T extends object>(Component: React.ComponentType<T & { stytch: StytchConsumer }>): React.ComponentType<T> => {
+export const withStytchB2B = <T extends object>(Component: React.ComponentType<T & { stytch: StytchB2B }>): React.ComponentType<T> => {
   const WithStytch: React.ComponentType<T> = (props) => {
-    return <Component {...props} stytch={useStytch()} />;
+    return <Component {...props} stytch={useStytchB2B()} />;
   };
-  WithStytch.displayName = `withStytch(${Component.displayName || Component.name || 'Component'})`;
+  WithStytch.displayName = `withStytchB2B(${Component.displayName || Component.name || 'Component'})`;
   return WithStytch;
 };
-export const withStytchUser = <T extends object>(
-  Component: React.ComponentType<T & { stytchUser: ApiUserV1User | undefined }>,
+export const withStytchMember = <T extends object>(
+  Component: React.ComponentType<T & { stytchMember: ApiOrganizationV1Member | undefined }>,
 ): React.ComponentType<T> => {
-  const WithStytchUser: React.ComponentType<T> = (props) => {
-    const user = useStytchUser();
-    return <Component {...props} stytchUser={user} />;
+  const WithStytchMember: React.ComponentType<T> = (props) => {
+    const member = useStytchMember();
+    return <Component {...props} stytchMember={member} />;
   };
-  WithStytchUser.displayName = `withStytchUser(${Component.displayName || Component.name || 'Component'})`;
-  return WithStytchUser;
+  WithStytchMember.displayName = `withStytchMember(${Component.displayName || Component.name || 'Component'})`;
+  return WithStytchMember;
 };
-export const withStytchSession = <T extends object>(
-  Component: React.ComponentType<T & { stytchSession: ApiSessionV1Session | undefined }>,
+export const withStytchMemberSession = <T extends object>(
+  Component: React.ComponentType<T & { stytchSession: ApiB2bSessionV1MemberSession | undefined }>,
 ): React.ComponentType<T> => {
-  const WithStytchSession: React.ComponentType<T> = (props) => {
-    const session = useStytchSession();
-    return <Component {...props} stytchSession={session} />;
+  const WithStytchMemberSession: React.ComponentType<T> = (props) => {
+    const memberSession = useStytchMemberSession();
+    return <Component {...props} stytchSession={memberSession} />;
   };
-  WithStytchSession.displayName = `withStytchSession(${Component.displayName || Component.name || 'Component'})`;
-  return WithStytchSession;
+  WithStytchMemberSession.displayName = `withStytchMemberSession(${Component.displayName || Component.name || 'Component'})`;
+  return WithStytchMemberSession;
 };
-export const withStytchAuthenticationState = <T extends object>(
-  Component: React.ComponentType<T & ConsumerAuthenticationState>,
+export const withStytchB2BAuthenticationState = <T extends object>(
+  Component: React.ComponentType<T & B2BAuthenticationState>,
 ): React.ComponentType<T> => {
-  const WithStytchAuthenticationState: React.ComponentType<T> = (props) => {
-    const state = useStytchAuthenticationState();
+  const WithStytchB2BAuthenticationState: React.ComponentType<T> = (props) => {
+    const state = useStytchB2BAuthenticationState();
     return <Component {...props} stytchAuthenticationState={state} />;
   };
-  WithStytchAuthenticationState.displayName = `withStytchAuthenticationState(${Component.displayName || Component.name || 'Component'})`;
-  return WithStytchAuthenticationState;
+  WithStytchB2BAuthenticationState.displayName = `withStytchB2BAuthenticationState(${Component.displayName || Component.name || 'Component'})`;
+  return WithStytchB2BAuthenticationState;
 };
 
-export type StytchProviderProps = {
-  stytch: StytchConsumer;
+export type StytchB2BProviderProps = {
+  stytch: StytchB2B;
   children?: React.ReactNode;
 };
 
 export const StytchProvider = ({
   stytch,
   children,
-}: StytchProviderProps): React.JSX.Element => {
-  const [{ user, session }, setClientState] = useState<{ user: ApiUserV1User | undefined, session: ApiSessionV1Session | undefined}>({
-    session: undefined,
-    user: undefined,
+}: StytchB2BProviderProps): React.JSX.Element => {
+  const [{ member, memberSession }, setClientState] = useState<{ member: ApiOrganizationV1Member | undefined, memberSession: ApiB2bSessionV1MemberSession | undefined}>({
+    member: undefined,
+    memberSession: undefined,
   });
-  const [authenticationState, setAuthenticationState] = useState<ConsumerAuthenticationState>(new ConsumerAuthenticationState.Loading())
+  const [authenticationState, setAuthenticationState] = useState<B2BAuthenticationState>(new B2BAuthenticationState.Loading())
 
   useEffect(() => {
     const handleAppStateChange = async (appState: AppStateStatus) => {
@@ -66,8 +66,8 @@ export const StytchProvider = ({
     };
     const appStateSubscription = AppState.addEventListener('change', handleAppStateChange);
     const tryAuthenticate = async () => {
-      const observationJob = stytch.authenticationStateObserver(async (state: ConsumerAuthenticationState) => {
-        if (state instanceof ConsumerAuthenticationState.Authenticated) {
+      const observationJob = stytch.authenticationStateObserver(async (state: B2BAuthenticationState) => {
+        if (state instanceof B2BAuthenticationState.Authenticated) {
           try {
             await stytch.session.authenticate({ sessionDurationMinutes: null });
           } catch {
@@ -84,15 +84,15 @@ export const StytchProvider = ({
 
   useEffect(
     () => {
-      const observationJob = stytch.authenticationStateObserver((state: ConsumerAuthenticationState) => {
-        let newUser: ApiUserV1User | undefined = undefined
-        let newSession: ApiSessionV1Session | undefined = undefined
-        if (state instanceof ConsumerAuthenticationState.Authenticated) {
-          newUser = (state as ConsumerAuthenticationState.Authenticated).user
-          newSession = (state as ConsumerAuthenticationState.Authenticated).session
+      const observationJob = stytch.authenticationStateObserver((state: B2BAuthenticationState) => {
+        let newMember: ApiOrganizationV1Member | undefined = undefined
+        let newMemberSession: ApiB2bSessionV1MemberSession | undefined = undefined
+        if (state instanceof B2BAuthenticationState.Authenticated) {
+          newMember = (state as B2BAuthenticationState.Authenticated).member
+          newMemberSession = (state as B2BAuthenticationState.Authenticated).memberSession
         }
         setClientState((oldState) => {
-          const newState = { user: newUser, session: newSession };
+          const newState = { member: newMember, memberSession: newMemberSession };
           return mergeWithStableProps(oldState, newState);
         });
         setAuthenticationState(state);
@@ -103,14 +103,14 @@ export const StytchProvider = ({
   );
 
   return (
-    <StytchContext.Provider value={stytch}>
-      <StytchUserContext.Provider value={user}>
-        <StytchSessionContext.Provider value={session}>
-          <StytchAuthenticationStateContext.Provider value={authenticationState}>
+    <StytchB2BContext.Provider value={stytch}>
+      <StytchMemberContext.Provider value={member}>
+        <StytchMemberSessionContext.Provider value={memberSession}>
+          <StytchB2BAuthenticationStateContext.Provider value={authenticationState}>
             {children}
-          </StytchAuthenticationStateContext.Provider>
-        </StytchSessionContext.Provider>
-      </StytchUserContext.Provider>
-    </StytchContext.Provider>
+          </StytchB2BAuthenticationStateContext.Provider>
+        </StytchMemberSessionContext.Provider>
+      </StytchMemberContext.Provider>
+    </StytchB2BContext.Provider>
   );
 };

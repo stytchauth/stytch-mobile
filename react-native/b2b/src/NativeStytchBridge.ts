@@ -82,6 +82,9 @@ export interface Spec extends TurboModule {
     sessionDurationMinutes?: number,
     googleCredentialConfiguration?: string,
   ): Promise<string>
+  startBrowserFlow(
+    url: string,
+  ): Promise<string>;
 };
 
 // create an instance of the module
