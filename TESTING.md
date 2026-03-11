@@ -21,10 +21,10 @@ All tests live in `jvmTest` source sets. Run them with:
 
 | Project | Tests | Files |
 |---|---|---|
-| `stytch-multiplatform-shared` | 62 | 7 |
+| `stytch-multiplatform-shared` | 81 | 9 |
 | `consumer-headless` | 121 | 18 |
 | `b2b-headless` | 166 | 20 |
-| **Total** | **349** | **45** |
+| **Total** | **368** | **47** |
 
 ---
 
@@ -38,12 +38,15 @@ All tests live in `jvmTest` source sets. Run them with:
 | `networking/StytchNetworkRequestTest` | 6 | `request { }` success/error/rethrow paths |
 | `oauth/GenerateOAuthStartUrlTest` | 7 | OAuth start URL construction (CNAME, test/live domain, params) |
 | `persistence/StytchPersistenceClientTest` | 8 | Typed save/get/remove round-trips |
+| `persistence/StytchPlatformPersistenceClientTest` | 7 | JVM actual: saveData/getData/removeData/reset, overwrite, isolation |
 | `pkce/PKCEClientTest` | 11 | PKCE create/retrieve/revoke, expiry, encoding |
+| `encryption/StytchEncryptionClientTest` | 12 | JVM actual: AES-GCM encrypt/decrypt round-trip + random IV, code verifier/challenge, Ed25519 keygen/derivation/signing, deleteKey |
 
 ### Known gaps — shared SDK
 
 - **`StytchNetworkingClient` base class** — session heartbeat scheduling (`startSessionUpdateJob`, delay calculations) not directly tested; this logic is exercised indirectly through `ConsumerNetworkingClientTest` and `B2BNetworkingClientTest`.
-- **`StytchEncryptionClient`, `OAuthProvider`, `BiometricsProvider`, `PasskeyProvider`** — `expect class` platform implementations; not unit-tested (platform actuals assumed correct per project policy).
+- **`OAuthProvider`, `BiometricsProvider`, `PasskeyProvider` (JVM actuals)** — pure unsupported-platform stubs (every method throws or returns a constant); no meaningful logic to test.
+- **Android/iOS actuals for `StytchEncryptionClient` and `StytchPlatformPersistenceClient`** — Android uses the Android Keystore (hardware-backed); iOS uses CryptoKit via StytchSwiftUtils. Both require platform-specific test infrastructure (Android instrumented tests or XCTest) to exercise.
 - **`SharedAPI` (bootstrap endpoint)** — network-dependent; no unit test.
 
 ---
