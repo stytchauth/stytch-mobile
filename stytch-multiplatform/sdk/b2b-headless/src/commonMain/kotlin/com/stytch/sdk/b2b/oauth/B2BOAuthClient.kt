@@ -81,20 +81,21 @@ internal class B2BOAuthClientImpl(
     override suspend fun authenticate(request: IB2BOAuthAuthenticateParameters): B2BOAuthAuthenticateResponse =
         withContext(dispatchers.ioDispatcher) {
             val codePair = pkceClient.retrieve() ?: throw MissingPKCEException()
-            networkingClient.request {
-                networkingClient.api.b2BOAuthAuthenticate(
-                    request.toNetworkModel(
-                        pkceCodeVerifier = codePair.verifier,
-                        intermediateSessionToken = sessionManager.intermediateSessionToken,
-                    ),
-                )
-            }.also { pkceClient.revoke() }
+            networkingClient
+                .request {
+                    networkingClient.api.b2BOAuthAuthenticate(
+                        request.toNetworkModel(
+                            pkceCodeVerifier = codePair.verifier,
+                            intermediateSessionToken = sessionManager.intermediateSessionToken,
+                        ),
+                    )
+                }.also { pkceClient.revoke() }
         }
 
     private fun providerClient(providerName: String) =
         B2BOAuthProviderClientImpl(
-            start = { params -> startOAuthFlow(providerName, params) },
-            discoveryStart = { params -> startDiscoveryOAuthFlow(providerName, params) },
+            handleStart = { params -> startOAuthFlow(providerName, params) },
+            handleDiscoveryStart = { params -> startDiscoveryOAuthFlow(providerName, params) },
         )
 
     private suspend fun startOAuthFlow(
@@ -108,20 +109,28 @@ internal class B2BOAuthClientImpl(
             val url = buildOAuthUrl(baseUrl, codePair.challenge, parameters)
             val result = oauthProvider.startBrowserFlow(url, parameters.toOAuthStartParameters(), dispatchers)
             when (result) {
-                is OAuthResult.ClassicToken ->
-                    networkingClient.request {
-                        networkingClient.api.b2BOAuthAuthenticate(
-                            B2BOAuthAuthenticateParameters(
-                                oauthToken = result.token,
-                                sessionDurationMinutes = parameters.sessionDurationMinutes ?: defaultSessionDuration,
-                            ).toNetworkModel(
-                                pkceCodeVerifier = codePair.verifier,
-                                intermediateSessionToken = sessionManager.intermediateSessionToken,
-                            ),
-                        )
-                    }.also { pkceClient.revoke() } as AuthenticatedResponse
-                is OAuthResult.Error -> throw OAuthException(RuntimeException(result.message))
-                else -> throw OAuthException(RuntimeException("Unexpected OAuth result type"))
+                is OAuthResult.ClassicToken -> {
+                    networkingClient
+                        .request {
+                            networkingClient.api.b2BOAuthAuthenticate(
+                                B2BOAuthAuthenticateParameters(
+                                    oauthToken = result.token,
+                                    sessionDurationMinutes = parameters.sessionDurationMinutes ?: defaultSessionDuration,
+                                ).toNetworkModel(
+                                    pkceCodeVerifier = codePair.verifier,
+                                    intermediateSessionToken = sessionManager.intermediateSessionToken,
+                                ),
+                            )
+                        }.also { pkceClient.revoke() } as AuthenticatedResponse
+                }
+
+                is OAuthResult.Error -> {
+                    throw OAuthException(RuntimeException(result.message))
+                }
+
+                else -> {
+                    throw OAuthException(RuntimeException("Unexpected OAuth result type"))
+                }
             }
         }
 
@@ -136,16 +145,24 @@ internal class B2BOAuthClientImpl(
             val url = buildDiscoveryOAuthUrl(baseUrl, codePair.challenge, parameters)
             val result = oauthProvider.startBrowserFlow(url, parameters.toOAuthStartParameters(), dispatchers)
             when (result) {
-                is OAuthResult.ClassicToken ->
-                    networkingClient.request {
-                        networkingClient.api.b2BOAuthDiscoveryAuthenticate(
-                            B2BOAuthDiscoveryAuthenticateParameters(
-                                discoveryOauthToken = result.token,
-                            ).toNetworkModel(pkceCodeVerifier = codePair.verifier),
-                        )
-                    }.also { pkceClient.revoke() }
-                is OAuthResult.Error -> throw OAuthException(RuntimeException(result.message))
-                else -> throw OAuthException(RuntimeException("Unexpected OAuth result type"))
+                is OAuthResult.ClassicToken -> {
+                    networkingClient
+                        .request {
+                            networkingClient.api.b2BOAuthDiscoveryAuthenticate(
+                                B2BOAuthDiscoveryAuthenticateParameters(
+                                    discoveryOauthToken = result.token,
+                                ).toNetworkModel(pkceCodeVerifier = codePair.verifier),
+                            )
+                        }.also { pkceClient.revoke() }
+                }
+
+                is OAuthResult.Error -> {
+                    throw OAuthException(RuntimeException(result.message))
+                }
+
+                else -> {
+                    throw OAuthException(RuntimeException("Unexpected OAuth result type"))
+                }
             }
         }
 
@@ -190,15 +207,15 @@ internal class B2BOAuthClientImpl(
 }
 
 internal class B2BOAuthProviderClientImpl(
-    private val start: suspend (B2BOAuthStartParameters) -> AuthenticatedResponse,
-    private val discoveryStart: suspend (B2BOAuthDiscoveryStartParameters) -> B2BOAuthDiscoveryAuthenticateResponse,
+    private val handleStart: suspend (B2BOAuthStartParameters) -> AuthenticatedResponse,
+    private val handleDiscoveryStart: suspend (B2BOAuthDiscoveryStartParameters) -> B2BOAuthDiscoveryAuthenticateResponse,
 ) : B2BOAuthProviderClient {
     override val discovery =
         object : B2BOAuthProviderDiscoveryClient {
-            override suspend fun start(parameters: B2BOAuthDiscoveryStartParameters) = discoveryStart(parameters)
+            override suspend fun start(parameters: B2BOAuthDiscoveryStartParameters) = handleDiscoveryStart(parameters)
         }
 
-    override suspend fun start(parameters: B2BOAuthStartParameters) = start(parameters)
+    override suspend fun start(parameters: B2BOAuthStartParameters) = handleStart(parameters)
 }
 
 internal class B2BOAuthDiscoveryClientImpl(
@@ -209,10 +226,11 @@ internal class B2BOAuthDiscoveryClientImpl(
     override suspend fun authenticate(request: IB2BOAuthDiscoveryAuthenticateParameters): B2BOAuthDiscoveryAuthenticateResponse =
         withContext(dispatchers.ioDispatcher) {
             val codePair = pkceClient.retrieve() ?: throw MissingPKCEException()
-            networkingClient.request {
-                networkingClient.api.b2BOAuthDiscoveryAuthenticate(
-                    request.toNetworkModel(pkceCodeVerifier = codePair.verifier),
-                )
-            }.also { pkceClient.revoke() }
+            networkingClient
+                .request {
+                    networkingClient.api.b2BOAuthDiscoveryAuthenticate(
+                        request.toNetworkModel(pkceCodeVerifier = codePair.verifier),
+                    )
+                }.also { pkceClient.revoke() }
         }
 }
