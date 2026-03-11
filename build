@@ -1,24 +1,40 @@
 #!/bin/sh
 set -e
 
-PLATFORM=$1
+SDK=$1
+PLATFORM=$2
+
 ROOT_DIR=`pwd`
 MAIN_WORKING_DIR=$ROOT_DIR/stytch-multiplatform
 SHARED_WORKING_DIR=$ROOT_DIR/stytch-multiplatform-shared
 
+usage() {
+    echo "Usage: ./build [sdk] [platform]"
+    echo "  sdk:      consumer | b2b | shared | (omit for both)"
+    echo "  platform: android | ios | rn | (omit for all)"
+    echo ""
+    echo "Examples:"
+    echo "  ./build                  # build everything"
+    echo "  ./build shared           # shared SDK only"
+    echo "  ./build consumer         # consumer SDK, all platforms"
+    echo "  ./build b2b              # B2B SDK, all platforms"
+    echo "  ./build consumer ios     # consumer iOS only"
+    echo "  ./build b2b android      # B2B android only"
+}
+
 buildAndPublishSwiftUtils() {
-    cd StytchSwiftUtils
+    cd $ROOT_DIR/StytchSwiftUtils
     # clear out any old stuff
     rm -rf derived archives StytchSwiftUtils.xcframework StytchSwiftUtils-Swift.h
-    
+
     # build (to get the header file)
     xcodebuild -project StytchSwiftUtils.xcodeproj -scheme StytchSwiftUtils -configuration Release -destination 'generic/platform=iOS' -derivedDataPath ./derived IPHONEOS_DEPLOYMENT_TARGET=15.0 SKIP_INSTALL=NO BUILD_LIBRARIES_FOR_DISTRIBUTION=YES ONLY_ACTIVE_ARCH=NO build
     xcodebuild -project StytchSwiftUtils.xcodeproj -scheme StytchSwiftUtils -configuration Release -destination 'generic/platform=iOS Simulator' -derivedDataPath ./derived IPHONEOS_DEPLOYMENT_TARGET=15.0 SKIP_INSTALL=NO BUILD_LIBRARIES_FOR_DISTRIBUTION=YES ONLY_ACTIVE_ARCH=NO build
-    
+
     # archive project
     xcodebuild -project StytchSwiftUtils.xcodeproj -scheme StytchSwiftUtils -configuration Release -archivePath "./archives/iOS" -destination 'generic/platform=iOS' -derivedDataPath ./derived IPHONEOS_DEPLOYMENT_TARGET=15.0 SKIP_INSTALL=NO BUILD_LIBRARIES_FOR_DISTRIBUTION=YES ONLY_ACTIVE_ARCH=NO archive
     xcodebuild -project StytchSwiftUtils.xcodeproj -scheme StytchSwiftUtils -configuration Release -archivePath "./archives/Simulator" -destination 'generic/platform=iOS Simulator' -derivedDataPath ./derived IPHONEOS_DEPLOYMENT_TARGET=15.0 SKIP_INSTALL=NO BUILD_LIBRARIES_FOR_DISTRIBUTION=YES ONLY_ACTIVE_ARCH=NO archive
-    
+
     # create xcframework
     xcodebuild -create-xcframework \
         -framework archives/iOS.xcarchive/Products/Library/Frameworks/StytchSwiftUtils.framework \
@@ -43,53 +59,137 @@ buildAndPublishSharedSdkFirst() {
     cp -r sdk/shared/build/XCFrameworks/release/StytchSharedSDK.xcframework $ROOT_DIR/stytch-ios
 }
 
-buildAndCopyAndroid() {
+# --- Consumer builds ---
+
+buildConsumerAndroid() {
     cd $MAIN_WORKING_DIR
-    echo "Building android artifact..."
+    echo "Building consumer android artifact..."
     ./gradlew :sdk:consumer-headless:publishToMavenLocal --rerun-tasks
 }
 
-buildAndCopyIos() {
-    echo "Building iOS artifacts..."
+buildConsumerIos() {
+    echo "Building consumer iOS artifacts..."
     cd $MAIN_WORKING_DIR
     ./gradlew assembleStytchConsumerSDKXCFramework --rerun-tasks
     cp -r sdk/consumer-headless/build/XCFrameworks/release/StytchConsumerSDK.xcframework $ROOT_DIR/stytch-ios
 }
 
-buildAndCopyRn() {
+buildConsumerRn() {
     cd $MAIN_WORKING_DIR
-    echo "Building RN artifacts..."
+    echo "Building consumer RN artifacts..."
     ./gradlew kotlinUpgradeYarnLock :sdk:consumer-headless:assemble :sdk:consumer-headless:jsBrowserProductionLibraryDistribution --rerun-tasks
     mkdir -p $ROOT_DIR/react-native/consumer/lib
     cp -r sdk/consumer-headless/build/dist/js/productionLibrary/consumer-headless* $ROOT_DIR/react-native/consumer/lib
     cd $ROOT_DIR/react-native/consumer
     yarn build
-    updateRnDemoApp
+    updateConsumerRnDemoApp
 }
 
-updateRnDemoApp() {
+updateConsumerRnDemoApp() {
     cd $ROOT_DIR/examples/rn
     yarn remove @stytch/react-native-consumer
     yarn add file:$ROOT_DIR/react-native/consumer
 }
 
-main() {
-    rm -rf stytch-ios/*.xcframework
-    buildAndPublishSharedSdkFirst
+# --- B2B builds ---
+
+buildB2BAndroid() {
+    cd $MAIN_WORKING_DIR
+    echo "Building B2B android artifact..."
+    ./gradlew :sdk:b2b-headless:publishToMavenLocal --rerun-tasks
+}
+
+buildB2BIos() {
+    echo "Building B2B iOS artifacts..."
+    cd $MAIN_WORKING_DIR
+    ./gradlew assembleStytchB2BSDKXCFramework --rerun-tasks
+    cp -r sdk/b2b-headless/build/XCFrameworks/release/StytchB2BSDK.xcframework $ROOT_DIR/stytch-ios
+}
+
+buildB2BRn() {
+    cd $MAIN_WORKING_DIR
+    echo "Building B2B RN artifacts..."
+    ./gradlew kotlinUpgradeYarnLock :sdk:b2b-headless:assemble :sdk:b2b-headless:jsBrowserProductionLibraryDistribution --rerun-tasks
+    mkdir -p $ROOT_DIR/react-native/b2b/lib
+    cp -r sdk/b2b-headless/build/dist/js/productionLibrary/b2b-headless* $ROOT_DIR/react-native/b2b/lib
+    cd $ROOT_DIR/react-native/b2b
+    yarn build
+}
+
+# --- Dispatch ---
+
+buildConsumer() {
     if [ -z "$PLATFORM" ]; then
-        echo "Building for all platforms"
-        buildAndCopyAndroid
-        buildAndCopyIos
-        buildAndCopyRn
-    elif [[ "$PLATFORM" == "shared" ]]; then
-        echo "Already built"
-    elif [[ "$PLATFORM" == "android" ]]; then
-        buildAndCopyAndroid
-    elif [[ "$PLATFORM" == "ios" ]]; then
-        buildAndCopyIos
-    elif [[ "$PLATFORM" == "rn" ]]; then
-        buildAndCopyRn
+        buildConsumerAndroid
+        buildConsumerIos
+        buildConsumerRn
+    elif [ "$PLATFORM" = "android" ]; then
+        buildConsumerAndroid
+    elif [ "$PLATFORM" = "ios" ]; then
+        buildConsumerIos
+    elif [ "$PLATFORM" = "rn" ]; then
+        buildConsumerRn
     fi
+}
+
+buildB2B() {
+    if [ -z "$PLATFORM" ]; then
+        buildB2BAndroid
+        buildB2BIos
+        buildB2BRn
+    elif [ "$PLATFORM" = "android" ]; then
+        buildB2BAndroid
+    elif [ "$PLATFORM" = "ios" ]; then
+        buildB2BIos
+    elif [ "$PLATFORM" = "rn" ]; then
+        buildB2BRn
+    fi
+}
+
+cleanXcframeworks() {
+    if [ -z "$SDK" ] || [ "$SDK" = "consumer" ]; then
+        rm -rf $ROOT_DIR/stytch-ios/StytchConsumerSDK.xcframework
+    fi
+    if [ -z "$SDK" ] || [ "$SDK" = "b2b" ]; then
+        rm -rf $ROOT_DIR/stytch-ios/StytchB2BSDK.xcframework
+    fi
+}
+
+main() {
+    if [ "$SDK" = "shared" ]; then
+        buildAndPublishSharedSdkFirst
+        cd $ROOT_DIR
+        echo "Done."
+        return
+    fi
+
+    if [ -n "$SDK" ] && [ "$SDK" != "consumer" ] && [ "$SDK" != "b2b" ]; then
+        echo "Error: unknown sdk '$SDK'."
+        usage
+        exit 1
+    fi
+
+    if [ -n "$PLATFORM" ] && [ "$PLATFORM" != "android" ] && [ "$PLATFORM" != "ios" ] && [ "$PLATFORM" != "rn" ]; then
+        echo "Error: unknown platform '$PLATFORM'."
+        usage
+        exit 1
+    fi
+
+    #cleanXcframeworks
+    buildAndPublishSharedSdkFirst
+
+    if [ -z "$SDK" ]; then
+        echo "Building consumer and B2B SDKs..."
+        buildConsumer
+        buildB2B
+    elif [ "$SDK" = "consumer" ]; then
+        echo "Building consumer SDK..."
+        buildConsumer
+    elif [ "$SDK" = "b2b" ]; then
+        echo "Building B2B SDK..."
+        buildB2B
+    fi
+
     cd $ROOT_DIR
     echo "Done."
 }

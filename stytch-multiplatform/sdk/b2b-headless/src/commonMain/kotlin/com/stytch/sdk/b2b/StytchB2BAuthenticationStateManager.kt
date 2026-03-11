@@ -68,11 +68,13 @@ internal class StytchB2BAuthenticationStateManager(
             coroutineScope {
                 memberFlow.value = response.member
                 sessionFlow.value = response.memberSession
+                organizationFlow.value = response.organization
                 sessionTokenFlow.value = response.sessionToken
                 sessionJwtFlow.value = response.sessionJwt
                 listOf(
                     async(dispatchers.ioDispatcher) { persistenceClient.save(MEMBER_IDENTIFIER, response.member) },
                     async(dispatchers.ioDispatcher) { persistenceClient.save(SESSION_IDENTIFIER, response.memberSession) },
+                    async(dispatchers.ioDispatcher) { persistenceClient.save(ORGANIZATION_IDENTIFIER, response.organization) },
                     async(dispatchers.ioDispatcher) { persistenceClient.save(SESSION_TOKEN_IDENTIFIER, response.sessionToken) },
                     async(dispatchers.ioDispatcher) { persistenceClient.save(SESSION_JWT_IDENTIFIER, response.sessionJwt) },
                 ).awaitAll()
@@ -100,6 +102,7 @@ internal class StytchB2BAuthenticationStateManager(
         coroutineScope {
             memberFlow.value = null
             sessionFlow.value = null
+            organizationFlow.value = null
             sessionTokenFlow.value = null
             sessionJwtFlow.value = null
             intermediateSessionTokenFlow.value = null
@@ -107,6 +110,7 @@ internal class StytchB2BAuthenticationStateManager(
             listOf(
                 async(dispatchers.ioDispatcher) { persistenceClient.remove(MEMBER_IDENTIFIER) },
                 async(dispatchers.ioDispatcher) { persistenceClient.remove(SESSION_IDENTIFIER) },
+                async(dispatchers.ioDispatcher) { persistenceClient.remove(ORGANIZATION_IDENTIFIER) },
                 async(dispatchers.ioDispatcher) { persistenceClient.remove(SESSION_TOKEN_IDENTIFIER) },
                 async(dispatchers.ioDispatcher) { persistenceClient.remove(SESSION_JWT_IDENTIFIER) },
                 async(dispatchers.ioDispatcher) { persistenceClient.remove(IST_IDENTIFIER) },
@@ -120,6 +124,7 @@ internal class StytchB2BAuthenticationStateManager(
             listOf(
                 async(dispatchers.ioDispatcher) { memberFlow.value = persistenceClient.get(MEMBER_IDENTIFIER, null) },
                 async(dispatchers.ioDispatcher) { sessionFlow.value = persistenceClient.get(SESSION_IDENTIFIER, null) },
+                async(dispatchers.ioDispatcher) { organizationFlow.value = persistenceClient.get(ORGANIZATION_IDENTIFIER, null) },
                 async(dispatchers.ioDispatcher) { sessionTokenFlow.value = persistenceClient.get(SESSION_TOKEN_IDENTIFIER, null) },
                 async(dispatchers.ioDispatcher) { sessionJwtFlow.value = persistenceClient.get(SESSION_JWT_IDENTIFIER, null) },
                 async(dispatchers.ioDispatcher) { intermediateSessionTokenFlow.value = persistenceClient.get(IST_IDENTIFIER, null) },
@@ -134,6 +139,7 @@ internal class StytchB2BAuthenticationStateManager(
         private const val SESSION_TOKEN_IDENTIFIER = "stytch_session_token"
         private const val SESSION_JWT_IDENTIFIER = "stytch_session_jwt"
         private const val MEMBER_IDENTIFIER = "stytch_member"
+        private const val ORGANIZATION_IDENTIFIER = "stytch_organization"
         private const val IST_IDENTIFIER = "stytch_ist_identifier"
         private const val IST_EXPIRATION = "stytch_ist_expiration"
     }

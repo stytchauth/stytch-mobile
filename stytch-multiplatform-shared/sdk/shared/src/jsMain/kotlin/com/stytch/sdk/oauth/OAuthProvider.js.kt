@@ -18,7 +18,13 @@ public actual class OAuthProvider(
         url: String,
         parameters: OAuthStartParameters,
         dispatchers: StytchDispatchers,
-    ): OAuthResult = throw OAuthUnsupportedError()
+    ): OAuthResult =
+        try {
+            val result = StytchBridge.startBrowserFlow(url).await()
+            Json.decodeFromString(result)
+        } catch (e: Throwable) {
+            OAuthResult.Error(e.message ?: e.toString())
+        }
 
     public actual override suspend fun getOAuthToken(
         parameters: OAuthStartParameters,
