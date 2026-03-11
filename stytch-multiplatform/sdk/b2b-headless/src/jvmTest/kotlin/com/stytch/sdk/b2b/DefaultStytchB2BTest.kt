@@ -136,15 +136,19 @@ internal class DefaultStytchB2BTest {
     @Test
     fun `authenticate returns UnknownDeeplink when token param is absent`() =
         runTest {
-            val result = makeB2B().authenticate("https://example.com?stytch_token_type=multi_tenant_magic_links", null)
+            val url = "https://example.com?stytch_token_type=multi_tenant_magic_links"
+            val result = makeB2B().authenticate(url, null)
             assertIs<DeeplinkAuthenticationStatus.UnknownDeeplink>(result)
+            assertEquals(url, result.url)
         }
 
     @Test
     fun `authenticate returns UnknownDeeplink when token type is UNKNOWN`() =
         runTest {
-            val result = makeB2B().authenticate("https://example.com?stytch_token_type=unrecognized&token=tok123", null)
+            val url = "https://example.com?stytch_token_type=unrecognized&token=tok123"
+            val result = makeB2B().authenticate(url, null)
             assertIs<DeeplinkAuthenticationStatus.UnknownDeeplink>(result)
+            assertEquals(url, result.url)
         }
 
     @Test
@@ -152,6 +156,7 @@ internal class DefaultStytchB2BTest {
         runTest {
             val result = makeB2B().authenticate("https://example.com?stytch_token_type=multi_tenant_passwords&token=tok123", null)
             assertIs<DeeplinkAuthenticationStatus.ManualHandlingRequired>(result)
+            assertEquals("tok123", result.token)
         }
 
     @Test
@@ -159,6 +164,7 @@ internal class DefaultStytchB2BTest {
         runTest {
             val result = makeB2B().authenticate("https://example.com?stytch_token_type=discovery&token=tok123", null)
             assertIs<DeeplinkAuthenticationStatus.ManualHandlingRequired>(result)
+            assertEquals("tok123", result.token)
         }
 
     @Test
@@ -166,6 +172,7 @@ internal class DefaultStytchB2BTest {
         runTest {
             val result = makeB2B().authenticate("https://example.com?stytch_token_type=discovery_oauth&token=tok123", null)
             assertIs<DeeplinkAuthenticationStatus.ManualHandlingRequired>(result)
+            assertEquals("tok123", result.token)
         }
 
     @Test
