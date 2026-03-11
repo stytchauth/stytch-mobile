@@ -7,6 +7,9 @@ import com.stytch.sdk.b2b.data.DeeplinkAuthenticationStatus
 import com.stytch.sdk.b2b.data.DeeplinkToken
 import com.stytch.sdk.b2b.discovery.B2BDiscoveryClient
 import com.stytch.sdk.b2b.discovery.B2BDiscoveryClientImpl
+import com.stytch.sdk.b2b.networking.models.B2BOAuthAuthenticateParameters
+import com.stytch.sdk.b2b.oauth.B2BOAuthClient
+import com.stytch.sdk.b2b.oauth.B2BOAuthClientImpl
 import com.stytch.sdk.b2b.magicLinks.B2BMagicLinksClient
 import com.stytch.sdk.b2b.magicLinks.B2BMagicLinksClientImpl
 import com.stytch.sdk.b2b.members.B2BMembersClient
@@ -59,6 +62,7 @@ public interface StytchB2B : StytchClient {
     public val organizations: B2BOrganizationsClient
     public val recoveryCodes: B2BRecoveryCodesClient
     public val scim: B2BSCIMClient
+    public val oauth: B2BOAuthClient
 
     public val authenticationStateFlow: StateFlow<B2BAuthenticationState>
 
@@ -117,6 +121,19 @@ internal class DefaultStytchB2B(
 
     override val scim: B2BSCIMClient = B2BSCIMClientImpl(dispatchers, networkingClient)
 
+    override val oauth: B2BOAuthClient =
+        B2BOAuthClientImpl(
+            dispatchers = dispatchers,
+            networkingClient = networkingClient,
+            pkceClient = pkceClient,
+            sessionManager = sessionManager,
+            oauthProvider = configuration.oAuthProvider,
+            publicTokenInfo = configuration.tokenInfo,
+            endpointOptions = configuration.endpointOptions,
+            cnameDomain = { bootstrapResponse?.cnameDomain },
+            defaultSessionDuration = configuration.defaultSessionDuration,
+        )
+
     override val authenticationStateFlow: StateFlow<B2BAuthenticationState> = sessionManager.authenticationStateFlow
 
     override fun authenticationStateObserver(callback: (authenticationState: B2BAuthenticationState) -> Unit): JsCleanup {
@@ -158,8 +175,25 @@ internal class DefaultStytchB2B(
                     DeeplinkAuthenticationStatus.ManualHandlingRequired(token.token)
                 }
 
+                B2BTokenType.OAUTH -> {
+                    DeeplinkAuthenticationStatus.Authenticated(
+                        oauth.authenticate(
+                            B2BOAuthAuthenticateParameters(
+                                oauthToken = token.token,
+                                sessionDurationMinutes = sessionDurationMinutes ?: configuration.defaultSessionDuration,
+                            ),
+                        ) as AuthenticatedResponse,
+                    )
+                }
+
+                B2BTokenType.DISCOVERY_OAUTH -> {
+                    // Discovery OAuth returns IST + discovered orgs, not a full session.
+                    // Caller must present org selection and then call oauth.discovery.authenticate().
+                    DeeplinkAuthenticationStatus.ManualHandlingRequired(token.token)
+                }
+
                 else -> {
-                    // TODO: Handle SSO, OAuth, Discovery token types
+                    // TODO: Handle SSO token type (PR 3)
                     DeeplinkAuthenticationStatus.UnknownDeeplink(url)
                 }
             }
