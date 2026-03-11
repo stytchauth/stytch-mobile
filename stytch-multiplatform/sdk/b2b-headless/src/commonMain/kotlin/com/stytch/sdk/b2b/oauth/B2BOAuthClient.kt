@@ -78,6 +78,7 @@ internal class B2BOAuthClientImpl(
     override val slack = providerClient("slack")
     override val github = providerClient("github")
 
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun authenticate(request: IB2BOAuthAuthenticateParameters): B2BOAuthAuthenticateResponse =
         withContext(dispatchers.ioDispatcher) {
             val codePair = pkceClient.retrieve() ?: throw MissingPKCEException()
@@ -212,9 +213,11 @@ internal class B2BOAuthProviderClientImpl(
 ) : B2BOAuthProviderClient {
     override val discovery =
         object : B2BOAuthProviderDiscoveryClient {
+            @Throws(StytchError::class, CancellationException::class)
             override suspend fun start(parameters: B2BOAuthDiscoveryStartParameters) = handleDiscoveryStart(parameters)
         }
 
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun start(parameters: B2BOAuthStartParameters) = handleStart(parameters)
 }
 
@@ -223,6 +226,7 @@ internal class B2BOAuthDiscoveryClientImpl(
     private val networkingClient: B2BNetworkingClient,
     private val pkceClient: PKCEClient,
 ) : B2BOAuthDiscoveryClient {
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun authenticate(request: IB2BOAuthDiscoveryAuthenticateParameters): B2BOAuthDiscoveryAuthenticateResponse =
         withContext(dispatchers.ioDispatcher) {
             val codePair = pkceClient.retrieve() ?: throw MissingPKCEException()

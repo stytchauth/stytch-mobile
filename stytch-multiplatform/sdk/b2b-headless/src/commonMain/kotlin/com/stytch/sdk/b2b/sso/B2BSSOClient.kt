@@ -123,6 +123,7 @@ internal class B2BSSOClientImpl(
     override val oidc: B2BSSOOIDCClient = B2BSSOOIDCClientImpl(dispatchers, networkingClient)
     override val external: B2BSSOExternalClient = B2BSSOExternalClientImpl(dispatchers, networkingClient)
 
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun start(parameters: B2BSSOStartParameters): AuthenticatedResponse =
         withContext(dispatchers.ioDispatcher) {
             val domain = cnameDomain() ?: if (publicTokenInfo.isTestToken) endpointOptions.testDomain else endpointOptions.liveDomain
@@ -149,6 +150,7 @@ internal class B2BSSOClientImpl(
             }
         }
 
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun authenticate(request: IB2BSSOAuthEnticateParameters): B2BSSOAuthenticateResponse =
         withContext(dispatchers.ioDispatcher) {
             val codePair = pkceClient.retrieve() ?: throw MissingPKCEException()
@@ -163,11 +165,13 @@ internal class B2BSSOClientImpl(
                 }.also { pkceClient.revoke() }
         }
 
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun getConnections(): B2BGetSSOConnectionsResponse =
         withContext(dispatchers.ioDispatcher) {
             networkingClient.request { networkingClient.api.b2BGetSSOConnections() }
         }
 
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun deleteConnection(connectionId: String): B2BDeleteSSOConnectionResponse =
         withContext(dispatchers.ioDispatcher) {
             networkingClient.request { networkingClient.api.b2BDeleteSSOConnection(connectionId) }
@@ -196,11 +200,13 @@ internal class B2BSSOSAMLClientImpl(
     private val dispatchers: StytchDispatchers,
     private val networkingClient: B2BNetworkingClient,
 ) : B2BSSOSAMLClient {
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun createConnection(request: IB2BCreateSAMLConnectionParameters): B2BCreateSAMLConnectionResponse =
         withContext(dispatchers.ioDispatcher) {
             networkingClient.request { networkingClient.api.b2BCreateSAMLConnection(request.toNetworkModel()) }
         }
 
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun updateConnection(
         connectionId: String,
         request: IB2BUpdateSAMLConnectionParameters,
@@ -209,6 +215,7 @@ internal class B2BSSOSAMLClientImpl(
             networkingClient.request { networkingClient.api.b2BUpdateSAMLConnection(connectionId, request.toNetworkModel()) }
         }
 
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun updateConnectionByUrl(
         connectionId: String,
         request: IB2BUpdateSAMLConnectionByURLParameters,
@@ -217,6 +224,7 @@ internal class B2BSSOSAMLClientImpl(
             networkingClient.request { networkingClient.api.b2BUpdateSAMLConnectionByURL(connectionId, request.toNetworkModel()) }
         }
 
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun deleteVerificationCertificate(
         connectionId: String,
         certificateId: String,
@@ -230,11 +238,13 @@ internal class B2BSSOOIDCClientImpl(
     private val dispatchers: StytchDispatchers,
     private val networkingClient: B2BNetworkingClient,
 ) : B2BSSOOIDCClient {
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun createConnection(request: IB2BCreateOIDCConnectionParameters): B2BCreateOIDCConnectionResponse =
         withContext(dispatchers.ioDispatcher) {
             networkingClient.request { networkingClient.api.b2BCreateOIDCConnection(request.toNetworkModel()) }
         }
 
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun updateConnection(
         connectionId: String,
         request: IB2BUpdateOIDCConnectionParameters,
@@ -248,11 +258,13 @@ internal class B2BSSOExternalClientImpl(
     private val dispatchers: StytchDispatchers,
     private val networkingClient: B2BNetworkingClient,
 ) : B2BSSOExternalClient {
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun createConnection(request: IB2BCreateExternalConnectionParameters): B2BCreateExternalConnectionResponse =
         withContext(dispatchers.ioDispatcher) {
             networkingClient.request { networkingClient.api.b2BCreateExternalConnection(request.toNetworkModel()) }
         }
 
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun updateConnection(
         connectionId: String,
         request: IB2BUpdateExternalConnectionParameters,
