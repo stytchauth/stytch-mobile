@@ -287,6 +287,19 @@ SCSDKOAuthProvider *oauthProvider = [[SCSDKOAuthProvider alloc] initWithPackageN
         }
     }];
 }
+- (void)startBrowserFlow:(nonnull NSString *)url resolve:(nonnull RCTPromiseResolveBlock)resolve reject:(nonnull RCTPromiseRejectBlock)reject {
+    SCSDKOAuthStartParameters *params = [[SCSDKOAuthStartParameters alloc] init];
+    [oauthProvider startBrowserFlowWithUrl:url parameters:params dispatchers:stytchDispatchers completionHandler:^(SCSDKOAuthResult * _Nullable result, NSError * _Nullable error) {
+        if (error == nil) {
+            NSError *encodeError = nil;
+            NSString *tokenResult = [[SCSDKJsonSerDeHelper alloc] encodeOAuthResultData:result error:&encodeError];
+            if (encodeError != nil) { reject(@"", [encodeError description], encodeError); return; }
+            resolve(tokenResult);
+        } else {
+            reject(@"", [error description], error);
+        }
+    }];
+}
 // End OAuth stuff
 
 @end
