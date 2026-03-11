@@ -22,6 +22,8 @@ derived/
 react-native/b2b/ios/
 react-native/b2b/android/
 react-native/b2b/src/NativeStytchBridge.ts
+react-native/b2b/StytchReactNative.podspec
 react-native/consumer/ios/
 react-native/consumer/android/
 react-native/consumer/src/NativeStytchBridge.ts
+react-native/consumer/StytchReactNative.podspec
