@@ -18,8 +18,6 @@ import com.stytch.sdk.b2b.networking.models.B2BOAuthAuthenticateParameters
 import com.stytch.sdk.b2b.networking.models.B2BSSOAuthEnticateParameters
 import com.stytch.sdk.b2b.oauth.B2BOAuthClient
 import com.stytch.sdk.b2b.oauth.B2BOAuthClientImpl
-import com.stytch.sdk.b2b.sso.B2BSSOClient
-import com.stytch.sdk.b2b.sso.B2BSSOClientImpl
 import com.stytch.sdk.b2b.organizations.B2BOrganizationsClient
 import com.stytch.sdk.b2b.organizations.B2BOrganizationsClientImpl
 import com.stytch.sdk.b2b.otp.B2BOtpClient
@@ -32,6 +30,8 @@ import com.stytch.sdk.b2b.scim.B2BSCIMClient
 import com.stytch.sdk.b2b.scim.B2BSCIMClientImpl
 import com.stytch.sdk.b2b.session.B2BSessionsClient
 import com.stytch.sdk.b2b.session.B2BSessionsClientImpl
+import com.stytch.sdk.b2b.sso.B2BSSOClient
+import com.stytch.sdk.b2b.sso.B2BSSOClientImpl
 import com.stytch.sdk.b2b.totp.B2BTOTPClient
 import com.stytch.sdk.b2b.totp.B2BTOTPClientImpl
 import com.stytch.sdk.data.BootstrapResponse
@@ -203,7 +203,7 @@ internal class DefaultStytchB2B(
                     )
                 }
 
-                B2BTokenType.DISCOVERY_OAUTH -> {
+                B2BTokenType.DISCOVERY, B2BTokenType.DISCOVERY_OAUTH -> {
                     // Discovery OAuth returns IST + discovered orgs, not a full session.
                     // Caller must present org selection and then call oauth.discovery.authenticate().
                     DeeplinkAuthenticationStatus.ManualHandlingRequired(token.token)
@@ -218,10 +218,6 @@ internal class DefaultStytchB2B(
                             ),
                         ) as AuthenticatedResponse,
                     )
-                }
-
-                else -> {
-                    DeeplinkAuthenticationStatus.UnknownDeeplink(url)
                 }
             }
         }
