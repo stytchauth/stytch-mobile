@@ -3,14 +3,14 @@ package com.stytch.sdk.consumer
 import com.stytch.sdk.StytchClient
 import com.stytch.sdk.consumer.biometrics.BiometricsClient
 import com.stytch.sdk.consumer.biometrics.BiometricsClientImpl
-import com.stytch.sdk.consumer.dfp.DFPClient
-import com.stytch.sdk.consumer.dfp.DFPClientImpl
 import com.stytch.sdk.consumer.crypto.CryptoClient
 import com.stytch.sdk.consumer.crypto.CryptoClientImpl
 import com.stytch.sdk.consumer.data.ConsumerAuthenticationState
 import com.stytch.sdk.consumer.data.ConsumerTokenType
 import com.stytch.sdk.consumer.data.DeeplinkAuthenticationStatus
 import com.stytch.sdk.consumer.data.DeeplinkToken
+import com.stytch.sdk.consumer.dfp.DFPClient
+import com.stytch.sdk.consumer.dfp.DFPClientImpl
 import com.stytch.sdk.consumer.magicLinks.MagicLinksClient
 import com.stytch.sdk.consumer.magicLinks.MagicLinksImpl
 import com.stytch.sdk.consumer.networking.AuthenticatedResponse

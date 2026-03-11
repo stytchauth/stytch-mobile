@@ -20,14 +20,14 @@ import com.stytch.sdk.b2b.networking.models.B2BOAuthAuthenticateParameters
 import com.stytch.sdk.b2b.networking.models.B2BSSOAuthEnticateParameters
 import com.stytch.sdk.b2b.oauth.B2BOAuthClient
 import com.stytch.sdk.b2b.oauth.B2BOAuthClientImpl
-import com.stytch.sdk.b2b.rbac.B2BRBACClient
-import com.stytch.sdk.b2b.rbac.B2BRBACClientImpl
 import com.stytch.sdk.b2b.organizations.B2BOrganizationsClient
 import com.stytch.sdk.b2b.organizations.B2BOrganizationsClientImpl
 import com.stytch.sdk.b2b.otp.B2BOtpClient
 import com.stytch.sdk.b2b.otp.B2BOtpClientImpl
 import com.stytch.sdk.b2b.passwords.B2BPasswordsClient
 import com.stytch.sdk.b2b.passwords.B2BPasswordsClientImpl
+import com.stytch.sdk.b2b.rbac.B2BRBACClient
+import com.stytch.sdk.b2b.rbac.B2BRBACClientImpl
 import com.stytch.sdk.b2b.recoveryCodes.B2BRecoveryCodesClient
 import com.stytch.sdk.b2b.recoveryCodes.B2BRecoveryCodesClientImpl
 import com.stytch.sdk.b2b.scim.B2BSCIMClient
@@ -39,7 +39,6 @@ import com.stytch.sdk.b2b.sso.B2BSSOClientImpl
 import com.stytch.sdk.b2b.totp.B2BTOTPClient
 import com.stytch.sdk.b2b.totp.B2BTOTPClientImpl
 import com.stytch.sdk.data.BootstrapResponse
-import com.stytch.sdk.data.RBACPolicy
 import com.stytch.sdk.data.JsCleanup
 import com.stytch.sdk.data.PKCECodePair
 import com.stytch.sdk.data.StytchClientConfiguration
