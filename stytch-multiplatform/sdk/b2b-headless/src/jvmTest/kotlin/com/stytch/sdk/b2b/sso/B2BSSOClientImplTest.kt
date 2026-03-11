@@ -76,9 +76,10 @@ internal class B2BSSOClientImplTest : B2BClientTest() {
             coEvery { pkceClient.create() } returns fakePair
             coEvery { oauthProvider.startBrowserFlow(any(), any(), any()) } returns OAuthResult.Error("SSO failed")
 
-            val thrown = assertFailsWith<OAuthException> {
-                makeClient().start(B2BSSOStartParameters(connectionId = "conn-123"))
-            }
+            val thrown =
+                assertFailsWith<OAuthException> {
+                    makeClient().start(B2BSSOStartParameters(connectionId = "conn-123"))
+                }
             assertEquals("SSO failed", thrown.cause?.message)
         }
 

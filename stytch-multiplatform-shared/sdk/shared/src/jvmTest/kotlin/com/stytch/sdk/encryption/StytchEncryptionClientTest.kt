@@ -6,7 +6,6 @@ import kotlin.test.AfterTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
-import kotlin.test.assertFailsWith
 
 internal class StytchEncryptionClientTest {
     private val client = StytchEncryptionClient("test-password")

@@ -179,7 +179,11 @@ class StytchB2BAuthenticationStateManagerTest {
         runTest(testDispatcher) {
             val manager = createManager()
             manager.update(fakeResponse)
-            manager.potentiallyUpdateIST(object : B2BResponse { override val intermediateSessionToken = "ist-tok" })
+            manager.potentiallyUpdateIST(
+                object : B2BResponse {
+                    override val intermediateSessionToken = "ist-tok"
+                },
+            )
             manager.revoke()
 
             assertNull(manager.memberFlow.value)
@@ -236,7 +240,11 @@ class StytchB2BAuthenticationStateManagerTest {
     fun `potentiallyUpdateIST sets intermediateSessionTokenFlow and expiration when token is non-empty`() =
         runTest(testDispatcher) {
             val manager = createManager()
-            manager.potentiallyUpdateIST(object : B2BResponse { override val intermediateSessionToken = "ist-tok" })
+            manager.potentiallyUpdateIST(
+                object : B2BResponse {
+                    override val intermediateSessionToken = "ist-tok"
+                },
+            )
 
             assertEquals("ist-tok", manager.intermediateSessionTokenFlow.value)
             assertNotNull(manager.istExpiration)
@@ -246,8 +254,16 @@ class StytchB2BAuthenticationStateManagerTest {
     fun `potentiallyUpdateIST clears expiration when token is null`() =
         runTest(testDispatcher) {
             val manager = createManager()
-            manager.potentiallyUpdateIST(object : B2BResponse { override val intermediateSessionToken = "ist-tok" })
-            manager.potentiallyUpdateIST(object : B2BResponse { override val intermediateSessionToken = null })
+            manager.potentiallyUpdateIST(
+                object : B2BResponse {
+                    override val intermediateSessionToken = "ist-tok"
+                },
+            )
+            manager.potentiallyUpdateIST(
+                object : B2BResponse {
+                    override val intermediateSessionToken = null
+                },
+            )
 
             assertNull(manager.intermediateSessionTokenFlow.value)
             assertNull(manager.istExpiration)
@@ -257,7 +273,11 @@ class StytchB2BAuthenticationStateManagerTest {
     fun `potentiallyUpdateIST persists IST and expiration`() =
         runTest(testDispatcher) {
             val manager = createManager()
-            manager.potentiallyUpdateIST(object : B2BResponse { override val intermediateSessionToken = "ist-tok" })
+            manager.potentiallyUpdateIST(
+                object : B2BResponse {
+                    override val intermediateSessionToken = "ist-tok"
+                },
+            )
             advanceUntilIdle()
 
             verify { platformClient.saveData(eq("stytch_ist_identifier"), any()) }
@@ -270,7 +290,11 @@ class StytchB2BAuthenticationStateManagerTest {
     fun `intermediateSessionToken returns value when not expired`() =
         runTest(testDispatcher) {
             val manager = createManager()
-            manager.potentiallyUpdateIST(object : B2BResponse { override val intermediateSessionToken = "ist-tok" })
+            manager.potentiallyUpdateIST(
+                object : B2BResponse {
+                    override val intermediateSessionToken = "ist-tok"
+                },
+            )
 
             assertEquals("ist-tok", manager.intermediateSessionToken)
         }
@@ -279,7 +303,11 @@ class StytchB2BAuthenticationStateManagerTest {
     fun `intermediateSessionToken returns null when expiration is in the past`() =
         runTest(testDispatcher) {
             val manager = createManager()
-            manager.potentiallyUpdateIST(object : B2BResponse { override val intermediateSessionToken = "ist-tok" })
+            manager.potentiallyUpdateIST(
+                object : B2BResponse {
+                    override val intermediateSessionToken = "ist-tok"
+                },
+            )
             // Manually backdate the expiration to the past
             manager.istExpiration = Clock.System.now() - 1.minutes
 

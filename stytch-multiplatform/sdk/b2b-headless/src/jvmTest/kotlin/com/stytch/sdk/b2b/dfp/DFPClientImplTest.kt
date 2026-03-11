@@ -1,8 +1,8 @@
 package com.stytch.sdk.b2b.dfp
 
+import com.stytch.sdk.data.StytchDispatchers
 import com.stytch.sdk.dfp.DFPNotConfiguredError
 import com.stytch.sdk.dfp.DFPProvider
-import com.stytch.sdk.data.StytchDispatchers
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi

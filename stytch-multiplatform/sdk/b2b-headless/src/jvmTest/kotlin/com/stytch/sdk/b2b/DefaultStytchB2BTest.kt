@@ -13,7 +13,6 @@ import com.stytch.sdk.data.EndpointOptions
 import com.stytch.sdk.data.KMPPlatformType
 import com.stytch.sdk.data.StytchClientConfigurationInternal
 import com.stytch.sdk.encryption.StytchEncryptionClient
-import com.stytch.sdk.persistence.StytchPersistenceClient
 import com.stytch.sdk.persistence.StytchPlatformPersistenceClient
 import io.mockk.coEvery
 import io.mockk.coVerify
