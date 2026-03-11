@@ -138,15 +138,19 @@ internal class DefaultStytchConsumerTest {
     @Test
     fun `authenticate returns UnknownDeeplink when token param is absent`() =
         runTest {
-            val result = makeConsumer().authenticate("https://example.com?stytch_token_type=magic_links", null)
+            val url = "https://example.com?stytch_token_type=magic_links"
+            val result = makeConsumer().authenticate(url, null)
             assertIs<DeeplinkAuthenticationStatus.UnknownDeeplink>(result)
+            assertEquals(url, result.url)
         }
 
     @Test
     fun `authenticate returns UnknownDeeplink when token type is UNKNOWN`() =
         runTest {
-            val result = makeConsumer().authenticate("https://example.com?stytch_token_type=unrecognized&token=abc123", null)
+            val url = "https://example.com?stytch_token_type=unrecognized&token=abc123"
+            val result = makeConsumer().authenticate(url, null)
             assertIs<DeeplinkAuthenticationStatus.UnknownDeeplink>(result)
+            assertEquals(url, result.url)
         }
 
     @Test
@@ -154,6 +158,7 @@ internal class DefaultStytchConsumerTest {
         runTest {
             val result = makeConsumer().authenticate("https://example.com?stytch_token_type=reset_password&token=abc123", null)
             assertIs<DeeplinkAuthenticationStatus.ManualHandlingRequired>(result)
+            assertEquals("abc123", result.token)
         }
 
     @Test

@@ -14,6 +14,18 @@ public actual class OAuthProvider(
 ) : IOAuthProvider {
     public actual override val isSupported: Boolean = true
 
+    public actual override suspend fun startBrowserFlow(
+        url: String,
+        parameters: OAuthStartParameters,
+        dispatchers: StytchDispatchers,
+    ): OAuthResult =
+        try {
+            val result = StytchBridge.startBrowserFlow(url).await()
+            Json.decodeFromString(result)
+        } catch (e: Throwable) {
+            OAuthResult.Error(e.message ?: e.toString())
+        }
+
     public actual override suspend fun getOAuthToken(
         parameters: OAuthStartParameters,
         pkceClient: PKCEClient,

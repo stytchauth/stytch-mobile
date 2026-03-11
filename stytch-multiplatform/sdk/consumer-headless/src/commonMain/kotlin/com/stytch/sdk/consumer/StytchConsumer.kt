@@ -9,6 +9,8 @@ import com.stytch.sdk.consumer.data.ConsumerAuthenticationState
 import com.stytch.sdk.consumer.data.ConsumerTokenType
 import com.stytch.sdk.consumer.data.DeeplinkAuthenticationStatus
 import com.stytch.sdk.consumer.data.DeeplinkToken
+import com.stytch.sdk.consumer.dfp.DFPClient
+import com.stytch.sdk.consumer.dfp.DFPClientImpl
 import com.stytch.sdk.consumer.magicLinks.MagicLinksClient
 import com.stytch.sdk.consumer.magicLinks.MagicLinksImpl
 import com.stytch.sdk.consumer.networking.AuthenticatedResponse
@@ -67,6 +69,8 @@ public interface StytchConsumer : StytchClient {
     public val biometrics: BiometricsClient
 
     public val oauth: OAuthClient
+
+    public val dfp: DFPClient
 
     public val authenticationStateFlow: StateFlow<ConsumerAuthenticationState>
 
@@ -129,6 +133,8 @@ internal class DefaultStytchConsumer(
             encryptionClient = configuration.encryptionClient,
             biometricsProvider = configuration.biometricsProvider,
         )
+
+    override val dfp: DFPClient = DFPClientImpl(dispatchers, configuration.dfpProvider)
 
     override val oauth: OAuthClient =
         OAuthClientImpl(

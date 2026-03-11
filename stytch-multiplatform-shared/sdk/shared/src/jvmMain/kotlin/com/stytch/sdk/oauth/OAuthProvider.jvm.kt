@@ -15,4 +15,10 @@ public actual class OAuthProvider : IOAuthProvider {
         baseUrl: String,
         publicTokenInfo: PublicTokenInfo,
     ): OAuthResult = throw OAuthUnsupportedError()
+
+    public actual override suspend fun startBrowserFlow(
+        url: String,
+        parameters: OAuthStartParameters,
+        dispatchers: StytchDispatchers,
+    ): OAuthResult = throw OAuthUnsupportedError()
 }

@@ -32,7 +32,7 @@ class StytchOpenAPINormalizer(
                 val pathWeDontWant = filter.removePrefix("!")
                 return !path.contains(pathWeDontWant)
             } else {
-                return super.hasCustomFilterMatch(path, operation)
+                return path.contains(filter)
             }
         }
     }
