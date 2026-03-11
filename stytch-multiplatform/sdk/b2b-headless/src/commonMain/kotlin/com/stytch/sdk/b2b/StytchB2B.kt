@@ -15,8 +15,11 @@ import com.stytch.sdk.b2b.networking.AuthenticatedResponse
 import com.stytch.sdk.b2b.networking.B2BNetworkingClient
 import com.stytch.sdk.b2b.networking.models.B2BMagicLinksAuthenticateParameters
 import com.stytch.sdk.b2b.networking.models.B2BOAuthAuthenticateParameters
+import com.stytch.sdk.b2b.networking.models.B2BSSOAuthEnticateParameters
 import com.stytch.sdk.b2b.oauth.B2BOAuthClient
 import com.stytch.sdk.b2b.oauth.B2BOAuthClientImpl
+import com.stytch.sdk.b2b.sso.B2BSSOClient
+import com.stytch.sdk.b2b.sso.B2BSSOClientImpl
 import com.stytch.sdk.b2b.organizations.B2BOrganizationsClient
 import com.stytch.sdk.b2b.organizations.B2BOrganizationsClientImpl
 import com.stytch.sdk.b2b.otp.B2BOtpClient
@@ -63,6 +66,7 @@ public interface StytchB2B : StytchClient {
     public val recoveryCodes: B2BRecoveryCodesClient
     public val scim: B2BSCIMClient
     public val oauth: B2BOAuthClient
+    public val sso: B2BSSOClient
 
     public val authenticationStateFlow: StateFlow<B2BAuthenticationState>
 
@@ -134,6 +138,19 @@ internal class DefaultStytchB2B(
             defaultSessionDuration = configuration.defaultSessionDuration,
         )
 
+    override val sso: B2BSSOClient =
+        B2BSSOClientImpl(
+            dispatchers = dispatchers,
+            networkingClient = networkingClient,
+            pkceClient = pkceClient,
+            sessionManager = sessionManager,
+            oauthProvider = configuration.oAuthProvider,
+            publicTokenInfo = configuration.tokenInfo,
+            endpointOptions = configuration.endpointOptions,
+            cnameDomain = { bootstrapResponse?.cnameDomain },
+            defaultSessionDuration = configuration.defaultSessionDuration,
+        )
+
     override val authenticationStateFlow: StateFlow<B2BAuthenticationState> = sessionManager.authenticationStateFlow
 
     override fun authenticationStateObserver(callback: (authenticationState: B2BAuthenticationState) -> Unit): JsCleanup {
@@ -192,8 +209,18 @@ internal class DefaultStytchB2B(
                     DeeplinkAuthenticationStatus.ManualHandlingRequired(token.token)
                 }
 
+                B2BTokenType.SSO -> {
+                    DeeplinkAuthenticationStatus.Authenticated(
+                        sso.authenticate(
+                            B2BSSOAuthEnticateParameters(
+                                ssoToken = token.token,
+                                sessionDurationMinutes = sessionDurationMinutes ?: configuration.defaultSessionDuration,
+                            ),
+                        ) as AuthenticatedResponse,
+                    )
+                }
+
                 else -> {
-                    // TODO: Handle SSO token type (PR 3)
                     DeeplinkAuthenticationStatus.UnknownDeeplink(url)
                 }
             }
