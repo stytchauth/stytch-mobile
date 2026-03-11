@@ -1,6 +1,6 @@
 #import "StytchBridge.h"
-#import <StytchB2BSDK/StytchB2BSDK.h>
-#import <StytchB2BSDK/StytchB2BSDK-Swift.h>
+#import <StytchConsumerSDK/StytchConsumerSDK.h>
+#import <StytchConsumerSDK/StytchConsumerSDK-Swift.h>
 SCSDKStytchEncryptionClient *encryptionClient = [[SCSDKStytchEncryptionClient alloc] init];
 SCSDKStytchPlatformPersistenceClient *platformPersistenceClient = [[SCSDKStytchPlatformPersistenceClient alloc] init];
 SCSDKCAPTCHAProviderImpl *captchaClient = [[SCSDKCAPTCHAProviderImpl alloc] init];

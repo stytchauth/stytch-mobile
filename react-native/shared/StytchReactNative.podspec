@@ -3,7 +3,7 @@ require "json"
 package = JSON.parse(File.read(File.join(__dir__, "package.json")))
 
 Pod::Spec.new do |s|
-  s.name         = "StytchReactNativeConsumer"
+  s.name         = "StytchReactNative"
   s.version      = package["version"]
   s.summary      = package['summary']
   s.description  = package['description']
@@ -21,11 +21,9 @@ Pod::Spec.new do |s|
   spm_dependency(s,
     url: File.dirname('/Users/jhaven/Documents/stytch-mobile/stytch-ios/Package.swift'), # this obviously needs to point to the git repo when we actually publish
     requirement: {},
-    products: ['StytchConsumerSDK']
+    products: ['StytchConsumerSDK'] # We're only using the shared module from this, so it doesn't matter if it's the consumer or b2b one :)
   )
 
-  #s.ios.vendored_frameworks = ["ios/StytchConsumerSDK.xcframework"]
-  #s.preserve_path = "ios/StytchConsumerSDK.xcframework"
   s.pod_target_xcconfig = {
     'DEFINES_MODULE' => 'YES',
     'SWIFT_COMPILATION_MODE' => 'wholemodule'
