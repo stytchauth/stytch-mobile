@@ -87,10 +87,7 @@ public actual class OAuthProvider(
         url: String,
         parameters: OAuthStartParameters,
         dispatchers: StytchDispatchers,
-    ): OAuthResult {
-        if (parameters.activity == null) throw MissingActivityException()
-        return launchSSOManagerActivity(url, parameters.activity)
-    }
+    ): OAuthResult = launchSSOManagerActivity(url, parameters.activity)
 
     private suspend fun launchSSOManagerActivity(
         url: String,
@@ -109,7 +106,6 @@ public actual class OAuthProvider(
         baseUrl: String,
         publicTokenInfo: PublicTokenInfo,
     ): OAuthResult {
-        if (parameters.activity == null) throw MissingActivityException()
         val uri = generateOAuthStartUrl(packageName, baseUrl, publicTokenInfo, parameters, pkceClient)
         return launchSSOManagerActivity(uri, parameters.activity)
     }

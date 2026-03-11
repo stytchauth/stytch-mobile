@@ -13,6 +13,7 @@ public actual class OAuthStartParameters(
     public val applePresentationContextProvider: ASAuthorizationControllerPresentationContextProvidingProtocol? = null,
     public val oauthPresentationContextProvider: ASWebAuthenticationPresentationContextProvidingProtocol? = null,
 ) {
+    public constructor() : this(null, null, null, null, null, null, null, null)
     public constructor(sessionDurationMinutes: Int) : this(null, null, null, null, null, sessionDurationMinutes, null, null)
     public constructor(
         loginRedirectUrl: String,

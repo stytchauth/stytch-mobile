@@ -9,6 +9,7 @@ let package = Package(
       ],
     products: [
         .library(name: "StytchConsumerSDK", targets: ["StytchConsumerTarget"]),
+        .library(name: "StytchB2BSDK", targets: ["StytchB2BTarget"]),
     ],
     dependencies: [
         .package(url: "https://github.com/GoogleCloudPlatform/recaptcha-enterprise-mobile-sdk", from: "18.8.1"),
@@ -18,6 +19,10 @@ let package = Package(
         .binaryTarget(
             name: "StytchConsumerFramework",
             path: "StytchConsumerSDK.xcframework",
+        ),
+        .binaryTarget(
+            name: "StytchB2BFramework",
+            path: "StytchB2BSDK.xcframework",
         ),
         .binaryTarget(
             name: "StytchSwiftUtilsFramework",
@@ -31,6 +36,15 @@ let package = Package(
             name: "StytchConsumerTarget",
             dependencies: [
                 "StytchConsumerFramework",
+                "StytchSwiftUtilsFramework",
+                "StytchSharedFramework",
+                .product(name: "StytchDFP", package: "stytch-ios-dfp")
+            ]
+        ),
+        .target(
+            name: "StytchB2BTarget",
+            dependencies: [
+                "StytchB2BFramework",
                 "StytchSwiftUtilsFramework",
                 "StytchSharedFramework",
                 .product(name: "StytchDFP", package: "stytch-ios-dfp")

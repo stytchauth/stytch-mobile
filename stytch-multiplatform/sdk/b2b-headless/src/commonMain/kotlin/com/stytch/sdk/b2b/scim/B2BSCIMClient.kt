@@ -56,26 +56,31 @@ internal class B2BSCIMClientImpl(
     private val dispatchers: StytchDispatchers,
     private val networkingClient: B2BNetworkingClient,
 ) : B2BSCIMClient {
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun getConnection(): B2BGetSCIMConnectionResponse =
         withContext(dispatchers.ioDispatcher) {
             networkingClient.request { networkingClient.api.b2BGetSCIMConnection() }
         }
 
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun getConnectionGroups(request: IB2BGetSCIMConnectionGroupsParameters): B2BGetSCIMConnectionGroupsResponse =
         withContext(dispatchers.ioDispatcher) {
             networkingClient.request { networkingClient.api.b2BGetSCIMConnectionGroups(request.toNetworkModel()) }
         }
 
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun createConnection(request: IB2BSCIMCreateConnectionParameters): B2BSCIMCreateConnectionResponse =
         withContext(dispatchers.ioDispatcher) {
             networkingClient.request { networkingClient.api.b2BSCIMCreateConnection(request.toNetworkModel()) }
         }
 
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun deleteConnection(connectionId: String): B2BSCIMDeleteConnectionResponse =
         withContext(dispatchers.ioDispatcher) {
             networkingClient.request { networkingClient.api.b2BSCIMDeleteConnection(connectionId) }
         }
 
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun updateConnection(
         connectionId: String,
         request: IB2BSCIMUpdateConnectionParameters,
@@ -84,16 +89,19 @@ internal class B2BSCIMClientImpl(
             networkingClient.request { networkingClient.api.b2BSCIMUpdateConnection(connectionId, request.toNetworkModel()) }
         }
 
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun rotateTokenStart(request: ISCIMRotateTokenStartParameters): SCIMRotateTokenStartResponse =
         withContext(dispatchers.ioDispatcher) {
             networkingClient.request { networkingClient.api.sCIMRotateTokenStart(request.toNetworkModel()) }
         }
 
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun rotateTokenComplete(request: ISCIMRotateTokenCompleteParameters): SCIMRotateTokenCompleteResponse =
         withContext(dispatchers.ioDispatcher) {
             networkingClient.request { networkingClient.api.sCIMRotateTokenComplete(request.toNetworkModel()) }
         }
 
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun rotateTokenCancel(request: ISCIMRotateTokenCancelParameters): SCIMRotateTokenCancelResponse =
         withContext(dispatchers.ioDispatcher) {
             networkingClient.request { networkingClient.api.sCIMRotateTokenCancel(request.toNetworkModel()) }

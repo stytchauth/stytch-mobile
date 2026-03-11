@@ -107,36 +107,43 @@ internal class B2BMembersClientImpl(
 ) : B2BMembersClient {
     override val admin: B2BMembersAdminClient = B2BMembersAdminClientImpl(dispatchers, networkingClient)
 
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun me(): B2BGetMeResponse =
         withContext(dispatchers.ioDispatcher) {
             networkingClient.request { networkingClient.api.b2BGetMe() }
         }
 
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun update(request: IOrganizationsMemberUpdateParameters): OrganizationsMemberUpdateResponse =
         withContext(dispatchers.ioDispatcher) {
             networkingClient.request { networkingClient.api.organizationsMemberUpdate(request.toNetworkModel()) }
         }
 
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun search(request: IOrganizationsMemberSearchParameters): OrganizationsMemberSearchResponse =
         withContext(dispatchers.ioDispatcher) {
             networkingClient.request { networkingClient.api.organizationsMemberSearch(request.toNetworkModel()) }
         }
 
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun create(request: IOrganizationsMemberCreateParameters): OrganizationsMemberCreateResponse =
         withContext(dispatchers.ioDispatcher) {
             networkingClient.request { networkingClient.api.organizationsMemberCreate(request.toNetworkModel()) }
         }
 
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun deleteMFAPhoneNumber(): OrganizationsMemberDeleteMFAPhoneNumberResponse =
         withContext(dispatchers.ioDispatcher) {
             networkingClient.request { networkingClient.api.organizationsMemberDeleteMFAPhoneNumber() }
         }
 
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun deleteMFATOTP(): OrganizationsMemberDeleteMFATOTPResponse =
         withContext(dispatchers.ioDispatcher) {
             networkingClient.request { networkingClient.api.organizationsMemberDeleteMFATOTP() }
         }
 
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun startEmailUpdate(
         request: IOrganizationsMemberStartEmailUpdateParameters,
     ): OrganizationsMemberStartEmailUpdateResponse =
@@ -146,6 +153,7 @@ internal class B2BMembersClientImpl(
             }
         }
 
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun unlinkRetiredEmail(
         request: IOrganizationsMemberUnlinkRetiredEmailParameters,
     ): OrganizationsMemberUnlinkRetiredEmailResponse =
@@ -160,6 +168,7 @@ internal class B2BMembersAdminClientImpl(
     private val dispatchers: StytchDispatchers,
     private val networkingClient: B2BNetworkingClient,
 ) : B2BMembersAdminClient {
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun update(
         memberId: String,
         request: IOrganizationsAdminMemberUpdateParameters,
@@ -170,31 +179,37 @@ internal class B2BMembersAdminClientImpl(
             }
         }
 
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun delete(memberId: String): OrganizationsAdminMemberDeleteResponse =
         withContext(dispatchers.ioDispatcher) {
             networkingClient.request { networkingClient.api.organizationsAdminMemberDelete(memberId) }
         }
 
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun deleteMFAPhoneNumber(memberId: String): OrganizationsAdminMemberDeleteMFAPhoneNumberResponse =
         withContext(dispatchers.ioDispatcher) {
             networkingClient.request { networkingClient.api.organizationsAdminMemberDeleteMFAPhoneNumber(memberId) }
         }
 
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun deleteMFATOTP(memberId: String): OrganizationsAdminMemberDeleteMFATOTPResponse =
         withContext(dispatchers.ioDispatcher) {
             networkingClient.request { networkingClient.api.organizationsAdminMemberDeleteMFATOTP(memberId) }
         }
 
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun deletePassword(memberPasswordId: String): OrganizationsAdminMemberDeletePasswordResponse =
         withContext(dispatchers.ioDispatcher) {
             networkingClient.request { networkingClient.api.organizationsAdminMemberDeletePassword(memberPasswordId) }
         }
 
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun reactivate(memberId: String): OrganizationsAdminMemberReactivateResponse =
         withContext(dispatchers.ioDispatcher) {
             networkingClient.request { networkingClient.api.organizationsAdminMemberReactivate(memberId, emptyMap<String, Any>()) }
         }
 
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun startEmailUpdate(
         memberId: String,
         request: IOrganizationsAdminMemberStartEmailUpdateParameters,
@@ -205,6 +220,7 @@ internal class B2BMembersAdminClientImpl(
             }
         }
 
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun unlinkRetiredEmail(
         memberId: String,
         request: IOrganizationsAdminMemberUnlinkRetiredEmailParameters,
