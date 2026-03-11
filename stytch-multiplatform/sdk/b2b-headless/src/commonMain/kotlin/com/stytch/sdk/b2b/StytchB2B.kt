@@ -18,6 +18,8 @@ import com.stytch.sdk.b2b.networking.models.B2BOAuthAuthenticateParameters
 import com.stytch.sdk.b2b.networking.models.B2BSSOAuthEnticateParameters
 import com.stytch.sdk.b2b.oauth.B2BOAuthClient
 import com.stytch.sdk.b2b.oauth.B2BOAuthClientImpl
+import com.stytch.sdk.b2b.rbac.B2BRBACClient
+import com.stytch.sdk.b2b.rbac.B2BRBACClientImpl
 import com.stytch.sdk.b2b.organizations.B2BOrganizationsClient
 import com.stytch.sdk.b2b.organizations.B2BOrganizationsClientImpl
 import com.stytch.sdk.b2b.otp.B2BOtpClient
@@ -35,6 +37,7 @@ import com.stytch.sdk.b2b.sso.B2BSSOClientImpl
 import com.stytch.sdk.b2b.totp.B2BTOTPClient
 import com.stytch.sdk.b2b.totp.B2BTOTPClientImpl
 import com.stytch.sdk.data.BootstrapResponse
+import com.stytch.sdk.data.RBACPolicy
 import com.stytch.sdk.data.JsCleanup
 import com.stytch.sdk.data.PKCECodePair
 import com.stytch.sdk.data.StytchClientConfiguration
@@ -67,6 +70,7 @@ public interface StytchB2B : StytchClient {
     public val scim: B2BSCIMClient
     public val oauth: B2BOAuthClient
     public val sso: B2BSSOClient
+    public val rbac: B2BRBACClient
 
     public val authenticationStateFlow: StateFlow<B2BAuthenticationState>
 
@@ -149,6 +153,17 @@ internal class DefaultStytchB2B(
             endpointOptions = configuration.endpointOptions,
             cnameDomain = { bootstrapResponse?.cnameDomain },
             defaultSessionDuration = configuration.defaultSessionDuration,
+        )
+
+    override val rbac: B2BRBACClient =
+        B2BRBACClientImpl(
+            dispatchers = dispatchers,
+            sessionManager = sessionManager,
+            getRbacPolicy = { bootstrapResponse?.rbacPolicy },
+            refreshAndGetRbacPolicy = {
+                bootstrapResponse = networkingClient.refreshBootStrapData()
+                bootstrapResponse?.rbacPolicy
+            },
         )
 
     override val authenticationStateFlow: StateFlow<B2BAuthenticationState> = sessionManager.authenticationStateFlow
