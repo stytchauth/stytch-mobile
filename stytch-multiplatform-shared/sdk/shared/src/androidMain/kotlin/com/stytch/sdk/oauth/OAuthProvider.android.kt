@@ -1,5 +1,6 @@
 package com.stytch.sdk.oauth
 
+import android.app.Activity
 import android.app.Application
 import androidx.credentials.CredentialManager
 import androidx.credentials.GetCredentialRequest
@@ -82,19 +83,30 @@ public actual class OAuthProvider(
             )
         }
 
+    public actual override suspend fun startBrowserFlow(
+        url: String,
+        parameters: OAuthStartParameters,
+        dispatchers: StytchDispatchers,
+    ): OAuthResult = launchSSOManagerActivity(url, parameters.activity)
+
+    private suspend fun launchSSOManagerActivity(
+        url: String,
+        activity: Activity,
+    ): OAuthResult =
+        suspendCancellableCoroutine { continuation ->
+            SSOManagerActivity.pendingResult = { result -> continuation.resume(result) }
+            val intent = SSOManagerActivity.createBaseIntent(activity)
+            intent.putExtra(URI_KEY, url)
+            activity.startActivity(intent)
+        }
+
     private suspend fun attemptStandardOAuthAuthentication(
         pkceClient: PKCEClient,
         parameters: OAuthStartParameters,
         baseUrl: String,
         publicTokenInfo: PublicTokenInfo,
     ): OAuthResult {
-        if (parameters.activity == null) throw MissingActivityException()
         val uri = generateOAuthStartUrl(packageName, baseUrl, publicTokenInfo, parameters, pkceClient)
-        return suspendCancellableCoroutine { continuation ->
-            SSOManagerActivity.pendingResult = { result -> continuation.resume(result) }
-            val intent = SSOManagerActivity.createBaseIntent(parameters.activity)
-            intent.putExtra(URI_KEY, uri)
-            parameters.activity.startActivity(intent)
-        }
+        return launchSSOManagerActivity(uri, parameters.activity)
     }
 }
