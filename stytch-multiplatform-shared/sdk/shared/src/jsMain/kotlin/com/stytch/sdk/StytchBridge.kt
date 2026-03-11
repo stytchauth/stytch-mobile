@@ -117,4 +117,6 @@ public external object StytchBridge {
         sessionDurationMinutes: Int?,
         googleCredentialConfiguration: String?,
     ): Promise<String>
+
+    public fun startBrowserFlow(url: String): Promise<String>
 }

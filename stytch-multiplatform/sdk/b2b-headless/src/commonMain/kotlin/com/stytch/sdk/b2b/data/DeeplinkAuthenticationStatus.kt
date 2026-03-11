@@ -6,14 +6,14 @@ import kotlin.js.JsExport
 @JsExport
 public sealed class DeeplinkAuthenticationStatus {
     public class Authenticated(
-        response: AuthenticatedResponse,
+        public val response: AuthenticatedResponse,
     ) : DeeplinkAuthenticationStatus()
 
     public class ManualHandlingRequired(
-        token: String,
+        public val token: String,
     ) : DeeplinkAuthenticationStatus()
 
     public class UnknownDeeplink(
-        url: String,
+        public val url: String,
     ) : DeeplinkAuthenticationStatus()
 }

@@ -5,6 +5,8 @@ import com.stytch.sdk.b2b.data.B2BAuthenticationState
 import com.stytch.sdk.b2b.data.B2BTokenType
 import com.stytch.sdk.b2b.data.DeeplinkAuthenticationStatus
 import com.stytch.sdk.b2b.data.DeeplinkToken
+import com.stytch.sdk.b2b.dfp.DFPClient
+import com.stytch.sdk.b2b.dfp.DFPClientImpl
 import com.stytch.sdk.b2b.discovery.B2BDiscoveryClient
 import com.stytch.sdk.b2b.discovery.B2BDiscoveryClientImpl
 import com.stytch.sdk.b2b.magicLinks.B2BMagicLinksClient
@@ -24,6 +26,8 @@ import com.stytch.sdk.b2b.otp.B2BOtpClient
 import com.stytch.sdk.b2b.otp.B2BOtpClientImpl
 import com.stytch.sdk.b2b.passwords.B2BPasswordsClient
 import com.stytch.sdk.b2b.passwords.B2BPasswordsClientImpl
+import com.stytch.sdk.b2b.rbac.B2BRBACClient
+import com.stytch.sdk.b2b.rbac.B2BRBACClientImpl
 import com.stytch.sdk.b2b.recoveryCodes.B2BRecoveryCodesClient
 import com.stytch.sdk.b2b.recoveryCodes.B2BRecoveryCodesClientImpl
 import com.stytch.sdk.b2b.scim.B2BSCIMClient
@@ -67,6 +71,8 @@ public interface StytchB2B : StytchClient {
     public val scim: B2BSCIMClient
     public val oauth: B2BOAuthClient
     public val sso: B2BSSOClient
+    public val rbac: B2BRBACClient
+    public val dfp: DFPClient
 
     public val authenticationStateFlow: StateFlow<B2BAuthenticationState>
 
@@ -149,6 +155,19 @@ internal class DefaultStytchB2B(
             endpointOptions = configuration.endpointOptions,
             cnameDomain = { bootstrapResponse?.cnameDomain },
             defaultSessionDuration = configuration.defaultSessionDuration,
+        )
+
+    override val dfp: DFPClient = DFPClientImpl(dispatchers, configuration.dfpProvider)
+
+    override val rbac: B2BRBACClient =
+        B2BRBACClientImpl(
+            dispatchers = dispatchers,
+            sessionManager = sessionManager,
+            getRbacPolicy = { bootstrapResponse?.rbacPolicy },
+            refreshAndGetRbacPolicy = {
+                bootstrapResponse = networkingClient.refreshBootStrapData()
+                bootstrapResponse?.rbacPolicy
+            },
         )
 
     override val authenticationStateFlow: StateFlow<B2BAuthenticationState> = sessionManager.authenticationStateFlow
