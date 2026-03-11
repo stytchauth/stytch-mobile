@@ -5,6 +5,8 @@ import com.stytch.sdk.b2b.data.B2BAuthenticationState
 import com.stytch.sdk.b2b.data.B2BTokenType
 import com.stytch.sdk.b2b.data.DeeplinkAuthenticationStatus
 import com.stytch.sdk.b2b.data.DeeplinkToken
+import com.stytch.sdk.b2b.dfp.DFPClient
+import com.stytch.sdk.b2b.dfp.DFPClientImpl
 import com.stytch.sdk.b2b.discovery.B2BDiscoveryClient
 import com.stytch.sdk.b2b.discovery.B2BDiscoveryClientImpl
 import com.stytch.sdk.b2b.magicLinks.B2BMagicLinksClient
@@ -71,6 +73,7 @@ public interface StytchB2B : StytchClient {
     public val oauth: B2BOAuthClient
     public val sso: B2BSSOClient
     public val rbac: B2BRBACClient
+    public val dfp: DFPClient
 
     public val authenticationStateFlow: StateFlow<B2BAuthenticationState>
 
@@ -154,6 +157,8 @@ internal class DefaultStytchB2B(
             cnameDomain = { bootstrapResponse?.cnameDomain },
             defaultSessionDuration = configuration.defaultSessionDuration,
         )
+
+    override val dfp: DFPClient = DFPClientImpl(dispatchers, configuration.dfpProvider)
 
     override val rbac: B2BRBACClient =
         B2BRBACClientImpl(

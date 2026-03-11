@@ -3,6 +3,8 @@ package com.stytch.sdk.consumer
 import com.stytch.sdk.StytchClient
 import com.stytch.sdk.consumer.biometrics.BiometricsClient
 import com.stytch.sdk.consumer.biometrics.BiometricsClientImpl
+import com.stytch.sdk.consumer.dfp.DFPClient
+import com.stytch.sdk.consumer.dfp.DFPClientImpl
 import com.stytch.sdk.consumer.crypto.CryptoClient
 import com.stytch.sdk.consumer.crypto.CryptoClientImpl
 import com.stytch.sdk.consumer.data.ConsumerAuthenticationState
@@ -68,6 +70,8 @@ public interface StytchConsumer : StytchClient {
 
     public val oauth: OAuthClient
 
+    public val dfp: DFPClient
+
     public val authenticationStateFlow: StateFlow<ConsumerAuthenticationState>
 
     @JsName("authenticationStateObserver")
@@ -129,6 +133,8 @@ internal class DefaultStytchConsumer(
             encryptionClient = configuration.encryptionClient,
             biometricsProvider = configuration.biometricsProvider,
         )
+
+    override val dfp: DFPClient = DFPClientImpl(dispatchers, configuration.dfpProvider)
 
     override val oauth: OAuthClient =
         OAuthClientImpl(
