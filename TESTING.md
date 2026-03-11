@@ -22,9 +22,9 @@ All tests live in `jvmTest` source sets. Run them with:
 | Project | Tests | Files |
 |---|---|---|
 | `stytch-multiplatform-shared` | 62 | 7 |
-| `consumer-headless` | 119 | 17 |
-| `b2b-headless` | 163 | 19 |
-| **Total** | **344** | **43** |
+| `consumer-headless` | 121 | 18 |
+| `b2b-headless` | 166 | 20 |
+| **Total** | **349** | **45** |
 
 ---
 
@@ -68,11 +68,11 @@ All tests live in `jvmTest` source sets. Run them with:
 | `crypto/CryptoClientImplTest` | 2 | `authenticateWallet`, `registerWallet` |
 | `biometrics/BiometricsClientImplTest` | 9 | Register/authenticate/isAvailable, BiometricsAlreadyEnrolled error, platform error propagation |
 | `passkeys/PasskeysClientImplTest` | 8 | Register/authenticate, MissingPasskeyException, PasskeysUnsupportedError |
+| `dfp/DFPClientImplTest` | 2 | `getTelemetryId` with and without provider |
 | `StytchConsumerAuthenticationStateManagerTest` | 12 | (same row as above — listed at top) |
 
 ### Known gaps — consumer-headless
 
-- **`dfp/DFPClientImpl`** — **no test file exists**. Simple two-path logic (`dfpProvider?.getTelemetryId() ?: throw DFPNotConfiguredError()`); the B2B version is tested in `b2b-headless/dfp/DFPClientImplTest` as a reference.
 - **`DefaultStytchConsumer.authenticationStateObserver`** — the JS observer wrapper is untested (creates a `CoroutineScope` job that forwards `StateFlow` emissions; low test value).
 - **`DefaultStytchConsumer` bootstrap caching** — `bootstrapResponse` (from `networkingClient.refreshBootStrapData()`) is not tested; integration-level concern.
 
@@ -86,7 +86,8 @@ All tests live in `jvmTest` source sets. Run them with:
 | `StytchB2BAuthenticationStateManagerTest` | 17 | All five flows + IST flow, `update`/`revoke` (incl. IST keys), `potentiallyUpdateIST`, IST expiration, `currentSessionToken`, persistence, init from persistence |
 | `data/B2BTokenTypeTest` | 9 | `fromString` for all 7 types, case-insensitivity, null, unknown |
 | `networking/B2BNetworkingClientMiddlewareTest` | 7 | `onSuccess` (Authenticated/Revoke/B2BResponse/other), `onError` (API error, unrecoverable revoke, network error) |
-| `magicLinks/B2BMagicLinksClientImplTest` | 8 | Authenticate PKCE/MissingPKCE/IST/revoke, email loginOrSignup PKCE, email discovery send PKCE, discovery authenticate PKCE/MissingPKCE |
+| `networking/B2BNetworkingClientTest` | 3 | Session expiry routing (past/future `expiresAt`), `updateSessionAndReturnExpiration` |
+| `magicLinks/B2BMagicLinksClientImplTest` | 9 | Authenticate PKCE/MissingPKCE/IST/revoke, email loginOrSignup PKCE, email invite, email discovery send PKCE, discovery authenticate PKCE/MissingPKCE |
 | `oauth/B2BOAuthClientImplTest` | 16 | Authenticate PKCE/MissingPKCE/IST, google start routing (ClassicToken/Error/IDToken), URL construction (CNAME/test/live domain, PKCE param), session duration, google discovery start, discovery authenticate |
 | `sso/B2BSSOClientImplTest` | 18 | Start routing/URL params/domain selection/session duration, authenticate PKCE/IST/MissingPKCE, getConnections/deleteConnection, saml CRUD, oidc CRUD, external CRUD |
 | `organizations/B2BOrganizationsClientImplTest` | 3 | get/update/delete |
@@ -103,8 +104,5 @@ All tests live in `jvmTest` source sets. Run them with:
 
 ### Known gaps — b2b-headless
 
-- **`B2BMagicLinksClientImpl.email.invite`** — `b2BMagicLinksInvite` is implemented but has no test case. Same simple passthrough shape as the other no-PKCE/no-IST endpoints.
-- **`B2BNetworkingClient.checkAndHandleInitialSession`** — the analogous `CheckAndHandleInitialSessionTest` exists in consumer-headless but was never added for B2B. The B2B version differs slightly: `expiresAt` on `ApiB2bSessionV1MemberSession` is a non-nullable `Instant`, so there is no null case.
-- **`B2BNetworkingClient.updateSessionAndReturnExpiration`** — tested in consumer as `ConsumerNetworkingClientTest`; the B2B equivalent was not added.
 - **`DefaultStytchB2B.authenticationStateObserver`** — same JS observer wrapper as consumer; not tested.
 - **`DefaultStytchB2B` bootstrap caching** — same as consumer; integration-level concern.
