@@ -7,9 +7,6 @@ import com.stytch.sdk.b2b.data.DeeplinkAuthenticationStatus
 import com.stytch.sdk.b2b.data.DeeplinkToken
 import com.stytch.sdk.b2b.discovery.B2BDiscoveryClient
 import com.stytch.sdk.b2b.discovery.B2BDiscoveryClientImpl
-import com.stytch.sdk.b2b.networking.models.B2BOAuthAuthenticateParameters
-import com.stytch.sdk.b2b.oauth.B2BOAuthClient
-import com.stytch.sdk.b2b.oauth.B2BOAuthClientImpl
 import com.stytch.sdk.b2b.magicLinks.B2BMagicLinksClient
 import com.stytch.sdk.b2b.magicLinks.B2BMagicLinksClientImpl
 import com.stytch.sdk.b2b.members.B2BMembersClient
@@ -17,6 +14,9 @@ import com.stytch.sdk.b2b.members.B2BMembersClientImpl
 import com.stytch.sdk.b2b.networking.AuthenticatedResponse
 import com.stytch.sdk.b2b.networking.B2BNetworkingClient
 import com.stytch.sdk.b2b.networking.models.B2BMagicLinksAuthenticateParameters
+import com.stytch.sdk.b2b.networking.models.B2BOAuthAuthenticateParameters
+import com.stytch.sdk.b2b.oauth.B2BOAuthClient
+import com.stytch.sdk.b2b.oauth.B2BOAuthClientImpl
 import com.stytch.sdk.b2b.organizations.B2BOrganizationsClient
 import com.stytch.sdk.b2b.organizations.B2BOrganizationsClientImpl
 import com.stytch.sdk.b2b.otp.B2BOtpClient
