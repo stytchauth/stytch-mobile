@@ -1,0 +1,72 @@
+buildscript {
+  repositories {
+    google()
+    mavenCentral()
+    mavenLocal()
+  }
+
+  dependencies {
+    classpath "com.facebook.react:react-native-gradle-plugin"
+    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:2.3.0"
+  }
+}
+
+plugins {
+  id 'org.jetbrains.kotlin.plugin.serialization' version '2.1.0'
+}
+
+apply plugin: "com.android.library"
+apply plugin: "kotlin-android"
+apply plugin: "com.facebook.react"
+
+android {
+  namespace "com.stytch.mobile.bridge"
+
+  compileSdkVersion 35
+
+  defaultConfig {
+    minSdkVersion 24
+    targetSdkVersion 34
+  }
+
+  buildFeatures {
+    buildConfig true
+  }
+
+  buildTypes {
+    release {
+      minifyEnabled false
+    }
+  }
+
+  lintOptions {
+    disable "GradleCompatible"
+  }
+
+  compileOptions {
+    sourceCompatibility JavaVersion.VERSION_1_8
+    targetCompatibility JavaVersion.VERSION_1_8
+  }
+
+  sourceSets {
+    main {
+      java.srcDirs += [
+        "generated/java",
+        "generated/jni"
+      ]
+    }
+  }
+}
+
+repositories {
+  mavenCentral()
+  google()
+  mavenLocal()
+}
+
+dependencies {
+  implementation "com.facebook.react:react-android"
+  implementation "com.stytch.sdk:shared:0.0.1"
+  implementation "io.ktor:ktor-client-core:3.3.3"
+  implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0"
+}
