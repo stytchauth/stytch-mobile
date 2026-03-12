@@ -65,20 +65,20 @@ buildAndPublishSharedSdkFirst() {
 buildConsumerAndroid() {
     cd $SDK_WORKING_DIR
     echo "Building consumer android artifact..."
-    ./gradlew :sdk:consumer-headless:publishToMavenLocal --rerun-tasks
+    ./gradlew :sdk:consumer-headless:publishToMavenLocal
 }
 
 buildConsumerIos() {
     echo "Building consumer iOS artifacts..."
     cd $SDK_WORKING_DIR
-    ./gradlew assembleStytchConsumerSDKXCFramework --rerun-tasks
+    ./gradlew assembleStytchConsumerSDKXCFramework
     cp -r sdk/consumer-headless/build/XCFrameworks/release/StytchConsumerSDK.xcframework $ARTIFACT_DIR/ios
 }
 
 buildConsumerRn() {
     cd $SDK_WORKING_DIR
     echo "Building consumer RN artifacts..."
-    ./gradlew kotlinUpgradeYarnLock :sdk:consumer-headless:assemble :sdk:consumer-headless:jsBrowserProductionLibraryDistribution --rerun-tasks
+    ./gradlew kotlinUpgradeYarnLock :sdk:consumer-headless:assemble :sdk:consumer-headless:jsBrowserProductionLibraryDistribution
     mkdir -p $SDK_WORKING_DIR/react-native/consumer/lib
     cp -r sdk/consumer-headless/build/dist/js/productionLibrary/consumer-headless* $SDK_WORKING_DIR/react-native/consumer/lib
     cd $SDK_WORKING_DIR/react-native/consumer
@@ -97,20 +97,20 @@ updateConsumerRnDemoApp() {
 buildB2BAndroid() {
     cd $SDK_WORKING_DIR
     echo "Building B2B android artifact..."
-    ./gradlew :sdk:b2b-headless:publishToMavenLocal --rerun-tasks
+    ./gradlew :sdk:b2b-headless:publishToMavenLocal
 }
 
 buildB2BIos() {
     echo "Building B2B iOS artifacts..."
     cd $SDK_WORKING_DIR
-    ./gradlew assembleStytchB2BSDKXCFramework --rerun-tasks
+    ./gradlew assembleStytchB2BSDKXCFramework
     cp -r sdk/b2b-headless/build/XCFrameworks/release/StytchB2BSDK.xcframework $ARTIFACT_DIR/ios
 }
 
 buildB2BRn() {
     cd $SDK_WORKING_DIR
     echo "Building B2B RN artifacts..."
-    ./gradlew kotlinUpgradeYarnLock :sdk:b2b-headless:assemble :sdk:b2b-headless:jsBrowserProductionLibraryDistribution --rerun-tasks
+    ./gradlew kotlinUpgradeYarnLock :sdk:b2b-headless:assemble :sdk:b2b-headless:jsBrowserProductionLibraryDistribution
     mkdir -p $SDK_WORKING_DIR/react-native/b2b/lib
     cp -r sdk/b2b-headless/build/dist/js/productionLibrary/b2b-headless* $SDK_WORKING_DIR/react-native/b2b/lib
     cd $SDK_WORKING_DIR/react-native/b2b
@@ -147,15 +147,6 @@ buildB2B() {
     fi
 }
 
-cleanXcframeworks() {
-    if [ -z "$SDK" ] || [ "$SDK" = "consumer" ]; then
-        rm -rf $ARTIFACT_DIR/ios/StytchConsumerSDK.xcframework
-    fi
-    if [ -z "$SDK" ] || [ "$SDK" = "b2b" ]; then
-        rm -rf $ARTIFACT_DIR/ios/StytchB2BSDK.xcframework
-    fi
-}
-
 main() {
     if [ "$SDK" = "shared" ]; then
         buildAndPublishSharedSdkFirst
@@ -176,7 +167,6 @@ main() {
         exit 1
     fi
 
-    cleanXcframeworks
     buildAndPublishSharedSdkFirst
 
     if [ -z "$SDK" ]; then
