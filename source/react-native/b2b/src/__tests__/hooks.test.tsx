@@ -1,5 +1,5 @@
 import React from 'react';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { renderHook } from '@testing-library/react';
 import { useStytchB2B, useStytchMember, useStytchMemberSession, useStytchB2BAuthenticationState } from '../hooks';
 import {
@@ -8,10 +8,6 @@ import {
   StytchMemberSessionContext,
   StytchB2BAuthenticationStateContext,
 } from '../contexts';
-
-vi.mock('../../lib/b2b-headless.mjs', () => ({
-  B2BAuthenticationState: { Loading: class Loading {} },
-}));
 
 describe('useStytchB2B', () => {
   it('throws when called outside a StytchProvider', () => {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { renderHook } from '@testing-library/react';
 import { useStytch, useStytchUser, useStytchSession, useStytchAuthenticationState } from '../hooks';
 import {
@@ -8,10 +8,6 @@ import {
   StytchSessionContext,
   StytchAuthenticationStateContext,
 } from '../contexts';
-
-vi.mock('../../lib/consumer-headless.mjs', () => ({
-  ConsumerAuthenticationState: { Loading: class Loading {} },
-}));
 
 describe('useStytch', () => {
   it('throws when called outside a StytchProvider', () => {
