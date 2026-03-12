@@ -6,7 +6,7 @@ on:
 
 jobs:
   check-shared:
-    name: Lint & Test (stytch-multiplatform-shared)
+    name: Lint & Test (Shared)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -17,30 +17,30 @@ jobs:
           java-version: 17
 
       - name: Lint
-        working-directory: stytch-multiplatform-shared
+        working-directory: source/shared
         run: ./gradlew ktlintCheck
 
       - name: Test & Coverage
-        working-directory: stytch-multiplatform-shared
+        working-directory: source/shared
         run: ./gradlew koverXmlReportJvm
 
       - name: Upload coverage report
         uses: actions/upload-artifact@v4
         with:
           name: coverage-shared
-          path: stytch-multiplatform-shared/sdk/shared/build/reports/kover/reportJvm.xml
+          path: source/shared/sdk/shared/build/reports/kover/reportJvm.xml
 
       - name: Post coverage comment
         if: github.event_name == 'pull_request'
         uses: madrapps/jacoco-report@v1.7.2
         with:
-          paths: stytch-multiplatform-shared/sdk/shared/build/reports/kover/reportJvm.xml
+          paths: source/shared/sdk/shared/build/reports/kover/reportJvm.xml
           token: ${{ secrets.GITHUB_TOKEN }}
-          title: Coverage — stytch-multiplatform-shared
+          title: Coverage — Shared SDK
           update-comment: true
 
   check-consumer:
-    name: Lint & Test (stytch-multiplatform)
+    name: Lint & Test (External SDK)
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v3
@@ -51,26 +51,26 @@ jobs:
           java-version: 17
 
       - name: Publish shared to mavenLocal
-        working-directory: stytch-multiplatform-shared
+        working-directory: source/shared
         run: ./gradlew publishToMavenLocal
 
       - name: Lint, Test & Coverage
-        working-directory: stytch-multiplatform
+        working-directory: source/sdks
         run: ./gradlew ktlintCheck koverXmlReportJvm --rerun-tasks
 
       - name: Upload coverage report
         uses: actions/upload-artifact@v4
         with:
           name: coverage-consumer
-          path: stytch-multiplatform/sdk/consumer-headless/build/reports/kover/reportJvm.xml
+          path: source/sdks/sdk/consumer-headless/build/reports/kover/reportJvm.xml
 
       - name: Post coverage comment
         if: github.event_name == 'pull_request'
         uses: madrapps/jacoco-report@v1.7.2
         with:
-          paths: stytch-multiplatform/sdk/consumer-headless/build/reports/kover/reportJvm.xml
+          paths: source/sdks/sdk/consumer-headless/build/reports/kover/reportJvm.xml
           token: ${{ secrets.GITHUB_TOKEN }}
-          title: Coverage — stytch-multiplatform
+          title: Coverage — External SDK
           update-comment: true
 
   check-rn:
@@ -84,21 +84,21 @@ jobs:
           node-version: 22
           cache: yarn
           cache-dependency-path: |
-            react-native/consumer/yarn.lock
-            react-native/b2b/yarn.lock
+            source/react-native/consumer/yarn.lock
+            source/react-native/b2b/yarn.lock
 
       - name: Install consumer deps
-        working-directory: react-native/consumer
+        working-directory: source/react-native/consumer
         run: yarn install --frozen-lockfile
 
       - name: Test consumer
-        working-directory: react-native/consumer
+        working-directory: source/react-native/consumer
         run: yarn test
 
       - name: Install b2b deps
-        working-directory: react-native/b2b
+        working-directory: source/react-native/b2b
         run: yarn install --frozen-lockfile
 
       - name: Test b2b
-        working-directory: react-native/b2b
+        working-directory: source/react-native/b2b
         run: yarn test

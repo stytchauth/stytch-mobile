@@ -34,6 +34,8 @@
 		3964B91E2F5B7ACA00E4C6A7 /* StytchConsumerSDK in Frameworks */ = {isa = PBXBuildFile; productRef = 3964B91D2F5B7ACA00E4C6A7 /* StytchConsumerSDK */; };
 		397D9A9F2F339E8200748266 /* StytchConsumerSDK in Frameworks */ = {isa = PBXBuildFile; productRef = 397D9A9E2F339E8200748266 /* StytchConsumerSDK */; };
 		39A4B0172F1A9B4B00D3262B /* StytchConsumerSDK in Frameworks */ = {isa = PBXBuildFile; productRef = 39A4B0162F1A9B4B00D3262B /* StytchConsumerSDK */; };
+		39ABD8F22F634DF100239DBA /* StytchB2BSDK in Frameworks */ = {isa = PBXBuildFile; productRef = 39ABD8F12F634DF100239DBA /* StytchB2BSDK */; };
+		39ABD8F42F634DF100239DBA /* StytchConsumerSDK in Frameworks */ = {isa = PBXBuildFile; productRef = 39ABD8F32F634DF100239DBA /* StytchConsumerSDK */; };
 		39FC5D922F181B8200B455A4 /* StytchConsumerSDK in Frameworks */ = {isa = PBXBuildFile; productRef = 39FC5D912F181B8200B455A4 /* StytchConsumerSDK */; };
 /* End PBXBuildFile section */
 
@@ -67,6 +69,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				39ABD8F22F634DF100239DBA /* StytchB2BSDK in Frameworks */,
 				3964B91B2F5B72D200E4C6A7 /* StytchConsumerSDK in Frameworks */,
 				3907282A2F2BC8FD007A0E0B /* StytchConsumerSDK in Frameworks */,
 				3907281C2F2B143F007A0E0B /* StytchConsumerSDK in Frameworks */,
@@ -90,6 +93,7 @@
 				3907281F2F2BBC85007A0E0B /* StytchConsumerSDK in Frameworks */,
 				390728242F2BC33D007A0E0B /* StytchConsumerSDK in Frameworks */,
 				3907280D2F2AC32F007A0E0B /* StytchConsumerSDK in Frameworks */,
+				39ABD8F42F634DF100239DBA /* StytchConsumerSDK in Frameworks */,
 				390A87CF2F2975EF00989579 /* StytchConsumerSDK in Frameworks */,
 				390728102F2AC3B3007A0E0B /* StytchConsumerSDK in Frameworks */,
 				390728162F2B11D6007A0E0B /* StytchConsumerSDK in Frameworks */,
@@ -173,6 +177,8 @@
 				397D9A9E2F339E8200748266 /* StytchConsumerSDK */,
 				3964B91A2F5B72D200E4C6A7 /* StytchConsumerSDK */,
 				3964B91D2F5B7ACA00E4C6A7 /* StytchConsumerSDK */,
+				39ABD8F12F634DF100239DBA /* StytchB2BSDK */,
+				39ABD8F32F634DF100239DBA /* StytchConsumerSDK */,
 			);
 			productName = demo;
 			productReference = 390BF9652F0F15C300B83179 /* demo.app */;
@@ -203,7 +209,7 @@
 			mainGroup = 390BF95C2F0F15C300B83179;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				3964B91C2F5B7ACA00E4C6A7 /* XCLocalSwiftPackageReference "../../stytch-ios" */,
+				39ABD8F02F634DF100239DBA /* XCLocalSwiftPackageReference "../../ios" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 390BF9662F0F15C300B83179 /* Products */;
@@ -463,9 +469,9 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		3964B91C2F5B7ACA00E4C6A7 /* XCLocalSwiftPackageReference "../../stytch-ios" */ = {
+		39ABD8F02F634DF100239DBA /* XCLocalSwiftPackageReference "../../ios" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = "../../stytch-ios";
+			relativePath = ../../ios;
 		};
 /* End XCLocalSwiftPackageReference section */
 
@@ -575,6 +581,14 @@
 			productName = StytchConsumerSDK;
 		};
 		39A4B0162F1A9B4B00D3262B /* StytchConsumerSDK */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = StytchConsumerSDK;
+		};
+		39ABD8F12F634DF100239DBA /* StytchB2BSDK */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = StytchB2BSDK;
+		};
+		39ABD8F32F634DF100239DBA /* StytchConsumerSDK */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = StytchConsumerSDK;
 		};
