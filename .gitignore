@@ -16,7 +16,6 @@ stytch-multiplatform/sdk/shared/src/iosMain/interop/StytchShared
 node_modules
 .env
 dist/
-lib/
 *.p12
 derived/
 react-native/b2b/ios/
