@@ -3,5 +3,5 @@ import { StytchB2B, ApiOrganizationV1Member, ApiB2bSessionV1MemberSession, B2BAu
 
 export const StytchMemberContext = createContext<ApiOrganizationV1Member | undefined>(undefined);
 export const StytchMemberSessionContext = createContext<ApiB2bSessionV1MemberSession | undefined>(undefined);
-export const StytchB2BContext = createContext<StytchB2B>({} as StytchB2B);
+export const StytchB2BContext = createContext<StytchB2B | null>(null);
 export const StytchB2BAuthenticationStateContext = createContext<B2BAuthenticationState>(B2BAuthenticationState.Loading);
