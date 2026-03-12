@@ -11,7 +11,7 @@ Package.resolved
 *.a
 .build/
 source/stytch-multiplatform/sdk/shared/src/iosMain/interop/StytchShared
-source/**/*.xcframework
+*.xcframework
 node_modules
 .env
 dist/

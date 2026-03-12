@@ -5,7 +5,7 @@ SDK=$1
 PLATFORM=$2
 
 ROOT_DIR=`pwd`
-ARTIFACT_DIR=$ROOT_DIR/artifacts
+IOS_DIR=$ROOT_DIR/ios
 SDK_WORKING_DIR=$ROOT_DIR/source/sdks
 SHARED_WORKING_DIR=$ROOT_DIR/source/shared
 
@@ -48,7 +48,7 @@ buildAndPublishSwiftUtils() {
 
     # copy xcframework to usable locations
     cp -r ./StytchSwiftUtils.xcframework $SHARED_WORKING_DIR/sdk/shared/src/iosMain/interop/
-    cp -r ./StytchSwiftUtils.xcframework $ARTIFACT_DIR/ios
+    cp -r ./StytchSwiftUtils.xcframework $IOS_DIR
 }
 
 buildAndPublishSharedSdkFirst() {
@@ -57,7 +57,7 @@ buildAndPublishSharedSdkFirst() {
 
     cd $SHARED_WORKING_DIR
     ./gradlew :sdk:shared:assembleStytchSharedSDKXCFramework :sdk:shared:publishToMavenLocal
-    cp -r sdk/shared/build/XCFrameworks/release/StytchSharedSDK.xcframework $ARTIFACT_DIR/ios
+    cp -r sdk/shared/build/XCFrameworks/release/StytchSharedSDK.xcframework $IOS_DIR
 }
 
 # --- Consumer builds ---
@@ -72,7 +72,7 @@ buildConsumerIos() {
     echo "Building consumer iOS artifacts..."
     cd $SDK_WORKING_DIR
     ./gradlew assembleStytchConsumerSDKXCFramework
-    cp -r sdk/consumer-headless/build/XCFrameworks/release/StytchConsumerSDK.xcframework $ARTIFACT_DIR/ios
+    cp -r sdk/consumer-headless/build/XCFrameworks/release/StytchConsumerSDK.xcframework $IOS_DIR
 }
 
 buildConsumerRn() {
@@ -104,7 +104,7 @@ buildB2BIos() {
     echo "Building B2B iOS artifacts..."
     cd $SDK_WORKING_DIR
     ./gradlew assembleStytchB2BSDKXCFramework
-    cp -r sdk/b2b-headless/build/XCFrameworks/release/StytchB2BSDK.xcframework $ARTIFACT_DIR/ios
+    cp -r sdk/b2b-headless/build/XCFrameworks/release/StytchB2BSDK.xcframework $IOS_DIR
 }
 
 buildB2BRn() {
