@@ -65,7 +65,10 @@ public abstract class StytchNetworkingClient(
                             sessionManager.revoke()
                         }
                     }
-                    // TODO: else, something went wrong
+                    // if it's not a network/API error, and we exhausted our retries, cancel the updating job. The next time a
+                    // (successful) network response completes, it will re-create the heartbeat
+                    sessionUpdateJob?.cancel()
+                    sessionUpdateJob = null
                 }
             }
     }
@@ -89,9 +92,13 @@ public abstract class StytchNetworkingClient(
 
     private var dfpConfiguration: DFPConfiguration = DFPConfiguration()
 
-    public suspend fun refreshBootStrapData(): BootstrapResponse =
+    public suspend fun refreshBootStrapData(cachedBootstrapResponse: BootstrapResponse?): BootstrapResponse =
         try {
-            val bootstrapResponse = sharedAPI.getBootstrapData(configuration.tokenInfo.publicToken)
+            // Add retry with backoff to boostrap requests
+            val bootstrapResponse =
+                stytchNetworkRequestWithRetryAndBackoff {
+                    sharedAPI.getBootstrapData(configuration.tokenInfo.publicToken)
+                }
             dfpConfiguration =
                 DFPConfiguration(
                     dfpProtectedAuthEnabled = bootstrapResponse.data.dfpProtectedAuthEnabled,
@@ -106,12 +113,17 @@ public abstract class StytchNetworkingClient(
             }
             bootstrapResponse.data
         } catch (e: Exception) {
-            // TODO: Logging for failed bootstrap response
+            // if getting the bootstrap data failed with backoff, return the cached bootstrap data (or the default), but mark it as failed
+            val fallback = cachedBootstrapResponse ?: BootstrapResponse(-1, "request-failed")
             try {
+                // if it failed with a StytchAPIError, update the fallback with the most recent statusCode and requestId
                 val apiResponse = (e as ResponseException).response.body<StytchAPIError>()
-                BootstrapResponse(apiResponse.statusCode, apiResponse.requestId)
+                fallback.copy(
+                    statusCode = apiResponse.statusCode,
+                    requestId = apiResponse.requestId,
+                )
             } catch (_: Exception) {
-                BootstrapResponse(-1, "request-failed")
+                fallback
             }
         }
 

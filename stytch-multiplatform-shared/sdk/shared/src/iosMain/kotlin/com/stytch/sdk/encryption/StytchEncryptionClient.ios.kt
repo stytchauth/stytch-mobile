@@ -123,16 +123,13 @@ public actual class StytchEncryptionClient {
 
 @OptIn(ExperimentalForeignApi::class)
 public fun NSData?.toByteArray(): ByteArray =
-    this?.let {
-        ByteArray(it.length.toInt()).apply {
+    this?.let { data ->
+        ByteArray(data.length.toInt()).apply {
             usePinned {
                 memcpy(it.addressOf(0), this@toByteArray.bytes, this@toByteArray.length)
             }
         }
-    } ?: run {
-        // TODO: Log errors encrypting/decrypting data
-        byteArrayOf()
-    }
+    } ?: byteArrayOf()
 
 @OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
 public fun ByteArray.toNSData(): NSData =
