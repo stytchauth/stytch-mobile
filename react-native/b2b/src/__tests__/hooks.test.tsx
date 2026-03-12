@@ -1,6 +1,5 @@
 import React from 'react';
-import { describe, it, expect, vi } from 'vitest';
-import { renderHook } from '@testing-library/react';
+import { renderHook } from '@testing-library/react-native';
 import {
   useStytchB2B,
   useStytchMember,
@@ -14,7 +13,7 @@ import {
   StytchB2BAuthenticationStateContext,
 } from '../contexts';
 
-vi.mock('../../lib/b2b-headless.mjs', () => ({
+jest.mock('../../lib/b2b-headless.mjs', () => ({
   B2BAuthenticationState: { Loading: class Loading {} },
 }));
 

@@ -31,41 +31,41 @@
     "url": "https://github.com/stytchauth"
   },
   "scripts": {
-    "test": "vitest run",
-    "build": "vitest run && rm -rf dist && cp -r ../shared/. . && tsc && swc src -d dist --copy-files --strip-leading-paths",
+    "test": "jest",
+    "build": "rm -rf dist && cp -r ../shared/. . && tsc && babel src -d dist --copy-files --extensions '.ts,.tsx'",
     "lint": "eslint src/",
-    "format": "prettier --write src/",
-    "format:check": "prettier --check src/"
+    "format": "prettier . --write",
+    "format:check": "prettier . --check"
   },
   "dependencies": {
     "@js-joda/core": "3.2.0",
     "react-native-get-random-values": "^2.0.0"
   },
   "devDependencies": {
+    "@babel/cli": "^7.27.5",
+    "@babel/core": "^7.27.4",
+    "@babel/preset-typescript": "^7.28.5",
     "@eslint/js": "^9.39.2",
     "@expo/config-plugins": "^54.0.4",
     "@react-native/babel-preset": "0.81.1",
     "@react-native/codegen": "0.81.1",
-    "@swc/cli": "^0.7.10",
-    "@swc/core": "^1.15.8",
-    "@testing-library/dom": "^10.0.0",
-    "@testing-library/react": "^16.3.2",
+    "@testing-library/react-native": "^13.3.3",
+    "@types/jest": "^30.0.0",
     "@types/react": "^19.2.8",
+    "babel-jest": "^30.3.0",
     "eslint": "^9.39.2",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.0.1",
     "globals": "^17.0.0",
-    "jiti": "^2.6.1",
-    "jsdom": "^28.1.0",
+    "jest": "^30.0.0",
     "prettier": "^3.8.1",
     "react": "19.1.0",
     "react-native": "0.81.4",
+    "react-test-renderer": "19.1.0",
     "tsc": "^2.0.4",
     "typescript": "5.9.2",
-    "typescript-eslint": "^8.57.0",
-    "vite": "^6.0.0",
-    "vitest": "^4.1.0"
+    "typescript-eslint": "^8.57.0"
   },
   "peerDependencies": {
     "react": ">= 17.0.2",

@@ -1,6 +1,6 @@
 import React from 'react';
 import { describe, it, expect, vi } from 'vitest';
-import { renderHook } from '@testing-library/react';
+import { renderHook } from '@testing-library/react-native';
 import { useStytch, useStytchUser, useStytchSession, useStytchAuthenticationState } from '../hooks';
 import {
   StytchContext,
