@@ -216,13 +216,21 @@ internal class DefaultStytchConsumer(
 
     init {
         CoroutineScope(dispatchers.ioDispatcher).launch {
-            bootstrapResponse = networkingClient.refreshBootStrapData()
+            // first, rehydrate any existing, cached, bootstrap data
+            val cachedBootstrapResponse = persistenceClient.get<BootstrapResponse>(BOOTSTRAP_IDENTIFIER, null)
+            // then, fetch the latest bootstrap from the network
+            bootstrapResponse =
+                networkingClient.refreshBootStrapData(cachedBootstrapResponse).also {
+                    // and persist whatever the latest bootstrap response was
+                    persistenceClient.save(BOOTSTRAP_IDENTIFIER, it)
+                }
         }
     }
 
     companion object {
         @Volatile
         private var instance: StytchConsumer? = null
+        private const val BOOTSTRAP_IDENTIFIER = "stytch_consumer_bootstrap_data"
 
         fun getInstance(configuration: StytchClientConfiguration): StytchConsumer =
             instance ?: DefaultStytchConsumer(configuration.toInternal()).also { instance = it }

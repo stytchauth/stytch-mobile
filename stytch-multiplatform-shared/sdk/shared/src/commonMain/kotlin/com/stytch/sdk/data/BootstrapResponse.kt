@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-public class BootstrapResponse(
+public data class BootstrapResponse(
     @SerialName("status_code")
     override val statusCode: Int,
     @SerialName("request_id")

@@ -331,9 +331,9 @@ SWIFT_CLASS_NAMED("StytchEncryptionManagerSwift")
 SWIFT_CLASS_PROPERTY(@property (nonatomic, class, readonly, strong) StytchEncryptionManagerSwift * _Nonnull shared;)
 + (StytchEncryptionManagerSwift * _Nonnull)shared SWIFT_WARN_UNUSED_RESULT;
 - (NSData * _Nullable)getEncryptionKeyWithName:(NSString * _Nonnull)name error:(NSError * _Nullable * _Nullable)error SWIFT_WARN_UNUSED_RESULT;
-- (NSData * _Nullable)encryptDataWithPlainText:(NSData * _Nonnull)plainText withKeyData:(NSData * _Nonnull)withKeyData SWIFT_WARN_UNUSED_RESULT;
-- (NSData * _Nullable)decryptDataWithEncryptedData:(NSData * _Nonnull)encryptedData withKeyData:(NSData * _Nonnull)withKeyData SWIFT_WARN_UNUSED_RESULT;
-- (void)deleteEncryptionKeyWithName:(NSString * _Nonnull)name;
+- (NSData * _Nullable)encryptDataWithPlainText:(NSData * _Nonnull)plainText withKeyData:(NSData * _Nonnull)withKeyData error:(NSError * _Nullable * _Nullable)error SWIFT_WARN_UNUSED_RESULT;
+- (NSData * _Nullable)decryptDataWithEncryptedData:(NSData * _Nonnull)encryptedData withKeyData:(NSData * _Nonnull)withKeyData error:(NSError * _Nullable * _Nullable)error SWIFT_WARN_UNUSED_RESULT;
+- (BOOL)deleteEncryptionKeyWithName:(NSString * _Nonnull)name error:(NSError * _Nullable * _Nullable)error;
 - (BOOL)persistBiometricKeyDataWithName:(NSString * _Nonnull)name keyData:(NSData * _Nonnull)keyData error:(NSError * _Nullable * _Nullable)error;
 - (NSData * _Nullable)getBiometricKeyDataWithName:(NSString * _Nonnull)name error:(NSError * _Nullable * _Nullable)error SWIFT_WARN_UNUSED_RESULT;
 - (NSData * _Nonnull)generateCodeVerifier SWIFT_WARN_UNUSED_RESULT;

@@ -19,30 +19,30 @@ public class StytchEncryptionManagerSwift: NSObject {
         return existingKeyData
     }
 
-    @objc public func encryptData(plainText: Data, withKeyData: Data) -> Data? {
-        do {
-            let encryptionKey = SymmetricKey(data: withKeyData)
-            let sealedBox = try AES.GCM.seal(plainText, using: encryptionKey)
-            return sealedBox.combined
-        } catch {
-            return nil
+    @objc public func encryptData(plainText: Data, withKeyData: Data) throws -> Data {
+        let encryptionKey = SymmetricKey(data: withKeyData)
+        let sealedBox = try AES.GCM.seal(plainText, using: encryptionKey)
+        guard let encrypted = sealedBox.combined else {
+            throw NSError(domain: "com.stytch.swift.encryption", code: 0, userInfo: ["Encryption returned nil": ""])
         }
+        return encrypted
     }
 
-    @objc public func decryptData(encryptedData: Data, withKeyData: Data) -> Data? {
-        do {
-            let encryptionKey = SymmetricKey(data: withKeyData)
-            let sealedBox = try AES.GCM.SealedBox(combined: encryptedData)
-            return try AES.GCM.open(sealedBox, using: encryptionKey)
-        } catch {
-            return nil
-        }
+    @objc public func decryptData(encryptedData: Data, withKeyData: Data) throws -> Data {
+        let encryptionKey = SymmetricKey(data: withKeyData)
+        let sealedBox = try AES.GCM.SealedBox(combined: encryptedData)
+        return try AES.GCM.open(sealedBox, using: encryptionKey)
     }
 
-    @objc public func deleteEncryptionKey(name: String) {
+    @objc public func deleteEncryptionKey(name: String) throws {
         let query: [CFString: Any] = baseKeyQuery(name: name)
         let status = SecItemDelete(query as CFDictionary)
-        // TODO: validate status, handle failures
+        if status != errSecSuccess || status != errSecItemNotFound {
+          throw NSError(
+              domain: "com.stytch.swift.encryption", code: Int(status),
+              userInfo: ["Error deleting encryption key": "Status=\(status)"]
+          )
+        }
     }
 
     @objc public func persistBiometricKeyData(name: String, keyData: Data) throws {

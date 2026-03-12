@@ -25,25 +25,51 @@ public actual class StytchEncryptionClient {
             val error = alloc<ObjCObjectVar<NSError?>>()
             val key = swiftEncryptionManager.getEncryptionKeyWithName(STYTCH_MASTER_KEY_ALIAS, error.ptr)
             if (error.value != null || key == null) {
-                throw IllegalStateException("Error getting master encryption key: ${error.value?.localizedDescription ?: "empty result"}")
+                throw StytchEncryptionError("Error getting master encryption key: ${error.value?.localizedDescription ?: "empty result"}")
             }
             key
         }
 
     public actual fun encrypt(data: ByteArray): ByteArray =
-        swiftEncryptionManager
-            .encryptDataWithPlainText(plainText = data.toNSData(), withKeyData = encryptionKeyData)
-            .toByteArray()
+        memScoped {
+            val error = alloc<ObjCObjectVar<NSError?>>()
+            val result =
+                swiftEncryptionManager
+                    .encryptDataWithPlainText(
+                        plainText = data.toNSData(),
+                        withKeyData = encryptionKeyData,
+                        error = error.ptr,
+                    ).toByteArray()
+            if (error.value != null) {
+                throw StytchEncryptionError("Error encrypting data: ${error.value?.localizedDescription}")
+            }
+            result
+        }
 
     public actual fun decrypt(data: ByteArray): ByteArray =
-        swiftEncryptionManager
-            .decryptDataWithEncryptedData(
-                encryptedData = data.toNSData(),
-                withKeyData = encryptionKeyData,
-            ).toByteArray()
+        memScoped {
+            val error = alloc<ObjCObjectVar<NSError?>>()
+            val result =
+                swiftEncryptionManager
+                    .decryptDataWithEncryptedData(
+                        encryptedData = data.toNSData(),
+                        withKeyData = encryptionKeyData,
+                        error = error.ptr,
+                    ).toByteArray()
+            if (error.value != null) {
+                throw StytchEncryptionError("Error decrypting data: ${error.value?.localizedDescription}")
+            }
+            result
+        }
 
     public actual fun deleteKey() {
-        swiftEncryptionManager.deleteEncryptionKeyWithName(STYTCH_MASTER_KEY_ALIAS)
+        memScoped {
+            val error = alloc<ObjCObjectVar<NSError?>>()
+            swiftEncryptionManager.deleteEncryptionKeyWithName(name = STYTCH_MASTER_KEY_ALIAS, error = error.ptr)
+            if (error.value != null) {
+                throw StytchEncryptionError("Error deleting master key: ${error.value?.localizedDescription}")
+            }
+        }
     }
 
     public fun createBiometricKey(
@@ -54,7 +80,7 @@ public actual class StytchEncryptionClient {
             val error = alloc<ObjCObjectVar<NSError?>>()
             swiftEncryptionManager.persistBiometricKeyDataWithName(name, data.toNSData(), error.ptr)
             if (error.value != null) {
-                throw IllegalStateException("Error creating biometric key: ${error.value?.localizedDescription}")
+                throw StytchEncryptionError("Error creating biometric key: ${error.value?.localizedDescription}")
             }
         }
     }
@@ -64,13 +90,19 @@ public actual class StytchEncryptionClient {
             val error = alloc<ObjCObjectVar<NSError?>>()
             val key = swiftEncryptionManager.getBiometricKeyDataWithName(name, error.ptr)
             if (error.value != null) {
-                throw IllegalStateException("Error retrieving biometric key: ${error.value?.localizedDescription}")
+                throw StytchEncryptionError("Error retrieving biometric key: ${error.value?.localizedDescription}")
             }
             return key.toByteArray()
         }
 
     public fun deleteBiometricKey(name: String) {
-        swiftEncryptionManager.deleteEncryptionKeyWithName(name)
+        memScoped {
+            val error = alloc<ObjCObjectVar<NSError?>>()
+            swiftEncryptionManager.deleteEncryptionKeyWithName(name = name, error = error.ptr)
+            if (error.value != null) {
+                throw StytchEncryptionError("Error deleting biometric key: ${error.value?.localizedDescription}")
+            }
+        }
     }
 
     public actual fun generateCodeVerifier(): ByteArray = swiftEncryptionManager.generateCodeVerifier().toByteArray()
@@ -123,16 +155,13 @@ public actual class StytchEncryptionClient {
 
 @OptIn(ExperimentalForeignApi::class)
 public fun NSData?.toByteArray(): ByteArray =
-    this?.let {
-        ByteArray(it.length.toInt()).apply {
+    this?.let { data ->
+        ByteArray(data.length.toInt()).apply {
             usePinned {
                 memcpy(it.addressOf(0), this@toByteArray.bytes, this@toByteArray.length)
             }
         }
-    } ?: run {
-        // TODO: Log errors encrypting/decrypting data
-        byteArrayOf()
-    }
+    } ?: byteArrayOf()
 
 @OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
 public fun ByteArray.toNSData(): NSData =

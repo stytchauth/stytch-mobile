@@ -9,7 +9,11 @@ export const useStytchMemberSession = (): ApiB2bSessionV1MemberSession | undefin
   return useContext(StytchMemberSessionContext);
 };
 export const useStytchB2B = (): StytchB2B => {
-  return useContext(StytchB2BContext);
+  const client = useContext(StytchB2BContext);
+  if (client === null) {
+    throw new Error('useStytchB2B() must be called within a <StytchProvider>.');
+  }
+  return client;
 };
 export const useStytchB2BAuthenticationState = (): B2BAuthenticationState => {
   return useContext(StytchB2BAuthenticationStateContext);

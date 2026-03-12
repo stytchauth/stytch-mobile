@@ -145,7 +145,7 @@ kover {
     }
 }
 
-val generatedSourcesPath = "$buildDir/generated/openapi"
+val generatedSourcesPath = "${layout.buildDirectory.dir("generated/openapi").get()}"
 val apiDescriptionFile = "$projectDir/src/commonMain/resources/openapi.yml"
 openApiGenerate {
     verbose.set(false)

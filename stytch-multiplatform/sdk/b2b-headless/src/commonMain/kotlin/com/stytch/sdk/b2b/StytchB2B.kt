@@ -165,7 +165,11 @@ internal class DefaultStytchB2B(
             sessionManager = sessionManager,
             getRbacPolicy = { bootstrapResponse?.rbacPolicy },
             refreshAndGetRbacPolicy = {
-                bootstrapResponse = networkingClient.refreshBootStrapData()
+                bootstrapResponse =
+                    networkingClient.refreshBootStrapData(bootstrapResponse).also {
+                        // and persist whatever the latest bootstrap response was
+                        persistenceClient.save(BOOTSTRAP_IDENTIFIER, it)
+                    }
                 bootstrapResponse?.rbacPolicy
             },
         )
@@ -254,13 +258,21 @@ internal class DefaultStytchB2B(
 
     init {
         CoroutineScope(dispatchers.ioDispatcher).launch {
-            bootstrapResponse = networkingClient.refreshBootStrapData()
+            // first, rehydrate any existing, cached, bootstrap data
+            val cachedBootstrapResponse = persistenceClient.get<BootstrapResponse>(BOOTSTRAP_IDENTIFIER, null)
+            // then, fetch the latest bootstrap from the network
+            bootstrapResponse =
+                networkingClient.refreshBootStrapData(cachedBootstrapResponse).also {
+                    // and persist whatever the latest bootstrap response was
+                    persistenceClient.save(BOOTSTRAP_IDENTIFIER, it)
+                }
         }
     }
 
     companion object {
         @Volatile
         private var instance: StytchB2B? = null
+        private const val BOOTSTRAP_IDENTIFIER = "stytch_b2b_bootstrap_data"
 
         fun getInstance(configuration: StytchClientConfiguration): StytchB2B =
             instance ?: DefaultStytchB2B(configuration.toInternal()).also { instance = it }

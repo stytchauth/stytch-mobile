@@ -9,7 +9,11 @@ export const useStytchSession = (): ApiSessionV1Session | undefined => {
   return useContext(StytchSessionContext);
 };
 export const useStytch = (): StytchConsumer => {
-  return useContext(StytchContext);
+  const client = useContext(StytchContext);
+  if (client === null) {
+    throw new Error('useStytch() must be called within a <StytchProvider>.');
+  }
+  return client;
 };
 export const useStytchAuthenticationState = (): ConsumerAuthenticationState => {
   return useContext(StytchAuthenticationStateContext);
