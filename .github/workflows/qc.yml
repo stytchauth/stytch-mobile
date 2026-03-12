@@ -72,3 +72,33 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           title: Coverage — stytch-multiplatform
           update-comment: true
+
+  check-rn:
+    name: Test (React Native)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: yarn
+          cache-dependency-path: |
+            react-native/consumer/yarn.lock
+            react-native/b2b/yarn.lock
+
+      - name: Install consumer deps
+        working-directory: react-native/consumer
+        run: yarn install --frozen-lockfile
+
+      - name: Test consumer
+        working-directory: react-native/consumer
+        run: yarn test
+
+      - name: Install b2b deps
+        working-directory: react-native/b2b
+        run: yarn install --frozen-lockfile
+
+      - name: Test b2b
+        working-directory: react-native/b2b
+        run: yarn test
