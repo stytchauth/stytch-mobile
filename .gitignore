@@ -18,10 +18,12 @@ dist/
 lib/
 *.p12
 derived/
+source/react-native/b2b/lib
 source/react-native/b2b/ios/
 source/react-native/b2b/android/
 source/react-native/b2b/src/NativeStytchBridge.ts
 source/react-native/b2b/StytchReactNative.podspec
+source/react-native/consumer/lib
 source/react-native/consumer/ios/
 source/react-native/consumer/android/
 source/react-native/consumer/src/NativeStytchBridge.ts
