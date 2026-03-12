@@ -1,7 +1,12 @@
 import React from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { renderHook } from '@testing-library/react';
-import { useStytchB2B, useStytchMember, useStytchMemberSession, useStytchB2BAuthenticationState } from '../hooks';
+import {
+  useStytchB2B,
+  useStytchMember,
+  useStytchMemberSession,
+  useStytchB2BAuthenticationState,
+} from '../hooks';
 import {
   StytchB2BContext,
   StytchMemberContext,
@@ -16,7 +21,7 @@ vi.mock('../../lib/b2b-headless.mjs', () => ({
 describe('useStytchB2B', () => {
   it('throws when called outside a StytchProvider', () => {
     expect(() => renderHook(() => useStytchB2B())).toThrow(
-      'useStytchB2B() must be called within a <StytchProvider>.',
+      'useStytchB2B() must be called within a <StytchProvider>.'
     );
   });
 
@@ -58,7 +63,9 @@ describe('useStytchMemberSession', () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const mockSession = { memberSessionId: 'session-123' } as any;
     const wrapper = ({ children }: { children: React.ReactNode }) => (
-      <StytchMemberSessionContext.Provider value={mockSession}>{children}</StytchMemberSessionContext.Provider>
+      <StytchMemberSessionContext.Provider value={mockSession}>
+        {children}
+      </StytchMemberSessionContext.Provider>
     );
     const { result } = renderHook(() => useStytchMemberSession(), { wrapper });
     expect(result.current).toBe(mockSession);
@@ -70,7 +77,9 @@ describe('useStytchB2BAuthenticationState', () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const mockState = { type: 'Loading' } as any;
     const wrapper = ({ children }: { children: React.ReactNode }) => (
-      <StytchB2BAuthenticationStateContext.Provider value={mockState}>{children}</StytchB2BAuthenticationStateContext.Provider>
+      <StytchB2BAuthenticationStateContext.Provider value={mockState}>
+        {children}
+      </StytchB2BAuthenticationStateContext.Provider>
     );
     const { result } = renderHook(() => useStytchB2BAuthenticationState(), { wrapper });
     expect(result.current).toBe(mockState);

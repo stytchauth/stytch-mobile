@@ -16,7 +16,7 @@ vi.mock('../../lib/consumer-headless.mjs', () => ({
 describe('useStytch', () => {
   it('throws when called outside a StytchProvider', () => {
     expect(() => renderHook(() => useStytch())).toThrow(
-      'useStytch() must be called within a <StytchProvider>.',
+      'useStytch() must be called within a <StytchProvider>.'
     );
   });
 
@@ -70,7 +70,9 @@ describe('useStytchAuthenticationState', () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const mockState = { type: 'Loading' } as any;
     const wrapper = ({ children }: { children: React.ReactNode }) => (
-      <StytchAuthenticationStateContext.Provider value={mockState}>{children}</StytchAuthenticationStateContext.Provider>
+      <StytchAuthenticationStateContext.Provider value={mockState}>
+        {children}
+      </StytchAuthenticationStateContext.Provider>
     );
     const { result } = renderHook(() => useStytchAuthenticationState(), { wrapper });
     expect(result.current).toBe(mockState);
