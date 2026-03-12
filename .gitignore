@@ -28,3 +28,4 @@ source/react-native/consumer/ios/
 source/react-native/consumer/android/
 source/react-native/consumer/src/NativeStytchBridge.ts
 source/react-native/consumer/StytchReactNative.podspec
+.claude
