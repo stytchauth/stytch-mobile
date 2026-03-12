@@ -15,7 +15,6 @@ source/**/*.xcframework
 node_modules
 .env
 dist/
-lib/
 *.p12
 derived/
 source/react-native/b2b/ios/
