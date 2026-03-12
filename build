@@ -5,8 +5,9 @@ SDK=$1
 PLATFORM=$2
 
 ROOT_DIR=`pwd`
-MAIN_WORKING_DIR=$ROOT_DIR/stytch-multiplatform
-SHARED_WORKING_DIR=$ROOT_DIR/stytch-multiplatform-shared
+ARTIFACT_DIR=$ARTIFACT_DIR
+SDK_WORKING_DIR=$ROOT_DIR/source/sdks
+SHARED_WORKING_DIR=$ROOT_DIR/source/shared
 
 usage() {
     echo "Usage: ./build [sdk] [platform]"
@@ -42,12 +43,12 @@ buildAndPublishSwiftUtils() {
         -output StytchSwiftUtils.xcframework
 
     # copy header file to usable location (for cinterop generation)
-    cp ./derived/Build/Intermediates.noindex/StytchSwiftUtils.build/Release-iphoneos/StytchSwiftUtils.build/DerivedSources/StytchSwiftUtils-Swift.h ../stytch-multiplatform-shared/sdk/shared/src/iosMain/interop/StytchSwiftUtils-device.h
-    cp ./derived/Build/Intermediates.noindex/StytchSwiftUtils.build/Release-iphonesimulator/StytchSwiftUtils.build/DerivedSources/StytchSwiftUtils-Swift.h ../stytch-multiplatform-shared/sdk/shared/src/iosMain/interop/StytchSwiftUtils-simulator.h
+    cp ./derived/Build/Intermediates.noindex/StytchSwiftUtils.build/Release-iphoneos/StytchSwiftUtils.build/DerivedSources/StytchSwiftUtils-Swift.h $SHARED_WORKING_DIR/sdk/shared/src/iosMain/interop/StytchSwiftUtils-device.h
+    cp ./derived/Build/Intermediates.noindex/StytchSwiftUtils.build/Release-iphonesimulator/StytchSwiftUtils.build/DerivedSources/StytchSwiftUtils-Swift.h $SHARED_WORKING_DIR/sdk/shared/src/iosMain/interop/StytchSwiftUtils-simulator.h
 
     # copy xcframework to usable locations
-    cp -r ./StytchSwiftUtils.xcframework $ROOT_DIR/source//stytch-multiplatform-shared/sdk/shared/src/iosMain/interop/
-    cp -r ./StytchSwiftUtils.xcframework $ROOT_DIR/artifacts/ios
+    cp -r ./StytchSwiftUtils.xcframework $SHARED_WORKING_DIR/sdk/shared/src/iosMain/interop/
+    cp -r ./StytchSwiftUtils.xcframework $ARTIFACT_DIR/ios
 }
 
 buildAndPublishSharedSdkFirst() {
@@ -56,31 +57,31 @@ buildAndPublishSharedSdkFirst() {
 
     cd $SHARED_WORKING_DIR
     ./gradlew :sdk:shared:assembleStytchSharedSDKXCFramework :sdk:shared:publishToMavenLocal
-    cp -r sdk/shared/build/XCFrameworks/release/StytchSharedSDK.xcframework $ROOT_DIR/artifacts/ios
+    cp -r sdk/shared/build/XCFrameworks/release/StytchSharedSDK.xcframework $ARTIFACT_DIR/ios
 }
 
 # --- Consumer builds ---
 
 buildConsumerAndroid() {
-    cd $MAIN_WORKING_DIR
+    cd $SDK_WORKING_DIR
     echo "Building consumer android artifact..."
     ./gradlew :sdk:consumer-headless:publishToMavenLocal --rerun-tasks
 }
 
 buildConsumerIos() {
     echo "Building consumer iOS artifacts..."
-    cd $MAIN_WORKING_DIR
+    cd $SDK_WORKING_DIR
     ./gradlew assembleStytchConsumerSDKXCFramework --rerun-tasks
-    cp -r sdk/consumer-headless/build/XCFrameworks/release/StytchConsumerSDK.xcframework $ROOT_DIR/artifacts/ios
+    cp -r sdk/consumer-headless/build/XCFrameworks/release/StytchConsumerSDK.xcframework $ARTIFACT_DIR/ios
 }
 
 buildConsumerRn() {
-    cd $MAIN_WORKING_DIR
+    cd $SDK_WORKING_DIR
     echo "Building consumer RN artifacts..."
     ./gradlew kotlinUpgradeYarnLock :sdk:consumer-headless:assemble :sdk:consumer-headless:jsBrowserProductionLibraryDistribution --rerun-tasks
-    mkdir -p $ROOT_DIR/react-native/consumer/lib
-    cp -r sdk/consumer-headless/build/dist/js/productionLibrary/consumer-headless* $ROOT_DIR/source/react-native/consumer/lib
-    cd $ROOT_DIR/source/react-native/consumer
+    mkdir -p $SDK_WORKING_DIR/react-native/consumer/lib
+    cp -r sdk/consumer-headless/build/dist/js/productionLibrary/consumer-headless* $SDK_WORKING_DIR/react-native/consumer/lib
+    cd $SDK_WORKING_DIR/react-native/consumer
     yarn build
     updateConsumerRnDemoApp
 }
@@ -88,31 +89,31 @@ buildConsumerRn() {
 updateConsumerRnDemoApp() {
     cd $ROOT_DIR/examples/rn
     yarn remove @stytch/react-native-consumer
-    yarn add file:$ROOT_DIR/source/react-native/consumer
+    yarn add file:$SDK_WORKING_DIR/react-native/consumer
 }
 
 # --- B2B builds ---
 
 buildB2BAndroid() {
-    cd $MAIN_WORKING_DIR
+    cd $SDK_WORKING_DIR
     echo "Building B2B android artifact..."
     ./gradlew :sdk:b2b-headless:publishToMavenLocal --rerun-tasks
 }
 
 buildB2BIos() {
     echo "Building B2B iOS artifacts..."
-    cd $MAIN_WORKING_DIR
+    cd $SDK_WORKING_DIR
     ./gradlew assembleStytchB2BSDKXCFramework --rerun-tasks
-    cp -r sdk/b2b-headless/build/XCFrameworks/release/StytchB2BSDK.xcframework $ROOT_DIR/artifacts/ios
+    cp -r sdk/b2b-headless/build/XCFrameworks/release/StytchB2BSDK.xcframework $ARTIFACT_DIR/ios
 }
 
 buildB2BRn() {
-    cd $MAIN_WORKING_DIR
+    cd $SDK_WORKING_DIR
     echo "Building B2B RN artifacts..."
     ./gradlew kotlinUpgradeYarnLock :sdk:b2b-headless:assemble :sdk:b2b-headless:jsBrowserProductionLibraryDistribution --rerun-tasks
-    mkdir -p $ROOT_DIR/react-native/b2b/lib
-    cp -r sdk/b2b-headless/build/dist/js/productionLibrary/b2b-headless* $ROOT_DIR/source/react-native/b2b/lib
-    cd $ROOT_DIR/source/react-native/b2b
+    mkdir -p $SDK_WORKING_DIR/react-native/b2b/lib
+    cp -r sdk/b2b-headless/build/dist/js/productionLibrary/b2b-headless* $SDK_WORKING_DIR/react-native/b2b/lib
+    cd $SDK_WORKING_DIR/react-native/b2b
     yarn build
 }
 
@@ -148,10 +149,10 @@ buildB2B() {
 
 cleanXcframeworks() {
     if [ -z "$SDK" ] || [ "$SDK" = "consumer" ]; then
-        rm -rf $ROOT_DIR/artifacts/ios/StytchConsumerSDK.xcframework
+        rm -rf $ARTIFACT_DIR/ios/StytchConsumerSDK.xcframework
     fi
     if [ -z "$SDK" ] || [ "$SDK" = "b2b" ]; then
-        rm -rf $ROOT_DIR/artifacts/ios/StytchB2BSDK.xcframework
+        rm -rf $ARTIFACT_DIR/ios/StytchB2BSDK.xcframework
     fi
 }
 
