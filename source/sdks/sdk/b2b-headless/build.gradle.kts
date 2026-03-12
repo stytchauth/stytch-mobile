@@ -59,7 +59,7 @@ kotlin {
         it.binaries.framework {
             baseName = "StytchB2BSDK"
             xcFramework.add(this)
-            val sharedIosProjectDirectory = "${rootProject.layout.projectDirectory}-shared/sdk/shared"
+            val sharedIosProjectDirectory = "${rootProject.layout.projectDirectory.dir("../shared/sdk/shared")}"
             if (target.name == "iosArm64") {
                 linkerOpts("-F$sharedIosProjectDirectory/build/XCFrameworks/release/StytchSharedSDK.xcframework/ios-arm64")
                 linkerOpts("-F$sharedIosProjectDirectory/src/iosMain/interop/StytchSwiftUtils.xcframework/ios-arm64")
