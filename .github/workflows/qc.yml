@@ -16,13 +16,9 @@ jobs:
           distribution: zulu
           java-version: 17
 
-      - name: Lint
+      - name: Lint, Test & Coverage
         working-directory: source/shared
-        run: ./gradlew ktlintCheck
-
-      - name: Test & Coverage
-        working-directory: source/shared
-        run: ./gradlew koverXmlReportJvm
+        run: ./gradlew ktlintCheck koverXmlReportJvm
 
       - name: Upload coverage report
         uses: actions/upload-artifact@v4
@@ -56,7 +52,7 @@ jobs:
 
       - name: Lint, Test & Coverage
         working-directory: source/sdks
-        run: ./gradlew ktlintCheck koverXmlReportJvm --rerun-tasks
+        run: ./gradlew ktlintCheck koverXmlReportJvm
 
       - name: Upload coverage report
         uses: actions/upload-artifact@v4

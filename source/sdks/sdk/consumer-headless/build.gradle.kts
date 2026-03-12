@@ -90,7 +90,7 @@ kotlin {
 
     sourceSets {
         commonMain {
-            kotlin.srcDir(layout.buildDirectory.dir("generated/openapi/src/main/kotlin"))
+            kotlin.srcDir(tasks.named("openApiGenerate").map { layout.buildDirectory.dir("generated/openapi/src/main/kotlin") })
             kotlin.srcDir(layout.buildDirectory.dir("generated/ksp/metadata/commonMain/kotlin"))
             dependencies {
                 api("com.stytch.sdk:shared:$version")

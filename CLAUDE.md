@@ -131,7 +131,6 @@ The demo app at `examples/rn/` uses `yarn add file:../../react-native/consumer` 
 3. **`buildconfig` plugin** → `BuildConfig` with SDK name/version for User-Agent headers
 4. **SKIE** → generates Swift-friendly wrappers around Kotlin/Native APIs (async/await, sealed classes, flows)
 
-> **IMPORTANT:** When running any Gradle command in either project, include `--rerun-tasks` to ensure KSP/code-generation tasks run. Without it, Gradle may skip them as up-to-date.
 
 ## Known Issues / Notes
 - `StytchSwiftUtils.xcframework` bridges Swift-only APIs (e.g., CryptoKit) to Kotlin via C interop — `StytchEncryptionClient` on iOS calls `StytchEncryptionManagerSwift` from this framework
