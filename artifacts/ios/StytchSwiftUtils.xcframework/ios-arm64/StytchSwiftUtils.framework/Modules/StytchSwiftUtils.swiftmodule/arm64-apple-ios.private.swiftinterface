@@ -1,0 +1,49 @@
+// swift-interface-format-version: 1.0
+// swift-compiler-version: Apple Swift version 6.2.1 effective-5.10 (swiftlang-6.2.1.4.8 clang-1700.4.4.1)
+// swift-module-flags: -target arm64-apple-ios15.0 -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -O -enable-upcoming-feature DisableOutwardActorInference -enable-upcoming-feature InferSendableFromCaptures -enable-upcoming-feature GlobalActorIsolatedTypesUsability -enable-upcoming-feature MemberImportVisibility -enable-upcoming-feature InferIsolatedConformances -enable-upcoming-feature NonisolatedNonsendingByDefault -enable-experimental-feature DebugDescriptionMacro -enable-bare-slash-regex -module-name StytchSwiftUtils
+// swift-module-flags-ignorable:  -formal-cxx-interoperability-mode=off -interface-compiler-version 6.2.1
+import CryptoKit
+import Foundation
+import Swift
+import _Concurrency
+import _StringProcessing
+import _SwiftConcurrencyShims
+@_inheritsConvenienceInitializers @objc(StytchEncryptionManagerSwift) public class StytchEncryptionManagerSwift : ObjectiveC.NSObject {
+  @_Concurrency.MainActor @objc public static let shared: StytchSwiftUtils.StytchEncryptionManagerSwift
+  @objc public func getEncryptionKey(name: Swift.String) throws -> Foundation.Data
+  @objc public func encryptData(plainText: Foundation.Data, withKeyData: Foundation.Data) throws -> Foundation.Data
+  @objc public func decryptData(encryptedData: Foundation.Data, withKeyData: Foundation.Data) throws -> Foundation.Data
+  @objc public func deleteEncryptionKey(name: Swift.String) throws
+  @objc public func persistBiometricKeyData(name: Swift.String, keyData: Foundation.Data) throws
+  @objc public func getBiometricKeyData(name: Swift.String) throws -> Foundation.Data
+  @objc public func generateCodeVerifier() -> Foundation.Data
+  @objc public func generateCodeChallenge(challenge: Foundation.Data) -> Foundation.Data
+  @objc public func generateEd25519KeyPair() -> [Swift.String : Foundation.Data]
+  @objc public func signEd25519(key: Foundation.Data, challenge: Foundation.Data) throws -> Foundation.Data
+  @objc public func deriveEd25519PublicKeyFromPrivateKeyBytes(privateKeyData: Foundation.Data) throws -> Foundation.Data
+  @objc override dynamic public init()
+  @objc deinit
+}
+@_inheritsConvenienceInitializers @objc(StytchCAPTCHAProvider) public class StytchCAPTCHAProvider : ObjectiveC.NSObject {
+  @_Concurrency.MainActor @objc public static let shared: StytchSwiftUtils.StytchCAPTCHAProvider
+  @objc public func isConfigured() -> Swift.Bool
+  #if compiler(>=5.3) && $AsyncExecutionBehaviorAttributes
+  @objc nonisolated(nonsending) public func executeRecaptcha() async -> Swift.String
+  #endif
+  #if compiler(>=5.3) && $AsyncExecutionBehaviorAttributes
+  @objc nonisolated(nonsending) public func setCaptchaClient(siteKey: Swift.String) async
+  #endif
+  @objc override dynamic public init()
+  @objc deinit
+}
+@_inheritsConvenienceInitializers @objc(StytchDFPProvider) public class StytchDFPProvider : ObjectiveC.NSObject {
+  @_Concurrency.MainActor @objc public static let shared: StytchSwiftUtils.StytchDFPProvider
+  #if compiler(>=5.3) && $NonescapableTypes
+  @objc public func configure(publicToken: Swift.String, dfppaDomain: Swift.String?)
+  #endif
+  #if compiler(>=5.3) && $AsyncExecutionBehaviorAttributes
+  @objc nonisolated(nonsending) public func getTelemetryId() async -> Swift.String
+  #endif
+  @objc override dynamic public init()
+  @objc deinit
+}

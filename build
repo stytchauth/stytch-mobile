@@ -23,7 +23,7 @@ usage() {
 }
 
 buildAndPublishSwiftUtils() {
-    cd $ROOT_DIR/StytchSwiftUtils
+    cd $ROOT_DIR/source/StytchSwiftUtils
     # clear out any old stuff
     rm -rf derived archives StytchSwiftUtils.xcframework StytchSwiftUtils-Swift.h
 
@@ -46,8 +46,8 @@ buildAndPublishSwiftUtils() {
     cp ./derived/Build/Intermediates.noindex/StytchSwiftUtils.build/Release-iphonesimulator/StytchSwiftUtils.build/DerivedSources/StytchSwiftUtils-Swift.h ../stytch-multiplatform-shared/sdk/shared/src/iosMain/interop/StytchSwiftUtils-simulator.h
 
     # copy xcframework to usable locations
-    cp -r ./StytchSwiftUtils.xcframework ../stytch-multiplatform-shared/sdk/shared/src/iosMain/interop/
-    cp -r ./StytchSwiftUtils.xcframework ../stytch-ios
+    cp -r ./StytchSwiftUtils.xcframework $ROOT_DIR/source//stytch-multiplatform-shared/sdk/shared/src/iosMain/interop/
+    cp -r ./StytchSwiftUtils.xcframework $ROOT_DIR/artifacts/ios
 }
 
 buildAndPublishSharedSdkFirst() {
@@ -56,7 +56,7 @@ buildAndPublishSharedSdkFirst() {
 
     cd $SHARED_WORKING_DIR
     ./gradlew :sdk:shared:assembleStytchSharedSDKXCFramework :sdk:shared:publishToMavenLocal
-    cp -r sdk/shared/build/XCFrameworks/release/StytchSharedSDK.xcframework $ROOT_DIR/stytch-ios
+    cp -r sdk/shared/build/XCFrameworks/release/StytchSharedSDK.xcframework $ROOT_DIR/artifacts/ios
 }
 
 # --- Consumer builds ---
@@ -71,7 +71,7 @@ buildConsumerIos() {
     echo "Building consumer iOS artifacts..."
     cd $MAIN_WORKING_DIR
     ./gradlew assembleStytchConsumerSDKXCFramework --rerun-tasks
-    cp -r sdk/consumer-headless/build/XCFrameworks/release/StytchConsumerSDK.xcframework $ROOT_DIR/stytch-ios
+    cp -r sdk/consumer-headless/build/XCFrameworks/release/StytchConsumerSDK.xcframework $ROOT_DIR/artifacts/ios
 }
 
 buildConsumerRn() {
@@ -79,8 +79,8 @@ buildConsumerRn() {
     echo "Building consumer RN artifacts..."
     ./gradlew kotlinUpgradeYarnLock :sdk:consumer-headless:assemble :sdk:consumer-headless:jsBrowserProductionLibraryDistribution --rerun-tasks
     mkdir -p $ROOT_DIR/react-native/consumer/lib
-    cp -r sdk/consumer-headless/build/dist/js/productionLibrary/consumer-headless* $ROOT_DIR/react-native/consumer/lib
-    cd $ROOT_DIR/react-native/consumer
+    cp -r sdk/consumer-headless/build/dist/js/productionLibrary/consumer-headless* $ROOT_DIR/source/react-native/consumer/lib
+    cd $ROOT_DIR/source/react-native/consumer
     yarn build
     updateConsumerRnDemoApp
 }
@@ -88,7 +88,7 @@ buildConsumerRn() {
 updateConsumerRnDemoApp() {
     cd $ROOT_DIR/examples/rn
     yarn remove @stytch/react-native-consumer
-    yarn add file:$ROOT_DIR/react-native/consumer
+    yarn add file:$ROOT_DIR/source/react-native/consumer
 }
 
 # --- B2B builds ---
@@ -103,7 +103,7 @@ buildB2BIos() {
     echo "Building B2B iOS artifacts..."
     cd $MAIN_WORKING_DIR
     ./gradlew assembleStytchB2BSDKXCFramework --rerun-tasks
-    cp -r sdk/b2b-headless/build/XCFrameworks/release/StytchB2BSDK.xcframework $ROOT_DIR/stytch-ios
+    cp -r sdk/b2b-headless/build/XCFrameworks/release/StytchB2BSDK.xcframework $ROOT_DIR/artifacts/ios
 }
 
 buildB2BRn() {
@@ -111,8 +111,8 @@ buildB2BRn() {
     echo "Building B2B RN artifacts..."
     ./gradlew kotlinUpgradeYarnLock :sdk:b2b-headless:assemble :sdk:b2b-headless:jsBrowserProductionLibraryDistribution --rerun-tasks
     mkdir -p $ROOT_DIR/react-native/b2b/lib
-    cp -r sdk/b2b-headless/build/dist/js/productionLibrary/b2b-headless* $ROOT_DIR/react-native/b2b/lib
-    cd $ROOT_DIR/react-native/b2b
+    cp -r sdk/b2b-headless/build/dist/js/productionLibrary/b2b-headless* $ROOT_DIR/source/react-native/b2b/lib
+    cd $ROOT_DIR/source/react-native/b2b
     yarn build
 }
 
@@ -148,10 +148,10 @@ buildB2B() {
 
 cleanXcframeworks() {
     if [ -z "$SDK" ] || [ "$SDK" = "consumer" ]; then
-        rm -rf $ROOT_DIR/stytch-ios/StytchConsumerSDK.xcframework
+        rm -rf $ROOT_DIR/artifacts/ios/StytchConsumerSDK.xcframework
     fi
     if [ -z "$SDK" ] || [ "$SDK" = "b2b" ]; then
-        rm -rf $ROOT_DIR/stytch-ios/StytchB2BSDK.xcframework
+        rm -rf $ROOT_DIR/artifacts/ios/StytchB2BSDK.xcframework
     fi
 }
 

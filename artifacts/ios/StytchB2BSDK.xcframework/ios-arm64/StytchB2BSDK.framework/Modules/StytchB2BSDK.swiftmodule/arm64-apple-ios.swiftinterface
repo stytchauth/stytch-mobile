@@ -1,0 +1,2681 @@
+// swift-interface-format-version: 1.0
+// swift-compiler-version: Apple Swift version 6.2.1 effective-5.10 (swiftlang-6.2.1.4.8 clang-1700.4.4.1)
+// swift-module-flags: -target arm64-apple-ios14.0 -enable-objc-interop -enable-library-evolution -swift-version 5 -O -module-name StytchB2BSDK
+// swift-module-flags-ignorable:  -formal-cxx-interoperability-mode=off -interface-compiler-version 6.2.1
+import Foundation
+@_exported import StytchB2BSDK
+import Swift
+import _Concurrency
+import _StringProcessing
+import _SwiftConcurrencyShims
+extension Swift.Error {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public var asStytchError: StytchB2BSDK.StytchError? {
+    get
+  }
+  #endif
+}
+public enum Skie {
+  public enum KotlinxCoroutinesCore {
+    public enum StateFlow {
+      public typealias __Kotlin = StytchB2BSDK.Kotlinx_coroutines_coreStateFlow
+    }
+    public enum SharedFlow {
+      public typealias __Kotlin = StytchB2BSDK.Kotlinx_coroutines_coreSharedFlow
+    }
+    public enum Flow {
+      public typealias __Kotlin = StytchB2BSDK.Kotlinx_coroutines_coreFlow
+    }
+    public enum Runnable {
+      public typealias __Kotlin = StytchB2BSDK.Kotlinx_coroutines_coreRunnable
+    }
+    public enum MutableSharedFlow {
+      public typealias __Kotlin = StytchB2BSDK.Kotlinx_coroutines_coreMutableSharedFlow
+    }
+    public enum MutableStateFlow {
+      public typealias __Kotlin = StytchB2BSDK.Kotlinx_coroutines_coreMutableStateFlow
+    }
+    public enum SelectClause0 {
+    }
+    public enum SelectClause {
+    }
+    public enum SelectInstance {
+    }
+    public enum SelectClause1 {
+    }
+    public enum SelectClause2 {
+    }
+  }
+  public typealias org_jetbrains_kotlinx__kotlinx_coroutines_core = StytchB2BSDK.Skie.KotlinxCoroutinesCore
+  public enum RuntimeKotlin {
+    public enum SkieColdFlowIterator {
+      public typealias __Kotlin = StytchB2BSDK.SkieColdFlowIterator
+    }
+    public enum SkieKotlinFlow {
+      public typealias __Kotlin = StytchB2BSDK.SkieKotlinFlow
+    }
+    public enum SkieKotlinMutableSharedFlow {
+      public typealias __Kotlin = StytchB2BSDK.SkieKotlinMutableSharedFlow
+    }
+    public enum SkieKotlinMutableStateFlow {
+      public typealias __Kotlin = StytchB2BSDK.SkieKotlinMutableStateFlow
+    }
+    public enum SkieKotlinOptionalFlow {
+      public typealias __Kotlin = StytchB2BSDK.SkieKotlinOptionalFlow
+    }
+    public enum SkieKotlinOptionalMutableSharedFlow {
+      public typealias __Kotlin = StytchB2BSDK.SkieKotlinOptionalMutableSharedFlow
+    }
+    public enum SkieKotlinOptionalMutableStateFlow {
+      public typealias __Kotlin = StytchB2BSDK.SkieKotlinOptionalMutableStateFlow
+    }
+    public enum SkieKotlinOptionalSharedFlow {
+      public typealias __Kotlin = StytchB2BSDK.SkieKotlinOptionalSharedFlow
+    }
+    public enum SkieKotlinOptionalStateFlow {
+      public typealias __Kotlin = StytchB2BSDK.SkieKotlinOptionalStateFlow
+    }
+    public enum SkieKotlinSharedFlow {
+      public typealias __Kotlin = StytchB2BSDK.SkieKotlinSharedFlow
+    }
+    public enum SkieKotlinStateFlow {
+      public typealias __Kotlin = StytchB2BSDK.SkieKotlinStateFlow
+    }
+    public enum Skie_CancellationHandler {
+      public typealias __Kotlin = StytchB2BSDK.Skie_CancellationHandler
+    }
+    public enum Skie_DispatcherDelegate {
+      public typealias __Kotlin = StytchB2BSDK.Skie_DispatcherDelegate
+    }
+    public enum Skie_SuspendHandler {
+      public typealias __Kotlin = StytchB2BSDK.Skie_SuspendHandler
+    }
+    public enum Skie_SuspendResult {
+      public typealias __Kotlin = StytchB2BSDK.Skie_SuspendResult
+      public enum Success {
+        public typealias __Kotlin = StytchB2BSDK.Skie_SuspendResult.Success
+      }
+      public enum Error {
+        public typealias __Kotlin = StytchB2BSDK.Skie_SuspendResult.Error
+      }
+      public enum Canceled {
+        public typealias __Kotlin = StytchB2BSDK.Skie_SuspendResult.Canceled
+      }
+    }
+  }
+  public typealias co_touchlab_skie__runtime_kotlin = StytchB2BSDK.Skie.RuntimeKotlin
+  public enum KtorUtils {
+    public enum Pipeline {
+    }
+  }
+  public typealias io_ktor__ktor_utils = StytchB2BSDK.Skie.KtorUtils
+  public enum Shared {
+    public enum BiometricsAvailability {
+    }
+    public enum SSOError {
+    }
+    public enum OAuthResult {
+    }
+  }
+  public typealias com_stytch_sdk__shared = StytchB2BSDK.Skie.Shared
+  public enum KotlinxSerializationCore {
+    public enum SerialKind {
+    }
+    public enum SerializersModule {
+    }
+    public enum PolymorphicKind {
+    }
+    public enum PrimitiveKind {
+    }
+    public enum StructureKind {
+    }
+  }
+  public typealias org_jetbrains_kotlinx__kotlinx_serialization_core = StytchB2BSDK.Skie.KotlinxSerializationCore
+  public enum KtorHttp {
+    public enum OutgoingContent {
+    }
+  }
+  public typealias io_ktor__ktor_http = StytchB2BSDK.Skie.KtorHttp
+  public enum KotlinxIoCore {
+    public enum Source {
+    }
+    public enum Sink {
+    }
+  }
+  public typealias org_jetbrains_kotlinx__kotlinx_io_core = StytchB2BSDK.Skie.KotlinxIoCore
+  public enum KtorfitLibCore {
+    public enum KtorfitResult {
+    }
+  }
+  public typealias Ktorfit__ktorfit_lib_core = StytchB2BSDK.Skie.KtorfitLibCore
+  public enum B2bHeadless {
+    public enum B2BAuthenticationState {
+    }
+    public enum DeeplinkAuthenticationStatus {
+    }
+  }
+  public typealias com_stytch_sdk__b2b_headless = StytchB2BSDK.Skie.B2bHeadless
+  public enum KotlinxSerializationJson {
+    public enum JsonElement {
+    }
+    public enum JsonPrimitive {
+    }
+  }
+  public typealias org_jetbrains_kotlinx__kotlinx_serialization_json = StytchB2BSDK.Skie.KotlinxSerializationJson
+}
+@_hasMissingDesignatedInitializers public class SkieSwiftFlowIterator<T> : _Concurrency.AsyncIteratorProtocol {
+  #if compiler(>=5.3) && $NonescapableTypes
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func next() async -> T?
+  #endif
+  @objc deinit
+  public typealias Element = T
+  @available(iOS 18.0, tvOS 18.0, watchOS 11.0, visionOS 2.0, macOS 15.0, *)
+  @_implements(_Concurrency.AsyncIteratorProtocol, Failure) public typealias __AsyncIteratorProtocol_Failure = Swift.Never
+}
+public protocol SkieSwiftFlowProtocol<Element> : _Concurrency.AsyncSequence {
+  associatedtype Element
+  associatedtype Delegate : StytchB2BSDK.Kotlinx_coroutines_coreFlow
+}
+@_hasMissingDesignatedInitializers final public class SkieSwiftFlow<T> : StytchB2BSDK.SkieSwiftFlowProtocol, Swift._ObjectiveCBridgeable {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public static func _forceBridgeFromObjectiveC(_ source: StytchB2BSDK.SkieKotlinFlow<Swift.AnyObject>, result: inout StytchB2BSDK.SkieSwiftFlow<T>?)
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public static func _conditionallyBridgeFromObjectiveC(_ source: StytchB2BSDK.SkieKotlinFlow<Swift.AnyObject>, result: inout StytchB2BSDK.SkieSwiftFlow<T>?) -> Swift.Bool
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public static func _unconditionallyBridgeFromObjectiveC(_ source: StytchB2BSDK.SkieKotlinFlow<Swift.AnyObject>?) -> Self
+  #endif
+  final public func _bridgeToObjectiveC() -> StytchB2BSDK.SkieKotlinFlow<Swift.AnyObject>
+  final public func makeAsyncIterator() -> StytchB2BSDK.SkieSwiftFlowIterator<T>
+  public typealias AsyncIterator = StytchB2BSDK.SkieSwiftFlowIterator<T>
+  public typealias Element = T
+  public typealias _ObjectiveCType = StytchB2BSDK.SkieKotlinFlow<Swift.AnyObject>
+  public typealias Delegate = any StytchB2BSDK.Kotlinx_coroutines_coreFlow
+  @available(iOS 18.0, tvOS 18.0, watchOS 11.0, visionOS 2.0, macOS 15.0, *)
+  @_implements(_Concurrency.AsyncSequence, Failure) public typealias __AsyncSequence_Failure = Swift.Never
+  @objc deinit
+}
+@_hasMissingDesignatedInitializers final public class SkieSwiftOptionalFlow<T> : StytchB2BSDK.SkieSwiftFlowProtocol, Swift._ObjectiveCBridgeable {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public static func _forceBridgeFromObjectiveC(_ source: StytchB2BSDK.SkieKotlinOptionalFlow<Swift.AnyObject>, result: inout StytchB2BSDK.SkieSwiftOptionalFlow<T>?)
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public static func _conditionallyBridgeFromObjectiveC(_ source: StytchB2BSDK.SkieKotlinOptionalFlow<Swift.AnyObject>, result: inout StytchB2BSDK.SkieSwiftOptionalFlow<T>?) -> Swift.Bool
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public static func _unconditionallyBridgeFromObjectiveC(_ source: StytchB2BSDK.SkieKotlinOptionalFlow<Swift.AnyObject>?) -> Self
+  #endif
+  final public func _bridgeToObjectiveC() -> StytchB2BSDK.SkieKotlinOptionalFlow<Swift.AnyObject>
+  #if compiler(>=5.3) && $NonescapableTypes
+  final public func makeAsyncIterator() -> StytchB2BSDK.SkieSwiftFlowIterator<T?>
+  #endif
+  public typealias AsyncIterator = StytchB2BSDK.SkieSwiftFlowIterator<T?>
+  public typealias Element = T?
+  public typealias _ObjectiveCType = StytchB2BSDK.SkieKotlinOptionalFlow<Swift.AnyObject>
+  public typealias Delegate = any StytchB2BSDK.Kotlinx_coroutines_coreFlow
+  @available(iOS 18.0, tvOS 18.0, watchOS 11.0, visionOS 2.0, macOS 15.0, *)
+  @_implements(_Concurrency.AsyncSequence, Failure) public typealias __AsyncSequence_Failure = Swift.Never
+  @objc deinit
+}
+@_hasMissingDesignatedInitializers final public class SkieSwiftSharedFlow<T> : StytchB2BSDK.SkieSwiftFlowProtocol, Swift._ObjectiveCBridgeable {
+  final public var replayCache: [T] {
+    get
+  }
+  #if compiler(>=5.3) && $NonescapableTypes
+  public static func _forceBridgeFromObjectiveC(_ source: StytchB2BSDK.SkieKotlinSharedFlow<Swift.AnyObject>, result: inout StytchB2BSDK.SkieSwiftSharedFlow<T>?)
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public static func _conditionallyBridgeFromObjectiveC(_ source: StytchB2BSDK.SkieKotlinSharedFlow<Swift.AnyObject>, result: inout StytchB2BSDK.SkieSwiftSharedFlow<T>?) -> Swift.Bool
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public static func _unconditionallyBridgeFromObjectiveC(_ source: StytchB2BSDK.SkieKotlinSharedFlow<Swift.AnyObject>?) -> Self
+  #endif
+  final public func _bridgeToObjectiveC() -> StytchB2BSDK.SkieKotlinSharedFlow<Swift.AnyObject>
+  final public func makeAsyncIterator() -> StytchB2BSDK.SkieSwiftFlowIterator<T>
+  public typealias AsyncIterator = StytchB2BSDK.SkieSwiftFlowIterator<T>
+  public typealias Element = T
+  public typealias _ObjectiveCType = StytchB2BSDK.SkieKotlinSharedFlow<Swift.AnyObject>
+  public typealias Delegate = any StytchB2BSDK.Kotlinx_coroutines_coreSharedFlow
+  @available(iOS 18.0, tvOS 18.0, watchOS 11.0, visionOS 2.0, macOS 15.0, *)
+  @_implements(_Concurrency.AsyncSequence, Failure) public typealias __AsyncSequence_Failure = Swift.Never
+  @objc deinit
+}
+@_hasMissingDesignatedInitializers final public class SkieSwiftOptionalSharedFlow<T> : StytchB2BSDK.SkieSwiftFlowProtocol, Swift._ObjectiveCBridgeable {
+  #if compiler(>=5.3) && $NonescapableTypes
+  final public var replayCache: [T?] {
+    get
+  }
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public static func _forceBridgeFromObjectiveC(_ source: StytchB2BSDK.SkieKotlinOptionalSharedFlow<Swift.AnyObject>, result: inout StytchB2BSDK.SkieSwiftOptionalSharedFlow<T>?)
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public static func _conditionallyBridgeFromObjectiveC(_ source: StytchB2BSDK.SkieKotlinOptionalSharedFlow<Swift.AnyObject>, result: inout StytchB2BSDK.SkieSwiftOptionalSharedFlow<T>?) -> Swift.Bool
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public static func _unconditionallyBridgeFromObjectiveC(_ source: StytchB2BSDK.SkieKotlinOptionalSharedFlow<Swift.AnyObject>?) -> Self
+  #endif
+  final public func _bridgeToObjectiveC() -> StytchB2BSDK.SkieKotlinOptionalSharedFlow<Swift.AnyObject>
+  #if compiler(>=5.3) && $NonescapableTypes
+  final public func makeAsyncIterator() -> StytchB2BSDK.SkieSwiftFlowIterator<T?>
+  #endif
+  public typealias AsyncIterator = StytchB2BSDK.SkieSwiftFlowIterator<T?>
+  public typealias Element = T?
+  public typealias _ObjectiveCType = StytchB2BSDK.SkieKotlinOptionalSharedFlow<Swift.AnyObject>
+  public typealias Delegate = any StytchB2BSDK.Kotlinx_coroutines_coreSharedFlow
+  @available(iOS 18.0, tvOS 18.0, watchOS 11.0, visionOS 2.0, macOS 15.0, *)
+  @_implements(_Concurrency.AsyncSequence, Failure) public typealias __AsyncSequence_Failure = Swift.Never
+  @objc deinit
+}
+@_hasMissingDesignatedInitializers final public class SkieSwiftMutableSharedFlow<T> : StytchB2BSDK.SkieSwiftFlowProtocol, Swift._ObjectiveCBridgeable {
+  final public var subscriptionCount: StytchB2BSDK.SkieSwiftStateFlow<StytchB2BSDK.KotlinInt> {
+    get
+  }
+  final public var replayCache: [T] {
+    get
+  }
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  final public func emit(value: T) async throws
+  final public func tryEmit(value: T) -> Swift.Bool
+  final public func resetReplayCache()
+  #if compiler(>=5.3) && $NonescapableTypes
+  public static func _forceBridgeFromObjectiveC(_ source: StytchB2BSDK.SkieKotlinMutableSharedFlow<Swift.AnyObject>, result: inout StytchB2BSDK.SkieSwiftMutableSharedFlow<T>?)
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public static func _conditionallyBridgeFromObjectiveC(_ source: StytchB2BSDK.SkieKotlinMutableSharedFlow<Swift.AnyObject>, result: inout StytchB2BSDK.SkieSwiftMutableSharedFlow<T>?) -> Swift.Bool
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public static func _unconditionallyBridgeFromObjectiveC(_ source: StytchB2BSDK.SkieKotlinMutableSharedFlow<Swift.AnyObject>?) -> Self
+  #endif
+  final public func _bridgeToObjectiveC() -> StytchB2BSDK.SkieKotlinMutableSharedFlow<Swift.AnyObject>
+  final public func makeAsyncIterator() -> StytchB2BSDK.SkieSwiftFlowIterator<T>
+  public typealias AsyncIterator = StytchB2BSDK.SkieSwiftFlowIterator<T>
+  public typealias Element = T
+  public typealias _ObjectiveCType = StytchB2BSDK.SkieKotlinMutableSharedFlow<Swift.AnyObject>
+  public typealias Delegate = any StytchB2BSDK.Kotlinx_coroutines_coreMutableSharedFlow
+  @available(iOS 18.0, tvOS 18.0, watchOS 11.0, visionOS 2.0, macOS 15.0, *)
+  @_implements(_Concurrency.AsyncSequence, Failure) public typealias __AsyncSequence_Failure = Swift.Never
+  @objc deinit
+}
+@_hasMissingDesignatedInitializers final public class SkieSwiftOptionalMutableSharedFlow<T> : StytchB2BSDK.SkieSwiftFlowProtocol, Swift._ObjectiveCBridgeable {
+  final public var subscriptionCount: StytchB2BSDK.SkieSwiftStateFlow<StytchB2BSDK.KotlinInt> {
+    get
+  }
+  #if compiler(>=5.3) && $NonescapableTypes
+  final public var replayCache: [T?] {
+    get
+  }
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  final public func emit(value: T?) async throws
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  final public func tryEmit(value: T?) -> Swift.Bool
+  #endif
+  final public func resetReplayCache()
+  #if compiler(>=5.3) && $NonescapableTypes
+  public static func _forceBridgeFromObjectiveC(_ source: StytchB2BSDK.SkieKotlinOptionalMutableSharedFlow<Swift.AnyObject>, result: inout StytchB2BSDK.SkieSwiftOptionalMutableSharedFlow<T>?)
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public static func _conditionallyBridgeFromObjectiveC(_ source: StytchB2BSDK.SkieKotlinOptionalMutableSharedFlow<Swift.AnyObject>, result: inout StytchB2BSDK.SkieSwiftOptionalMutableSharedFlow<T>?) -> Swift.Bool
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public static func _unconditionallyBridgeFromObjectiveC(_ source: StytchB2BSDK.SkieKotlinOptionalMutableSharedFlow<Swift.AnyObject>?) -> Self
+  #endif
+  final public func _bridgeToObjectiveC() -> StytchB2BSDK.SkieKotlinOptionalMutableSharedFlow<Swift.AnyObject>
+  #if compiler(>=5.3) && $NonescapableTypes
+  final public func makeAsyncIterator() -> StytchB2BSDK.SkieSwiftFlowIterator<T?>
+  #endif
+  public typealias AsyncIterator = StytchB2BSDK.SkieSwiftFlowIterator<T?>
+  public typealias Element = T?
+  public typealias _ObjectiveCType = StytchB2BSDK.SkieKotlinOptionalMutableSharedFlow<Swift.AnyObject>
+  public typealias Delegate = any StytchB2BSDK.Kotlinx_coroutines_coreMutableSharedFlow
+  @available(iOS 18.0, tvOS 18.0, watchOS 11.0, visionOS 2.0, macOS 15.0, *)
+  @_implements(_Concurrency.AsyncSequence, Failure) public typealias __AsyncSequence_Failure = Swift.Never
+  @objc deinit
+}
+@_hasMissingDesignatedInitializers final public class SkieSwiftStateFlow<T> : StytchB2BSDK.SkieSwiftFlowProtocol, Swift._ObjectiveCBridgeable {
+  final public var value: T {
+    get
+  }
+  final public var replayCache: [T] {
+    get
+  }
+  #if compiler(>=5.3) && $NonescapableTypes
+  public static func _forceBridgeFromObjectiveC(_ source: StytchB2BSDK.SkieKotlinStateFlow<Swift.AnyObject>, result: inout StytchB2BSDK.SkieSwiftStateFlow<T>?)
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public static func _conditionallyBridgeFromObjectiveC(_ source: StytchB2BSDK.SkieKotlinStateFlow<Swift.AnyObject>, result: inout StytchB2BSDK.SkieSwiftStateFlow<T>?) -> Swift.Bool
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public static func _unconditionallyBridgeFromObjectiveC(_ source: StytchB2BSDK.SkieKotlinStateFlow<Swift.AnyObject>?) -> Self
+  #endif
+  final public func _bridgeToObjectiveC() -> StytchB2BSDK.SkieKotlinStateFlow<Swift.AnyObject>
+  final public func makeAsyncIterator() -> StytchB2BSDK.SkieSwiftFlowIterator<T>
+  public typealias AsyncIterator = StytchB2BSDK.SkieSwiftFlowIterator<T>
+  public typealias Element = T
+  public typealias _ObjectiveCType = StytchB2BSDK.SkieKotlinStateFlow<Swift.AnyObject>
+  public typealias Delegate = any StytchB2BSDK.Kotlinx_coroutines_coreStateFlow
+  @available(iOS 18.0, tvOS 18.0, watchOS 11.0, visionOS 2.0, macOS 15.0, *)
+  @_implements(_Concurrency.AsyncSequence, Failure) public typealias __AsyncSequence_Failure = Swift.Never
+  @objc deinit
+}
+@_hasMissingDesignatedInitializers final public class SkieSwiftOptionalStateFlow<T> : StytchB2BSDK.SkieSwiftFlowProtocol, Swift._ObjectiveCBridgeable {
+  #if compiler(>=5.3) && $NonescapableTypes
+  final public var value: T? {
+    get
+  }
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  final public var replayCache: [T?] {
+    get
+  }
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public static func _forceBridgeFromObjectiveC(_ source: StytchB2BSDK.SkieKotlinOptionalStateFlow<Swift.AnyObject>, result: inout StytchB2BSDK.SkieSwiftOptionalStateFlow<T>?)
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public static func _conditionallyBridgeFromObjectiveC(_ source: StytchB2BSDK.SkieKotlinOptionalStateFlow<Swift.AnyObject>, result: inout StytchB2BSDK.SkieSwiftOptionalStateFlow<T>?) -> Swift.Bool
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public static func _unconditionallyBridgeFromObjectiveC(_ source: StytchB2BSDK.SkieKotlinOptionalStateFlow<Swift.AnyObject>?) -> Self
+  #endif
+  final public func _bridgeToObjectiveC() -> StytchB2BSDK.SkieKotlinOptionalStateFlow<Swift.AnyObject>
+  #if compiler(>=5.3) && $NonescapableTypes
+  final public func makeAsyncIterator() -> StytchB2BSDK.SkieSwiftFlowIterator<T?>
+  #endif
+  public typealias AsyncIterator = StytchB2BSDK.SkieSwiftFlowIterator<T?>
+  public typealias Element = T?
+  public typealias _ObjectiveCType = StytchB2BSDK.SkieKotlinOptionalStateFlow<Swift.AnyObject>
+  public typealias Delegate = any StytchB2BSDK.Kotlinx_coroutines_coreStateFlow
+  @available(iOS 18.0, tvOS 18.0, watchOS 11.0, visionOS 2.0, macOS 15.0, *)
+  @_implements(_Concurrency.AsyncSequence, Failure) public typealias __AsyncSequence_Failure = Swift.Never
+  @objc deinit
+}
+@_hasMissingDesignatedInitializers final public class SkieSwiftMutableStateFlow<T> : StytchB2BSDK.SkieSwiftFlowProtocol, Swift._ObjectiveCBridgeable {
+  final public var value: T {
+    get
+    set(value)
+  }
+  final public var replayCache: [T] {
+    get
+  }
+  final public var subscriptionCount: StytchB2BSDK.SkieSwiftStateFlow<StytchB2BSDK.KotlinInt> {
+    get
+  }
+  final public func compareAndSet(expect: T, update: T) -> Swift.Bool
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  final public func emit(value: T) async throws
+  final public func tryEmit(value: T) -> Swift.Bool
+  final public func resetReplayCache()
+  #if compiler(>=5.3) && $NonescapableTypes
+  public static func _forceBridgeFromObjectiveC(_ source: StytchB2BSDK.SkieKotlinMutableStateFlow<Swift.AnyObject>, result: inout StytchB2BSDK.SkieSwiftMutableStateFlow<T>?)
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public static func _conditionallyBridgeFromObjectiveC(_ source: StytchB2BSDK.SkieKotlinMutableStateFlow<Swift.AnyObject>, result: inout StytchB2BSDK.SkieSwiftMutableStateFlow<T>?) -> Swift.Bool
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public static func _unconditionallyBridgeFromObjectiveC(_ source: StytchB2BSDK.SkieKotlinMutableStateFlow<Swift.AnyObject>?) -> Self
+  #endif
+  final public func _bridgeToObjectiveC() -> StytchB2BSDK.SkieKotlinMutableStateFlow<Swift.AnyObject>
+  final public func makeAsyncIterator() -> StytchB2BSDK.SkieSwiftFlowIterator<T>
+  public typealias AsyncIterator = StytchB2BSDK.SkieSwiftFlowIterator<T>
+  public typealias Element = T
+  public typealias _ObjectiveCType = StytchB2BSDK.SkieKotlinMutableStateFlow<Swift.AnyObject>
+  public typealias Delegate = any StytchB2BSDK.Kotlinx_coroutines_coreMutableStateFlow
+  @available(iOS 18.0, tvOS 18.0, watchOS 11.0, visionOS 2.0, macOS 15.0, *)
+  @_implements(_Concurrency.AsyncSequence, Failure) public typealias __AsyncSequence_Failure = Swift.Never
+  @objc deinit
+}
+@_hasMissingDesignatedInitializers final public class SkieSwiftOptionalMutableStateFlow<T> : StytchB2BSDK.SkieSwiftFlowProtocol, Swift._ObjectiveCBridgeable {
+  #if compiler(>=5.3) && $NonescapableTypes
+  final public var value: T? {
+    get
+    set(value)
+  }
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  final public var replayCache: [T?] {
+    get
+  }
+  #endif
+  final public var subscriptionCount: StytchB2BSDK.SkieSwiftStateFlow<StytchB2BSDK.KotlinInt> {
+    get
+  }
+  #if compiler(>=5.3) && $NonescapableTypes
+  final public func compareAndSet(expect: T?, update: T?) -> Swift.Bool
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  final public func emit(value: T?) async throws
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  final public func tryEmit(value: T?) -> Swift.Bool
+  #endif
+  final public func resetReplayCache()
+  #if compiler(>=5.3) && $NonescapableTypes
+  public static func _forceBridgeFromObjectiveC(_ source: StytchB2BSDK.SkieKotlinOptionalMutableStateFlow<Swift.AnyObject>, result: inout StytchB2BSDK.SkieSwiftOptionalMutableStateFlow<T>?)
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public static func _conditionallyBridgeFromObjectiveC(_ source: StytchB2BSDK.SkieKotlinOptionalMutableStateFlow<Swift.AnyObject>, result: inout StytchB2BSDK.SkieSwiftOptionalMutableStateFlow<T>?) -> Swift.Bool
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public static func _unconditionallyBridgeFromObjectiveC(_ source: StytchB2BSDK.SkieKotlinOptionalMutableStateFlow<Swift.AnyObject>?) -> Self
+  #endif
+  final public func _bridgeToObjectiveC() -> StytchB2BSDK.SkieKotlinOptionalMutableStateFlow<Swift.AnyObject>
+  #if compiler(>=5.3) && $NonescapableTypes
+  final public func makeAsyncIterator() -> StytchB2BSDK.SkieSwiftFlowIterator<T?>
+  #endif
+  public typealias AsyncIterator = StytchB2BSDK.SkieSwiftFlowIterator<T?>
+  public typealias Element = T?
+  public typealias _ObjectiveCType = StytchB2BSDK.SkieKotlinOptionalMutableStateFlow<Swift.AnyObject>
+  public typealias Delegate = any StytchB2BSDK.Kotlinx_coroutines_coreMutableStateFlow
+  @available(iOS 18.0, tvOS 18.0, watchOS 11.0, visionOS 2.0, macOS 15.0, *)
+  @_implements(_Concurrency.AsyncSequence, Failure) public typealias __AsyncSequence_Failure = Swift.Never
+  @objc deinit
+}
+extension StytchB2BSDK.StytchNetworkRequestKt {
+  #if compiler(>=5.3) && $NonescapableTypes
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public static func stytchNetworkRequest(middleware: any StytchB2BSDK.StytchNetworkResponseMiddleware, block: any StytchB2BSDK.KotlinSuspendFunction0) async throws -> Any?
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public static func stytchNetworkRequestWithRetryAndBackoff(maxRetries: Swift.Int32, initialDelay: Swift.Int64, maxDelay: Swift.Int64, factor: Swift.Double, block: any StytchB2BSDK.KotlinSuspendFunction0) async throws -> Any?
+  #endif
+}
+#if compiler(>=5.3) && $NonescapableTypes
+public func __stytchNetworkRequest(middleware: any StytchB2BSDK.StytchNetworkResponseMiddleware, block: any StytchB2BSDK.KotlinSuspendFunction0, completionHandler: @escaping (Any?, (any Swift.Error)?) -> Swift.Void)
+#endif
+#if compiler(>=5.3) && $NonescapableTypes
+@available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+public func stytchNetworkRequest(middleware: any StytchB2BSDK.StytchNetworkResponseMiddleware, block: any StytchB2BSDK.KotlinSuspendFunction0) async throws -> Any?
+#endif
+#if compiler(>=5.3) && $NonescapableTypes
+public func __stytchNetworkRequestWithRetryAndBackoff(maxRetries: Swift.Int32, initialDelay: Swift.Int64, maxDelay: Swift.Int64, factor: Swift.Double, block: any StytchB2BSDK.KotlinSuspendFunction0, completionHandler: @escaping (Any?, (any Swift.Error)?) -> Swift.Void)
+#endif
+#if compiler(>=5.3) && $NonescapableTypes
+@available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+public func stytchNetworkRequestWithRetryAndBackoff(maxRetries: Swift.Int32, initialDelay: Swift.Int64, maxDelay: Swift.Int64, factor: Swift.Double, block: any StytchB2BSDK.KotlinSuspendFunction0) async throws -> Any?
+#endif
+extension StytchB2BSDK.StytchAuthenticationStateManager {
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func revoke() async throws
+  #if compiler(>=5.3) && $NonescapableTypes
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func update(response: Any?) async throws
+  #endif
+}
+extension StytchB2BSDK.Kotlinx_coroutines_coreFlow {
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func collect(collector: any StytchB2BSDK.Kotlinx_coroutines_coreFlowCollector) async throws
+}
+extension StytchB2BSDK.Kotlinx_coroutines_coreFlowCollector {
+  #if compiler(>=5.3) && $NonescapableTypes
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func emit(value: Any?) async throws
+  #endif
+}
+extension StytchB2BSDK.IBiometricsProvider {
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func authenticate(parameters: StytchB2BSDK.BiometricsParameters) async throws -> StytchB2BSDK.Ed25519KeyPair
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func getAvailability(parameters: StytchB2BSDK.BiometricsParameters) async throws -> StytchB2BSDK.BiometricsAvailability
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func persistRegistration(registrationId: Swift.String, privateKeyData: Swift.String) async throws
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func register(parameters: StytchB2BSDK.BiometricsParameters) async throws -> StytchB2BSDK.Ed25519KeyPair
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func removeRegistration() async throws
+}
+extension StytchB2BSDK.IPasskeyProvider {
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func createPublicKeyCredential(parameters: StytchB2BSDK.PasskeysParameters, dispatchers: StytchB2BSDK.StytchDispatchers, json: Swift.String) async throws -> Swift.String
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func getPublicKeyCredential(parameters: StytchB2BSDK.PasskeysParameters, dispatchers: StytchB2BSDK.StytchDispatchers, json: Swift.String) async throws -> Swift.String
+}
+extension StytchB2BSDK.IOAuthProvider {
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func getOAuthToken(parameters: StytchB2BSDK.OAuthStartParameters, pkceClient: StytchB2BSDK.PKCEClient, dispatchers: StytchB2BSDK.StytchDispatchers, type: StytchB2BSDK.OAuthProviderType, baseUrl: Swift.String, publicTokenInfo: StytchB2BSDK.PublicTokenInfo) async throws -> StytchB2BSDK.OAuthResult
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func startBrowserFlow(url: Swift.String, parameters: StytchB2BSDK.OAuthStartParameters, dispatchers: StytchB2BSDK.StytchDispatchers) async throws -> StytchB2BSDK.OAuthResult
+}
+extension StytchB2BSDK.PKCEClient {
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func create() async throws -> StytchB2BSDK.PKCECodePair
+  #if compiler(>=5.3) && $NonescapableTypes
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func retrieve() async throws -> StytchB2BSDK.PKCECodePair?
+  #endif
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func revoke() async throws
+}
+extension StytchB2BSDK.StytchPersistenceClient {
+  #if compiler(>=5.3) && $NonescapableTypes
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func get(key: Swift.String, default: Any?) async throws -> Any?
+  #endif
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func remove(key: Swift.String) async throws
+  #if compiler(>=5.3) && $NonescapableTypes
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func save(key: Swift.String, data: Any?) async throws
+  #endif
+}
+extension StytchB2BSDK.DFPProvider {
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func getTelemetryId() async throws -> Swift.String
+}
+extension StytchB2BSDK.CAPTCHAProvider {
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func getCAPTCHAToken() async throws -> Swift.String
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func initialize(siteKey: Swift.String) async throws
+}
+extension StytchB2BSDK.Kotlinx_coroutines_coreJob {
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func join() async throws
+}
+extension StytchB2BSDK.Skie.KtorUtils.Pipeline {
+  public struct __Suspend<TSubject, TContext> where TSubject : AnyObject, TContext : AnyObject {
+    public let __kotlinObject: StytchB2BSDK.Ktor_utilsPipeline<TSubject, TContext>
+    public init(_ __kotlinObject: StytchB2BSDK.Ktor_utilsPipeline<TSubject, TContext>)
+  }
+}
+public func skie<TSubject, TContext>(_ kotlinObject: StytchB2BSDK.Ktor_utilsPipeline<TSubject, TContext>) -> StytchB2BSDK.Skie.KtorUtils.Pipeline.__Suspend<TSubject, TContext> where TSubject : AnyObject, TContext : AnyObject
+extension StytchB2BSDK.Skie.KtorUtils.Pipeline.__Suspend {
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func execute(context: TContext, subject: TSubject) async throws -> TSubject
+}
+extension StytchB2BSDK.KotlinSuspendFunction2 {
+  #if compiler(>=5.3) && $NonescapableTypes
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func invoke(p1: Any?, p2: Any?) async throws -> Any?
+  #endif
+}
+extension StytchB2BSDK.Ktor_client_coreHttpClientCall {
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func body(info: StytchB2BSDK.Ktor_utilsTypeInfo) async throws -> Any
+  #if compiler(>=5.3) && $NonescapableTypes
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func bodyNullable(info: StytchB2BSDK.Ktor_utilsTypeInfo) async throws -> Any?
+  #endif
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func getResponseContent() async throws -> any StytchB2BSDK.Ktor_ioByteReadChannel
+}
+extension StytchB2BSDK.Ktor_ioByteReadChannel {
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func awaitContent(min: Swift.Int32) async throws -> StytchB2BSDK.KotlinBoolean
+}
+extension StytchB2BSDK.Ktor_client_coreHttpClientEngine {
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func execute(data: StytchB2BSDK.Ktor_client_coreHttpRequestData) async throws -> StytchB2BSDK.Ktor_client_coreHttpResponseData
+}
+extension StytchB2BSDK.KotlinSuspendFunction0 {
+  #if compiler(>=5.3) && $NonescapableTypes
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func invoke() async throws -> Any?
+  #endif
+}
+extension StytchB2BSDK.StytchNetworkResponseMiddleware {
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func onError(exception: StytchB2BSDK.Ktor_client_coreResponseException) async throws -> StytchB2BSDK.KotlinException
+  #if compiler(>=5.3) && $NonescapableTypes
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func onSuccess(data: Any?) async throws
+  #endif
+}
+extension StytchB2BSDK.StytchNetworkingClient {
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func refreshBootStrapData() async throws -> StytchB2BSDK.BootstrapResponse_
+  #if compiler(>=5.3) && $NonescapableTypes
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func request(block: any StytchB2BSDK.KotlinSuspendFunction0) async throws -> Any?
+  #endif
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func updateSessionAndReturnExpiration() async throws -> StytchB2BSDK.KotlinInstant
+}
+extension StytchB2BSDK.Ktorfit_lib_coreConverterSuspendResponseConverter {
+  #if compiler(>=5.3) && $NonescapableTypes
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func convert(result: any StytchB2BSDK.Ktorfit_lib_coreKtorfitResult) async throws -> Any?
+  #endif
+}
+extension StytchB2BSDK.Skie.RuntimeKotlin.SkieColdFlowIterator {
+  public struct __Suspend<E> where E : AnyObject {
+    public let __kotlinObject: StytchB2BSDK.SkieColdFlowIterator<E>
+    public init(_ __kotlinObject: StytchB2BSDK.SkieColdFlowIterator<E>)
+  }
+}
+public func skie<E>(_ kotlinObject: StytchB2BSDK.SkieColdFlowIterator<E>) -> StytchB2BSDK.Skie.RuntimeKotlin.SkieColdFlowIterator.__Suspend<E> where E : AnyObject
+extension StytchB2BSDK.Skie.RuntimeKotlin.SkieColdFlowIterator.__Suspend {
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func hasNext() async throws -> StytchB2BSDK.KotlinBoolean
+}
+extension StytchB2BSDK.StytchB2B {
+  #if compiler(>=5.3) && $NonescapableTypes
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func authenticate(url: Swift.String, sessionDurationMinutes: StytchB2BSDK.KotlinInt?) async throws -> StytchB2BSDK.DeeplinkAuthenticationStatus
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func getPKCECodePair() async throws -> StytchB2BSDK.PKCECodePair?
+  #endif
+}
+extension StytchB2BSDK.B2BTOTPClient {
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func authenticate(request: any StytchB2BSDK.IB2BTOTPsAuthenticateParameters) async throws -> StytchB2BSDK.B2BTOTPsAuthenticateResponse
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func create(request: any StytchB2BSDK.IB2BTOTPsCreateParameters) async throws -> StytchB2BSDK.B2BTOTPsCreateResponse
+}
+extension StytchB2BSDK.B2BSSOClient {
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func authenticate(request: any StytchB2BSDK.IB2BSSOAuthEnticateParameters) async throws -> StytchB2BSDK.B2BSSOAuthEnticateResponse
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func deleteConnection(connectionId: Swift.String) async throws -> StytchB2BSDK.B2BDeleteSSOConnectionResponse
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func getConnections() async throws -> StytchB2BSDK.B2BGetSSOConnectionsResponse
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func start(parameters: StytchB2BSDK.B2BSSOStartParameters) async throws -> any StytchB2BSDK.AuthenticatedResponse
+}
+extension StytchB2BSDK.B2BSSOSAMLClient {
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func createConnection(request: any StytchB2BSDK.IB2BCreateSAMLConnectionParameters) async throws -> StytchB2BSDK.B2BCreateSAMLConnectionResponse
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func deleteVerificationCertificate(connectionId: Swift.String, certificateId: Swift.String) async throws -> StytchB2BSDK.B2BDeleteSAMLVerificationCertificateResponse
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func updateConnection(connectionId: Swift.String, request: any StytchB2BSDK.IB2BUpdateSAMLConnectionParameters) async throws -> StytchB2BSDK.B2BUpdateSAMLConnectionResponse
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func updateConnectionByUrl(connectionId: Swift.String, request: any StytchB2BSDK.IB2BUpdateSAMLConnectionByURLParameters) async throws -> StytchB2BSDK.B2BUpdateSAMLConnectionByURLResponse
+}
+extension StytchB2BSDK.B2BSSOOIDCClient {
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func createConnection(request: any StytchB2BSDK.IB2BCreateOIDCConnectionParameters) async throws -> StytchB2BSDK.B2BCreateOIDCConnectionResponse
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func updateConnection(connectionId: Swift.String, request: any StytchB2BSDK.IB2BUpdateOIDCConnectionParameters) async throws -> StytchB2BSDK.B2BUpdateOIDCConnectionResponse
+}
+extension StytchB2BSDK.B2BSSOExternalClient {
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func createConnection(request: any StytchB2BSDK.IB2BCreateExternalConnectionParameters) async throws -> StytchB2BSDK.B2BCreateExternalConnectionResponse
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func updateConnection(connectionId: Swift.String, request: any StytchB2BSDK.IB2BUpdateExternalConnectionParameters) async throws -> StytchB2BSDK.B2BUpdateExternalConnectionResponse
+}
+extension StytchB2BSDK.B2BSessionsClient {
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func attest(request: any StytchB2BSDK.IB2BSessionsAttestParameters) async throws -> StytchB2BSDK.B2BSessionsAttestResponse
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func authenticate(request: any StytchB2BSDK.IB2BSessionsAuthenticateParameters) async throws -> StytchB2BSDK.B2BSessionsAuthenticateResponse
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func exchange(request: any StytchB2BSDK.IB2BSessionsExchangeParameters) async throws -> StytchB2BSDK.B2BSessionsExchangeResponse
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func exchangeAccessToken(request: any StytchB2BSDK.IB2BSessionsAccessTokenExchangeParameters) async throws -> StytchB2BSDK.B2BSessionsAccessTokenExchangeResponse
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func revoke() async throws -> StytchB2BSDK.B2BSessionsRevokeResponse
+}
+extension StytchB2BSDK.B2BSCIMClient {
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func createConnection(request: any StytchB2BSDK.IB2BSCIMCreateConnectionParameters) async throws -> StytchB2BSDK.B2BSCIMCreateConnectionResponse
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func deleteConnection(connectionId: Swift.String) async throws -> StytchB2BSDK.B2BSCIMDeleteConnectionResponse
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func getConnection() async throws -> StytchB2BSDK.B2BGetSCIMConnectionResponse
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func getConnectionGroups(request: any StytchB2BSDK.IB2BGetSCIMConnectionGroupsParameters) async throws -> StytchB2BSDK.B2BGetSCIMConnectionGroupsResponse
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func rotateTokenCancel(request: any StytchB2BSDK.ISCIMRotateTokenCancelParameters) async throws -> StytchB2BSDK.SCIMRotateTokenCancelResponse
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func rotateTokenComplete(request: any StytchB2BSDK.ISCIMRotateTokenCompleteParameters) async throws -> StytchB2BSDK.SCIMRotateTokenCompleteResponse
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func rotateTokenStart(request: any StytchB2BSDK.ISCIMRotateTokenStartParameters) async throws -> StytchB2BSDK.SCIMRotateTokenStartResponse
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func updateConnection(connectionId: Swift.String, request: any StytchB2BSDK.IB2BSCIMUpdateConnectionParameters) async throws -> StytchB2BSDK.B2BSCIMUpdateConnectionResponse
+}
+extension StytchB2BSDK.B2BRecoveryCodesClient {
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func get() async throws -> StytchB2BSDK.B2BRecoveryCodesGetResponse
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func recover(request: any StytchB2BSDK.IB2BRecoveryCodesRecoverParameters) async throws -> StytchB2BSDK.B2BRecoveryCodesRecoverResponse
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func rotate(request: any StytchB2BSDK.IB2BRecoveryCodesRotateParameters) async throws -> StytchB2BSDK.B2BRecoveryCodesRotateResponse
+}
+extension StytchB2BSDK.B2BRBACClient {
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func allPermissions() async throws -> [Swift.String : [Swift.String : StytchB2BSDK.KotlinBoolean]]
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func isAuthorized(resourceId: Swift.String, action: Swift.String) async throws -> StytchB2BSDK.KotlinBoolean
+}
+extension StytchB2BSDK.B2BPasswordsClient {
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func authenticate(request: any StytchB2BSDK.IB2BPasswordAuthenticateParameters) async throws -> StytchB2BSDK.B2BPasswordAuthenticateResponse
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func strengthCheck(request: any StytchB2BSDK.IB2BPasswordStrengthCheckParameters) async throws -> StytchB2BSDK.B2BPasswordStrengthCheckResponse
+}
+extension StytchB2BSDK.B2BPasswordsSessionClient {
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func reset(request: any StytchB2BSDK.IB2BPasswordSessionResetParameters) async throws -> StytchB2BSDK.B2BPasswordSessionResetResponse
+}
+extension StytchB2BSDK.B2BPasswordsExistingPasswordClient {
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func reset(request: any StytchB2BSDK.IB2BPasswordExistingPasswordResetParameters) async throws -> StytchB2BSDK.B2BPasswordExistingPasswordResetResponse
+}
+extension StytchB2BSDK.B2BPasswordsEmailClient {
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func reset(request: any StytchB2BSDK.IB2BPasswordEmailResetParameters) async throws -> StytchB2BSDK.B2BPasswordEmailResetResponse
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func resetStart(request: any StytchB2BSDK.IB2BPasswordEmailResetStartParameters) async throws -> StytchB2BSDK.B2BPasswordEmailResetStartResponse
+}
+extension StytchB2BSDK.B2BSmsOtpClient {
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func authenticate(request: any StytchB2BSDK.IB2BOTPsSMSAuthenticateParameters) async throws -> StytchB2BSDK.B2BOTPsSMSAuthenticateResponse
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func send(request: any StytchB2BSDK.IB2BOTPsSMSSendParameters) async throws -> StytchB2BSDK.B2BOTPsSMSSendResponse
+}
+extension StytchB2BSDK.B2BEmailOtpClient {
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func authenticate(request: any StytchB2BSDK.IB2BOTPsEmailAuthenticateParameters) async throws -> StytchB2BSDK.B2BOTPsEmailAuthenticateResponse
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func loginOrSignup(request: any StytchB2BSDK.IB2BOTPsEmailLoginOrSignupParameters) async throws -> StytchB2BSDK.B2BOTPsEmailLoginOrSignupResponse
+}
+extension StytchB2BSDK.B2BEmailOtpDiscoveryClient {
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func authenticate(request: any StytchB2BSDK.IB2BOTPsEmailDiscoveryAuthenticateParameters) async throws -> StytchB2BSDK.B2BOTPsEmailDiscoveryAuthenticateResponse
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func send(request: any StytchB2BSDK.IB2BOTPsEmailDiscoverySendParameters) async throws -> StytchB2BSDK.B2BOTPsEmailDiscoverySendResponse
+}
+extension StytchB2BSDK.B2BOrganizationsClient {
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func delete() async throws -> StytchB2BSDK.B2BOrganizationsDeleteResponse
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func get() async throws -> StytchB2BSDK.B2BOrganizationsGetResponse
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func update(request: any StytchB2BSDK.IB2BOrganizationsUpdateParameters) async throws -> StytchB2BSDK.B2BOrganizationsUpdateResponse
+}
+extension StytchB2BSDK.B2BOAuthClient {
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func authenticate(request: any StytchB2BSDK.IB2BOAuthAuthenticateParameters) async throws -> StytchB2BSDK.B2BOAuthAuthenticateResponse
+}
+extension StytchB2BSDK.B2BOAuthProviderClient {
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func start(parameters: StytchB2BSDK.B2BOAuthStartParameters) async throws -> any StytchB2BSDK.AuthenticatedResponse
+}
+extension StytchB2BSDK.B2BOAuthProviderDiscoveryClient {
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func start(parameters: StytchB2BSDK.B2BOAuthDiscoveryStartParameters) async throws -> StytchB2BSDK.B2BOAuthDiscoveryAuthenticateResponse
+}
+extension StytchB2BSDK.B2BOAuthDiscoveryClient {
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func authenticate(request: any StytchB2BSDK.IB2BOAuthDiscoveryAuthenticateParameters) async throws -> StytchB2BSDK.B2BOAuthDiscoveryAuthenticateResponse
+}
+extension StytchB2BSDK.B2BMembersClient {
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func create(request: any StytchB2BSDK.IOrganizationsMemberCreateParameters) async throws -> StytchB2BSDK.OrganizationsMemberCreateResponse
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func deleteMFAPhoneNumber() async throws -> StytchB2BSDK.OrganizationsMemberDeleteMFAPhoneNumberResponse
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func deleteMFATOTP() async throws -> StytchB2BSDK.OrganizationsMemberDeleteMFATOTPResponse
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func me() async throws -> StytchB2BSDK.B2BGetMeResponse
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func search(request: any StytchB2BSDK.IOrganizationsMemberSearchParameters) async throws -> StytchB2BSDK.OrganizationsMemberSearchResponse
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func startEmailUpdate(request: any StytchB2BSDK.IOrganizationsMemberStartEmailUpdateParameters) async throws -> StytchB2BSDK.OrganizationsMemberStartEmailUpdateResponse
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func unlinkRetiredEmail(request: any StytchB2BSDK.IOrganizationsMemberUnlinkRetiredEmailParameters) async throws -> StytchB2BSDK.OrganizationsMemberUnlinkRetiredEmailResponse
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func update(request: any StytchB2BSDK.IOrganizationsMemberUpdateParameters) async throws -> StytchB2BSDK.OrganizationsMemberUpdateResponse
+}
+extension StytchB2BSDK.B2BMembersAdminClient {
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func delete(memberId: Swift.String) async throws -> StytchB2BSDK.OrganizationsAdminMemberDeleteResponse
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func deleteMFAPhoneNumber(memberId: Swift.String) async throws -> StytchB2BSDK.OrganizationsAdminMemberDeleteMFAPhoneNumberResponse
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func deleteMFATOTP(memberId: Swift.String) async throws -> StytchB2BSDK.OrganizationsAdminMemberDeleteMFATOTPResponse
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func deletePassword(memberPasswordId: Swift.String) async throws -> StytchB2BSDK.OrganizationsAdminMemberDeletePasswordResponse
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func reactivate(memberId: Swift.String) async throws -> StytchB2BSDK.OrganizationsAdminMemberReactivateResponse
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func startEmailUpdate(memberId: Swift.String, request: any StytchB2BSDK.IOrganizationsAdminMemberStartEmailUpdateParameters) async throws -> StytchB2BSDK.OrganizationsAdminMemberStartEmailUpdateResponse
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func unlinkRetiredEmail(memberId: Swift.String, request: any StytchB2BSDK.IOrganizationsAdminMemberUnlinkRetiredEmailParameters) async throws -> StytchB2BSDK.OrganizationsAdminMemberUnlinkRetiredEmailResponse
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func update(memberId: Swift.String, request: any StytchB2BSDK.IOrganizationsAdminMemberUpdateParameters) async throws -> StytchB2BSDK.OrganizationsAdminMemberUpdateResponse
+}
+extension StytchB2BSDK.B2BMagicLinksClient {
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func authenticate(request: any StytchB2BSDK.IB2BMagicLinksAuthenticateParameters) async throws -> StytchB2BSDK.B2BMagicLinksAuthenticateResponse
+}
+extension StytchB2BSDK.B2BEmailMagicLinksClient {
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func invite(request: any StytchB2BSDK.IB2BMagicLinksInviteParameters) async throws -> StytchB2BSDK.B2BMagicLinksInviteResponse
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func loginOrSignup(request: any StytchB2BSDK.IB2BMagicLinksLoginOrSignupParameters) async throws -> StytchB2BSDK.B2BMagicLinksLoginOrSignupResponse
+}
+extension StytchB2BSDK.B2BMagicLinksDiscoveryClient {
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func authenticate(request: any StytchB2BSDK.IB2BMagicLinksDiscoveryAuthenticateParameters) async throws -> StytchB2BSDK.B2BMagicLinksDiscoveryAuthenticateResponse
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func emailSend(request: any StytchB2BSDK.IB2BMagicLinksDiscoveryEmailSendParameters) async throws -> StytchB2BSDK.B2BMagicLinksDiscoveryEmailSendResponse
+}
+extension StytchB2BSDK.B2BDiscoveryPasswordsClient {
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func authenticate(request: any StytchB2BSDK.IB2BPasswordDiscoveryAuthenticateParameters) async throws -> StytchB2BSDK.B2BPasswordDiscoveryAuthenticateResponse
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func reset(request: any StytchB2BSDK.IB2BDiscoveryPasswordResetParameters) async throws -> StytchB2BSDK.B2BDiscoveryPasswordResetResponse
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func resetStart(request: any StytchB2BSDK.IB2BDiscoveryPasswordResetStartParameters) async throws -> StytchB2BSDK.B2BDiscoveryPasswordResetStartResponse
+}
+extension StytchB2BSDK.B2BDiscoveryOrganizationsClient {
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func create(request: any StytchB2BSDK.IB2BDiscoveryOrganizationsCreateParameters) async throws -> StytchB2BSDK.B2BDiscoveryOrganizationsCreateResponse
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func list(request: any StytchB2BSDK.IB2BDiscoveryOrganizationsParameters) async throws -> StytchB2BSDK.B2BDiscoveryOrganizationsResponse
+}
+extension StytchB2BSDK.B2BDiscoveryIntermediateSessionsClient {
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func exchange(request: any StytchB2BSDK.IB2BDiscoveryIntermediateSessionsExchangeParameters) async throws -> StytchB2BSDK.B2BDiscoveryIntermediateSessionsExchangeResponse
+}
+extension StytchB2BSDK.DFPClient {
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func getTelemetryId() async throws -> Swift.String
+}
+extension StytchB2BSDK.Ktor_httpOutgoingContent.ProtocolUpgrade {
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func upgrade(input: any StytchB2BSDK.Ktor_ioByteReadChannel, output: any StytchB2BSDK.Ktor_ioByteWriteChannel, engineContext: any StytchB2BSDK.KotlinCoroutineContext, userContext: any StytchB2BSDK.KotlinCoroutineContext) async throws -> any StytchB2BSDK.Kotlinx_coroutines_coreJob
+}
+extension StytchB2BSDK.Ktor_ioByteWriteChannel {
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func flush() async throws
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func flushAndClose() async throws
+}
+extension StytchB2BSDK.Ktor_httpOutgoingContent.WriteChannelContent {
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func writeTo(channel: any StytchB2BSDK.Ktor_ioByteWriteChannel) async throws
+}
+public func SkieKotlinFlow<T>(_ flow: StytchB2BSDK.SkieSwiftFlow<T>) -> StytchB2BSDK.SkieKotlinFlow<T> where T : AnyObject
+public func SkieKotlinFlow<T>(_ flow: StytchB2BSDK.SkieSwiftSharedFlow<T>) -> StytchB2BSDK.SkieKotlinFlow<T> where T : AnyObject
+public func SkieKotlinFlow<T>(_ flow: StytchB2BSDK.SkieSwiftMutableSharedFlow<T>) -> StytchB2BSDK.SkieKotlinFlow<T> where T : AnyObject
+public func SkieKotlinFlow<T>(_ flow: StytchB2BSDK.SkieSwiftStateFlow<T>) -> StytchB2BSDK.SkieKotlinFlow<T> where T : AnyObject
+public func SkieKotlinFlow<T>(_ flow: StytchB2BSDK.SkieSwiftMutableStateFlow<T>) -> StytchB2BSDK.SkieKotlinFlow<T> where T : AnyObject
+public func SkieKotlinFlow<T>(_ flow: StytchB2BSDK.SkieSwiftFlow<T>) -> StytchB2BSDK.SkieKotlinFlow<T._ObjectiveCType> where T : Swift._ObjectiveCBridgeable
+public func SkieKotlinFlow<T>(_ flow: StytchB2BSDK.SkieSwiftSharedFlow<T>) -> StytchB2BSDK.SkieKotlinFlow<T._ObjectiveCType> where T : Swift._ObjectiveCBridgeable
+public func SkieKotlinFlow<T>(_ flow: StytchB2BSDK.SkieSwiftMutableSharedFlow<T>) -> StytchB2BSDK.SkieKotlinFlow<T._ObjectiveCType> where T : Swift._ObjectiveCBridgeable
+public func SkieKotlinFlow<T>(_ flow: StytchB2BSDK.SkieSwiftStateFlow<T>) -> StytchB2BSDK.SkieKotlinFlow<T._ObjectiveCType> where T : Swift._ObjectiveCBridgeable
+public func SkieKotlinFlow<T>(_ flow: StytchB2BSDK.SkieSwiftMutableStateFlow<T>) -> StytchB2BSDK.SkieKotlinFlow<T._ObjectiveCType> where T : Swift._ObjectiveCBridgeable
+extension StytchB2BSDK.SkieSwiftFlow where T : AnyObject {
+  convenience public init(_ flow: StytchB2BSDK.SkieKotlinFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieKotlinSharedFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieKotlinMutableSharedFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieKotlinStateFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieKotlinMutableStateFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftSharedFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftMutableSharedFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftStateFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftMutableStateFlow<T>)
+}
+extension StytchB2BSDK.SkieSwiftFlow where T : Swift._ObjectiveCBridgeable {
+  convenience public init(_ flow: StytchB2BSDK.SkieKotlinFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: StytchB2BSDK.SkieKotlinSharedFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: StytchB2BSDK.SkieKotlinMutableSharedFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: StytchB2BSDK.SkieKotlinStateFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: StytchB2BSDK.SkieKotlinMutableStateFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftSharedFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftMutableSharedFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftStateFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftMutableStateFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftSharedFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftMutableSharedFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftStateFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftMutableStateFlow<T>)
+}
+public func SkieKotlinOptionalFlow<T>(_ flow: StytchB2BSDK.SkieSwiftFlow<T>) -> StytchB2BSDK.SkieKotlinOptionalFlow<T> where T : AnyObject
+public func SkieKotlinOptionalFlow<T>(_ flow: StytchB2BSDK.SkieSwiftOptionalFlow<T>) -> StytchB2BSDK.SkieKotlinOptionalFlow<T> where T : AnyObject
+public func SkieKotlinOptionalFlow<T>(_ flow: StytchB2BSDK.SkieSwiftSharedFlow<T>) -> StytchB2BSDK.SkieKotlinOptionalFlow<T> where T : AnyObject
+public func SkieKotlinOptionalFlow<T>(_ flow: StytchB2BSDK.SkieSwiftOptionalSharedFlow<T>) -> StytchB2BSDK.SkieKotlinOptionalFlow<T> where T : AnyObject
+public func SkieKotlinOptionalFlow<T>(_ flow: StytchB2BSDK.SkieSwiftMutableSharedFlow<T>) -> StytchB2BSDK.SkieKotlinOptionalFlow<T> where T : AnyObject
+public func SkieKotlinOptionalFlow<T>(_ flow: StytchB2BSDK.SkieSwiftOptionalMutableSharedFlow<T>) -> StytchB2BSDK.SkieKotlinOptionalFlow<T> where T : AnyObject
+public func SkieKotlinOptionalFlow<T>(_ flow: StytchB2BSDK.SkieSwiftStateFlow<T>) -> StytchB2BSDK.SkieKotlinOptionalFlow<T> where T : AnyObject
+public func SkieKotlinOptionalFlow<T>(_ flow: StytchB2BSDK.SkieSwiftOptionalStateFlow<T>) -> StytchB2BSDK.SkieKotlinOptionalFlow<T> where T : AnyObject
+public func SkieKotlinOptionalFlow<T>(_ flow: StytchB2BSDK.SkieSwiftMutableStateFlow<T>) -> StytchB2BSDK.SkieKotlinOptionalFlow<T> where T : AnyObject
+public func SkieKotlinOptionalFlow<T>(_ flow: StytchB2BSDK.SkieSwiftOptionalMutableStateFlow<T>) -> StytchB2BSDK.SkieKotlinOptionalFlow<T> where T : AnyObject
+public func SkieKotlinOptionalFlow<T>(_ flow: StytchB2BSDK.SkieSwiftFlow<T>) -> StytchB2BSDK.SkieKotlinOptionalFlow<T._ObjectiveCType> where T : Swift._ObjectiveCBridgeable
+public func SkieKotlinOptionalFlow<T>(_ flow: StytchB2BSDK.SkieSwiftOptionalFlow<T>) -> StytchB2BSDK.SkieKotlinOptionalFlow<T._ObjectiveCType> where T : Swift._ObjectiveCBridgeable
+public func SkieKotlinOptionalFlow<T>(_ flow: StytchB2BSDK.SkieSwiftSharedFlow<T>) -> StytchB2BSDK.SkieKotlinOptionalFlow<T._ObjectiveCType> where T : Swift._ObjectiveCBridgeable
+public func SkieKotlinOptionalFlow<T>(_ flow: StytchB2BSDK.SkieSwiftOptionalSharedFlow<T>) -> StytchB2BSDK.SkieKotlinOptionalFlow<T._ObjectiveCType> where T : Swift._ObjectiveCBridgeable
+public func SkieKotlinOptionalFlow<T>(_ flow: StytchB2BSDK.SkieSwiftMutableSharedFlow<T>) -> StytchB2BSDK.SkieKotlinOptionalFlow<T._ObjectiveCType> where T : Swift._ObjectiveCBridgeable
+public func SkieKotlinOptionalFlow<T>(_ flow: StytchB2BSDK.SkieSwiftOptionalMutableSharedFlow<T>) -> StytchB2BSDK.SkieKotlinOptionalFlow<T._ObjectiveCType> where T : Swift._ObjectiveCBridgeable
+public func SkieKotlinOptionalFlow<T>(_ flow: StytchB2BSDK.SkieSwiftStateFlow<T>) -> StytchB2BSDK.SkieKotlinOptionalFlow<T._ObjectiveCType> where T : Swift._ObjectiveCBridgeable
+public func SkieKotlinOptionalFlow<T>(_ flow: StytchB2BSDK.SkieSwiftOptionalStateFlow<T>) -> StytchB2BSDK.SkieKotlinOptionalFlow<T._ObjectiveCType> where T : Swift._ObjectiveCBridgeable
+public func SkieKotlinOptionalFlow<T>(_ flow: StytchB2BSDK.SkieSwiftMutableStateFlow<T>) -> StytchB2BSDK.SkieKotlinOptionalFlow<T._ObjectiveCType> where T : Swift._ObjectiveCBridgeable
+public func SkieKotlinOptionalFlow<T>(_ flow: StytchB2BSDK.SkieSwiftOptionalMutableStateFlow<T>) -> StytchB2BSDK.SkieKotlinOptionalFlow<T._ObjectiveCType> where T : Swift._ObjectiveCBridgeable
+extension StytchB2BSDK.SkieSwiftOptionalFlow where T : AnyObject {
+  convenience public init(_ flow: StytchB2BSDK.SkieKotlinFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieKotlinOptionalFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieKotlinSharedFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieKotlinOptionalSharedFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieKotlinMutableSharedFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieKotlinOptionalMutableSharedFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieKotlinStateFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieKotlinOptionalStateFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieKotlinMutableStateFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieKotlinOptionalMutableStateFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftOptionalFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftSharedFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftOptionalSharedFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftMutableSharedFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftOptionalMutableSharedFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftStateFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftOptionalStateFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftMutableStateFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftOptionalMutableStateFlow<T>)
+}
+extension StytchB2BSDK.SkieSwiftOptionalFlow where T : Swift._ObjectiveCBridgeable {
+  convenience public init(_ flow: StytchB2BSDK.SkieKotlinFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: StytchB2BSDK.SkieKotlinOptionalFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: StytchB2BSDK.SkieKotlinSharedFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: StytchB2BSDK.SkieKotlinOptionalSharedFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: StytchB2BSDK.SkieKotlinMutableSharedFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: StytchB2BSDK.SkieKotlinOptionalMutableSharedFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: StytchB2BSDK.SkieKotlinStateFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: StytchB2BSDK.SkieKotlinOptionalStateFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: StytchB2BSDK.SkieKotlinMutableStateFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: StytchB2BSDK.SkieKotlinOptionalMutableStateFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftOptionalFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftSharedFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftOptionalSharedFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftMutableSharedFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftOptionalMutableSharedFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftStateFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftOptionalStateFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftMutableStateFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftOptionalMutableStateFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftOptionalFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftSharedFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftOptionalSharedFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftMutableSharedFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftOptionalMutableSharedFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftStateFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftOptionalStateFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftMutableStateFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftOptionalMutableStateFlow<T>)
+}
+public func SkieKotlinSharedFlow<T>(_ flow: StytchB2BSDK.SkieSwiftSharedFlow<T>) -> StytchB2BSDK.SkieKotlinSharedFlow<T> where T : AnyObject
+public func SkieKotlinSharedFlow<T>(_ flow: StytchB2BSDK.SkieSwiftMutableSharedFlow<T>) -> StytchB2BSDK.SkieKotlinSharedFlow<T> where T : AnyObject
+public func SkieKotlinSharedFlow<T>(_ flow: StytchB2BSDK.SkieSwiftStateFlow<T>) -> StytchB2BSDK.SkieKotlinSharedFlow<T> where T : AnyObject
+public func SkieKotlinSharedFlow<T>(_ flow: StytchB2BSDK.SkieSwiftMutableStateFlow<T>) -> StytchB2BSDK.SkieKotlinSharedFlow<T> where T : AnyObject
+public func SkieKotlinSharedFlow<T>(_ flow: StytchB2BSDK.SkieSwiftSharedFlow<T>) -> StytchB2BSDK.SkieKotlinSharedFlow<T._ObjectiveCType> where T : Swift._ObjectiveCBridgeable
+public func SkieKotlinSharedFlow<T>(_ flow: StytchB2BSDK.SkieSwiftMutableSharedFlow<T>) -> StytchB2BSDK.SkieKotlinSharedFlow<T._ObjectiveCType> where T : Swift._ObjectiveCBridgeable
+public func SkieKotlinSharedFlow<T>(_ flow: StytchB2BSDK.SkieSwiftStateFlow<T>) -> StytchB2BSDK.SkieKotlinSharedFlow<T._ObjectiveCType> where T : Swift._ObjectiveCBridgeable
+public func SkieKotlinSharedFlow<T>(_ flow: StytchB2BSDK.SkieSwiftMutableStateFlow<T>) -> StytchB2BSDK.SkieKotlinSharedFlow<T._ObjectiveCType> where T : Swift._ObjectiveCBridgeable
+extension StytchB2BSDK.SkieSwiftSharedFlow where T : AnyObject {
+  convenience public init(_ flow: StytchB2BSDK.SkieKotlinSharedFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieKotlinMutableSharedFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieKotlinStateFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieKotlinMutableStateFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftSharedFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftMutableSharedFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftStateFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftMutableStateFlow<T>)
+}
+extension StytchB2BSDK.SkieSwiftSharedFlow where T : Swift._ObjectiveCBridgeable {
+  convenience public init(_ flow: StytchB2BSDK.SkieKotlinSharedFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: StytchB2BSDK.SkieKotlinMutableSharedFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: StytchB2BSDK.SkieKotlinStateFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: StytchB2BSDK.SkieKotlinMutableStateFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftSharedFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftMutableSharedFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftStateFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftMutableStateFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftSharedFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftMutableSharedFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftStateFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftMutableStateFlow<T>)
+}
+public func SkieKotlinOptionalSharedFlow<T>(_ flow: StytchB2BSDK.SkieSwiftSharedFlow<T>) -> StytchB2BSDK.SkieKotlinOptionalSharedFlow<T> where T : AnyObject
+public func SkieKotlinOptionalSharedFlow<T>(_ flow: StytchB2BSDK.SkieSwiftOptionalSharedFlow<T>) -> StytchB2BSDK.SkieKotlinOptionalSharedFlow<T> where T : AnyObject
+public func SkieKotlinOptionalSharedFlow<T>(_ flow: StytchB2BSDK.SkieSwiftMutableSharedFlow<T>) -> StytchB2BSDK.SkieKotlinOptionalSharedFlow<T> where T : AnyObject
+public func SkieKotlinOptionalSharedFlow<T>(_ flow: StytchB2BSDK.SkieSwiftOptionalMutableSharedFlow<T>) -> StytchB2BSDK.SkieKotlinOptionalSharedFlow<T> where T : AnyObject
+public func SkieKotlinOptionalSharedFlow<T>(_ flow: StytchB2BSDK.SkieSwiftStateFlow<T>) -> StytchB2BSDK.SkieKotlinOptionalSharedFlow<T> where T : AnyObject
+public func SkieKotlinOptionalSharedFlow<T>(_ flow: StytchB2BSDK.SkieSwiftOptionalStateFlow<T>) -> StytchB2BSDK.SkieKotlinOptionalSharedFlow<T> where T : AnyObject
+public func SkieKotlinOptionalSharedFlow<T>(_ flow: StytchB2BSDK.SkieSwiftMutableStateFlow<T>) -> StytchB2BSDK.SkieKotlinOptionalSharedFlow<T> where T : AnyObject
+public func SkieKotlinOptionalSharedFlow<T>(_ flow: StytchB2BSDK.SkieSwiftOptionalMutableStateFlow<T>) -> StytchB2BSDK.SkieKotlinOptionalSharedFlow<T> where T : AnyObject
+public func SkieKotlinOptionalSharedFlow<T>(_ flow: StytchB2BSDK.SkieSwiftSharedFlow<T>) -> StytchB2BSDK.SkieKotlinOptionalSharedFlow<T._ObjectiveCType> where T : Swift._ObjectiveCBridgeable
+public func SkieKotlinOptionalSharedFlow<T>(_ flow: StytchB2BSDK.SkieSwiftOptionalSharedFlow<T>) -> StytchB2BSDK.SkieKotlinOptionalSharedFlow<T._ObjectiveCType> where T : Swift._ObjectiveCBridgeable
+public func SkieKotlinOptionalSharedFlow<T>(_ flow: StytchB2BSDK.SkieSwiftMutableSharedFlow<T>) -> StytchB2BSDK.SkieKotlinOptionalSharedFlow<T._ObjectiveCType> where T : Swift._ObjectiveCBridgeable
+public func SkieKotlinOptionalSharedFlow<T>(_ flow: StytchB2BSDK.SkieSwiftOptionalMutableSharedFlow<T>) -> StytchB2BSDK.SkieKotlinOptionalSharedFlow<T._ObjectiveCType> where T : Swift._ObjectiveCBridgeable
+public func SkieKotlinOptionalSharedFlow<T>(_ flow: StytchB2BSDK.SkieSwiftStateFlow<T>) -> StytchB2BSDK.SkieKotlinOptionalSharedFlow<T._ObjectiveCType> where T : Swift._ObjectiveCBridgeable
+public func SkieKotlinOptionalSharedFlow<T>(_ flow: StytchB2BSDK.SkieSwiftOptionalStateFlow<T>) -> StytchB2BSDK.SkieKotlinOptionalSharedFlow<T._ObjectiveCType> where T : Swift._ObjectiveCBridgeable
+public func SkieKotlinOptionalSharedFlow<T>(_ flow: StytchB2BSDK.SkieSwiftMutableStateFlow<T>) -> StytchB2BSDK.SkieKotlinOptionalSharedFlow<T._ObjectiveCType> where T : Swift._ObjectiveCBridgeable
+public func SkieKotlinOptionalSharedFlow<T>(_ flow: StytchB2BSDK.SkieSwiftOptionalMutableStateFlow<T>) -> StytchB2BSDK.SkieKotlinOptionalSharedFlow<T._ObjectiveCType> where T : Swift._ObjectiveCBridgeable
+extension StytchB2BSDK.SkieSwiftOptionalSharedFlow where T : AnyObject {
+  convenience public init(_ flow: StytchB2BSDK.SkieKotlinSharedFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieKotlinOptionalSharedFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieKotlinMutableSharedFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieKotlinOptionalMutableSharedFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieKotlinStateFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieKotlinOptionalStateFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieKotlinMutableStateFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieKotlinOptionalMutableStateFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftSharedFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftOptionalSharedFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftMutableSharedFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftOptionalMutableSharedFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftStateFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftOptionalStateFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftMutableStateFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftOptionalMutableStateFlow<T>)
+}
+extension StytchB2BSDK.SkieSwiftOptionalSharedFlow where T : Swift._ObjectiveCBridgeable {
+  convenience public init(_ flow: StytchB2BSDK.SkieKotlinSharedFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: StytchB2BSDK.SkieKotlinOptionalSharedFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: StytchB2BSDK.SkieKotlinMutableSharedFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: StytchB2BSDK.SkieKotlinOptionalMutableSharedFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: StytchB2BSDK.SkieKotlinStateFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: StytchB2BSDK.SkieKotlinOptionalStateFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: StytchB2BSDK.SkieKotlinMutableStateFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: StytchB2BSDK.SkieKotlinOptionalMutableStateFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftSharedFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftOptionalSharedFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftMutableSharedFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftOptionalMutableSharedFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftStateFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftOptionalStateFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftMutableStateFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftOptionalMutableStateFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftSharedFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftOptionalSharedFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftMutableSharedFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftOptionalMutableSharedFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftStateFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftOptionalStateFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftMutableStateFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftOptionalMutableStateFlow<T>)
+}
+public func SkieKotlinMutableSharedFlow<T>(_ flow: StytchB2BSDK.SkieSwiftMutableSharedFlow<T>) -> StytchB2BSDK.SkieKotlinMutableSharedFlow<T> where T : AnyObject
+public func SkieKotlinMutableSharedFlow<T>(_ flow: StytchB2BSDK.SkieSwiftMutableSharedFlow<T>) -> StytchB2BSDK.SkieKotlinMutableSharedFlow<T._ObjectiveCType> where T : Swift._ObjectiveCBridgeable
+extension StytchB2BSDK.SkieSwiftMutableSharedFlow where T : AnyObject {
+  convenience public init(_ flow: StytchB2BSDK.SkieKotlinMutableSharedFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftMutableSharedFlow<T>)
+}
+extension StytchB2BSDK.SkieSwiftMutableSharedFlow where T : Swift._ObjectiveCBridgeable {
+  convenience public init(_ flow: StytchB2BSDK.SkieKotlinMutableSharedFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftMutableSharedFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftMutableSharedFlow<T>)
+}
+public func SkieKotlinOptionalMutableSharedFlow<T>(_ flow: StytchB2BSDK.SkieSwiftMutableSharedFlow<T>) -> StytchB2BSDK.SkieKotlinOptionalMutableSharedFlow<T> where T : AnyObject
+public func SkieKotlinOptionalMutableSharedFlow<T>(_ flow: StytchB2BSDK.SkieSwiftOptionalMutableSharedFlow<T>) -> StytchB2BSDK.SkieKotlinOptionalMutableSharedFlow<T> where T : AnyObject
+public func SkieKotlinOptionalMutableSharedFlow<T>(_ flow: StytchB2BSDK.SkieSwiftMutableSharedFlow<T>) -> StytchB2BSDK.SkieKotlinOptionalMutableSharedFlow<T._ObjectiveCType> where T : Swift._ObjectiveCBridgeable
+public func SkieKotlinOptionalMutableSharedFlow<T>(_ flow: StytchB2BSDK.SkieSwiftOptionalMutableSharedFlow<T>) -> StytchB2BSDK.SkieKotlinOptionalMutableSharedFlow<T._ObjectiveCType> where T : Swift._ObjectiveCBridgeable
+extension StytchB2BSDK.SkieSwiftOptionalMutableSharedFlow where T : AnyObject {
+  convenience public init(_ flow: StytchB2BSDK.SkieKotlinMutableSharedFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieKotlinOptionalMutableSharedFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftMutableSharedFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftOptionalMutableSharedFlow<T>)
+}
+extension StytchB2BSDK.SkieSwiftOptionalMutableSharedFlow where T : Swift._ObjectiveCBridgeable {
+  convenience public init(_ flow: StytchB2BSDK.SkieKotlinMutableSharedFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: StytchB2BSDK.SkieKotlinOptionalMutableSharedFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftMutableSharedFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftOptionalMutableSharedFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftMutableSharedFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftOptionalMutableSharedFlow<T>)
+}
+public func SkieKotlinStateFlow<T>(_ flow: StytchB2BSDK.SkieSwiftStateFlow<T>) -> StytchB2BSDK.SkieKotlinStateFlow<T> where T : AnyObject
+public func SkieKotlinStateFlow<T>(_ flow: StytchB2BSDK.SkieSwiftMutableStateFlow<T>) -> StytchB2BSDK.SkieKotlinStateFlow<T> where T : AnyObject
+public func SkieKotlinStateFlow<T>(_ flow: StytchB2BSDK.SkieSwiftStateFlow<T>) -> StytchB2BSDK.SkieKotlinStateFlow<T._ObjectiveCType> where T : Swift._ObjectiveCBridgeable
+public func SkieKotlinStateFlow<T>(_ flow: StytchB2BSDK.SkieSwiftMutableStateFlow<T>) -> StytchB2BSDK.SkieKotlinStateFlow<T._ObjectiveCType> where T : Swift._ObjectiveCBridgeable
+extension StytchB2BSDK.SkieSwiftStateFlow where T : AnyObject {
+  convenience public init(_ flow: StytchB2BSDK.SkieKotlinStateFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieKotlinMutableStateFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftStateFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftMutableStateFlow<T>)
+}
+extension StytchB2BSDK.SkieSwiftStateFlow where T : Swift._ObjectiveCBridgeable {
+  convenience public init(_ flow: StytchB2BSDK.SkieKotlinStateFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: StytchB2BSDK.SkieKotlinMutableStateFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftStateFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftMutableStateFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftStateFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftMutableStateFlow<T>)
+}
+public func SkieKotlinOptionalStateFlow<T>(_ flow: StytchB2BSDK.SkieSwiftStateFlow<T>) -> StytchB2BSDK.SkieKotlinOptionalStateFlow<T> where T : AnyObject
+public func SkieKotlinOptionalStateFlow<T>(_ flow: StytchB2BSDK.SkieSwiftOptionalStateFlow<T>) -> StytchB2BSDK.SkieKotlinOptionalStateFlow<T> where T : AnyObject
+public func SkieKotlinOptionalStateFlow<T>(_ flow: StytchB2BSDK.SkieSwiftMutableStateFlow<T>) -> StytchB2BSDK.SkieKotlinOptionalStateFlow<T> where T : AnyObject
+public func SkieKotlinOptionalStateFlow<T>(_ flow: StytchB2BSDK.SkieSwiftOptionalMutableStateFlow<T>) -> StytchB2BSDK.SkieKotlinOptionalStateFlow<T> where T : AnyObject
+public func SkieKotlinOptionalStateFlow<T>(_ flow: StytchB2BSDK.SkieSwiftStateFlow<T>) -> StytchB2BSDK.SkieKotlinOptionalStateFlow<T._ObjectiveCType> where T : Swift._ObjectiveCBridgeable
+public func SkieKotlinOptionalStateFlow<T>(_ flow: StytchB2BSDK.SkieSwiftOptionalStateFlow<T>) -> StytchB2BSDK.SkieKotlinOptionalStateFlow<T._ObjectiveCType> where T : Swift._ObjectiveCBridgeable
+public func SkieKotlinOptionalStateFlow<T>(_ flow: StytchB2BSDK.SkieSwiftMutableStateFlow<T>) -> StytchB2BSDK.SkieKotlinOptionalStateFlow<T._ObjectiveCType> where T : Swift._ObjectiveCBridgeable
+public func SkieKotlinOptionalStateFlow<T>(_ flow: StytchB2BSDK.SkieSwiftOptionalMutableStateFlow<T>) -> StytchB2BSDK.SkieKotlinOptionalStateFlow<T._ObjectiveCType> where T : Swift._ObjectiveCBridgeable
+extension StytchB2BSDK.SkieSwiftOptionalStateFlow where T : AnyObject {
+  convenience public init(_ flow: StytchB2BSDK.SkieKotlinStateFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieKotlinOptionalStateFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieKotlinMutableStateFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieKotlinOptionalMutableStateFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftStateFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftOptionalStateFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftMutableStateFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftOptionalMutableStateFlow<T>)
+}
+extension StytchB2BSDK.SkieSwiftOptionalStateFlow where T : Swift._ObjectiveCBridgeable {
+  convenience public init(_ flow: StytchB2BSDK.SkieKotlinStateFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: StytchB2BSDK.SkieKotlinOptionalStateFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: StytchB2BSDK.SkieKotlinMutableStateFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: StytchB2BSDK.SkieKotlinOptionalMutableStateFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftStateFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftOptionalStateFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftMutableStateFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftOptionalMutableStateFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftStateFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftOptionalStateFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftMutableStateFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftOptionalMutableStateFlow<T>)
+}
+public func SkieKotlinMutableStateFlow<T>(_ flow: StytchB2BSDK.SkieSwiftMutableStateFlow<T>) -> StytchB2BSDK.SkieKotlinMutableStateFlow<T> where T : AnyObject
+public func SkieKotlinMutableStateFlow<T>(_ flow: StytchB2BSDK.SkieSwiftMutableStateFlow<T>) -> StytchB2BSDK.SkieKotlinMutableStateFlow<T._ObjectiveCType> where T : Swift._ObjectiveCBridgeable
+extension StytchB2BSDK.SkieSwiftMutableStateFlow where T : AnyObject {
+  convenience public init(_ flow: StytchB2BSDK.SkieKotlinMutableStateFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftMutableStateFlow<T>)
+}
+extension StytchB2BSDK.SkieSwiftMutableStateFlow where T : Swift._ObjectiveCBridgeable {
+  convenience public init(_ flow: StytchB2BSDK.SkieKotlinMutableStateFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftMutableStateFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftMutableStateFlow<T>)
+}
+public func SkieKotlinOptionalMutableStateFlow<T>(_ flow: StytchB2BSDK.SkieSwiftMutableStateFlow<T>) -> StytchB2BSDK.SkieKotlinOptionalMutableStateFlow<T> where T : AnyObject
+public func SkieKotlinOptionalMutableStateFlow<T>(_ flow: StytchB2BSDK.SkieSwiftOptionalMutableStateFlow<T>) -> StytchB2BSDK.SkieKotlinOptionalMutableStateFlow<T> where T : AnyObject
+public func SkieKotlinOptionalMutableStateFlow<T>(_ flow: StytchB2BSDK.SkieSwiftMutableStateFlow<T>) -> StytchB2BSDK.SkieKotlinOptionalMutableStateFlow<T._ObjectiveCType> where T : Swift._ObjectiveCBridgeable
+public func SkieKotlinOptionalMutableStateFlow<T>(_ flow: StytchB2BSDK.SkieSwiftOptionalMutableStateFlow<T>) -> StytchB2BSDK.SkieKotlinOptionalMutableStateFlow<T._ObjectiveCType> where T : Swift._ObjectiveCBridgeable
+extension StytchB2BSDK.SkieSwiftOptionalMutableStateFlow where T : AnyObject {
+  convenience public init(_ flow: StytchB2BSDK.SkieKotlinMutableStateFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieKotlinOptionalMutableStateFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftMutableStateFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftOptionalMutableStateFlow<T>)
+}
+extension StytchB2BSDK.SkieSwiftOptionalMutableStateFlow where T : Swift._ObjectiveCBridgeable {
+  convenience public init(_ flow: StytchB2BSDK.SkieKotlinMutableStateFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: StytchB2BSDK.SkieKotlinOptionalMutableStateFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftMutableStateFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftOptionalMutableStateFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftMutableStateFlow<T>)
+  convenience public init(_ flow: StytchB2BSDK.SkieSwiftOptionalMutableStateFlow<T>)
+}
+@frozen public enum KotlinKVariance : Swift.Hashable, Swift.CaseIterable, Swift._ObjectiveCBridgeable {
+  case invariant
+  case `in`
+  case out
+  public var name: Swift.String {
+    get
+  }
+  public var ordinal: Swift.Int32 {
+    get
+  }
+  #if compiler(>=5.3) && $NonescapableTypes
+  public static func _forceBridgeFromObjectiveC(_ source: StytchB2BSDK.__KotlinKVariance, result: inout StytchB2BSDK.KotlinKVariance?)
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public static func _conditionallyBridgeFromObjectiveC(_ source: StytchB2BSDK.__KotlinKVariance, result: inout StytchB2BSDK.KotlinKVariance?) -> Swift.Bool
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public static func _unconditionallyBridgeFromObjectiveC(_ source: StytchB2BSDK.__KotlinKVariance?) -> StytchB2BSDK.KotlinKVariance
+  #endif
+  public func _bridgeToObjectiveC() -> StytchB2BSDK.__KotlinKVariance
+  public typealias _ObjectiveCType = StytchB2BSDK.__KotlinKVariance
+  public static func == (a: StytchB2BSDK.KotlinKVariance, b: StytchB2BSDK.KotlinKVariance) -> Swift.Bool
+  public typealias AllCases = [StytchB2BSDK.KotlinKVariance]
+  nonisolated public static var allCases: [StytchB2BSDK.KotlinKVariance] {
+    get
+  }
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+extension StytchB2BSDK.KotlinKVariance {
+  public func toKotlinEnum() -> StytchB2BSDK.__KotlinKVariance
+}
+extension StytchB2BSDK.__KotlinKVariance {
+  public func toSwiftEnum() -> StytchB2BSDK.KotlinKVariance
+}
+@frozen public enum Vertical : Swift.Hashable, Swift.CaseIterable, Swift._ObjectiveCBridgeable {
+  case b2B
+  case consumer
+  public var name: Swift.String {
+    get
+  }
+  public var ordinal: Swift.Int32 {
+    get
+  }
+  public static var companion: StytchB2BSDK.__Vertical.Companion {
+    get
+  }
+  #if compiler(>=5.3) && $NonescapableTypes
+  public static func _forceBridgeFromObjectiveC(_ source: StytchB2BSDK.__Vertical, result: inout StytchB2BSDK.Vertical?)
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public static func _conditionallyBridgeFromObjectiveC(_ source: StytchB2BSDK.__Vertical, result: inout StytchB2BSDK.Vertical?) -> Swift.Bool
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public static func _unconditionallyBridgeFromObjectiveC(_ source: StytchB2BSDK.__Vertical?) -> StytchB2BSDK.Vertical
+  #endif
+  public func _bridgeToObjectiveC() -> StytchB2BSDK.__Vertical
+  public typealias _ObjectiveCType = StytchB2BSDK.__Vertical
+  public typealias Companion = StytchB2BSDK.__Vertical.Companion
+  public static func == (a: StytchB2BSDK.Vertical, b: StytchB2BSDK.Vertical) -> Swift.Bool
+  public typealias AllCases = [StytchB2BSDK.Vertical]
+  nonisolated public static var allCases: [StytchB2BSDK.Vertical] {
+    get
+  }
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+extension StytchB2BSDK.Vertical {
+  public func toKotlinEnum() -> StytchB2BSDK.__Vertical
+}
+extension StytchB2BSDK.__Vertical {
+  public func toSwiftEnum() -> StytchB2BSDK.Vertical
+}
+@frozen public enum DFPProtectedAuthMode : Swift.Hashable, Swift.CaseIterable, Swift._ObjectiveCBridgeable {
+  case observation
+  case decisioning
+  public var name: Swift.String {
+    get
+  }
+  public var ordinal: Swift.Int32 {
+    get
+  }
+  public static var companion: StytchB2BSDK.__DFPProtectedAuthMode.Companion {
+    get
+  }
+  #if compiler(>=5.3) && $NonescapableTypes
+  public static func _forceBridgeFromObjectiveC(_ source: StytchB2BSDK.__DFPProtectedAuthMode, result: inout StytchB2BSDK.DFPProtectedAuthMode?)
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public static func _conditionallyBridgeFromObjectiveC(_ source: StytchB2BSDK.__DFPProtectedAuthMode, result: inout StytchB2BSDK.DFPProtectedAuthMode?) -> Swift.Bool
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public static func _unconditionallyBridgeFromObjectiveC(_ source: StytchB2BSDK.__DFPProtectedAuthMode?) -> StytchB2BSDK.DFPProtectedAuthMode
+  #endif
+  public func _bridgeToObjectiveC() -> StytchB2BSDK.__DFPProtectedAuthMode
+  public typealias _ObjectiveCType = StytchB2BSDK.__DFPProtectedAuthMode
+  public typealias Companion = StytchB2BSDK.__DFPProtectedAuthMode.Companion
+  public static func == (a: StytchB2BSDK.DFPProtectedAuthMode, b: StytchB2BSDK.DFPProtectedAuthMode) -> Swift.Bool
+  public typealias AllCases = [StytchB2BSDK.DFPProtectedAuthMode]
+  nonisolated public static var allCases: [StytchB2BSDK.DFPProtectedAuthMode] {
+    get
+  }
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+extension StytchB2BSDK.DFPProtectedAuthMode {
+  public func toKotlinEnum() -> StytchB2BSDK.__DFPProtectedAuthMode
+}
+extension StytchB2BSDK.__DFPProtectedAuthMode {
+  public func toSwiftEnum() -> StytchB2BSDK.DFPProtectedAuthMode
+}
+@frozen public enum OAuthProviderType : Swift.Hashable, Swift.CaseIterable, Swift._ObjectiveCBridgeable {
+  case apple
+  case amazon
+  case bitbucket
+  case coinbase
+  case discord
+  case facebook
+  case figma
+  case github
+  case gitlab
+  case google
+  case linkedin
+  case microsoft
+  case salesforce
+  case slack
+  case snapchat
+  case tiktok
+  case twitch
+  case twitter
+  case yahoo
+  public var hostName: Swift.String {
+    get
+  }
+  public var name: Swift.String {
+    get
+  }
+  public var ordinal: Swift.Int32 {
+    get
+  }
+  public static var companion: StytchB2BSDK.__OAuthProviderType.Companion {
+    get
+  }
+  #if compiler(>=5.3) && $NonescapableTypes
+  public static func _forceBridgeFromObjectiveC(_ source: StytchB2BSDK.__OAuthProviderType, result: inout StytchB2BSDK.OAuthProviderType?)
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public static func _conditionallyBridgeFromObjectiveC(_ source: StytchB2BSDK.__OAuthProviderType, result: inout StytchB2BSDK.OAuthProviderType?) -> Swift.Bool
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public static func _unconditionallyBridgeFromObjectiveC(_ source: StytchB2BSDK.__OAuthProviderType?) -> StytchB2BSDK.OAuthProviderType
+  #endif
+  public func _bridgeToObjectiveC() -> StytchB2BSDK.__OAuthProviderType
+  public typealias _ObjectiveCType = StytchB2BSDK.__OAuthProviderType
+  public typealias Companion = StytchB2BSDK.__OAuthProviderType.Companion
+  public static func == (a: StytchB2BSDK.OAuthProviderType, b: StytchB2BSDK.OAuthProviderType) -> Swift.Bool
+  public typealias AllCases = [StytchB2BSDK.OAuthProviderType]
+  nonisolated public static var allCases: [StytchB2BSDK.OAuthProviderType] {
+    get
+  }
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+extension StytchB2BSDK.OAuthProviderType {
+  public func toKotlinEnum() -> StytchB2BSDK.__OAuthProviderType
+}
+extension StytchB2BSDK.__OAuthProviderType {
+  public func toSwiftEnum() -> StytchB2BSDK.OAuthProviderType
+}
+@frozen public enum KMPPlatformType : Swift.Hashable, Swift.CaseIterable, Swift._ObjectiveCBridgeable {
+  case android
+  case ios
+  case reactnative
+  case jvm
+  public var name: Swift.String {
+    get
+  }
+  public var ordinal: Swift.Int32 {
+    get
+  }
+  #if compiler(>=5.3) && $NonescapableTypes
+  public static func _forceBridgeFromObjectiveC(_ source: StytchB2BSDK.__KMPPlatformType, result: inout StytchB2BSDK.KMPPlatformType?)
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public static func _conditionallyBridgeFromObjectiveC(_ source: StytchB2BSDK.__KMPPlatformType, result: inout StytchB2BSDK.KMPPlatformType?) -> Swift.Bool
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public static func _unconditionallyBridgeFromObjectiveC(_ source: StytchB2BSDK.__KMPPlatformType?) -> StytchB2BSDK.KMPPlatformType
+  #endif
+  public func _bridgeToObjectiveC() -> StytchB2BSDK.__KMPPlatformType
+  public typealias _ObjectiveCType = StytchB2BSDK.__KMPPlatformType
+  public static func == (a: StytchB2BSDK.KMPPlatformType, b: StytchB2BSDK.KMPPlatformType) -> Swift.Bool
+  public typealias AllCases = [StytchB2BSDK.KMPPlatformType]
+  nonisolated public static var allCases: [StytchB2BSDK.KMPPlatformType] {
+    get
+  }
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+extension StytchB2BSDK.KMPPlatformType {
+  public func toKotlinEnum() -> StytchB2BSDK.__KMPPlatformType
+}
+extension StytchB2BSDK.__KMPPlatformType {
+  public func toSwiftEnum() -> StytchB2BSDK.KMPPlatformType
+}
+@frozen public enum Ktor_utilsMonth : Swift.Hashable, Swift.CaseIterable, Swift._ObjectiveCBridgeable {
+  case january
+  case february
+  case march
+  case april
+  case may
+  case june
+  case july
+  case august
+  case september
+  case october
+  case november
+  case december
+  public var name: Swift.String {
+    get
+  }
+  public var ordinal: Swift.Int32 {
+    get
+  }
+  public var value: Swift.String {
+    get
+  }
+  public static var companion: StytchB2BSDK.__Ktor_utilsMonth.Companion {
+    get
+  }
+  #if compiler(>=5.3) && $NonescapableTypes
+  public static func _forceBridgeFromObjectiveC(_ source: StytchB2BSDK.__Ktor_utilsMonth, result: inout StytchB2BSDK.Ktor_utilsMonth?)
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public static func _conditionallyBridgeFromObjectiveC(_ source: StytchB2BSDK.__Ktor_utilsMonth, result: inout StytchB2BSDK.Ktor_utilsMonth?) -> Swift.Bool
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public static func _unconditionallyBridgeFromObjectiveC(_ source: StytchB2BSDK.__Ktor_utilsMonth?) -> StytchB2BSDK.Ktor_utilsMonth
+  #endif
+  public func _bridgeToObjectiveC() -> StytchB2BSDK.__Ktor_utilsMonth
+  public typealias _ObjectiveCType = StytchB2BSDK.__Ktor_utilsMonth
+  public typealias Companion = StytchB2BSDK.__Ktor_utilsMonth.Companion
+  public static func == (a: StytchB2BSDK.Ktor_utilsMonth, b: StytchB2BSDK.Ktor_utilsMonth) -> Swift.Bool
+  public typealias AllCases = [StytchB2BSDK.Ktor_utilsMonth]
+  nonisolated public static var allCases: [StytchB2BSDK.Ktor_utilsMonth] {
+    get
+  }
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+extension StytchB2BSDK.Ktor_utilsMonth {
+  public func toKotlinEnum() -> StytchB2BSDK.__Ktor_utilsMonth
+}
+extension StytchB2BSDK.__Ktor_utilsMonth {
+  public func toSwiftEnum() -> StytchB2BSDK.Ktor_utilsMonth
+}
+@frozen public enum Ktor_utilsWeekDay : Swift.Hashable, Swift.CaseIterable, Swift._ObjectiveCBridgeable {
+  case monday
+  case tuesday
+  case wednesday
+  case thursday
+  case friday
+  case saturday
+  case sunday
+  public var name: Swift.String {
+    get
+  }
+  public var ordinal: Swift.Int32 {
+    get
+  }
+  public var value: Swift.String {
+    get
+  }
+  public static var companion: StytchB2BSDK.__Ktor_utilsWeekDay.Companion {
+    get
+  }
+  #if compiler(>=5.3) && $NonescapableTypes
+  public static func _forceBridgeFromObjectiveC(_ source: StytchB2BSDK.__Ktor_utilsWeekDay, result: inout StytchB2BSDK.Ktor_utilsWeekDay?)
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public static func _conditionallyBridgeFromObjectiveC(_ source: StytchB2BSDK.__Ktor_utilsWeekDay, result: inout StytchB2BSDK.Ktor_utilsWeekDay?) -> Swift.Bool
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public static func _unconditionallyBridgeFromObjectiveC(_ source: StytchB2BSDK.__Ktor_utilsWeekDay?) -> StytchB2BSDK.Ktor_utilsWeekDay
+  #endif
+  public func _bridgeToObjectiveC() -> StytchB2BSDK.__Ktor_utilsWeekDay
+  public typealias _ObjectiveCType = StytchB2BSDK.__Ktor_utilsWeekDay
+  public typealias Companion = StytchB2BSDK.__Ktor_utilsWeekDay.Companion
+  public static func == (a: StytchB2BSDK.Ktor_utilsWeekDay, b: StytchB2BSDK.Ktor_utilsWeekDay) -> Swift.Bool
+  public typealias AllCases = [StytchB2BSDK.Ktor_utilsWeekDay]
+  nonisolated public static var allCases: [StytchB2BSDK.Ktor_utilsWeekDay] {
+    get
+  }
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+extension StytchB2BSDK.Ktor_utilsWeekDay {
+  public func toKotlinEnum() -> StytchB2BSDK.__Ktor_utilsWeekDay
+}
+extension StytchB2BSDK.__Ktor_utilsWeekDay {
+  public func toSwiftEnum() -> StytchB2BSDK.Ktor_utilsWeekDay
+}
+@frozen public enum B2BTokenType : Swift.Hashable, Swift.CaseIterable, Swift._ObjectiveCBridgeable {
+  case multiTenantMagicLinks
+  case multiTenantPasswords
+  case discovery
+  case sso
+  case oauth
+  case discoveryOauth
+  case unknown
+  public var name: Swift.String {
+    get
+  }
+  public var ordinal: Swift.Int32 {
+    get
+  }
+  #if compiler(>=5.3) && $NonescapableTypes
+  public static func _forceBridgeFromObjectiveC(_ source: StytchB2BSDK.__B2BTokenType, result: inout StytchB2BSDK.B2BTokenType?)
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public static func _conditionallyBridgeFromObjectiveC(_ source: StytchB2BSDK.__B2BTokenType, result: inout StytchB2BSDK.B2BTokenType?) -> Swift.Bool
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public static func _unconditionallyBridgeFromObjectiveC(_ source: StytchB2BSDK.__B2BTokenType?) -> StytchB2BSDK.B2BTokenType
+  #endif
+  public func _bridgeToObjectiveC() -> StytchB2BSDK.__B2BTokenType
+  public typealias _ObjectiveCType = StytchB2BSDK.__B2BTokenType
+  public static func == (a: StytchB2BSDK.B2BTokenType, b: StytchB2BSDK.B2BTokenType) -> Swift.Bool
+  public typealias AllCases = [StytchB2BSDK.B2BTokenType]
+  nonisolated public static var allCases: [StytchB2BSDK.B2BTokenType] {
+    get
+  }
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+extension StytchB2BSDK.B2BTokenType {
+  public func toKotlinEnum() -> StytchB2BSDK.__B2BTokenType
+}
+extension StytchB2BSDK.__B2BTokenType {
+  public func toSwiftEnum() -> StytchB2BSDK.B2BTokenType
+}
+@frozen public enum ApiSessionV1AuthenticationFactorDeliveryMethod : Swift.Hashable, Swift.CaseIterable, Swift._ObjectiveCBridgeable {
+  case email
+  case sms
+  case whatsapp
+  case embedded
+  case oauthGoogle
+  case oauthMicrosoft
+  case oauthApple
+  case webauthnRegistration
+  case authenticatorApp
+  case oauthGithub
+  case recoveryCode
+  case oauthFacebook
+  case cryptoWallet
+  case oauthAmazon
+  case oauthBitbucket
+  case oauthCoinbase
+  case oauthDiscord
+  case oauthFigma
+  case oauthGitlab
+  case oauthInstagram
+  case oauthLinkedin
+  case oauthShopify
+  case oauthSlack
+  case oauthSnapchat
+  case oauthSpotify
+  case oauthSteam
+  case oauthTiktok
+  case oauthTwitch
+  case oauthTwitter
+  case knowledge
+  case biometric
+  case ssoSaml
+  case ssoOidc
+  case oauthSalesforce
+  case oauthYahoo
+  case oauthHubspot
+  case importedAuth0
+  case oauthExchangeSlack
+  case oauthExchangeHubspot
+  case oauthExchangeGithub
+  case oauthExchangeGoogle
+  case impersonation
+  case oauthAccessTokenExchange
+  case trustedTokenExchange
+  public var name: Swift.String {
+    get
+  }
+  public var ordinal: Swift.Int32 {
+    get
+  }
+  public var value: Swift.String {
+    get
+  }
+  public static var companion: StytchB2BSDK.__ApiSessionV1AuthenticationFactorDeliveryMethod.Companion {
+    get
+  }
+  #if compiler(>=5.3) && $NonescapableTypes
+  public static func _forceBridgeFromObjectiveC(_ source: StytchB2BSDK.__ApiSessionV1AuthenticationFactorDeliveryMethod, result: inout StytchB2BSDK.ApiSessionV1AuthenticationFactorDeliveryMethod?)
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public static func _conditionallyBridgeFromObjectiveC(_ source: StytchB2BSDK.__ApiSessionV1AuthenticationFactorDeliveryMethod, result: inout StytchB2BSDK.ApiSessionV1AuthenticationFactorDeliveryMethod?) -> Swift.Bool
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public static func _unconditionallyBridgeFromObjectiveC(_ source: StytchB2BSDK.__ApiSessionV1AuthenticationFactorDeliveryMethod?) -> StytchB2BSDK.ApiSessionV1AuthenticationFactorDeliveryMethod
+  #endif
+  public func _bridgeToObjectiveC() -> StytchB2BSDK.__ApiSessionV1AuthenticationFactorDeliveryMethod
+  public typealias _ObjectiveCType = StytchB2BSDK.__ApiSessionV1AuthenticationFactorDeliveryMethod
+  public typealias Companion = StytchB2BSDK.__ApiSessionV1AuthenticationFactorDeliveryMethod.Companion
+  public static func == (a: StytchB2BSDK.ApiSessionV1AuthenticationFactorDeliveryMethod, b: StytchB2BSDK.ApiSessionV1AuthenticationFactorDeliveryMethod) -> Swift.Bool
+  public typealias AllCases = [StytchB2BSDK.ApiSessionV1AuthenticationFactorDeliveryMethod]
+  nonisolated public static var allCases: [StytchB2BSDK.ApiSessionV1AuthenticationFactorDeliveryMethod] {
+    get
+  }
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+extension StytchB2BSDK.ApiSessionV1AuthenticationFactorDeliveryMethod {
+  public func toKotlinEnum() -> StytchB2BSDK.__ApiSessionV1AuthenticationFactorDeliveryMethod
+}
+extension StytchB2BSDK.__ApiSessionV1AuthenticationFactorDeliveryMethod {
+  public func toSwiftEnum() -> StytchB2BSDK.ApiSessionV1AuthenticationFactorDeliveryMethod
+}
+@frozen public enum ApiSessionV1AuthenticationFactorType : Swift.Hashable, Swift.CaseIterable, Swift._ObjectiveCBridgeable {
+  case magicLink
+  case otp
+  case oauth
+  case webauthn
+  case totp
+  case crypto
+  case password
+  case signatureChallenge
+  case sso
+  case imported
+  case recoveryCodes
+  case emailOtp
+  case impersonated
+  case trustedAuthToken
+  public var name: Swift.String {
+    get
+  }
+  public var ordinal: Swift.Int32 {
+    get
+  }
+  public var value: Swift.String {
+    get
+  }
+  public static var companion: StytchB2BSDK.__ApiSessionV1AuthenticationFactorType.Companion {
+    get
+  }
+  #if compiler(>=5.3) && $NonescapableTypes
+  public static func _forceBridgeFromObjectiveC(_ source: StytchB2BSDK.__ApiSessionV1AuthenticationFactorType, result: inout StytchB2BSDK.ApiSessionV1AuthenticationFactorType?)
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public static func _conditionallyBridgeFromObjectiveC(_ source: StytchB2BSDK.__ApiSessionV1AuthenticationFactorType, result: inout StytchB2BSDK.ApiSessionV1AuthenticationFactorType?) -> Swift.Bool
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public static func _unconditionallyBridgeFromObjectiveC(_ source: StytchB2BSDK.__ApiSessionV1AuthenticationFactorType?) -> StytchB2BSDK.ApiSessionV1AuthenticationFactorType
+  #endif
+  public func _bridgeToObjectiveC() -> StytchB2BSDK.__ApiSessionV1AuthenticationFactorType
+  public typealias _ObjectiveCType = StytchB2BSDK.__ApiSessionV1AuthenticationFactorType
+  public typealias Companion = StytchB2BSDK.__ApiSessionV1AuthenticationFactorType.Companion
+  public static func == (a: StytchB2BSDK.ApiSessionV1AuthenticationFactorType, b: StytchB2BSDK.ApiSessionV1AuthenticationFactorType) -> Swift.Bool
+  public typealias AllCases = [StytchB2BSDK.ApiSessionV1AuthenticationFactorType]
+  nonisolated public static var allCases: [StytchB2BSDK.ApiSessionV1AuthenticationFactorType] {
+    get
+  }
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+extension StytchB2BSDK.ApiSessionV1AuthenticationFactorType {
+  public func toKotlinEnum() -> StytchB2BSDK.__ApiSessionV1AuthenticationFactorType
+}
+extension StytchB2BSDK.__ApiSessionV1AuthenticationFactorType {
+  public func toSwiftEnum() -> StytchB2BSDK.ApiSessionV1AuthenticationFactorType
+}
+@frozen public enum ApiOrganizationV1ExternalSearchQueryOperator : Swift.Hashable, Swift.CaseIterable, Swift._ObjectiveCBridgeable {
+  case or
+  case and
+  public var name: Swift.String {
+    get
+  }
+  public var ordinal: Swift.Int32 {
+    get
+  }
+  public var value: Swift.String {
+    get
+  }
+  public static var companion: StytchB2BSDK.__ApiOrganizationV1ExternalSearchQueryOperator.Companion {
+    get
+  }
+  #if compiler(>=5.3) && $NonescapableTypes
+  public static func _forceBridgeFromObjectiveC(_ source: StytchB2BSDK.__ApiOrganizationV1ExternalSearchQueryOperator, result: inout StytchB2BSDK.ApiOrganizationV1ExternalSearchQueryOperator?)
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public static func _conditionallyBridgeFromObjectiveC(_ source: StytchB2BSDK.__ApiOrganizationV1ExternalSearchQueryOperator, result: inout StytchB2BSDK.ApiOrganizationV1ExternalSearchQueryOperator?) -> Swift.Bool
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public static func _unconditionallyBridgeFromObjectiveC(_ source: StytchB2BSDK.__ApiOrganizationV1ExternalSearchQueryOperator?) -> StytchB2BSDK.ApiOrganizationV1ExternalSearchQueryOperator
+  #endif
+  public func _bridgeToObjectiveC() -> StytchB2BSDK.__ApiOrganizationV1ExternalSearchQueryOperator
+  public typealias _ObjectiveCType = StytchB2BSDK.__ApiOrganizationV1ExternalSearchQueryOperator
+  public typealias Companion = StytchB2BSDK.__ApiOrganizationV1ExternalSearchQueryOperator.Companion
+  public static func == (a: StytchB2BSDK.ApiOrganizationV1ExternalSearchQueryOperator, b: StytchB2BSDK.ApiOrganizationV1ExternalSearchQueryOperator) -> Swift.Bool
+  public typealias AllCases = [StytchB2BSDK.ApiOrganizationV1ExternalSearchQueryOperator]
+  nonisolated public static var allCases: [StytchB2BSDK.ApiOrganizationV1ExternalSearchQueryOperator] {
+    get
+  }
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+extension StytchB2BSDK.ApiOrganizationV1ExternalSearchQueryOperator {
+  public func toKotlinEnum() -> StytchB2BSDK.__ApiOrganizationV1ExternalSearchQueryOperator
+}
+extension StytchB2BSDK.__ApiOrganizationV1ExternalSearchQueryOperator {
+  public func toSwiftEnum() -> StytchB2BSDK.ApiOrganizationV1ExternalSearchQueryOperator
+}
+@frozen public enum ApiAttributeV1Vertical : Swift.Hashable, Swift.CaseIterable, Swift._ObjectiveCBridgeable {
+  case all
+  case consumer
+  case b2B
+  public var name: Swift.String {
+    get
+  }
+  public var ordinal: Swift.Int32 {
+    get
+  }
+  public var value: Swift.String {
+    get
+  }
+  public static var companion: StytchB2BSDK.__ApiAttributeV1Vertical.Companion {
+    get
+  }
+  #if compiler(>=5.3) && $NonescapableTypes
+  public static func _forceBridgeFromObjectiveC(_ source: StytchB2BSDK.__ApiAttributeV1Vertical, result: inout StytchB2BSDK.ApiAttributeV1Vertical?)
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public static func _conditionallyBridgeFromObjectiveC(_ source: StytchB2BSDK.__ApiAttributeV1Vertical, result: inout StytchB2BSDK.ApiAttributeV1Vertical?) -> Swift.Bool
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public static func _unconditionallyBridgeFromObjectiveC(_ source: StytchB2BSDK.__ApiAttributeV1Vertical?) -> StytchB2BSDK.ApiAttributeV1Vertical
+  #endif
+  public func _bridgeToObjectiveC() -> StytchB2BSDK.__ApiAttributeV1Vertical
+  public typealias _ObjectiveCType = StytchB2BSDK.__ApiAttributeV1Vertical
+  public typealias Companion = StytchB2BSDK.__ApiAttributeV1Vertical.Companion
+  public static func == (a: StytchB2BSDK.ApiAttributeV1Vertical, b: StytchB2BSDK.ApiAttributeV1Vertical) -> Swift.Bool
+  public typealias AllCases = [StytchB2BSDK.ApiAttributeV1Vertical]
+  nonisolated public static var allCases: [StytchB2BSDK.ApiAttributeV1Vertical] {
+    get
+  }
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+extension StytchB2BSDK.ApiAttributeV1Vertical {
+  public func toKotlinEnum() -> StytchB2BSDK.__ApiAttributeV1Vertical
+}
+extension StytchB2BSDK.__ApiAttributeV1Vertical {
+  public func toSwiftEnum() -> StytchB2BSDK.ApiAttributeV1Vertical
+}
+@frozen public enum UserSearchByEmailResponseUserType : Swift.Hashable, Swift.CaseIterable, Swift._ObjectiveCBridgeable {
+  case theNew
+  case password
+  case passwordless
+  public var name: Swift.String {
+    get
+  }
+  public var ordinal: Swift.Int32 {
+    get
+  }
+  public var value: Swift.String {
+    get
+  }
+  public static var companion: StytchB2BSDK.__UserSearchByEmailResponseUserType.Companion {
+    get
+  }
+  #if compiler(>=5.3) && $NonescapableTypes
+  public static func _forceBridgeFromObjectiveC(_ source: StytchB2BSDK.__UserSearchByEmailResponseUserType, result: inout StytchB2BSDK.UserSearchByEmailResponseUserType?)
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public static func _conditionallyBridgeFromObjectiveC(_ source: StytchB2BSDK.__UserSearchByEmailResponseUserType, result: inout StytchB2BSDK.UserSearchByEmailResponseUserType?) -> Swift.Bool
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public static func _unconditionallyBridgeFromObjectiveC(_ source: StytchB2BSDK.__UserSearchByEmailResponseUserType?) -> StytchB2BSDK.UserSearchByEmailResponseUserType
+  #endif
+  public func _bridgeToObjectiveC() -> StytchB2BSDK.__UserSearchByEmailResponseUserType
+  public typealias _ObjectiveCType = StytchB2BSDK.__UserSearchByEmailResponseUserType
+  public typealias Companion = StytchB2BSDK.__UserSearchByEmailResponseUserType.Companion
+  public static func == (a: StytchB2BSDK.UserSearchByEmailResponseUserType, b: StytchB2BSDK.UserSearchByEmailResponseUserType) -> Swift.Bool
+  public typealias AllCases = [StytchB2BSDK.UserSearchByEmailResponseUserType]
+  nonisolated public static var allCases: [StytchB2BSDK.UserSearchByEmailResponseUserType] {
+    get
+  }
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+extension StytchB2BSDK.UserSearchByEmailResponseUserType {
+  public func toKotlinEnum() -> StytchB2BSDK.__UserSearchByEmailResponseUserType
+}
+extension StytchB2BSDK.__UserSearchByEmailResponseUserType {
+  public func toSwiftEnum() -> StytchB2BSDK.UserSearchByEmailResponseUserType
+}
+extension StytchB2BSDK.Skie.Shared.BiometricsAvailability {
+  @frozen public enum __Sealed : Swift.Hashable {
+    case alreadyRegistered(StytchB2BSDK.BiometricsAvailability.AlreadyRegistered)
+    case available(StytchB2BSDK.BiometricsAvailability.Available)
+    case registrationRevoked(StytchB2BSDK.BiometricsAvailability.RegistrationRevoked)
+    case unavailable(StytchB2BSDK.BiometricsAvailability.Unavailable)
+    public static func == (a: StytchB2BSDK.Skie.Shared.BiometricsAvailability.__Sealed, b: StytchB2BSDK.Skie.Shared.BiometricsAvailability.__Sealed) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
+    public var hashValue: Swift.Int {
+      get
+    }
+  }
+}
+public func onEnum<__Sealed>(of sealed: __Sealed) -> StytchB2BSDK.Skie.Shared.BiometricsAvailability.__Sealed where __Sealed : StytchB2BSDK.BiometricsAvailability
+#if compiler(>=5.3) && $NonescapableTypes
+@_disfavoredOverload public func onEnum<__Sealed>(of sealed: __Sealed?) -> StytchB2BSDK.Skie.Shared.BiometricsAvailability.__Sealed? where __Sealed : StytchB2BSDK.BiometricsAvailability
+#endif
+extension StytchB2BSDK.Skie.Shared.SSOError {
+  @frozen public enum __Sealed : Swift.Hashable {
+    case noBrowserFound(StytchB2BSDK.SSOError.NoBrowserFound)
+    case noTokenFound(StytchB2BSDK.SSOError.NoTokenFound)
+    case noURIFound(StytchB2BSDK.SSOError.NoURIFound)
+    case unknownError(StytchB2BSDK.SSOError.UnknownError)
+    case userCanceled(StytchB2BSDK.SSOError.UserCanceled)
+    public static func == (a: StytchB2BSDK.Skie.Shared.SSOError.__Sealed, b: StytchB2BSDK.Skie.Shared.SSOError.__Sealed) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
+    public var hashValue: Swift.Int {
+      get
+    }
+  }
+}
+public func onEnum<__Sealed>(of sealed: __Sealed) -> StytchB2BSDK.Skie.Shared.SSOError.__Sealed where __Sealed : StytchB2BSDK.SSOError
+#if compiler(>=5.3) && $NonescapableTypes
+@_disfavoredOverload public func onEnum<__Sealed>(of sealed: __Sealed?) -> StytchB2BSDK.Skie.Shared.SSOError.__Sealed? where __Sealed : StytchB2BSDK.SSOError
+#endif
+extension StytchB2BSDK.Skie.Shared.OAuthResult {
+  @frozen public enum __Sealed : Swift.Hashable {
+    case classicToken(StytchB2BSDK.OAuthResult.ClassicToken)
+    case error(StytchB2BSDK.OAuthResult.Error)
+    case iDToken(StytchB2BSDK.OAuthResult.IDToken)
+    public static func == (a: StytchB2BSDK.Skie.Shared.OAuthResult.__Sealed, b: StytchB2BSDK.Skie.Shared.OAuthResult.__Sealed) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
+    public var hashValue: Swift.Int {
+      get
+    }
+  }
+}
+public func onEnum<__Sealed>(of sealed: __Sealed) -> StytchB2BSDK.Skie.Shared.OAuthResult.__Sealed where __Sealed : StytchB2BSDK.OAuthResult
+#if compiler(>=5.3) && $NonescapableTypes
+@_disfavoredOverload public func onEnum<__Sealed>(of sealed: __Sealed?) -> StytchB2BSDK.Skie.Shared.OAuthResult.__Sealed? where __Sealed : StytchB2BSDK.OAuthResult
+#endif
+extension StytchB2BSDK.Skie.KotlinxCoroutinesCore.SelectClause0 {
+  @frozen public enum __Sealed : Swift.Hashable {
+    case `else`
+    public static func == (a: StytchB2BSDK.Skie.KotlinxCoroutinesCore.SelectClause0.__Sealed, b: StytchB2BSDK.Skie.KotlinxCoroutinesCore.SelectClause0.__Sealed) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
+    public var hashValue: Swift.Int {
+      get
+    }
+  }
+}
+public func onEnum<__Sealed>(of sealed: __Sealed) -> StytchB2BSDK.Skie.KotlinxCoroutinesCore.SelectClause0.__Sealed where __Sealed : StytchB2BSDK.Kotlinx_coroutines_coreSelectClause0
+#if compiler(>=5.3) && $NonescapableTypes
+@_disfavoredOverload public func onEnum<__Sealed>(of sealed: __Sealed?) -> StytchB2BSDK.Skie.KotlinxCoroutinesCore.SelectClause0.__Sealed? where __Sealed : StytchB2BSDK.Kotlinx_coroutines_coreSelectClause0
+#endif
+extension StytchB2BSDK.Skie.KotlinxCoroutinesCore.SelectClause {
+  @frozen public enum __Sealed {
+    case selectClause0(any StytchB2BSDK.Kotlinx_coroutines_coreSelectClause0)
+    case selectClause1(any StytchB2BSDK.Kotlinx_coroutines_coreSelectClause1)
+    case selectClause2(any StytchB2BSDK.Kotlinx_coroutines_coreSelectClause2)
+  }
+}
+public func onEnum<__Sealed>(of sealed: __Sealed) -> StytchB2BSDK.Skie.KotlinxCoroutinesCore.SelectClause.__Sealed where __Sealed : StytchB2BSDK.Kotlinx_coroutines_coreSelectClause
+#if compiler(>=5.3) && $NonescapableTypes
+@_disfavoredOverload public func onEnum<__Sealed>(of sealed: __Sealed?) -> StytchB2BSDK.Skie.KotlinxCoroutinesCore.SelectClause.__Sealed? where __Sealed : StytchB2BSDK.Kotlinx_coroutines_coreSelectClause
+#endif
+extension StytchB2BSDK.Skie.KotlinxCoroutinesCore.SelectInstance {
+  @frozen public enum __Sealed : Swift.Hashable {
+    case `else`
+    public static func == (a: StytchB2BSDK.Skie.KotlinxCoroutinesCore.SelectInstance.__Sealed, b: StytchB2BSDK.Skie.KotlinxCoroutinesCore.SelectInstance.__Sealed) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
+    public var hashValue: Swift.Int {
+      get
+    }
+  }
+}
+public func onEnum<__Sealed>(of sealed: __Sealed) -> StytchB2BSDK.Skie.KotlinxCoroutinesCore.SelectInstance.__Sealed where __Sealed : StytchB2BSDK.Kotlinx_coroutines_coreSelectInstance
+#if compiler(>=5.3) && $NonescapableTypes
+@_disfavoredOverload public func onEnum<__Sealed>(of sealed: __Sealed?) -> StytchB2BSDK.Skie.KotlinxCoroutinesCore.SelectInstance.__Sealed? where __Sealed : StytchB2BSDK.Kotlinx_coroutines_coreSelectInstance
+#endif
+extension StytchB2BSDK.Skie.KotlinxCoroutinesCore.SelectClause1 {
+  @frozen public enum __Sealed : Swift.Hashable {
+    case `else`
+    public static func == (a: StytchB2BSDK.Skie.KotlinxCoroutinesCore.SelectClause1.__Sealed, b: StytchB2BSDK.Skie.KotlinxCoroutinesCore.SelectClause1.__Sealed) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
+    public var hashValue: Swift.Int {
+      get
+    }
+  }
+}
+public func onEnum<__Sealed>(of sealed: __Sealed) -> StytchB2BSDK.Skie.KotlinxCoroutinesCore.SelectClause1.__Sealed where __Sealed : StytchB2BSDK.Kotlinx_coroutines_coreSelectClause1
+#if compiler(>=5.3) && $NonescapableTypes
+@_disfavoredOverload public func onEnum<__Sealed>(of sealed: __Sealed?) -> StytchB2BSDK.Skie.KotlinxCoroutinesCore.SelectClause1.__Sealed? where __Sealed : StytchB2BSDK.Kotlinx_coroutines_coreSelectClause1
+#endif
+extension StytchB2BSDK.Skie.KotlinxCoroutinesCore.SelectClause2 {
+  @frozen public enum __Sealed : Swift.Hashable {
+    case `else`
+    public static func == (a: StytchB2BSDK.Skie.KotlinxCoroutinesCore.SelectClause2.__Sealed, b: StytchB2BSDK.Skie.KotlinxCoroutinesCore.SelectClause2.__Sealed) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
+    public var hashValue: Swift.Int {
+      get
+    }
+  }
+}
+public func onEnum<__Sealed>(of sealed: __Sealed) -> StytchB2BSDK.Skie.KotlinxCoroutinesCore.SelectClause2.__Sealed where __Sealed : StytchB2BSDK.Kotlinx_coroutines_coreSelectClause2
+#if compiler(>=5.3) && $NonescapableTypes
+@_disfavoredOverload public func onEnum<__Sealed>(of sealed: __Sealed?) -> StytchB2BSDK.Skie.KotlinxCoroutinesCore.SelectClause2.__Sealed? where __Sealed : StytchB2BSDK.Kotlinx_coroutines_coreSelectClause2
+#endif
+extension StytchB2BSDK.Skie.KotlinxSerializationCore.SerialKind {
+  @frozen public enum __Sealed : Swift.Hashable {
+    case polymorphicKind(StytchB2BSDK.Kotlinx_serialization_corePolymorphicKind)
+    case primitiveKind(StytchB2BSDK.Kotlinx_serialization_corePrimitiveKind)
+    case cONTEXTUAL(StytchB2BSDK.Kotlinx_serialization_coreSerialKind.CONTEXTUAL)
+    case eNUM(StytchB2BSDK.Kotlinx_serialization_coreSerialKind.ENUM)
+    case structureKind(StytchB2BSDK.Kotlinx_serialization_coreStructureKind)
+    public static func == (a: StytchB2BSDK.Skie.KotlinxSerializationCore.SerialKind.__Sealed, b: StytchB2BSDK.Skie.KotlinxSerializationCore.SerialKind.__Sealed) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
+    public var hashValue: Swift.Int {
+      get
+    }
+  }
+}
+public func onEnum<__Sealed>(of sealed: __Sealed) -> StytchB2BSDK.Skie.KotlinxSerializationCore.SerialKind.__Sealed where __Sealed : StytchB2BSDK.Kotlinx_serialization_coreSerialKind
+#if compiler(>=5.3) && $NonescapableTypes
+@_disfavoredOverload public func onEnum<__Sealed>(of sealed: __Sealed?) -> StytchB2BSDK.Skie.KotlinxSerializationCore.SerialKind.__Sealed? where __Sealed : StytchB2BSDK.Kotlinx_serialization_coreSerialKind
+#endif
+extension StytchB2BSDK.Skie.KotlinxSerializationCore.SerializersModule {
+  @frozen public enum __Sealed : Swift.Hashable {
+    case `else`
+    public static func == (a: StytchB2BSDK.Skie.KotlinxSerializationCore.SerializersModule.__Sealed, b: StytchB2BSDK.Skie.KotlinxSerializationCore.SerializersModule.__Sealed) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
+    public var hashValue: Swift.Int {
+      get
+    }
+  }
+}
+public func onEnum<__Sealed>(of sealed: __Sealed) -> StytchB2BSDK.Skie.KotlinxSerializationCore.SerializersModule.__Sealed where __Sealed : StytchB2BSDK.Kotlinx_serialization_coreSerializersModule
+#if compiler(>=5.3) && $NonescapableTypes
+@_disfavoredOverload public func onEnum<__Sealed>(of sealed: __Sealed?) -> StytchB2BSDK.Skie.KotlinxSerializationCore.SerializersModule.__Sealed? where __Sealed : StytchB2BSDK.Kotlinx_serialization_coreSerializersModule
+#endif
+extension StytchB2BSDK.Skie.KotlinxSerializationCore.PolymorphicKind {
+  @frozen public enum __Sealed : Swift.Hashable {
+    case oPEN(StytchB2BSDK.Kotlinx_serialization_corePolymorphicKind.OPEN)
+    case sEALED(StytchB2BSDK.Kotlinx_serialization_corePolymorphicKind.SEALED)
+    public static func == (a: StytchB2BSDK.Skie.KotlinxSerializationCore.PolymorphicKind.__Sealed, b: StytchB2BSDK.Skie.KotlinxSerializationCore.PolymorphicKind.__Sealed) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
+    public var hashValue: Swift.Int {
+      get
+    }
+  }
+}
+public func onEnum<__Sealed>(of sealed: __Sealed) -> StytchB2BSDK.Skie.KotlinxSerializationCore.PolymorphicKind.__Sealed where __Sealed : StytchB2BSDK.Kotlinx_serialization_corePolymorphicKind
+#if compiler(>=5.3) && $NonescapableTypes
+@_disfavoredOverload public func onEnum<__Sealed>(of sealed: __Sealed?) -> StytchB2BSDK.Skie.KotlinxSerializationCore.PolymorphicKind.__Sealed? where __Sealed : StytchB2BSDK.Kotlinx_serialization_corePolymorphicKind
+#endif
+extension StytchB2BSDK.Skie.KotlinxSerializationCore.PrimitiveKind {
+  @frozen public enum __Sealed : Swift.Hashable {
+    case bOOLEAN(StytchB2BSDK.Kotlinx_serialization_corePrimitiveKind.BOOLEAN)
+    case bYTE(StytchB2BSDK.Kotlinx_serialization_corePrimitiveKind.BYTE)
+    case cHAR(StytchB2BSDK.Kotlinx_serialization_corePrimitiveKind.CHAR)
+    case dOUBLE(StytchB2BSDK.Kotlinx_serialization_corePrimitiveKind.DOUBLE)
+    case fLOAT(StytchB2BSDK.Kotlinx_serialization_corePrimitiveKind.FLOAT)
+    case iNT(StytchB2BSDK.Kotlinx_serialization_corePrimitiveKind.INT)
+    case lONG(StytchB2BSDK.Kotlinx_serialization_corePrimitiveKind.LONG)
+    case sHORT(StytchB2BSDK.Kotlinx_serialization_corePrimitiveKind.SHORT)
+    case sTRING(StytchB2BSDK.Kotlinx_serialization_corePrimitiveKind.STRING)
+    public static func == (a: StytchB2BSDK.Skie.KotlinxSerializationCore.PrimitiveKind.__Sealed, b: StytchB2BSDK.Skie.KotlinxSerializationCore.PrimitiveKind.__Sealed) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
+    public var hashValue: Swift.Int {
+      get
+    }
+  }
+}
+public func onEnum<__Sealed>(of sealed: __Sealed) -> StytchB2BSDK.Skie.KotlinxSerializationCore.PrimitiveKind.__Sealed where __Sealed : StytchB2BSDK.Kotlinx_serialization_corePrimitiveKind
+#if compiler(>=5.3) && $NonescapableTypes
+@_disfavoredOverload public func onEnum<__Sealed>(of sealed: __Sealed?) -> StytchB2BSDK.Skie.KotlinxSerializationCore.PrimitiveKind.__Sealed? where __Sealed : StytchB2BSDK.Kotlinx_serialization_corePrimitiveKind
+#endif
+extension StytchB2BSDK.Skie.KotlinxSerializationCore.StructureKind {
+  @frozen public enum __Sealed : Swift.Hashable {
+    case cLASS(StytchB2BSDK.Kotlinx_serialization_coreStructureKind.CLASS)
+    case lIST(StytchB2BSDK.Kotlinx_serialization_coreStructureKind.LIST)
+    case mAP(StytchB2BSDK.Kotlinx_serialization_coreStructureKind.MAP)
+    case oBJECT(StytchB2BSDK.Kotlinx_serialization_coreStructureKind.OBJECT)
+    public static func == (a: StytchB2BSDK.Skie.KotlinxSerializationCore.StructureKind.__Sealed, b: StytchB2BSDK.Skie.KotlinxSerializationCore.StructureKind.__Sealed) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
+    public var hashValue: Swift.Int {
+      get
+    }
+  }
+}
+public func onEnum<__Sealed>(of sealed: __Sealed) -> StytchB2BSDK.Skie.KotlinxSerializationCore.StructureKind.__Sealed where __Sealed : StytchB2BSDK.Kotlinx_serialization_coreStructureKind
+#if compiler(>=5.3) && $NonescapableTypes
+@_disfavoredOverload public func onEnum<__Sealed>(of sealed: __Sealed?) -> StytchB2BSDK.Skie.KotlinxSerializationCore.StructureKind.__Sealed? where __Sealed : StytchB2BSDK.Kotlinx_serialization_coreStructureKind
+#endif
+extension StytchB2BSDK.Skie.KtorHttp.OutgoingContent {
+  @frozen public enum __Sealed : Swift.Hashable {
+    case byteArrayContent(StytchB2BSDK.Ktor_httpOutgoingContent.ByteArrayContent)
+    case contentWrapper(StytchB2BSDK.Ktor_httpOutgoingContent.ContentWrapper)
+    case noContent(StytchB2BSDK.Ktor_httpOutgoingContent.NoContent)
+    case protocolUpgrade(StytchB2BSDK.Ktor_httpOutgoingContent.ProtocolUpgrade)
+    case readChannelContent(StytchB2BSDK.Ktor_httpOutgoingContent.ReadChannelContent)
+    case writeChannelContent(StytchB2BSDK.Ktor_httpOutgoingContent.WriteChannelContent)
+    public static func == (a: StytchB2BSDK.Skie.KtorHttp.OutgoingContent.__Sealed, b: StytchB2BSDK.Skie.KtorHttp.OutgoingContent.__Sealed) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
+    public var hashValue: Swift.Int {
+      get
+    }
+  }
+}
+public func onEnum<__Sealed>(of sealed: __Sealed) -> StytchB2BSDK.Skie.KtorHttp.OutgoingContent.__Sealed where __Sealed : StytchB2BSDK.Ktor_httpOutgoingContent
+#if compiler(>=5.3) && $NonescapableTypes
+@_disfavoredOverload public func onEnum<__Sealed>(of sealed: __Sealed?) -> StytchB2BSDK.Skie.KtorHttp.OutgoingContent.__Sealed? where __Sealed : StytchB2BSDK.Ktor_httpOutgoingContent
+#endif
+extension StytchB2BSDK.Skie.KotlinxIoCore.Source {
+  @frozen public enum __Sealed : Swift.Hashable {
+    case buffer(StytchB2BSDK.Kotlinx_io_coreBuffer)
+    case `else`
+    public static func == (a: StytchB2BSDK.Skie.KotlinxIoCore.Source.__Sealed, b: StytchB2BSDK.Skie.KotlinxIoCore.Source.__Sealed) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
+    public var hashValue: Swift.Int {
+      get
+    }
+  }
+}
+public func onEnum<__Sealed>(of sealed: __Sealed) -> StytchB2BSDK.Skie.KotlinxIoCore.Source.__Sealed where __Sealed : StytchB2BSDK.Kotlinx_io_coreSource
+#if compiler(>=5.3) && $NonescapableTypes
+@_disfavoredOverload public func onEnum<__Sealed>(of sealed: __Sealed?) -> StytchB2BSDK.Skie.KotlinxIoCore.Source.__Sealed? where __Sealed : StytchB2BSDK.Kotlinx_io_coreSource
+#endif
+extension StytchB2BSDK.Skie.KotlinxIoCore.Sink {
+  @frozen public enum __Sealed : Swift.Hashable {
+    case buffer(StytchB2BSDK.Kotlinx_io_coreBuffer)
+    case `else`
+    public static func == (a: StytchB2BSDK.Skie.KotlinxIoCore.Sink.__Sealed, b: StytchB2BSDK.Skie.KotlinxIoCore.Sink.__Sealed) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
+    public var hashValue: Swift.Int {
+      get
+    }
+  }
+}
+public func onEnum<__Sealed>(of sealed: __Sealed) -> StytchB2BSDK.Skie.KotlinxIoCore.Sink.__Sealed where __Sealed : StytchB2BSDK.Kotlinx_io_coreSink
+#if compiler(>=5.3) && $NonescapableTypes
+@_disfavoredOverload public func onEnum<__Sealed>(of sealed: __Sealed?) -> StytchB2BSDK.Skie.KotlinxIoCore.Sink.__Sealed? where __Sealed : StytchB2BSDK.Kotlinx_io_coreSink
+#endif
+extension StytchB2BSDK.Skie.KtorfitLibCore.KtorfitResult {
+  @frozen public enum __Sealed : Swift.Hashable {
+    case failure(StytchB2BSDK.Ktorfit_lib_coreKtorfitResultFailure)
+    case success(StytchB2BSDK.Ktorfit_lib_coreKtorfitResultSuccess)
+    public static func == (a: StytchB2BSDK.Skie.KtorfitLibCore.KtorfitResult.__Sealed, b: StytchB2BSDK.Skie.KtorfitLibCore.KtorfitResult.__Sealed) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
+    public var hashValue: Swift.Int {
+      get
+    }
+  }
+}
+public func onEnum<__Sealed>(of sealed: __Sealed) -> StytchB2BSDK.Skie.KtorfitLibCore.KtorfitResult.__Sealed where __Sealed : StytchB2BSDK.Ktorfit_lib_coreKtorfitResult
+#if compiler(>=5.3) && $NonescapableTypes
+@_disfavoredOverload public func onEnum<__Sealed>(of sealed: __Sealed?) -> StytchB2BSDK.Skie.KtorfitLibCore.KtorfitResult.__Sealed? where __Sealed : StytchB2BSDK.Ktorfit_lib_coreKtorfitResult
+#endif
+extension StytchB2BSDK.Skie.RuntimeKotlin.Skie_SuspendResult {
+  @frozen public enum __Sealed : Swift.Hashable {
+    case canceled(StytchB2BSDK.Skie_SuspendResult.Canceled)
+    case error(StytchB2BSDK.Skie_SuspendResult.Error)
+    case success(StytchB2BSDK.Skie_SuspendResult.Success)
+    public static func == (a: StytchB2BSDK.Skie.RuntimeKotlin.Skie_SuspendResult.__Sealed, b: StytchB2BSDK.Skie.RuntimeKotlin.Skie_SuspendResult.__Sealed) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
+    public var hashValue: Swift.Int {
+      get
+    }
+  }
+}
+public func onEnum<__Sealed>(of sealed: __Sealed) -> StytchB2BSDK.Skie.RuntimeKotlin.Skie_SuspendResult.__Sealed where __Sealed : StytchB2BSDK.Skie_SuspendResult
+#if compiler(>=5.3) && $NonescapableTypes
+@_disfavoredOverload public func onEnum<__Sealed>(of sealed: __Sealed?) -> StytchB2BSDK.Skie.RuntimeKotlin.Skie_SuspendResult.__Sealed? where __Sealed : StytchB2BSDK.Skie_SuspendResult
+#endif
+extension StytchB2BSDK.Skie.B2bHeadless.B2BAuthenticationState {
+  @frozen public enum __Sealed : Swift.Hashable {
+    case authenticated(StytchB2BSDK.B2BAuthenticationState.Authenticated)
+    case loading(StytchB2BSDK.B2BAuthenticationState.Loading)
+    case unauthenticated(StytchB2BSDK.B2BAuthenticationState.Unauthenticated)
+    public static func == (a: StytchB2BSDK.Skie.B2bHeadless.B2BAuthenticationState.__Sealed, b: StytchB2BSDK.Skie.B2bHeadless.B2BAuthenticationState.__Sealed) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
+    public var hashValue: Swift.Int {
+      get
+    }
+  }
+}
+public func onEnum<__Sealed>(of sealed: __Sealed) -> StytchB2BSDK.Skie.B2bHeadless.B2BAuthenticationState.__Sealed where __Sealed : StytchB2BSDK.B2BAuthenticationState
+#if compiler(>=5.3) && $NonescapableTypes
+@_disfavoredOverload public func onEnum<__Sealed>(of sealed: __Sealed?) -> StytchB2BSDK.Skie.B2bHeadless.B2BAuthenticationState.__Sealed? where __Sealed : StytchB2BSDK.B2BAuthenticationState
+#endif
+extension StytchB2BSDK.Skie.B2bHeadless.DeeplinkAuthenticationStatus {
+  @frozen public enum __Sealed : Swift.Hashable {
+    case authenticated(StytchB2BSDK.DeeplinkAuthenticationStatus.Authenticated)
+    case manualHandlingRequired(StytchB2BSDK.DeeplinkAuthenticationStatus.ManualHandlingRequired)
+    case unknownDeeplink(StytchB2BSDK.DeeplinkAuthenticationStatus.UnknownDeeplink)
+    public static func == (a: StytchB2BSDK.Skie.B2bHeadless.DeeplinkAuthenticationStatus.__Sealed, b: StytchB2BSDK.Skie.B2bHeadless.DeeplinkAuthenticationStatus.__Sealed) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
+    public var hashValue: Swift.Int {
+      get
+    }
+  }
+}
+public func onEnum<__Sealed>(of sealed: __Sealed) -> StytchB2BSDK.Skie.B2bHeadless.DeeplinkAuthenticationStatus.__Sealed where __Sealed : StytchB2BSDK.DeeplinkAuthenticationStatus
+#if compiler(>=5.3) && $NonescapableTypes
+@_disfavoredOverload public func onEnum<__Sealed>(of sealed: __Sealed?) -> StytchB2BSDK.Skie.B2bHeadless.DeeplinkAuthenticationStatus.__Sealed? where __Sealed : StytchB2BSDK.DeeplinkAuthenticationStatus
+#endif
+extension StytchB2BSDK.Skie.KotlinxSerializationJson.JsonElement {
+  @frozen public enum __Sealed : Swift.Hashable {
+    case jsonPrimitive(StytchB2BSDK.Kotlinx_serialization_jsonJsonPrimitive)
+    case `else`
+    public static func == (a: StytchB2BSDK.Skie.KotlinxSerializationJson.JsonElement.__Sealed, b: StytchB2BSDK.Skie.KotlinxSerializationJson.JsonElement.__Sealed) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
+    public var hashValue: Swift.Int {
+      get
+    }
+  }
+}
+public func onEnum<__Sealed>(of sealed: __Sealed) -> StytchB2BSDK.Skie.KotlinxSerializationJson.JsonElement.__Sealed where __Sealed : StytchB2BSDK.Kotlinx_serialization_jsonJsonElement
+#if compiler(>=5.3) && $NonescapableTypes
+@_disfavoredOverload public func onEnum<__Sealed>(of sealed: __Sealed?) -> StytchB2BSDK.Skie.KotlinxSerializationJson.JsonElement.__Sealed? where __Sealed : StytchB2BSDK.Kotlinx_serialization_jsonJsonElement
+#endif
+extension StytchB2BSDK.Skie.KotlinxSerializationJson.JsonPrimitive {
+  @frozen public enum __Sealed : Swift.Hashable {
+    case jsonNull(StytchB2BSDK.Kotlinx_serialization_jsonJsonNull)
+    case `else`
+    public static func == (a: StytchB2BSDK.Skie.KotlinxSerializationJson.JsonPrimitive.__Sealed, b: StytchB2BSDK.Skie.KotlinxSerializationJson.JsonPrimitive.__Sealed) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
+    public var hashValue: Swift.Int {
+      get
+    }
+  }
+}
+public func onEnum<__Sealed>(of sealed: __Sealed) -> StytchB2BSDK.Skie.KotlinxSerializationJson.JsonPrimitive.__Sealed where __Sealed : StytchB2BSDK.Kotlinx_serialization_jsonJsonPrimitive
+#if compiler(>=5.3) && $NonescapableTypes
+@_disfavoredOverload public func onEnum<__Sealed>(of sealed: __Sealed?) -> StytchB2BSDK.Skie.KotlinxSerializationJson.JsonPrimitive.__Sealed? where __Sealed : StytchB2BSDK.Kotlinx_serialization_jsonJsonPrimitive
+#endif
+public func getPublicTokenInfo(publicToken: Swift.String) -> StytchB2BSDK.PublicTokenInfo
+public func getStytchHttpClient(configuration: StytchB2BSDK.StytchClientConfigurationInternal, getSessionToken: any StytchB2BSDK.KotlinSuspendFunction0, getDfpConfiguration: @escaping () -> StytchB2BSDK.DFPConfiguration) -> StytchB2BSDK.Ktor_client_coreHttpClient
+public var STYTCH_PERSISTENCE_FILE_NAME: Swift.String {
+  get
+}
+extension Swift.String {
+  public func stytchUrlEncode() -> Swift.String
+}
+public func createStytchB2B(configuration: StytchB2BSDK.StytchClientConfiguration) -> any StytchB2BSDK.StytchB2B
+public func createStytchDispatchers() -> StytchB2BSDK.StytchDispatchers
+extension StytchB2BSDK.IB2BCreateExternalConnectionParameters {
+  public func toNetworkModel() -> StytchB2BSDK.B2BCreateExternalConnectionRequest
+}
+extension StytchB2BSDK.IB2BCreateOIDCConnectionParameters {
+  public func toNetworkModel() -> StytchB2BSDK.B2BCreateOIDCConnectionRequest
+}
+extension StytchB2BSDK.IB2BCreateSAMLConnectionParameters {
+  public func toNetworkModel() -> StytchB2BSDK.B2BCreateSAMLConnectionRequest
+}
+extension StytchB2BSDK.IB2BDiscoveryIntermediateSessionsExchangeParameters {
+  public func toNetworkModel(intermediateSessionToken: Swift.String) -> StytchB2BSDK.B2BDiscoveryIntermediateSessionsExchangeRequest
+}
+extension StytchB2BSDK.IB2BDiscoveryOrganizationsCreateParameters {
+  public func toNetworkModel(intermediateSessionToken: Swift.String) -> StytchB2BSDK.B2BDiscoveryOrganizationsCreateRequest
+}
+extension StytchB2BSDK.IB2BDiscoveryOrganizationsParameters {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func toNetworkModel(intermediateSessionToken: Swift.String?) -> StytchB2BSDK.B2BDiscoveryOrganizationsRequest
+  #endif
+}
+extension StytchB2BSDK.IB2BDiscoveryPasswordResetParameters {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func toNetworkModel(pkceCodeVerifier: Swift.String?, captchaToken: Swift.String?, dfpTelemetryId: Swift.String?) -> StytchB2BSDK.B2BDiscoveryPasswordResetRequest
+  #endif
+}
+extension StytchB2BSDK.IB2BDiscoveryPasswordResetStartParameters {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func toNetworkModel(pkceCodeChallenge: Swift.String?, dfpTelemetryId: Swift.String?, captchaToken: Swift.String?) -> StytchB2BSDK.B2BDiscoveryPasswordResetStartRequest
+  #endif
+}
+extension StytchB2BSDK.IB2BGetSCIMConnectionGroupsParameters {
+  public func toNetworkModel() -> StytchB2BSDK.B2BGetSCIMConnectionGroupsRequest
+}
+extension StytchB2BSDK.IB2BImpersonationTokenAuthenticateParameters {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func toNetworkModel(dfpTelemetryId: Swift.String?, captchaToken: Swift.String?) -> StytchB2BSDK.B2BImpersonationTokenAuthenticateRequest
+  #endif
+}
+extension StytchB2BSDK.IB2BMagicLinksAuthenticateParameters {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func toNetworkModel(pkceCodeVerifier: Swift.String?, dfpTelemetryId: Swift.String?, captchaToken: Swift.String?, intermediateSessionToken: Swift.String?) -> StytchB2BSDK.B2BMagicLinksAuthenticateRequest
+  #endif
+}
+extension StytchB2BSDK.IB2BMagicLinksDiscoveryAuthenticateParameters {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func toNetworkModel(pkceCodeVerifier: Swift.String?, dfpTelemetryId: Swift.String?, captchaToken: Swift.String?) -> StytchB2BSDK.B2BMagicLinksDiscoveryAuthenticateRequest
+  #endif
+}
+extension StytchB2BSDK.IB2BMagicLinksDiscoveryEmailSendParameters {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func toNetworkModel(pkceCodeChallenge: Swift.String?, dfpTelemetryId: Swift.String?, captchaToken: Swift.String?) -> StytchB2BSDK.B2BMagicLinksDiscoveryEmailSendRequest
+  #endif
+}
+extension StytchB2BSDK.IB2BMagicLinksInviteParameters {
+  public func toNetworkModel() -> StytchB2BSDK.B2BMagicLinksInviteRequest
+}
+extension StytchB2BSDK.IB2BMagicLinksLoginOrSignupParameters {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func toNetworkModel(pkceCodeChallenge: Swift.String?) -> StytchB2BSDK.B2BMagicLinksLoginOrSignupRequest
+  #endif
+}
+extension StytchB2BSDK.IB2BOAuthAuthenticateParameters {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func toNetworkModel(pkceCodeVerifier: Swift.String?, dfpTelemetryId: Swift.String?, captchaToken: Swift.String?, intermediateSessionToken: Swift.String?) -> StytchB2BSDK.B2BOAuthAuthenticateRequest
+  #endif
+}
+extension StytchB2BSDK.IB2BOAuthAuthorizeParameters {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func toNetworkModel(codeChallenge: Swift.String?) -> StytchB2BSDK.B2BOAuthAuthorizeRequest
+  #endif
+}
+extension StytchB2BSDK.IB2BOAuthAuthorizeStartParameters {
+  public func toNetworkModel() -> StytchB2BSDK.B2BOAuthAuthorizeStartRequest
+}
+extension StytchB2BSDK.IB2BOAuthDiscoveryAuthenticateParameters {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func toNetworkModel(pkceCodeVerifier: Swift.String?, dfpTelemetryId: Swift.String?, captchaToken: Swift.String?) -> StytchB2BSDK.B2BOAuthDiscoveryAuthenticateRequest
+  #endif
+}
+extension StytchB2BSDK.IB2BOAuthGoogleOneTapDiscoverySubmitParameters {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func toNetworkModel(pkceCodeChallenge: Swift.String?) -> StytchB2BSDK.B2BOAuthGoogleOneTapDiscoverySubmitRequest
+  #endif
+}
+extension StytchB2BSDK.IB2BOAuthGoogleOneTapSubmitParameters {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func toNetworkModel(pkceCodeChallenge: Swift.String?) -> StytchB2BSDK.B2BOAuthGoogleOneTapSubmitRequest
+  #endif
+}
+extension StytchB2BSDK.IB2BOTPsEmailAuthenticateParameters {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func toNetworkModel(intermediateSessionToken: Swift.String?, captchaToken: Swift.String?, dfpTelemetryId: Swift.String?) -> StytchB2BSDK.B2BOTPsEmailAuthenticateRequest
+  #endif
+}
+extension StytchB2BSDK.IB2BOTPsEmailDiscoveryAuthenticateParameters {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func toNetworkModel(captchaToken: Swift.String?, dfpTelemetryId: Swift.String?) -> StytchB2BSDK.B2BOTPsEmailDiscoveryAuthenticateRequest
+  #endif
+}
+extension StytchB2BSDK.IB2BOTPsEmailDiscoverySendParameters {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func toNetworkModel(captchaToken: Swift.String?, dfpTelemetryId: Swift.String?) -> StytchB2BSDK.B2BOTPsEmailDiscoverySendRequest
+  #endif
+}
+extension StytchB2BSDK.IB2BOTPsEmailLoginOrSignupParameters {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func toNetworkModel(captchaToken: Swift.String?, dfpTelemetryId: Swift.String?) -> StytchB2BSDK.B2BOTPsEmailLoginOrSignupRequest
+  #endif
+}
+extension StytchB2BSDK.IB2BOTPsSMSAuthenticateParameters {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func toNetworkModel(intermediateSessionToken: Swift.String?, captchaToken: Swift.String?, dfpTelemetryId: Swift.String?) -> StytchB2BSDK.B2BOTPsSMSAuthenticateRequest
+  #endif
+}
+extension StytchB2BSDK.IB2BOTPsSMSSendParameters {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func toNetworkModel(intermediateSessionToken: Swift.String?, captchaToken: Swift.String?, dfpTelemetryId: Swift.String?) -> StytchB2BSDK.B2BOTPsSMSSendRequest
+  #endif
+}
+extension StytchB2BSDK.IB2BOrganizationsUpdateParameters {
+  public func toNetworkModel() -> StytchB2BSDK.B2BOrganizationsUpdateRequest
+}
+extension StytchB2BSDK.IB2BPasswordAuthenticateParameters {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func toNetworkModel(intermediateSessionToken: Swift.String?, dfpTelemetryId: Swift.String?, captchaToken: Swift.String?) -> StytchB2BSDK.B2BPasswordAuthenticateRequest
+  #endif
+}
+extension StytchB2BSDK.IB2BPasswordDiscoveryAuthenticateParameters {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func toNetworkModel(dfpTelemetryId: Swift.String?, captchaToken: Swift.String?) -> StytchB2BSDK.B2BPasswordDiscoveryAuthenticateRequest
+  #endif
+}
+extension StytchB2BSDK.IB2BPasswordEmailResetParameters {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func toNetworkModel(codeVerifier: Swift.String?, captchaToken: Swift.String?, dfpTelemetryId: Swift.String?, intermediateSessionToken: Swift.String?) -> StytchB2BSDK.B2BPasswordEmailResetRequest
+  #endif
+}
+extension StytchB2BSDK.IB2BPasswordEmailResetStartParameters {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func toNetworkModel(codeChallenge: Swift.String?, dfpTelemetryId: Swift.String?, captchaToken: Swift.String?) -> StytchB2BSDK.B2BPasswordEmailResetStartRequest
+  #endif
+}
+extension StytchB2BSDK.IB2BPasswordExistingPasswordResetParameters {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func toNetworkModel(captchaToken: Swift.String?, dfpTelemetryId: Swift.String?) -> StytchB2BSDK.B2BPasswordExistingPasswordResetRequest
+  #endif
+}
+extension StytchB2BSDK.IB2BPasswordSessionResetParameters {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func toNetworkModel(dfpTelemetryId: Swift.String?, captchaToken: Swift.String?) -> StytchB2BSDK.B2BPasswordSessionResetRequest
+  #endif
+}
+extension StytchB2BSDK.IB2BPasswordStrengthCheckParameters {
+  public func toNetworkModel() -> StytchB2BSDK.B2BPasswordStrengthCheckRequest
+}
+extension StytchB2BSDK.IB2BRecoveryCodesRecoverParameters {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func toNetworkModel(intermediateSessionToken: Swift.String?, dfpTelemetryId: Swift.String?, captchaToken: Swift.String?) -> StytchB2BSDK.B2BRecoveryCodesRecoverRequest
+  #endif
+}
+extension StytchB2BSDK.IB2BRecoveryCodesRotateParameters {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func toNetworkModel(dfpTelemetryId: Swift.String?, captchaToken: Swift.String?) -> StytchB2BSDK.B2BRecoveryCodesRotateRequest
+  #endif
+}
+extension StytchB2BSDK.IB2BSCIMCreateConnectionParameters {
+  public func toNetworkModel() -> StytchB2BSDK.B2BSCIMCreateConnectionRequest
+}
+extension StytchB2BSDK.IB2BSCIMUpdateConnectionParameters {
+  public func toNetworkModel() -> StytchB2BSDK.B2BSCIMUpdateConnectionRequest
+}
+extension StytchB2BSDK.IB2BSSOAuthEnticateParameters {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func toNetworkModel(pkceCodeVerifier: Swift.String?, dfpTelemetryId: Swift.String?, captchaToken: Swift.String?, intermediateSessionToken: Swift.String?) -> StytchB2BSDK.B2BSSOAuthEnticateRequest
+  #endif
+}
+extension StytchB2BSDK.IB2BSessionsAccessTokenExchangeParameters {
+  public func toNetworkModel() -> StytchB2BSDK.B2BSessionsAccessTokenExchangeRequest
+}
+extension StytchB2BSDK.IB2BSessionsAttestParameters {
+  public func toNetworkModel() -> StytchB2BSDK.B2BSessionsAttestRequest
+}
+extension StytchB2BSDK.IB2BSessionsAuthenticateParameters {
+  public func toNetworkModel() -> StytchB2BSDK.B2BSessionsAuthenticateRequest
+}
+extension StytchB2BSDK.IB2BSessionsExchangeParameters {
+  public func toNetworkModel() -> StytchB2BSDK.B2BSessionsExchangeRequest
+}
+extension StytchB2BSDK.IB2BTOTPsAuthenticateParameters {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func toNetworkModel(intermediateSessionToken: Swift.String?, dfpTelemetryId: Swift.String?, captchaToken: Swift.String?) -> StytchB2BSDK.B2BTOTPsAuthenticateRequest
+  #endif
+}
+extension StytchB2BSDK.IB2BTOTPsCreateParameters {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func toNetworkModel(dfpTelemetryId: Swift.String?, captchaToken: Swift.String?, intermediateSessionToken: Swift.String?) -> StytchB2BSDK.B2BTOTPsCreateRequest
+  #endif
+}
+extension StytchB2BSDK.IB2BUpdateExternalConnectionParameters {
+  public func toNetworkModel() -> StytchB2BSDK.B2BUpdateExternalConnectionRequest
+}
+extension StytchB2BSDK.IB2BUpdateOIDCConnectionParameters {
+  public func toNetworkModel() -> StytchB2BSDK.B2BUpdateOIDCConnectionRequest
+}
+extension StytchB2BSDK.IB2BUpdateSAMLConnectionByURLParameters {
+  public func toNetworkModel() -> StytchB2BSDK.B2BUpdateSAMLConnectionByURLRequest
+}
+extension StytchB2BSDK.IB2BUpdateSAMLConnectionParameters {
+  public func toNetworkModel() -> StytchB2BSDK.B2BUpdateSAMLConnectionRequest
+}
+extension StytchB2BSDK.IBiometricsAuthenticateParameters {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func toNetworkModel(biometricRegistrationId: Swift.String, signature: Swift.String, dfpTelemetryId: Swift.String?, captchaToken: Swift.String?) -> StytchB2BSDK.BiometricsAuthenticateRequest
+  #endif
+}
+extension StytchB2BSDK.IBiometricsAuthenticateStartParameters {
+  public func toNetworkModel(publicKey: Swift.String) -> StytchB2BSDK.BiometricsAuthenticateStartRequest
+}
+extension StytchB2BSDK.IBiometricsRegisterParameters {
+  public func toNetworkModel(biometricRegistrationId: Swift.String, signature: Swift.String) -> StytchB2BSDK.BiometricsRegisterRequest
+}
+extension StytchB2BSDK.IBiometricsRegisterStartParameters {
+  public func toNetworkModel(publicKey: Swift.String) -> StytchB2BSDK.BiometricsRegisterStartRequest
+}
+extension StytchB2BSDK.ICryptoWalletsAuthenticateParameters {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func toNetworkModel(signature: Swift.String, dfpTelemetryId: Swift.String?, captchaToken: Swift.String?) -> StytchB2BSDK.CryptoWalletsAuthenticateRequest
+  #endif
+}
+extension StytchB2BSDK.ICryptoWalletsAuthenticateStartSecondaryParameters {
+  public func toNetworkModel() -> StytchB2BSDK.CryptoWalletsAuthenticateStartSecondaryRequest
+}
+extension StytchB2BSDK.IExternalB2BOAuthAuthorizeStartParameters {
+  public func toNetworkModel() -> StytchB2BSDK.ExternalB2BOAuthAuthorizeStartRequest
+}
+extension StytchB2BSDK.IExternalB2BOAuthAuthorizeSubmitParameters {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func toNetworkModel(codeChallenge: Swift.String?) -> StytchB2BSDK.ExternalB2BOAuthAuthorizeSubmitRequest
+  #endif
+}
+extension StytchB2BSDK.IExternalOAuthAuthorizeStartParameters {
+  public func toNetworkModel() -> StytchB2BSDK.ExternalOAuthAuthorizeStartRequest
+}
+extension StytchB2BSDK.IExternalOAuthAuthorizeSubmitParameters {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func toNetworkModel(codeChallenge: Swift.String?) -> StytchB2BSDK.ExternalOAuthAuthorizeSubmitRequest
+  #endif
+}
+extension StytchB2BSDK.IImpersonationTokenAuthenticateParameters {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func toNetworkModel(dfpTelemetryId: Swift.String?, captchaToken: Swift.String?) -> StytchB2BSDK.ImpersonationTokenAuthenticateRequest
+  #endif
+}
+extension StytchB2BSDK.IMagicLinksAuthenticateParameters {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func toNetworkModel(codeVerifier: Swift.String?) -> StytchB2BSDK.MagicLinksAuthenticateRequest
+  #endif
+}
+extension StytchB2BSDK.IMagicLinksEmailLoginOrCreateParameters {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func toNetworkModel(captchaToken: Swift.String?, codeChallenge: Swift.String?, dfpTelemetryId: Swift.String?) -> StytchB2BSDK.MagicLinksEmailLoginOrCreateRequest
+  #endif
+}
+extension StytchB2BSDK.IMagicLinksEmailSendSecondaryParameters {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func toNetworkModel(captchaToken: Swift.String?, codeChallenge: Swift.String?, dfpTelemetryId: Swift.String?) -> StytchB2BSDK.MagicLinksEmailSendSecondaryRequest
+  #endif
+}
+extension StytchB2BSDK.IMemberSearchByEmailParameters {
+  public func toNetworkModel() -> StytchB2BSDK.MemberSearchByEmailRequest
+}
+extension StytchB2BSDK.IOAuthAppleIDTokenAuthenticateParameters {
+  public func toNetworkModel() -> StytchB2BSDK.OAuthAppleIDTokenAuthenticateRequest
+}
+extension StytchB2BSDK.IOAuthAttachParameters {
+  public func toNetworkModel() -> StytchB2BSDK.OAuthAttachRequest
+}
+extension StytchB2BSDK.IOAuthAuthenticateParameters {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func toNetworkModel(codeVerifier: Swift.String?) -> StytchB2BSDK.OAuthAuthenticateRequest
+  #endif
+}
+extension StytchB2BSDK.IOAuthAuthorizeParameters {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func toNetworkModel(codeChallenge: Swift.String?) -> StytchB2BSDK.OAuthAuthorizeRequest
+  #endif
+}
+extension StytchB2BSDK.IOAuthAuthorizeStartParameters {
+  public func toNetworkModel() -> StytchB2BSDK.OAuthAuthorizeStartRequest
+}
+extension StytchB2BSDK.IOAuthGoogleIDTokenAuthenticateParameters {
+  public func toNetworkModel() -> StytchB2BSDK.OAuthGoogleIDTokenAuthenticateRequest
+}
+extension StytchB2BSDK.IOIDCLogoutParameters {
+  public func toNetworkModel() -> StytchB2BSDK.OIDCLogoutRequest
+}
+extension StytchB2BSDK.IOTPsAuthenticateParameters {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func toNetworkModel(dfpTelemetryId: Swift.String?, captchaToken: Swift.String?) -> StytchB2BSDK.OTPsAuthenticateRequest
+  #endif
+}
+extension StytchB2BSDK.IOTPsEmailLoginOrCreateParameters {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func toNetworkModel(captchaToken: Swift.String?, dfpTelemetryId: Swift.String?) -> StytchB2BSDK.OTPsEmailLoginOrCreateRequest
+  #endif
+}
+extension StytchB2BSDK.IOTPsEmailSendSecondaryParameters {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func toNetworkModel(captchaToken: Swift.String?) -> StytchB2BSDK.OTPsEmailSendSecondaryRequest
+  #endif
+}
+extension StytchB2BSDK.IOTPsSMSLoginOrCreateParameters {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func toNetworkModel(dfpTelemetryId: Swift.String?, captchaToken: Swift.String?) -> StytchB2BSDK.OTPsSMSLoginOrCreateRequest
+  #endif
+}
+extension StytchB2BSDK.IOTPsSMSSendSecondaryParameters {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func toNetworkModel(dfpTelemetryId: Swift.String?, captchaToken: Swift.String?) -> StytchB2BSDK.OTPsSMSSendSecondaryRequest
+  #endif
+}
+extension StytchB2BSDK.IOTPsWhatsAppLoginOrCreateParameters {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func toNetworkModel(dfpTelemetryId: Swift.String?, captchaToken: Swift.String?) -> StytchB2BSDK.OTPsWhatsAppLoginOrCreateRequest
+  #endif
+}
+extension StytchB2BSDK.IOTPsWhatsAppSendSecondaryParameters {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func toNetworkModel(dfpTelemetryId: Swift.String?, captchaToken: Swift.String?) -> StytchB2BSDK.OTPsWhatsAppSendSecondaryRequest
+  #endif
+}
+extension StytchB2BSDK.IOrgSearchBySlugParameters {
+  public func toNetworkModel() -> StytchB2BSDK.OrgSearchBySlugRequest
+}
+extension StytchB2BSDK.IOrganizationsAdminMemberStartEmailUpdateParameters {
+  public func toNetworkModel() -> StytchB2BSDK.OrganizationsAdminMemberStartEmailUpdateRequest
+}
+extension StytchB2BSDK.IOrganizationsAdminMemberUnlinkRetiredEmailParameters {
+  public func toNetworkModel() -> StytchB2BSDK.OrganizationsAdminMemberUnlinkRetiredEmailRequest
+}
+extension StytchB2BSDK.IOrganizationsAdminMemberUpdateParameters {
+  public func toNetworkModel() -> StytchB2BSDK.OrganizationsAdminMemberUpdateRequest
+}
+extension StytchB2BSDK.IOrganizationsMemberCreateParameters {
+  public func toNetworkModel() -> StytchB2BSDK.OrganizationsMemberCreateRequest
+}
+extension StytchB2BSDK.IOrganizationsMemberSearchParameters {
+  public func toNetworkModel() -> StytchB2BSDK.OrganizationsMemberSearchRequest
+}
+extension StytchB2BSDK.IOrganizationsMemberStartEmailUpdateParameters {
+  public func toNetworkModel() -> StytchB2BSDK.OrganizationsMemberStartEmailUpdateRequest
+}
+extension StytchB2BSDK.IOrganizationsMemberUnlinkRetiredEmailParameters {
+  public func toNetworkModel() -> StytchB2BSDK.OrganizationsMemberUnlinkRetiredEmailRequest
+}
+extension StytchB2BSDK.IOrganizationsMemberUpdateParameters {
+  public func toNetworkModel() -> StytchB2BSDK.OrganizationsMemberUpdateRequest
+}
+extension StytchB2BSDK.IPasswordsAuthenticateParameters {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func toNetworkModel(captchaToken: Swift.String?, dfpTelemetryId: Swift.String?) -> StytchB2BSDK.PasswordsAuthenticateRequest
+  #endif
+}
+extension StytchB2BSDK.IPasswordsCreateParameters {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func toNetworkModel(captchaToken: Swift.String?, dfpTelemetryId: Swift.String?) -> StytchB2BSDK.PasswordsCreateRequest
+  #endif
+}
+extension StytchB2BSDK.IPasswordsEmailResetParameters {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func toNetworkModel(captchaToken: Swift.String?, dfpTelemetryId: Swift.String?, codeVerifier: Swift.String?) -> StytchB2BSDK.PasswordsEmailResetRequest
+  #endif
+}
+extension StytchB2BSDK.IPasswordsEmailResetStartParameters {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func toNetworkModel(codeChallenge: Swift.String?, captchaToken: Swift.String?, dfpTelemetryId: Swift.String?) -> StytchB2BSDK.PasswordsEmailResetStartRequest
+  #endif
+}
+extension StytchB2BSDK.IPasswordsExistingPasswordResetParameters {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func toNetworkModel(captchaToken: Swift.String?, dfpTelemetryId: Swift.String?) -> StytchB2BSDK.PasswordsExistingPasswordResetRequest
+  #endif
+}
+extension StytchB2BSDK.IPasswordsSessionResetParameters {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func toNetworkModel(captchaToken: Swift.String?, dfpTelemetryId: Swift.String?) -> StytchB2BSDK.PasswordsSessionResetRequest
+  #endif
+}
+extension StytchB2BSDK.IPasswordsStrengthCheckParameters {
+  public func toNetworkModel() -> StytchB2BSDK.PasswordsStrengthCheckRequest
+}
+extension StytchB2BSDK.ISCIMRotateTokenCancelParameters {
+  public func toNetworkModel() -> StytchB2BSDK.SCIMRotateTokenCancelRequest
+}
+extension StytchB2BSDK.ISCIMRotateTokenCompleteParameters {
+  public func toNetworkModel() -> StytchB2BSDK.SCIMRotateTokenCompleteRequest
+}
+extension StytchB2BSDK.ISCIMRotateTokenStartParameters {
+  public func toNetworkModel() -> StytchB2BSDK.SCIMRotateTokenStartRequest
+}
+extension StytchB2BSDK.ISessionsAccessTokenExchangeParameters {
+  public func toNetworkModel() -> StytchB2BSDK.SessionsAccessTokenExchangeRequest
+}
+extension StytchB2BSDK.ISessionsAttestParameters {
+  public func toNetworkModel() -> StytchB2BSDK.SessionsAttestRequest
+}
+extension StytchB2BSDK.ISessionsAuthenticateParameters {
+  public func toNetworkModel() -> StytchB2BSDK.SessionsAuthenticateRequest
+}
+extension StytchB2BSDK.ITOTPsAuthenticateParameters {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func toNetworkModel(dfpTelemetryId: Swift.String?, captchaToken: Swift.String?) -> StytchB2BSDK.TOTPsAuthenticateRequest
+  #endif
+}
+extension StytchB2BSDK.ITOTPsCreateParameters {
+  public func toNetworkModel() -> StytchB2BSDK.TOTPsCreateRequest
+}
+extension StytchB2BSDK.ITOTPsRecoverParameters {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func toNetworkModel(dfpTelemetryId: Swift.String?, captchaToken: Swift.String?) -> StytchB2BSDK.TOTPsRecoverRequest
+  #endif
+}
+extension StytchB2BSDK.IUpdateMeParameters {
+  public func toNetworkModel() -> StytchB2BSDK.UpdateMeRequest
+}
+extension StytchB2BSDK.IUserSearchByEmailParameters {
+  public func toNetworkModel() -> StytchB2BSDK.UserSearchByEmailRequest
+}
+extension StytchB2BSDK.IWebAuthnAuthenticateParameters {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func toNetworkModel(dfpTelemetryId: Swift.String?, captchaToken: Swift.String?) -> StytchB2BSDK.WebAuthnAuthenticateRequest
+  #endif
+}
+extension StytchB2BSDK.IWebAuthnAuthenticateStartSecondaryParameters {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func toNetworkModel(returnPasskeyCredentialOptions: StytchB2BSDK.KotlinBoolean?) -> StytchB2BSDK.WebAuthnAuthenticateStartSecondaryRequest
+  #endif
+}
+extension StytchB2BSDK.IWebAuthnRegisterParameters {
+  public func toNetworkModel() -> StytchB2BSDK.WebAuthnRegisterRequest
+}
+extension StytchB2BSDK.IWebAuthnRegisterStartParameters {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func toNetworkModel(userAgent: Swift.String?, authenticatorType: Swift.String?, returnPasskeyCredentialOptions: StytchB2BSDK.KotlinBoolean?) -> StytchB2BSDK.WebAuthnRegisterStartRequest
+  #endif
+}
+extension StytchB2BSDK.IWebAuthnUpdateParameters {
+  public func toNetworkModel() -> StytchB2BSDK.WebAuthnUpdateRequest
+}
+extension StytchB2BSDK.KotlinKVariance : Swift.Sendable {}
+extension StytchB2BSDK.KotlinKVariance : Swift.BitwiseCopyable {}
+extension StytchB2BSDK.Vertical : Swift.Sendable {}
+extension StytchB2BSDK.Vertical : Swift.BitwiseCopyable {}
+extension StytchB2BSDK.DFPProtectedAuthMode : Swift.Sendable {}
+extension StytchB2BSDK.DFPProtectedAuthMode : Swift.BitwiseCopyable {}
+extension StytchB2BSDK.OAuthProviderType : Swift.Sendable {}
+extension StytchB2BSDK.OAuthProviderType : Swift.BitwiseCopyable {}
+extension StytchB2BSDK.KMPPlatformType : Swift.Sendable {}
+extension StytchB2BSDK.KMPPlatformType : Swift.BitwiseCopyable {}
+extension StytchB2BSDK.Ktor_utilsMonth : Swift.Sendable {}
+extension StytchB2BSDK.Ktor_utilsMonth : Swift.BitwiseCopyable {}
+extension StytchB2BSDK.Ktor_utilsWeekDay : Swift.Sendable {}
+extension StytchB2BSDK.Ktor_utilsWeekDay : Swift.BitwiseCopyable {}
+extension StytchB2BSDK.B2BTokenType : Swift.Sendable {}
+extension StytchB2BSDK.B2BTokenType : Swift.BitwiseCopyable {}
+extension StytchB2BSDK.ApiSessionV1AuthenticationFactorDeliveryMethod : Swift.Sendable {}
+extension StytchB2BSDK.ApiSessionV1AuthenticationFactorDeliveryMethod : Swift.BitwiseCopyable {}
+extension StytchB2BSDK.ApiSessionV1AuthenticationFactorType : Swift.Sendable {}
+extension StytchB2BSDK.ApiSessionV1AuthenticationFactorType : Swift.BitwiseCopyable {}
+extension StytchB2BSDK.ApiOrganizationV1ExternalSearchQueryOperator : Swift.Sendable {}
+extension StytchB2BSDK.ApiOrganizationV1ExternalSearchQueryOperator : Swift.BitwiseCopyable {}
+extension StytchB2BSDK.ApiAttributeV1Vertical : Swift.Sendable {}
+extension StytchB2BSDK.ApiAttributeV1Vertical : Swift.BitwiseCopyable {}
+extension StytchB2BSDK.UserSearchByEmailResponseUserType : Swift.Sendable {}
+extension StytchB2BSDK.UserSearchByEmailResponseUserType : Swift.BitwiseCopyable {}
+extension StytchB2BSDK.Skie.KotlinxCoroutinesCore.SelectClause0.__Sealed : Swift.Sendable {}
+extension StytchB2BSDK.Skie.KotlinxCoroutinesCore.SelectClause0.__Sealed : Swift.BitwiseCopyable {}
+extension StytchB2BSDK.Skie.KotlinxCoroutinesCore.SelectInstance.__Sealed : Swift.Sendable {}
+extension StytchB2BSDK.Skie.KotlinxCoroutinesCore.SelectInstance.__Sealed : Swift.BitwiseCopyable {}
+extension StytchB2BSDK.Skie.KotlinxCoroutinesCore.SelectClause1.__Sealed : Swift.Sendable {}
+extension StytchB2BSDK.Skie.KotlinxCoroutinesCore.SelectClause1.__Sealed : Swift.BitwiseCopyable {}
+extension StytchB2BSDK.Skie.KotlinxCoroutinesCore.SelectClause2.__Sealed : Swift.Sendable {}
+extension StytchB2BSDK.Skie.KotlinxCoroutinesCore.SelectClause2.__Sealed : Swift.BitwiseCopyable {}
+extension StytchB2BSDK.Skie.KotlinxSerializationCore.SerializersModule.__Sealed : Swift.Sendable {}
+extension StytchB2BSDK.Skie.KotlinxSerializationCore.SerializersModule.__Sealed : Swift.BitwiseCopyable {}

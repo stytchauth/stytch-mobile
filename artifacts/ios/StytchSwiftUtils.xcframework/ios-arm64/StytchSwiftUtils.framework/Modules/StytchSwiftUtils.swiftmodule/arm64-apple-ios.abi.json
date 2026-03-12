@@ -1,0 +1,1033 @@
+{
+  "ABIRoot": {
+    "kind": "Root",
+    "name": "StytchSwiftUtils",
+    "printedName": "StytchSwiftUtils",
+    "children": [
+      {
+        "kind": "Import",
+        "name": "CryptoKit",
+        "printedName": "CryptoKit",
+        "declKind": "Import",
+        "moduleName": "StytchSwiftUtils"
+      },
+      {
+        "kind": "Import",
+        "name": "Foundation",
+        "printedName": "Foundation",
+        "declKind": "Import",
+        "moduleName": "StytchSwiftUtils"
+      },
+      {
+        "kind": "Import",
+        "name": "RecaptchaEnterprise",
+        "printedName": "RecaptchaEnterprise",
+        "declKind": "Import",
+        "moduleName": "StytchSwiftUtils",
+        "declAttributes": [
+          "AccessControl"
+        ]
+      },
+      {
+        "kind": "Import",
+        "name": "StytchDFP",
+        "printedName": "StytchDFP",
+        "declKind": "Import",
+        "moduleName": "StytchSwiftUtils",
+        "declAttributes": [
+          "AccessControl"
+        ]
+      },
+      {
+        "kind": "TypeDecl",
+        "name": "StytchEncryptionManagerSwift",
+        "printedName": "StytchEncryptionManagerSwift",
+        "children": [
+          {
+            "kind": "Var",
+            "name": "shared",
+            "printedName": "shared",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "StytchEncryptionManagerSwift",
+                "printedName": "StytchSwiftUtils.StytchEncryptionManagerSwift",
+                "usr": "c:@M@StytchSwiftUtils@objc(cs)StytchEncryptionManagerSwift"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "c:@M@StytchSwiftUtils@objc(cs)StytchEncryptionManagerSwift(cpy)shared",
+            "mangledName": "$s16StytchSwiftUtils0a17EncryptionManagerB0C6sharedACvpZ",
+            "moduleName": "StytchSwiftUtils",
+            "static": true,
+            "declAttributes": [
+              "HasInitialValue",
+              "Final",
+              "HasStorage",
+              "AccessControl",
+              "ObjC",
+              "Custom"
+            ],
+            "isLet": true,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "StytchEncryptionManagerSwift",
+                    "printedName": "StytchSwiftUtils.StytchEncryptionManagerSwift",
+                    "usr": "c:@M@StytchSwiftUtils@objc(cs)StytchEncryptionManagerSwift"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "c:@M@StytchSwiftUtils@objc(cs)StytchEncryptionManagerSwift(cm)shared",
+                "mangledName": "$s16StytchSwiftUtils0a17EncryptionManagerB0C6sharedACvgZ",
+                "moduleName": "StytchSwiftUtils",
+                "static": true,
+                "implicit": true,
+                "declAttributes": [
+                  "Final",
+                  "ObjC"
+                ],
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Function",
+            "name": "getEncryptionKey",
+            "printedName": "getEncryptionKey(name:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Data",
+                "printedName": "Foundation.Data",
+                "usr": "s:10Foundation4DataV"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "c:@M@StytchSwiftUtils@objc(cs)StytchEncryptionManagerSwift(im)getEncryptionKeyWithName:error:",
+            "mangledName": "$s16StytchSwiftUtils0a17EncryptionManagerB0C03getD3Key4name10Foundation4DataVSS_tKF",
+            "moduleName": "StytchSwiftUtils",
+            "objc_name": "getEncryptionKeyWithName:error:",
+            "declAttributes": [
+              "AccessControl",
+              "ObjC"
+            ],
+            "throwing": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "encryptData",
+            "printedName": "encryptData(plainText:withKeyData:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Data",
+                "printedName": "Foundation.Data",
+                "usr": "s:10Foundation4DataV"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Data",
+                "printedName": "Foundation.Data",
+                "usr": "s:10Foundation4DataV"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Data",
+                "printedName": "Foundation.Data",
+                "usr": "s:10Foundation4DataV"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "c:@M@StytchSwiftUtils@objc(cs)StytchEncryptionManagerSwift(im)encryptDataWithPlainText:withKeyData:error:",
+            "mangledName": "$s16StytchSwiftUtils0a17EncryptionManagerB0C11encryptData9plainText07withKeyG010Foundation0G0VAI_AItKF",
+            "moduleName": "StytchSwiftUtils",
+            "objc_name": "encryptDataWithPlainText:withKeyData:error:",
+            "declAttributes": [
+              "AccessControl",
+              "ObjC"
+            ],
+            "throwing": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "decryptData",
+            "printedName": "decryptData(encryptedData:withKeyData:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Data",
+                "printedName": "Foundation.Data",
+                "usr": "s:10Foundation4DataV"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Data",
+                "printedName": "Foundation.Data",
+                "usr": "s:10Foundation4DataV"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Data",
+                "printedName": "Foundation.Data",
+                "usr": "s:10Foundation4DataV"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "c:@M@StytchSwiftUtils@objc(cs)StytchEncryptionManagerSwift(im)decryptDataWithEncryptedData:withKeyData:error:",
+            "mangledName": "$s16StytchSwiftUtils0a17EncryptionManagerB0C11decryptData09encryptedG007withKeyG010Foundation0G0VAI_AItKF",
+            "moduleName": "StytchSwiftUtils",
+            "objc_name": "decryptDataWithEncryptedData:withKeyData:error:",
+            "declAttributes": [
+              "AccessControl",
+              "ObjC"
+            ],
+            "throwing": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "deleteEncryptionKey",
+            "printedName": "deleteEncryptionKey(name:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "c:@M@StytchSwiftUtils@objc(cs)StytchEncryptionManagerSwift(im)deleteEncryptionKeyWithName:error:",
+            "mangledName": "$s16StytchSwiftUtils0a17EncryptionManagerB0C06deleteD3Key4nameySS_tKF",
+            "moduleName": "StytchSwiftUtils",
+            "objc_name": "deleteEncryptionKeyWithName:error:",
+            "declAttributes": [
+              "AccessControl",
+              "ObjC"
+            ],
+            "throwing": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "persistBiometricKeyData",
+            "printedName": "persistBiometricKeyData(name:keyData:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Data",
+                "printedName": "Foundation.Data",
+                "usr": "s:10Foundation4DataV"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "c:@M@StytchSwiftUtils@objc(cs)StytchEncryptionManagerSwift(im)persistBiometricKeyDataWithName:keyData:error:",
+            "mangledName": "$s16StytchSwiftUtils0a17EncryptionManagerB0C23persistBiometricKeyData4name03keyI0ySS_10Foundation0I0VtKF",
+            "moduleName": "StytchSwiftUtils",
+            "objc_name": "persistBiometricKeyDataWithName:keyData:error:",
+            "declAttributes": [
+              "AccessControl",
+              "ObjC"
+            ],
+            "throwing": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "getBiometricKeyData",
+            "printedName": "getBiometricKeyData(name:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Data",
+                "printedName": "Foundation.Data",
+                "usr": "s:10Foundation4DataV"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "c:@M@StytchSwiftUtils@objc(cs)StytchEncryptionManagerSwift(im)getBiometricKeyDataWithName:error:",
+            "mangledName": "$s16StytchSwiftUtils0a17EncryptionManagerB0C19getBiometricKeyData4name10Foundation0I0VSS_tKF",
+            "moduleName": "StytchSwiftUtils",
+            "objc_name": "getBiometricKeyDataWithName:error:",
+            "declAttributes": [
+              "AccessControl",
+              "ObjC"
+            ],
+            "throwing": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "generateCodeVerifier",
+            "printedName": "generateCodeVerifier()",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Data",
+                "printedName": "Foundation.Data",
+                "usr": "s:10Foundation4DataV"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "c:@M@StytchSwiftUtils@objc(cs)StytchEncryptionManagerSwift(im)generateCodeVerifier",
+            "mangledName": "$s16StytchSwiftUtils0a17EncryptionManagerB0C20generateCodeVerifier10Foundation4DataVyF",
+            "moduleName": "StytchSwiftUtils",
+            "declAttributes": [
+              "AccessControl",
+              "ObjC"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "generateCodeChallenge",
+            "printedName": "generateCodeChallenge(challenge:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Data",
+                "printedName": "Foundation.Data",
+                "usr": "s:10Foundation4DataV"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Data",
+                "printedName": "Foundation.Data",
+                "usr": "s:10Foundation4DataV"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "c:@M@StytchSwiftUtils@objc(cs)StytchEncryptionManagerSwift(im)generateCodeChallengeWithChallenge:",
+            "mangledName": "$s16StytchSwiftUtils0a17EncryptionManagerB0C21generateCodeChallenge9challenge10Foundation4DataVAH_tF",
+            "moduleName": "StytchSwiftUtils",
+            "objc_name": "generateCodeChallengeWithChallenge:",
+            "declAttributes": [
+              "AccessControl",
+              "ObjC"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "generateEd25519KeyPair",
+            "printedName": "generateEd25519KeyPair()",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Dictionary",
+                "printedName": "[Swift.String : Foundation.Data]",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Data",
+                    "printedName": "Foundation.Data",
+                    "usr": "s:10Foundation4DataV"
+                  }
+                ],
+                "usr": "s:SD"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "c:@M@StytchSwiftUtils@objc(cs)StytchEncryptionManagerSwift(im)generateEd25519KeyPair",
+            "mangledName": "$s16StytchSwiftUtils0a17EncryptionManagerB0C22generateEd25519KeyPairSDySS10Foundation4DataVGyF",
+            "moduleName": "StytchSwiftUtils",
+            "declAttributes": [
+              "AccessControl",
+              "ObjC"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "signEd25519",
+            "printedName": "signEd25519(key:challenge:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Data",
+                "printedName": "Foundation.Data",
+                "usr": "s:10Foundation4DataV"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Data",
+                "printedName": "Foundation.Data",
+                "usr": "s:10Foundation4DataV"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Data",
+                "printedName": "Foundation.Data",
+                "usr": "s:10Foundation4DataV"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "c:@M@StytchSwiftUtils@objc(cs)StytchEncryptionManagerSwift(im)signEd25519WithKey:challenge:error:",
+            "mangledName": "$s16StytchSwiftUtils0a17EncryptionManagerB0C11signEd255193key9challenge10Foundation4DataVAI_AItKF",
+            "moduleName": "StytchSwiftUtils",
+            "objc_name": "signEd25519WithKey:challenge:error:",
+            "declAttributes": [
+              "AccessControl",
+              "ObjC"
+            ],
+            "throwing": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "deriveEd25519PublicKeyFromPrivateKeyBytes",
+            "printedName": "deriveEd25519PublicKeyFromPrivateKeyBytes(privateKeyData:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Data",
+                "printedName": "Foundation.Data",
+                "usr": "s:10Foundation4DataV"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Data",
+                "printedName": "Foundation.Data",
+                "usr": "s:10Foundation4DataV"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "c:@M@StytchSwiftUtils@objc(cs)StytchEncryptionManagerSwift(im)deriveEd25519PublicKeyFromPrivateKeyBytesWithPrivateKeyData:error:",
+            "mangledName": "$s16StytchSwiftUtils0a17EncryptionManagerB0C033deriveEd25519PublicKeyFromPrivateI5Bytes07privateI4Data10Foundation0N0VAH_tKF",
+            "moduleName": "StytchSwiftUtils",
+            "objc_name": "deriveEd25519PublicKeyFromPrivateKeyBytesWithPrivateKeyData:error:",
+            "declAttributes": [
+              "AccessControl",
+              "ObjC"
+            ],
+            "throwing": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Constructor",
+            "name": "init",
+            "printedName": "init()",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "StytchEncryptionManagerSwift",
+                "printedName": "StytchSwiftUtils.StytchEncryptionManagerSwift",
+                "usr": "c:@M@StytchSwiftUtils@objc(cs)StytchEncryptionManagerSwift"
+              }
+            ],
+            "declKind": "Constructor",
+            "usr": "c:@M@StytchSwiftUtils@objc(cs)StytchEncryptionManagerSwift(im)init",
+            "mangledName": "$s16StytchSwiftUtils0a17EncryptionManagerB0CACycfc",
+            "moduleName": "StytchSwiftUtils",
+            "overriding": true,
+            "implicit": true,
+            "objc_name": "init",
+            "declAttributes": [
+              "Dynamic",
+              "ObjC",
+              "Override"
+            ],
+            "init_kind": "Designated"
+          }
+        ],
+        "declKind": "Class",
+        "usr": "c:@M@StytchSwiftUtils@objc(cs)StytchEncryptionManagerSwift",
+        "mangledName": "$s16StytchSwiftUtils0a17EncryptionManagerB0C",
+        "moduleName": "StytchSwiftUtils",
+        "objc_name": "StytchEncryptionManagerSwift",
+        "declAttributes": [
+          "AccessControl",
+          "ObjC"
+        ],
+        "superclassUsr": "c:objc(cs)NSObject",
+        "inheritsConvenienceInitializers": true,
+        "superclassNames": [
+          "ObjectiveC.NSObject"
+        ],
+        "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "Copyable",
+            "printedName": "Copyable",
+            "usr": "s:s8CopyableP",
+            "mangledName": "$ss8CopyableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Escapable",
+            "printedName": "Escapable",
+            "usr": "s:s9EscapableP",
+            "mangledName": "$ss9EscapableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Equatable",
+            "printedName": "Equatable",
+            "usr": "s:SQ",
+            "mangledName": "$sSQ"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Hashable",
+            "printedName": "Hashable",
+            "usr": "s:SH",
+            "mangledName": "$sSH"
+          },
+          {
+            "kind": "Conformance",
+            "name": "CVarArg",
+            "printedName": "CVarArg",
+            "usr": "s:s7CVarArgP",
+            "mangledName": "$ss7CVarArgP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "_KeyValueCodingAndObservingPublishing",
+            "printedName": "_KeyValueCodingAndObservingPublishing",
+            "usr": "s:10Foundation37_KeyValueCodingAndObservingPublishingP",
+            "mangledName": "$s10Foundation37_KeyValueCodingAndObservingPublishingP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "_KeyValueCodingAndObserving",
+            "printedName": "_KeyValueCodingAndObserving",
+            "usr": "s:10Foundation27_KeyValueCodingAndObservingP",
+            "mangledName": "$s10Foundation27_KeyValueCodingAndObservingP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "CustomStringConvertible",
+            "printedName": "CustomStringConvertible",
+            "usr": "s:s23CustomStringConvertibleP",
+            "mangledName": "$ss23CustomStringConvertibleP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "CustomDebugStringConvertible",
+            "printedName": "CustomDebugStringConvertible",
+            "usr": "s:s28CustomDebugStringConvertibleP",
+            "mangledName": "$ss28CustomDebugStringConvertibleP"
+          }
+        ]
+      },
+      {
+        "kind": "TypeDecl",
+        "name": "StytchCAPTCHAProvider",
+        "printedName": "StytchCAPTCHAProvider",
+        "children": [
+          {
+            "kind": "Var",
+            "name": "shared",
+            "printedName": "shared",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "StytchCAPTCHAProvider",
+                "printedName": "StytchSwiftUtils.StytchCAPTCHAProvider",
+                "usr": "c:@M@StytchSwiftUtils@objc(cs)StytchCAPTCHAProvider"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "c:@M@StytchSwiftUtils@objc(cs)StytchCAPTCHAProvider(cpy)shared",
+            "mangledName": "$s16StytchSwiftUtils0A15CAPTCHAProviderC6sharedACvpZ",
+            "moduleName": "StytchSwiftUtils",
+            "static": true,
+            "declAttributes": [
+              "HasInitialValue",
+              "Final",
+              "HasStorage",
+              "AccessControl",
+              "ObjC",
+              "Custom"
+            ],
+            "isLet": true,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "StytchCAPTCHAProvider",
+                    "printedName": "StytchSwiftUtils.StytchCAPTCHAProvider",
+                    "usr": "c:@M@StytchSwiftUtils@objc(cs)StytchCAPTCHAProvider"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "c:@M@StytchSwiftUtils@objc(cs)StytchCAPTCHAProvider(cm)shared",
+                "mangledName": "$s16StytchSwiftUtils0A15CAPTCHAProviderC6sharedACvgZ",
+                "moduleName": "StytchSwiftUtils",
+                "static": true,
+                "implicit": true,
+                "declAttributes": [
+                  "Final",
+                  "ObjC"
+                ],
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Function",
+            "name": "isConfigured",
+            "printedName": "isConfigured()",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Bool",
+                "printedName": "Swift.Bool",
+                "usr": "s:Sb"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "c:@M@StytchSwiftUtils@objc(cs)StytchCAPTCHAProvider(im)isConfigured",
+            "mangledName": "$s16StytchSwiftUtils0A15CAPTCHAProviderC12isConfiguredSbyF",
+            "moduleName": "StytchSwiftUtils",
+            "declAttributes": [
+              "AccessControl",
+              "ObjC"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "executeRecaptcha",
+            "printedName": "executeRecaptcha()",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "c:@M@StytchSwiftUtils@objc(cs)StytchCAPTCHAProvider(im)executeRecaptchaWithCompletionHandler:",
+            "mangledName": "$s16StytchSwiftUtils0A15CAPTCHAProviderC16executeRecaptchaSSyYaF",
+            "moduleName": "StytchSwiftUtils",
+            "objc_name": "executeRecaptchaWithCompletionHandler:",
+            "declAttributes": [
+              "Nonisolated",
+              "AccessControl",
+              "ObjC"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "setCaptchaClient",
+            "printedName": "setCaptchaClient(siteKey:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "c:@M@StytchSwiftUtils@objc(cs)StytchCAPTCHAProvider(im)setCaptchaClientWithSiteKey:completionHandler:",
+            "mangledName": "$s16StytchSwiftUtils0A15CAPTCHAProviderC16setCaptchaClient7siteKeyySS_tYaF",
+            "moduleName": "StytchSwiftUtils",
+            "objc_name": "setCaptchaClientWithSiteKey:completionHandler:",
+            "declAttributes": [
+              "Nonisolated",
+              "AccessControl",
+              "ObjC"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Constructor",
+            "name": "init",
+            "printedName": "init()",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "StytchCAPTCHAProvider",
+                "printedName": "StytchSwiftUtils.StytchCAPTCHAProvider",
+                "usr": "c:@M@StytchSwiftUtils@objc(cs)StytchCAPTCHAProvider"
+              }
+            ],
+            "declKind": "Constructor",
+            "usr": "c:@M@StytchSwiftUtils@objc(cs)StytchCAPTCHAProvider(im)init",
+            "mangledName": "$s16StytchSwiftUtils0A15CAPTCHAProviderCACycfc",
+            "moduleName": "StytchSwiftUtils",
+            "overriding": true,
+            "implicit": true,
+            "objc_name": "init",
+            "declAttributes": [
+              "Dynamic",
+              "ObjC",
+              "Override"
+            ],
+            "init_kind": "Designated"
+          }
+        ],
+        "declKind": "Class",
+        "usr": "c:@M@StytchSwiftUtils@objc(cs)StytchCAPTCHAProvider",
+        "mangledName": "$s16StytchSwiftUtils0A15CAPTCHAProviderC",
+        "moduleName": "StytchSwiftUtils",
+        "objc_name": "StytchCAPTCHAProvider",
+        "declAttributes": [
+          "AccessControl",
+          "ObjC"
+        ],
+        "superclassUsr": "c:objc(cs)NSObject",
+        "inheritsConvenienceInitializers": true,
+        "superclassNames": [
+          "ObjectiveC.NSObject"
+        ],
+        "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "Copyable",
+            "printedName": "Copyable",
+            "usr": "s:s8CopyableP",
+            "mangledName": "$ss8CopyableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Escapable",
+            "printedName": "Escapable",
+            "usr": "s:s9EscapableP",
+            "mangledName": "$ss9EscapableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Equatable",
+            "printedName": "Equatable",
+            "usr": "s:SQ",
+            "mangledName": "$sSQ"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Hashable",
+            "printedName": "Hashable",
+            "usr": "s:SH",
+            "mangledName": "$sSH"
+          },
+          {
+            "kind": "Conformance",
+            "name": "CVarArg",
+            "printedName": "CVarArg",
+            "usr": "s:s7CVarArgP",
+            "mangledName": "$ss7CVarArgP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "_KeyValueCodingAndObservingPublishing",
+            "printedName": "_KeyValueCodingAndObservingPublishing",
+            "usr": "s:10Foundation37_KeyValueCodingAndObservingPublishingP",
+            "mangledName": "$s10Foundation37_KeyValueCodingAndObservingPublishingP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "_KeyValueCodingAndObserving",
+            "printedName": "_KeyValueCodingAndObserving",
+            "usr": "s:10Foundation27_KeyValueCodingAndObservingP",
+            "mangledName": "$s10Foundation27_KeyValueCodingAndObservingP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "CustomStringConvertible",
+            "printedName": "CustomStringConvertible",
+            "usr": "s:s23CustomStringConvertibleP",
+            "mangledName": "$ss23CustomStringConvertibleP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "CustomDebugStringConvertible",
+            "printedName": "CustomDebugStringConvertible",
+            "usr": "s:s28CustomDebugStringConvertibleP",
+            "mangledName": "$ss28CustomDebugStringConvertibleP"
+          }
+        ]
+      },
+      {
+        "kind": "TypeDecl",
+        "name": "StytchDFPProvider",
+        "printedName": "StytchDFPProvider",
+        "children": [
+          {
+            "kind": "Var",
+            "name": "shared",
+            "printedName": "shared",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "StytchDFPProvider",
+                "printedName": "StytchSwiftUtils.StytchDFPProvider",
+                "usr": "c:@M@StytchSwiftUtils@objc(cs)StytchDFPProvider"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "c:@M@StytchSwiftUtils@objc(cs)StytchDFPProvider(cpy)shared",
+            "mangledName": "$s16StytchSwiftUtils0A11DFPProviderC6sharedACvpZ",
+            "moduleName": "StytchSwiftUtils",
+            "static": true,
+            "declAttributes": [
+              "HasInitialValue",
+              "Final",
+              "HasStorage",
+              "AccessControl",
+              "ObjC",
+              "Custom"
+            ],
+            "isLet": true,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "StytchDFPProvider",
+                    "printedName": "StytchSwiftUtils.StytchDFPProvider",
+                    "usr": "c:@M@StytchSwiftUtils@objc(cs)StytchDFPProvider"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "c:@M@StytchSwiftUtils@objc(cs)StytchDFPProvider(cm)shared",
+                "mangledName": "$s16StytchSwiftUtils0A11DFPProviderC6sharedACvgZ",
+                "moduleName": "StytchSwiftUtils",
+                "static": true,
+                "implicit": true,
+                "declAttributes": [
+                  "Final",
+                  "ObjC"
+                ],
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Function",
+            "name": "configure",
+            "printedName": "configure(publicToken:dfppaDomain:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "Swift.String?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  }
+                ],
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "c:@M@StytchSwiftUtils@objc(cs)StytchDFPProvider(im)configureWithPublicToken:dfppaDomain:",
+            "mangledName": "$s16StytchSwiftUtils0A11DFPProviderC9configure11publicToken11dfppaDomainySS_SSSgtF",
+            "moduleName": "StytchSwiftUtils",
+            "objc_name": "configureWithPublicToken:dfppaDomain:",
+            "declAttributes": [
+              "AccessControl",
+              "ObjC"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "getTelemetryId",
+            "printedName": "getTelemetryId()",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "c:@M@StytchSwiftUtils@objc(cs)StytchDFPProvider(im)getTelemetryIdWithCompletionHandler:",
+            "mangledName": "$s16StytchSwiftUtils0A11DFPProviderC14getTelemetryIdSSyYaF",
+            "moduleName": "StytchSwiftUtils",
+            "objc_name": "getTelemetryIdWithCompletionHandler:",
+            "declAttributes": [
+              "Nonisolated",
+              "AccessControl",
+              "ObjC"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Constructor",
+            "name": "init",
+            "printedName": "init()",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "StytchDFPProvider",
+                "printedName": "StytchSwiftUtils.StytchDFPProvider",
+                "usr": "c:@M@StytchSwiftUtils@objc(cs)StytchDFPProvider"
+              }
+            ],
+            "declKind": "Constructor",
+            "usr": "c:@M@StytchSwiftUtils@objc(cs)StytchDFPProvider(im)init",
+            "mangledName": "$s16StytchSwiftUtils0A11DFPProviderCACycfc",
+            "moduleName": "StytchSwiftUtils",
+            "overriding": true,
+            "implicit": true,
+            "objc_name": "init",
+            "declAttributes": [
+              "Dynamic",
+              "ObjC",
+              "Override"
+            ],
+            "init_kind": "Designated"
+          }
+        ],
+        "declKind": "Class",
+        "usr": "c:@M@StytchSwiftUtils@objc(cs)StytchDFPProvider",
+        "mangledName": "$s16StytchSwiftUtils0A11DFPProviderC",
+        "moduleName": "StytchSwiftUtils",
+        "objc_name": "StytchDFPProvider",
+        "declAttributes": [
+          "AccessControl",
+          "ObjC"
+        ],
+        "superclassUsr": "c:objc(cs)NSObject",
+        "inheritsConvenienceInitializers": true,
+        "superclassNames": [
+          "ObjectiveC.NSObject"
+        ],
+        "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "Copyable",
+            "printedName": "Copyable",
+            "usr": "s:s8CopyableP",
+            "mangledName": "$ss8CopyableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Escapable",
+            "printedName": "Escapable",
+            "usr": "s:s9EscapableP",
+            "mangledName": "$ss9EscapableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Equatable",
+            "printedName": "Equatable",
+            "usr": "s:SQ",
+            "mangledName": "$sSQ"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Hashable",
+            "printedName": "Hashable",
+            "usr": "s:SH",
+            "mangledName": "$sSH"
+          },
+          {
+            "kind": "Conformance",
+            "name": "CVarArg",
+            "printedName": "CVarArg",
+            "usr": "s:s7CVarArgP",
+            "mangledName": "$ss7CVarArgP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "_KeyValueCodingAndObservingPublishing",
+            "printedName": "_KeyValueCodingAndObservingPublishing",
+            "usr": "s:10Foundation37_KeyValueCodingAndObservingPublishingP",
+            "mangledName": "$s10Foundation37_KeyValueCodingAndObservingPublishingP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "_KeyValueCodingAndObserving",
+            "printedName": "_KeyValueCodingAndObserving",
+            "usr": "s:10Foundation27_KeyValueCodingAndObservingP",
+            "mangledName": "$s10Foundation27_KeyValueCodingAndObservingP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "CustomStringConvertible",
+            "printedName": "CustomStringConvertible",
+            "usr": "s:s23CustomStringConvertibleP",
+            "mangledName": "$ss23CustomStringConvertibleP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "CustomDebugStringConvertible",
+            "printedName": "CustomDebugStringConvertible",
+            "usr": "s:s28CustomDebugStringConvertibleP",
+            "mangledName": "$ss28CustomDebugStringConvertibleP"
+          }
+        ]
+      }
+    ],
+    "json_format_version": 8
+  },
+  "ConstValues": []
+}

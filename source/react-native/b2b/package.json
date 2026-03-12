@@ -1,0 +1,79 @@
+{
+  "name": "@stytch/react-native-b2b",
+  "version": "0.0.1",
+  "type": "module",
+  "description": "Stytch's official React Native Library",
+  "summary": "Stytch's official React Native Library",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "source": "./src/index.tsx",
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "lib",
+    "android",
+    "ios",
+    "src/NativeStytchBridge.ts",
+    "*.podspec",
+    "package.json",
+    "src/app.plugin.cjs"
+  ],
+  "license": "MIT",
+  "homepage": "https://stytch.com/docs/sdks/react-native-sdk",
+  "author": {
+    "name": "Stytch",
+    "url": "https://github.com/stytchauth"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "build": "vitest run && rm -rf dist && cp -r ../shared/. . && tsc && swc src -d dist --copy-files --strip-leading-paths",
+    "lint": "eslint src/"
+  },
+  "dependencies": {
+    "@js-joda/core": "3.2.0",
+    "react-native-get-random-values": "^2.0.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.2",
+    "@expo/config-plugins": "^54.0.4",
+    "@react-native/babel-preset": "0.81.1",
+    "@react-native/codegen": "0.81.1",
+    "@swc/cli": "^0.7.10",
+    "@swc/core": "^1.15.8",
+    "@types/react": "^19.2.8",
+    "eslint": "^9.39.2",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "globals": "^17.0.0",
+    "jiti": "^2.6.1",
+    "react-dom": "19.1.0",
+    "react-native": "0.81.4",
+    "tsc": "^2.0.4",
+    "typescript": "5.9.2",
+    "typescript-eslint": "^8.57.0",
+    "@testing-library/dom": "^10.0.0",
+    "@testing-library/react": "^16.3.2",
+    "jsdom": "^28.1.0",
+    "react": "19.1.0",
+    "vite": "^6.0.0",
+    "vitest": "^4.1.0"
+  },
+  "peerDependencies": {
+    "react-dom": ">= 17.0.2",
+    "react-native": ">= 0.80.x"
+  },
+  "codegenConfig": {
+    "name": "StytchBridge",
+    "type": "modules",
+    "jsSrcsDir": "./src",
+    "android": {
+      "javaPackageName": "com.stytch.mobile.bridge"
+    }
+  }
+}
