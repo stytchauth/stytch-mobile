@@ -8,6 +8,7 @@ import com.stytch.sdk.persistence.StytchPlatformPersistenceClient
 
 public interface ILegacyTokenReader {
     public suspend fun getExistingToken(
+        publicToken: String,
         platformPersistenceClient: StytchPlatformPersistenceClient,
         dispatchers: StytchDispatchers,
         platform: KMPPlatformType,
@@ -17,6 +18,7 @@ public interface ILegacyTokenReader {
 
 public expect class LegacyTokenReader : ILegacyTokenReader {
     override suspend fun getExistingToken(
+        publicToken: String,
         platformPersistenceClient: StytchPlatformPersistenceClient,
         dispatchers: StytchDispatchers,
         platform: KMPPlatformType,

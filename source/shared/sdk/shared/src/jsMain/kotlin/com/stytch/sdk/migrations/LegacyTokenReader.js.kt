@@ -10,6 +10,7 @@ import kotlinx.serialization.json.Json
 
 public actual class LegacyTokenReader : ILegacyTokenReader {
     actual override suspend fun getExistingToken(
+        publicToken: String,
         platformPersistenceClient: StytchPlatformPersistenceClient,
         dispatchers: StytchDispatchers,
         platform: KMPPlatformType,
