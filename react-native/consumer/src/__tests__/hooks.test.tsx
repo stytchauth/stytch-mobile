@@ -9,6 +9,11 @@ import {
   StytchAuthenticationStateContext,
 } from '../contexts';
 
+type StytchConsumer = NonNullable<React.ContextType<typeof StytchContext>>;
+type ApiUserV1User = NonNullable<React.ContextType<typeof StytchUserContext>>;
+type ApiSessionV1Session = NonNullable<React.ContextType<typeof StytchSessionContext>>;
+type ConsumerAuthenticationState = React.ContextType<typeof StytchAuthenticationStateContext>;
+
 jest.mock('../../lib/consumer-headless.mjs', () => ({
   ConsumerAuthenticationState: { Loading: class Loading {} },
 }));
@@ -21,8 +26,7 @@ describe('useStytch', () => {
   });
 
   it('returns the client when inside a StytchProvider', () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const mockClient = { otp: {} } as any;
+    const mockClient = { otp: {} } as StytchConsumer;
     const wrapper = ({ children }: { children: React.ReactNode }) => (
       <StytchContext.Provider value={mockClient}>{children}</StytchContext.Provider>
     );
@@ -38,8 +42,7 @@ describe('useStytchUser', () => {
   });
 
   it('returns the user when provided', () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const mockUser = { userId: 'user-123' } as any;
+    const mockUser = { userId: 'user-123' } as ApiUserV1User;
     const wrapper = ({ children }: { children: React.ReactNode }) => (
       <StytchUserContext.Provider value={mockUser}>{children}</StytchUserContext.Provider>
     );
@@ -55,8 +58,7 @@ describe('useStytchSession', () => {
   });
 
   it('returns the session when provided', () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const mockSession = { sessionId: 'session-123' } as any;
+    const mockSession = { sessionId: 'session-123' } as ApiSessionV1Session;
     const wrapper = ({ children }: { children: React.ReactNode }) => (
       <StytchSessionContext.Provider value={mockSession}>{children}</StytchSessionContext.Provider>
     );
@@ -67,8 +69,7 @@ describe('useStytchSession', () => {
 
 describe('useStytchAuthenticationState', () => {
   it('returns the provided authentication state', () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const mockState = { type: 'Loading' } as any;
+    const mockState = { type: 'Loading' } as ConsumerAuthenticationState;
     const wrapper = ({ children }: { children: React.ReactNode }) => (
       <StytchAuthenticationStateContext.Provider value={mockState}>
         {children}

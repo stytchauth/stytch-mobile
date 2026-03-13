@@ -14,6 +14,11 @@ import {
   StytchB2BAuthenticationStateContext,
 } from '../contexts';
 
+type StytchB2B = NonNullable<React.ContextType<typeof StytchB2BContext>>;
+type ApiOrganizationV1Member = NonNullable<React.ContextType<typeof StytchMemberContext>>;
+type ApiB2bSessionV1MemberSession = NonNullable<React.ContextType<typeof StytchMemberSessionContext>>;
+type B2BAuthenticationState = React.ContextType<typeof StytchB2BAuthenticationStateContext>;
+
 jest.mock('../../lib/b2b-headless.mjs', () => ({
   B2BAuthenticationState: { Loading: class Loading {} },
 }));
@@ -26,8 +31,7 @@ describe('useStytchB2B', () => {
   });
 
   it('returns the client when inside a StytchProvider', () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const mockClient = { session: {} } as any;
+    const mockClient = { session: {} } as StytchB2B;
     const wrapper = ({ children }: { children: React.ReactNode }) => (
       <StytchB2BContext.Provider value={mockClient}>{children}</StytchB2BContext.Provider>
     );
@@ -43,8 +47,7 @@ describe('useStytchMember', () => {
   });
 
   it('returns the member when provided', () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const mockMember = { memberId: 'member-123' } as any;
+    const mockMember = { memberId: 'member-123' } as ApiOrganizationV1Member;
     const wrapper = ({ children }: { children: React.ReactNode }) => (
       <StytchMemberContext.Provider value={mockMember}>{children}</StytchMemberContext.Provider>
     );
@@ -60,8 +63,7 @@ describe('useStytchMemberSession', () => {
   });
 
   it('returns the member session when provided', () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const mockSession = { memberSessionId: 'session-123' } as any;
+    const mockSession = { memberSessionId: 'session-123' } as ApiB2bSessionV1MemberSession;
     const wrapper = ({ children }: { children: React.ReactNode }) => (
       <StytchMemberSessionContext.Provider value={mockSession}>
         {children}
@@ -74,8 +76,7 @@ describe('useStytchMemberSession', () => {
 
 describe('useStytchB2BAuthenticationState', () => {
   it('returns the provided authentication state', () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const mockState = { type: 'Loading' } as any;
+    const mockState = { type: 'Loading' } as B2BAuthenticationState;
     const wrapper = ({ children }: { children: React.ReactNode }) => (
       <StytchB2BAuthenticationStateContext.Provider value={mockState}>
         {children}
