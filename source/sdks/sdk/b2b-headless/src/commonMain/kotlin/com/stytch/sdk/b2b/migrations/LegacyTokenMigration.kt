@@ -3,6 +3,7 @@ package com.stytch.sdk.b2b.migrations
 import com.stytch.sdk.b2b.StytchB2BAuthenticationStateManager.Companion.SESSION_TOKEN_IDENTIFIER
 import com.stytch.sdk.data.KMPPlatformType
 import com.stytch.sdk.data.StytchError
+import com.stytch.sdk.data.Vertical
 import com.stytch.sdk.migrations.ILegacyTokenReader
 import com.stytch.sdk.migrations.Migration
 import com.stytch.sdk.migrations.MigrationResult
@@ -18,7 +19,12 @@ internal class LegacyTokenMigration(
 
     override suspend fun isApplicable(): Boolean =
         try {
-            decryptedTokenFromPreviousInstall = tokenReader.getExistingToken(platform)
+            decryptedTokenFromPreviousInstall =
+                tokenReader.getExistingToken(
+                    platformPersistenceClient = persistenceClient.platformPersistenceClient,
+                    platform = platform,
+                    vertical = Vertical.B2B,
+                )
             return decryptedTokenFromPreviousInstall != null
         } catch (_: StytchError) {
             // If something went wrong getting the previous token data, consider it unrecoverable, and therefore not applicable
