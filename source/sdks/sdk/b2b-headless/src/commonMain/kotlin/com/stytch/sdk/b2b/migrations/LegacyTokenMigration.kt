@@ -1,6 +1,6 @@
-package com.stytch.sdk.consumer.migrations
+package com.stytch.sdk.b2b.migrations
 
-import com.stytch.sdk.consumer.StytchConsumerAuthenticationStateManager.Companion.SESSION_TOKEN_IDENTIFIER
+import com.stytch.sdk.b2b.StytchB2BAuthenticationStateManager.Companion.SESSION_TOKEN_IDENTIFIER
 import com.stytch.sdk.data.KMPPlatformType
 import com.stytch.sdk.data.StytchError
 import com.stytch.sdk.migrations.ILegacyTokenReader

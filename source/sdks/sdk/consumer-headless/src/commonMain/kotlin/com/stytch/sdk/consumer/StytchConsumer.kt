@@ -34,6 +34,7 @@ import com.stytch.sdk.consumer.user.UserClient
 import com.stytch.sdk.consumer.user.UserClientImpl
 import com.stytch.sdk.data.BootstrapResponse
 import com.stytch.sdk.data.JsCleanup
+import com.stytch.sdk.data.KMPPlatformType
 import com.stytch.sdk.data.PKCECodePair
 import com.stytch.sdk.data.StytchClientConfiguration
 import com.stytch.sdk.data.StytchClientConfigurationInternal
@@ -116,7 +117,14 @@ internal class DefaultStytchConsumer(
 
     private val migrationRunner =
         MigrationRunner(
-            migrations = listOf(LegacyTokenMigration(tokenReader = LegacyTokenReader())),
+            migrations =
+                listOf(
+                    LegacyTokenMigration(
+                        platform = configuration.platform,
+                        tokenReader = LegacyTokenReader(),
+                        persistenceClient = persistenceClient,
+                    ),
+                ),
             store = MigrationStore("consumer", configuration.platformPersistenceClient),
         )
 

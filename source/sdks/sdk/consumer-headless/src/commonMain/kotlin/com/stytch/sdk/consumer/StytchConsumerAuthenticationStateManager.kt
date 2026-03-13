@@ -84,9 +84,9 @@ internal class StytchConsumerAuthenticationStateManager(
         }
     }
 
-    private companion object {
+    internal companion object {
         private const val SESSION_IDENTIFIER = "stytch_session"
-        private const val SESSION_TOKEN_IDENTIFIER = "stytch_session_token"
+        internal const val SESSION_TOKEN_IDENTIFIER = "stytch_session_token"
         private const val SESSION_JWT_IDENTIFIER = "stytch_session_jwt"
         private const val USER_IDENTIFIER = "stytch_user"
     }

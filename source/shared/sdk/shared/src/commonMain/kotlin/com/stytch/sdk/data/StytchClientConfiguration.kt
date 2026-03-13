@@ -44,7 +44,7 @@ public class StytchClientConfigurationInternal(
     internal val appSessionId: String = Uuid.random().toString(),
     internal val timezone: String = TimeZone.currentSystemDefault().id,
     public val platformPersistenceClient: StytchPlatformPersistenceClient,
-    internal val platform: KMPPlatformType,
+    public val platform: KMPPlatformType,
     public val encryptionClient: StytchEncryptionClient,
     public val dfpProvider: DFPProvider? = null,
     public val captchaProvider: CAPTCHAProvider? = null,

@@ -13,6 +13,7 @@ import com.stytch.sdk.b2b.magicLinks.B2BMagicLinksClient
 import com.stytch.sdk.b2b.magicLinks.B2BMagicLinksClientImpl
 import com.stytch.sdk.b2b.members.B2BMembersClient
 import com.stytch.sdk.b2b.members.B2BMembersClientImpl
+import com.stytch.sdk.b2b.migrations.LegacyTokenMigration
 import com.stytch.sdk.b2b.networking.AuthenticatedResponse
 import com.stytch.sdk.b2b.networking.B2BNetworkingClient
 import com.stytch.sdk.b2b.networking.models.B2BMagicLinksAuthenticateParameters
@@ -40,10 +41,12 @@ import com.stytch.sdk.b2b.totp.B2BTOTPClient
 import com.stytch.sdk.b2b.totp.B2BTOTPClientImpl
 import com.stytch.sdk.data.BootstrapResponse
 import com.stytch.sdk.data.JsCleanup
+import com.stytch.sdk.data.KMPPlatformType
 import com.stytch.sdk.data.PKCECodePair
 import com.stytch.sdk.data.StytchClientConfiguration
 import com.stytch.sdk.data.StytchClientConfigurationInternal
 import com.stytch.sdk.data.StytchError
+import com.stytch.sdk.migrations.LegacyTokenReader
 import com.stytch.sdk.migrations.MigrationRunner
 import com.stytch.sdk.migrations.MigrationStore
 import com.stytch.sdk.persistence.StytchPersistenceClient
@@ -116,7 +119,14 @@ internal class DefaultStytchB2B(
 
     private val migrationRunner =
         MigrationRunner(
-            migrations = emptyList(), // add B2B migrations here
+            migrations =
+                listOf(
+                    LegacyTokenMigration(
+                        platform = configuration.platform,
+                        tokenReader = LegacyTokenReader(),
+                        persistenceClient = persistenceClient,
+                    ),
+                ),
             store = MigrationStore("b2b", configuration.platformPersistenceClient),
         )
 

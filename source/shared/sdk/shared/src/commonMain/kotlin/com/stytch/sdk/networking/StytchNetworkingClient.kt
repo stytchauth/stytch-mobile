@@ -15,6 +15,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.math.max
 import kotlin.math.min
 import kotlin.time.Clock
 import kotlin.time.Instant
@@ -57,7 +58,8 @@ public abstract class StytchNetworkingClient(
                             block = ::updateSessionAndReturnExpiration,
                         )
                     val timeUntilSessionExpires = (nextSessionExpiration - Clock.System.now()).inWholeMilliseconds
-                    val delay = min(timeUntilSessionExpires, HEARTBEAT_INTERVAL_MS)
+                    // prevent negative delays
+                    val delay = max(0L, min(timeUntilSessionExpires, HEARTBEAT_INTERVAL_MS))
                     startSessionUpdateJob(delay)
                 } catch (e: Exception) {
                     if (e is ResponseException) {
