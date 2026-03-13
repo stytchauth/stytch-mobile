@@ -16,6 +16,12 @@ import kotlinx.serialization.json.Json
 import java.security.KeyStore
 
 public actual class LegacyTokenReader : ILegacyTokenReader {
+    private val jsonSerializer =
+        Json {
+            ignoreUnknownKeys = true
+            isLenient = true
+        }
+
     actual override suspend fun getExistingToken(
         publicToken: String,
         platformPersistenceClient: StytchPlatformPersistenceClient,
@@ -63,12 +69,6 @@ public actual class LegacyTokenReader : ILegacyTokenReader {
         // Finally, return the decrypted token
         return aead.decrypt(cipherText, null).decodeToString()
     }
-
-    private val jsonSerializer =
-        Json {
-            ignoreUnknownKeys = true
-            isLenient = true
-        }
 
     private suspend fun getDecryptedSessionTokenFromLegacyReactNativeSDK(
         context: Context,
