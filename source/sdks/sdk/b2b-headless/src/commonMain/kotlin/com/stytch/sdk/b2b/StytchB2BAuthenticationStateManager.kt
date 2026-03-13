@@ -18,7 +18,6 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Instant
@@ -119,8 +118,8 @@ internal class StytchB2BAuthenticationStateManager(
         }
     }
 
-    init {
-        CoroutineScope(dispatchers.ioDispatcher).launch {
+    suspend fun hydrate() {
+        coroutineScope {
             listOf(
                 async(dispatchers.ioDispatcher) { memberFlow.value = persistenceClient.get(MEMBER_IDENTIFIER, null) },
                 async(dispatchers.ioDispatcher) { sessionFlow.value = persistenceClient.get(SESSION_IDENTIFIER, null) },

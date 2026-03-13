@@ -14,7 +14,6 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
 import com.stytch.sdk.consumer.networking.models.ApiSessionV1Session as Session
 import com.stytch.sdk.consumer.networking.models.ApiUserV1User as User
 
@@ -73,8 +72,8 @@ internal class StytchConsumerAuthenticationStateManager(
         }
     }
 
-    init {
-        CoroutineScope(dispatchers.ioDispatcher).launch {
+    suspend fun hydrate() {
+        coroutineScope {
             listOf(
                 async(dispatchers.ioDispatcher) { userFlow.value = persistenceClient.get(USER_IDENTIFIER, null) },
                 async(dispatchers.ioDispatcher) { sessionFlow.value = persistenceClient.get(SESSION_IDENTIFIER, null) },
