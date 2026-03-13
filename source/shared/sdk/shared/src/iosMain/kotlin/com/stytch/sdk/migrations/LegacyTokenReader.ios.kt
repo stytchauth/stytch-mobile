@@ -26,11 +26,10 @@ public actual class LegacyTokenReader : ILegacyTokenReader {
         platformPersistenceClient: StytchPlatformPersistenceClient,
         dispatchers: StytchDispatchers,
         platform: KMPPlatformType,
-        vertical: Vertical,
     ): String? =
         when (platform) {
             KMPPlatformType.IOS -> {
-                getDecryptedSessionTokenFromLegacyIosSDK(dispatcher = dispatchers.ioDispatcher, vertical = vertical)
+                getDecryptedSessionTokenFromLegacyIosSDK(dispatcher = dispatchers.ioDispatcher)
             }
 
             KMPPlatformType.REACTNATIVE -> {
@@ -42,12 +41,16 @@ public actual class LegacyTokenReader : ILegacyTokenReader {
             }
         }
 
-    private suspend fun getDecryptedSessionTokenFromLegacyIosSDK(
-        dispatcher: CoroutineDispatcher,
-        vertical: Vertical,
-    ): String? =
+    private suspend fun getDecryptedSessionTokenFromLegacyIosSDK(dispatcher: CoroutineDispatcher): String? =
         withContext(dispatcher) {
-            TODO()
+            val keyData = swiftEncryptionManager.getLegacyNativeEncryptionKey() ?: return@withContext null
+            val userDefaults = NSUserDefaults(suiteName = "StytchEncryptedUserDefaults")
+            // `stytch_session` is the session_token; the naming is admittedly confusing
+            val encryptedSessionToken = userDefaults.dataForKey("stytch_session") ?: return@withContext null
+            swiftEncryptionManager.decryptDataFromLegacyInstallWithEncryptedData(
+                encryptedData = encryptedSessionToken,
+                keyData = keyData,
+            )
         }
 
     private suspend fun getDecryptedSessionTokenFromLegacyReactNativeSDK(
@@ -62,7 +65,7 @@ public actual class LegacyTokenReader : ILegacyTokenReader {
             val sessionStateKey = "stytch_stytch_sdk_state_$publicToken"
             val encryptedSessionStateData = userDefaults.dataForKey(sessionStateKey) ?: return@withContext null
             val sessionStateString =
-                swiftEncryptionManager.decryptDataFromLegacyReactNativeInstallWithEncryptedData(
+                swiftEncryptionManager.decryptDataFromLegacyInstallWithEncryptedData(
                     encryptedData = encryptedSessionStateData,
                     keyData = keyData,
                 ) ?: return@withContext null

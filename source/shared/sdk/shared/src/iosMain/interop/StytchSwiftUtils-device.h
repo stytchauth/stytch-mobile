@@ -341,8 +341,9 @@ SWIFT_CLASS_PROPERTY(@property (nonatomic, class, readonly, strong) StytchEncryp
 - (NSDictionary<NSString *, NSData *> * _Nonnull)generateEd25519KeyPair SWIFT_WARN_UNUSED_RESULT;
 - (NSData * _Nullable)signEd25519WithKey:(NSData * _Nonnull)key challenge:(NSData * _Nonnull)challenge error:(NSError * _Nullable * _Nullable)error SWIFT_WARN_UNUSED_RESULT;
 - (NSData * _Nullable)deriveEd25519PublicKeyFromPrivateKeyBytesWithPrivateKeyData:(NSData * _Nonnull)privateKeyData error:(NSError * _Nullable * _Nullable)error SWIFT_WARN_UNUSED_RESULT;
+- (NSData * _Nullable)getLegacyNativeEncryptionKey SWIFT_WARN_UNUSED_RESULT;
 - (NSData * _Nullable)getLegacyReactNativeEncryptionKey SWIFT_WARN_UNUSED_RESULT;
-- (NSString * _Nullable)decryptDataFromLegacyReactNativeInstallWithEncryptedData:(NSData * _Nonnull)encryptedData keyData:(NSData * _Nonnull)keyData SWIFT_WARN_UNUSED_RESULT;
+- (NSString * _Nullable)decryptDataFromLegacyInstallWithEncryptedData:(NSData * _Nonnull)encryptedData keyData:(NSData * _Nonnull)keyData SWIFT_WARN_UNUSED_RESULT;
 - (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
 @end
 

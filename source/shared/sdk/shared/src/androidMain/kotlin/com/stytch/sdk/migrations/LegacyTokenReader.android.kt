@@ -7,7 +7,6 @@ import com.google.crypto.tink.integration.android.AndroidKeysetManager
 import com.stytch.sdk.data.KMPPlatformType
 import com.stytch.sdk.data.ReactNativeSessionState
 import com.stytch.sdk.data.StytchDispatchers
-import com.stytch.sdk.data.Vertical
 import com.stytch.sdk.persistence.StytchPlatformPersistenceClient
 import io.ktor.util.decodeBase64Bytes
 import kotlinx.coroutines.CoroutineDispatcher
@@ -27,13 +26,11 @@ public actual class LegacyTokenReader : ILegacyTokenReader {
         platformPersistenceClient: StytchPlatformPersistenceClient,
         dispatchers: StytchDispatchers,
         platform: KMPPlatformType,
-        vertical: Vertical,
     ): String? =
         when (platform) {
             KMPPlatformType.ANDROID -> {
                 getDecryptedSessionTokenFromLegacyAndroidSDK(
                     context = platformPersistenceClient.context,
-                    vertical = vertical,
                     dispatcher = dispatchers.ioDispatcher,
                 )
             }
@@ -42,7 +39,6 @@ public actual class LegacyTokenReader : ILegacyTokenReader {
                 getDecryptedSessionTokenFromLegacyReactNativeSDK(
                     context = platformPersistenceClient.context,
                     publicToken = publicToken,
-                    vertical = vertical,
                     dispatcher = dispatchers.ioDispatcher,
                 )
             }
@@ -54,7 +50,6 @@ public actual class LegacyTokenReader : ILegacyTokenReader {
 
     private suspend fun getDecryptedSessionTokenFromLegacyAndroidSDK(
         context: Context,
-        vertical: Vertical,
         dispatcher: CoroutineDispatcher,
     ): String? {
         val keysetName = "Stytch RSA 2048"
@@ -73,7 +68,6 @@ public actual class LegacyTokenReader : ILegacyTokenReader {
     private suspend fun getDecryptedSessionTokenFromLegacyReactNativeSDK(
         context: Context,
         publicToken: String,
-        vertical: Vertical,
         dispatcher: CoroutineDispatcher,
     ): String? {
         val keysetName = ""

@@ -41,7 +41,6 @@ import com.stytch.sdk.b2b.totp.B2BTOTPClient
 import com.stytch.sdk.b2b.totp.B2BTOTPClientImpl
 import com.stytch.sdk.data.BootstrapResponse
 import com.stytch.sdk.data.JsCleanup
-import com.stytch.sdk.data.KMPPlatformType
 import com.stytch.sdk.data.PKCECodePair
 import com.stytch.sdk.data.StytchClientConfiguration
 import com.stytch.sdk.data.StytchClientConfigurationInternal
@@ -122,9 +121,11 @@ internal class DefaultStytchB2B(
             migrations =
                 listOf(
                     LegacyTokenMigration(
+                        publicToken = configuration.tokenInfo.publicToken,
                         platform = configuration.platform,
                         tokenReader = LegacyTokenReader(),
                         persistenceClient = persistenceClient,
+                        dispatchers = dispatchers,
                     ),
                 ),
             store = MigrationStore("b2b", configuration.platformPersistenceClient),

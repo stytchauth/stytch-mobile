@@ -2,6 +2,7 @@ package com.stytch.sdk.b2b.migrations
 
 import com.stytch.sdk.b2b.StytchB2BAuthenticationStateManager.Companion.SESSION_TOKEN_IDENTIFIER
 import com.stytch.sdk.data.KMPPlatformType
+import com.stytch.sdk.data.StytchDispatchers
 import com.stytch.sdk.data.StytchError
 import com.stytch.sdk.data.Vertical
 import com.stytch.sdk.migrations.ILegacyTokenReader
@@ -10,9 +11,11 @@ import com.stytch.sdk.migrations.MigrationResult
 import com.stytch.sdk.persistence.StytchPersistenceClient
 
 internal class LegacyTokenMigration(
+    private val publicToken: String,
     private val platform: KMPPlatformType,
     private val tokenReader: ILegacyTokenReader,
     private val persistenceClient: StytchPersistenceClient,
+    private val dispatchers: StytchDispatchers,
     override val id: Int = 1,
 ) : Migration {
     private var decryptedTokenFromPreviousInstall: String? = null
@@ -21,9 +24,10 @@ internal class LegacyTokenMigration(
         try {
             decryptedTokenFromPreviousInstall =
                 tokenReader.getExistingToken(
-                    platformPersistenceClient = persistenceClient.platformPersistenceClient,
+                    publicToken = publicToken,
                     platform = platform,
-                    vertical = Vertical.B2B,
+                    platformPersistenceClient = persistenceClient.platformPersistenceClient,
+                    dispatchers = dispatchers,
                 )
             return decryptedTokenFromPreviousInstall != null
         } catch (_: StytchError) {

@@ -14,6 +14,5 @@ public actual class LegacyTokenReader : ILegacyTokenReader {
         platformPersistenceClient: StytchPlatformPersistenceClient,
         dispatchers: StytchDispatchers,
         platform: KMPPlatformType,
-        vertical: Vertical,
-    ): String? = StytchBridge.getLegacyToken(vertical = Json.encodeToString(vertical)).await()
+    ): String? = StytchBridge.getLegacyToken().await()
 }

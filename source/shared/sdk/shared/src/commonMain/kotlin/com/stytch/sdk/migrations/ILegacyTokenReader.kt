@@ -12,17 +12,15 @@ public interface ILegacyTokenReader {
         platformPersistenceClient: StytchPlatformPersistenceClient,
         dispatchers: StytchDispatchers,
         platform: KMPPlatformType,
-        vertical: Vertical,
     ): String?
 }
 
-public expect class LegacyTokenReader : ILegacyTokenReader {
+public expect class LegacyTokenReader() : ILegacyTokenReader {
     override suspend fun getExistingToken(
         publicToken: String,
         platformPersistenceClient: StytchPlatformPersistenceClient,
         dispatchers: StytchDispatchers,
         platform: KMPPlatformType,
-        vertical: Vertical,
     ): String?
 }
 

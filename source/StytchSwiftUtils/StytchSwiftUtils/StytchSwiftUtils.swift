@@ -155,6 +155,26 @@ public class StytchEncryptionManagerSwift: NSObject {
         return query
     }
 
+    @objc public func getLegacyNativeEncryptionKey() -> Data? {
+        var query = [
+            kSecAttrService: "stytch_encryption_key",
+            kSecAttrAccount: "EncryptedUserDefaultsKey",
+            kSecClass: kSecClassGenericPassword,
+            kSecUseDataProtectionKeychain: true,
+            kSecReturnData: true,
+            kSecReturnAttributes: true,
+            kSecMatchLimit: kSecMatchLimitAll,
+            kSecAttrSynchronizable: kSecAttrSynchronizableAny,
+            kSecUseAuthenticationUI: kSecUseAuthenticationUISkip
+        ] as [CFString : Any] as CFDictionary
+        var result: AnyObject?
+        let status = SecItemCopyMatching(query, &result)
+        guard status == errSecSuccess, let data = result as? Data else {
+            return nil
+        }
+        return data
+    }
+
     @objc public func getLegacyReactNativeEncryptionKey() -> Data? {
         let query = [
             kSecAttrService: "AES_SERVICE",
@@ -171,7 +191,7 @@ public class StytchEncryptionManagerSwift: NSObject {
         return data
     }
 
-    @objc public func decryptDataFromLegacyReactNativeInstall(encryptedData: Data, keyData: Data) -> String? {
+    @objc public func decryptDataFromLegacyInstall(encryptedData: Data, keyData: Data) -> String? {
         do {
             let key = SymmetricKey(data: keyData)
             let sealedBox = try AES.GCM.SealedBox(combined: encryptedData)
