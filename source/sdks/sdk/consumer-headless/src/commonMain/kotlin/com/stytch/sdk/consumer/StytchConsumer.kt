@@ -13,6 +13,7 @@ import com.stytch.sdk.consumer.dfp.DFPClient
 import com.stytch.sdk.consumer.dfp.DFPClientImpl
 import com.stytch.sdk.consumer.magicLinks.MagicLinksClient
 import com.stytch.sdk.consumer.magicLinks.MagicLinksImpl
+import com.stytch.sdk.consumer.migrations.LegacyTokenMigration
 import com.stytch.sdk.consumer.networking.AuthenticatedResponse
 import com.stytch.sdk.consumer.networking.ConsumerNetworkingClient
 import com.stytch.sdk.consumer.networking.models.MagicLinksAuthenticateParameters
@@ -37,6 +38,7 @@ import com.stytch.sdk.data.PKCECodePair
 import com.stytch.sdk.data.StytchClientConfiguration
 import com.stytch.sdk.data.StytchClientConfigurationInternal
 import com.stytch.sdk.data.StytchError
+import com.stytch.sdk.migrations.LegacyTokenReader
 import com.stytch.sdk.migrations.MigrationRunner
 import com.stytch.sdk.migrations.MigrationStore
 import com.stytch.sdk.persistence.StytchPersistenceClient
@@ -114,7 +116,7 @@ internal class DefaultStytchConsumer(
 
     private val migrationRunner =
         MigrationRunner(
-            migrations = emptyList(), // add consumer migrations here
+            migrations = listOf(LegacyTokenMigration(tokenReader = LegacyTokenReader())),
             store = MigrationStore("consumer", configuration.platformPersistenceClient),
         )
 

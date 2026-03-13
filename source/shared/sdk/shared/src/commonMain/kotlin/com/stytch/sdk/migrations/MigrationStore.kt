@@ -10,13 +10,13 @@ import kotlinx.serialization.json.Json
  * metadata (IDs and timestamps) is not sensitive, and using the encrypted client would
  * create ordering problems if encryption setup were ever part of a migration.
  */
-internal class MigrationStore(
+public class MigrationStore(
     namespace: String,
     private val platformPersistenceClient: StytchPlatformPersistenceClient,
 ) {
     private val key = "stytch_${namespace}_migrations"
 
-    fun getAppliedIds(): Set<Int> {
+    public fun getAppliedIds(): Set<Int> {
         val json = platformPersistenceClient.getData(key) ?: return emptySet()
         return try {
             Json.decodeFromString<List<MigrationRecord>>(json).map { it.id }.toSet()
@@ -25,7 +25,7 @@ internal class MigrationStore(
         }
     }
 
-    fun record(record: MigrationRecord) {
+    public fun record(record: MigrationRecord) {
         val current =
             try {
                 val json = platformPersistenceClient.getData(key) ?: "[]"

@@ -2,11 +2,11 @@ package com.stytch.sdk.migrations
 
 import kotlin.time.Clock
 
-internal class MigrationRunner(
+public class MigrationRunner(
     private val migrations: List<Migration>,
     private val store: MigrationStore,
 ) {
-    suspend fun runPendingMigrations() {
+    public suspend fun runPendingMigrations() {
         val appliedIds = store.getAppliedIds()
 
         for (migration in migrations.sortedBy { it.id }) {
