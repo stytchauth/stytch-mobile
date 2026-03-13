@@ -21,7 +21,7 @@ import {
 import { mergeWithStableProps } from './utils';
 
 export const withStytchB2B = <T extends object>(
-  Component: React.ComponentType<T & { stytch: StytchB2B }>
+  Component: React.ComponentType<T & { stytch: StytchB2B }>,
 ): React.ComponentType<T> => {
   const WithStytch: React.ComponentType<T> = (props) => {
     return <Component {...props} stytch={useStytchB2B()} />;
@@ -30,7 +30,7 @@ export const withStytchB2B = <T extends object>(
   return WithStytch;
 };
 export const withStytchMember = <T extends object>(
-  Component: React.ComponentType<T & { stytchMember: ApiOrganizationV1Member | undefined }>
+  Component: React.ComponentType<T & { stytchMember: ApiOrganizationV1Member | undefined }>,
 ): React.ComponentType<T> => {
   const WithStytchMember: React.ComponentType<T> = (props) => {
     const member = useStytchMember();
@@ -40,7 +40,7 @@ export const withStytchMember = <T extends object>(
   return WithStytchMember;
 };
 export const withStytchMemberSession = <T extends object>(
-  Component: React.ComponentType<T & { stytchSession: ApiB2bSessionV1MemberSession | undefined }>
+  Component: React.ComponentType<T & { stytchSession: ApiB2bSessionV1MemberSession | undefined }>,
 ): React.ComponentType<T> => {
   const WithStytchMemberSession: React.ComponentType<T> = (props) => {
     const memberSession = useStytchMemberSession();
@@ -50,7 +50,7 @@ export const withStytchMemberSession = <T extends object>(
   return WithStytchMemberSession;
 };
 export const withStytchB2BAuthenticationState = <T extends object>(
-  Component: React.ComponentType<T & B2BAuthenticationState>
+  Component: React.ComponentType<T & B2BAuthenticationState>,
 ): React.ComponentType<T> => {
   const WithStytchB2BAuthenticationState: React.ComponentType<T> = (props) => {
     const state = useStytchB2BAuthenticationState();
@@ -74,7 +74,7 @@ export const StytchProvider = ({ stytch, children }: StytchB2BProviderProps): Re
     memberSession: undefined,
   });
   const [authenticationState, setAuthenticationState] = useState<B2BAuthenticationState>(
-    new B2BAuthenticationState.Loading()
+    new B2BAuthenticationState.Loading(),
   );
 
   useEffect(() => {
@@ -95,7 +95,7 @@ export const StytchProvider = ({ stytch, children }: StytchB2BProviderProps): Re
             }
           }
           observationJob.stop();
-        }
+        },
       );
     };
     return () => {

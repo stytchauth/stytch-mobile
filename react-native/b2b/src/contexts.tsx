@@ -8,9 +8,9 @@ import {
 
 export const StytchMemberContext = createContext<ApiOrganizationV1Member | undefined>(undefined);
 export const StytchMemberSessionContext = createContext<ApiB2bSessionV1MemberSession | undefined>(
-  undefined
+  undefined,
 );
 export const StytchB2BContext = createContext<StytchB2B | null>(null);
 export const StytchB2BAuthenticationStateContext = createContext<B2BAuthenticationState>(
-  B2BAuthenticationState.Loading
+  B2BAuthenticationState.Loading,
 );

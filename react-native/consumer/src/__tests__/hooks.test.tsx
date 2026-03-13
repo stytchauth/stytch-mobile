@@ -21,7 +21,7 @@ jest.mock('../../lib/consumer-headless.mjs', () => ({
 describe('useStytch', () => {
   it('throws when called outside a StytchProvider', () => {
     expect(() => renderHook(() => useStytch())).toThrow(
-      'useStytch() must be called within a <StytchProvider>.'
+      'useStytch() must be called within a <StytchProvider>.',
     );
   });
 

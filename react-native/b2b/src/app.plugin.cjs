@@ -69,7 +69,7 @@ const addSPMDependenciesToMainTarget = (config) =>
 
     // update PBXFrameworksBuildPhase
     const buildPhaseId = Object.keys(
-      xcodeProject.hash.project.objects['PBXFrameworksBuildPhase']
+      xcodeProject.hash.project.objects['PBXFrameworksBuildPhase'],
     ).at(0);
 
     if (!xcodeProject.hash.project.objects['PBXFrameworksBuildPhase'][buildPhaseId]['files']) {

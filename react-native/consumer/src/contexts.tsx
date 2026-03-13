@@ -10,5 +10,5 @@ export const StytchUserContext = createContext<ApiUserV1User | undefined>(undefi
 export const StytchSessionContext = createContext<ApiSessionV1Session | undefined>(undefined);
 export const StytchContext = createContext<StytchConsumer | null>(null);
 export const StytchAuthenticationStateContext = createContext<ConsumerAuthenticationState>(
-  ConsumerAuthenticationState.Loading
+  ConsumerAuthenticationState.Loading,
 );

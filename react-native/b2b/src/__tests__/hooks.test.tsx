@@ -16,7 +16,9 @@ import {
 
 type StytchB2B = NonNullable<React.ContextType<typeof StytchB2BContext>>;
 type ApiOrganizationV1Member = NonNullable<React.ContextType<typeof StytchMemberContext>>;
-type ApiB2bSessionV1MemberSession = NonNullable<React.ContextType<typeof StytchMemberSessionContext>>;
+type ApiB2bSessionV1MemberSession = NonNullable<
+  React.ContextType<typeof StytchMemberSessionContext>
+>;
 type B2BAuthenticationState = React.ContextType<typeof StytchB2BAuthenticationStateContext>;
 
 jest.mock('../../lib/b2b-headless.mjs', () => ({
@@ -26,7 +28,7 @@ jest.mock('../../lib/b2b-headless.mjs', () => ({
 describe('useStytchB2B', () => {
   it('throws when called outside a StytchProvider', () => {
     expect(() => renderHook(() => useStytchB2B())).toThrow(
-      'useStytchB2B() must be called within a <StytchProvider>.'
+      'useStytchB2B() must be called within a <StytchProvider>.',
     );
   });
 

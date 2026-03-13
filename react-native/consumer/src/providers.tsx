@@ -16,7 +16,7 @@ import {
 import { mergeWithStableProps } from './utils';
 
 export const withStytch = <T extends object>(
-  Component: React.ComponentType<T & { stytch: StytchConsumer }>
+  Component: React.ComponentType<T & { stytch: StytchConsumer }>,
 ): React.ComponentType<T> => {
   const WithStytch: React.ComponentType<T> = (props) => {
     return <Component {...props} stytch={useStytch()} />;
@@ -25,7 +25,7 @@ export const withStytch = <T extends object>(
   return WithStytch;
 };
 export const withStytchUser = <T extends object>(
-  Component: React.ComponentType<T & { stytchUser: ApiUserV1User | undefined }>
+  Component: React.ComponentType<T & { stytchUser: ApiUserV1User | undefined }>,
 ): React.ComponentType<T> => {
   const WithStytchUser: React.ComponentType<T> = (props) => {
     const user = useStytchUser();
@@ -35,7 +35,7 @@ export const withStytchUser = <T extends object>(
   return WithStytchUser;
 };
 export const withStytchSession = <T extends object>(
-  Component: React.ComponentType<T & { stytchSession: ApiSessionV1Session | undefined }>
+  Component: React.ComponentType<T & { stytchSession: ApiSessionV1Session | undefined }>,
 ): React.ComponentType<T> => {
   const WithStytchSession: React.ComponentType<T> = (props) => {
     const session = useStytchSession();
@@ -45,7 +45,7 @@ export const withStytchSession = <T extends object>(
   return WithStytchSession;
 };
 export const withStytchAuthenticationState = <T extends object>(
-  Component: React.ComponentType<T & ConsumerAuthenticationState>
+  Component: React.ComponentType<T & ConsumerAuthenticationState>,
 ): React.ComponentType<T> => {
   const WithStytchAuthenticationState: React.ComponentType<T> = (props) => {
     const state = useStytchAuthenticationState();
@@ -69,7 +69,7 @@ export const StytchProvider = ({ stytch, children }: StytchProviderProps): React
     user: undefined,
   });
   const [authenticationState, setAuthenticationState] = useState<ConsumerAuthenticationState>(
-    new ConsumerAuthenticationState.Loading()
+    new ConsumerAuthenticationState.Loading(),
   );
 
   useEffect(() => {
@@ -90,7 +90,7 @@ export const StytchProvider = ({ stytch, children }: StytchProviderProps): React
             }
           }
           observationJob.stop();
-        }
+        },
       );
     };
     return () => {
@@ -112,7 +112,7 @@ export const StytchProvider = ({ stytch, children }: StytchProviderProps): React
           return mergeWithStableProps(oldState, newState);
         });
         setAuthenticationState(state);
-      }
+      },
     );
     return () => {
       observationJob.stop();

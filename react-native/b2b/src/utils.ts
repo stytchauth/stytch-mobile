@@ -18,7 +18,7 @@ export const mergeWithStableProps = <
   U extends Record<string, unknown> = T,
 >(
   oldValue: U,
-  newValue: T
+  newValue: T,
 ): T => {
   // If the values are already referentially the same, just return the new value
   if ((oldValue as unknown) === newValue) {
@@ -32,6 +32,6 @@ export const mergeWithStableProps = <
       }
       return acc;
     },
-    { ...newValue }
+    { ...newValue },
   );
 };
