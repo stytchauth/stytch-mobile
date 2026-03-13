@@ -1,5 +1,6 @@
 // Credit: https://www.reactnativecrossroads.com/posts/expo-plugin-add-spm-dependency/
 
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const { withXcodeProject } = require('@expo/config-plugins');
 
 const addSPMDependenciesToMainTarget = (config) =>
