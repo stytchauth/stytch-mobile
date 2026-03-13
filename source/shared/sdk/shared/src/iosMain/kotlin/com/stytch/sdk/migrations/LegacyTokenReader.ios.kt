@@ -21,15 +21,16 @@ public actual class LegacyTokenReader : ILegacyTokenReader {
         }
     private val swiftEncryptionManager = StytchEncryptionManagerSwift.shared()
 
-    actual override suspend fun getExistingToken(
+    actual override suspend fun getExistingSessionData(
         publicToken: String,
         platformPersistenceClient: StytchPlatformPersistenceClient,
         dispatchers: StytchDispatchers,
         platform: KMPPlatformType,
-    ): String? =
+        vertical: Vertical,
+    ): PersistedLegacySessionData? =
         when (platform) {
             KMPPlatformType.IOS -> {
-                getDecryptedSessionTokenFromLegacyIosSDK(dispatcher = dispatchers.ioDispatcher)
+                getDecryptedSessionTokenFromLegacyIosSDK(dispatcher = dispatchers.ioDispatcher, vertical = vertical)
             }
 
             KMPPlatformType.REACTNATIVE -> {
@@ -41,22 +42,41 @@ public actual class LegacyTokenReader : ILegacyTokenReader {
             }
         }
 
-    private suspend fun getDecryptedSessionTokenFromLegacyIosSDK(dispatcher: CoroutineDispatcher): String? =
+    private suspend fun getDecryptedSessionTokenFromLegacyIosSDK(
+        dispatcher: CoroutineDispatcher,
+        vertical: Vertical,
+    ): PersistedLegacySessionData? =
         withContext(dispatcher) {
             val keyData = swiftEncryptionManager.getLegacyNativeEncryptionKey() ?: return@withContext null
             val userDefaults = NSUserDefaults(suiteName = "StytchEncryptedUserDefaults")
             // `stytch_session` is the session_token; the naming is admittedly confusing
             val encryptedSessionToken = userDefaults.dataForKey("stytch_session") ?: return@withContext null
-            swiftEncryptionManager.decryptDataFromLegacyInstallWithEncryptedData(
-                encryptedData = encryptedSessionToken,
-                keyData = keyData,
+            val sessionToken =
+                swiftEncryptionManager.decryptDataFromLegacyInstallWithEncryptedData(
+                    encryptedData = encryptedSessionToken,
+                    keyData = keyData,
+                ) ?: return@withContext null
+            val decryptedSessionDataString =
+                if (vertical == Vertical.CONSUMER) {
+                    userDefaults.dataForKey("stytch_session_object")
+                } else {
+                    userDefaults.dataForKey("stytch_member_session_object")
+                }?.let {
+                    swiftEncryptionManager.decryptDataFromLegacyInstallWithEncryptedData(
+                        encryptedData = it,
+                        keyData = keyData,
+                    )
+                }
+            PersistedLegacySessionData(
+                token = sessionToken,
+                sessionDataString = decryptedSessionDataString,
             )
         }
 
     private suspend fun getDecryptedSessionTokenFromLegacyReactNativeSDK(
         dispatcher: CoroutineDispatcher,
         publicToken: String,
-    ): String? =
+    ): PersistedLegacySessionData? =
         withContext(dispatcher) {
             // first, check if a key exists
             val keyData = swiftEncryptionManager.getLegacyReactNativeEncryptionKey() ?: return@withContext null
@@ -69,7 +89,14 @@ public actual class LegacyTokenReader : ILegacyTokenReader {
                     encryptedData = encryptedSessionStateData,
                     keyData = keyData,
                 ) ?: return@withContext null
-            val sessionState: ReactNativeSessionState = jsonSerializer.decodeFromString(sessionStateString)
-            sessionState.sessionToken
+            try {
+                val sessionState: ReactNativeSessionState = jsonSerializer.decodeFromString(sessionStateString)
+                PersistedLegacySessionData(
+                    token = sessionState.sessionToken,
+                    sessionDataString = sessionState.session,
+                )
+            } catch (_: Exception) {
+                null
+            }
         }
 }

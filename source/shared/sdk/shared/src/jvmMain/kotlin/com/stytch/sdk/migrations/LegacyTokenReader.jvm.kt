@@ -6,10 +6,11 @@ import com.stytch.sdk.data.Vertical
 import com.stytch.sdk.persistence.StytchPlatformPersistenceClient
 
 public actual class LegacyTokenReader : ILegacyTokenReader {
-    actual override suspend fun getExistingToken(
+    actual override suspend fun getExistingSessionData(
         publicToken: String,
         platformPersistenceClient: StytchPlatformPersistenceClient,
         dispatchers: StytchDispatchers,
         platform: KMPPlatformType,
-    ): String? = null
+        vertical: Vertical,
+    ): PersistedLegacySessionData? = null
 }

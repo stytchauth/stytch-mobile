@@ -1,6 +1,8 @@
 package com.stytch.sdk.consumer.migrations
 
+import com.stytch.sdk.consumer.StytchConsumerAuthenticationStateManager.Companion.SESSION_IDENTIFIER
 import com.stytch.sdk.consumer.StytchConsumerAuthenticationStateManager.Companion.SESSION_TOKEN_IDENTIFIER
+import com.stytch.sdk.consumer.networking.models.ApiSessionV1Session
 import com.stytch.sdk.data.KMPPlatformType
 import com.stytch.sdk.data.StytchDispatchers
 import com.stytch.sdk.data.StytchError
@@ -8,7 +10,9 @@ import com.stytch.sdk.data.Vertical
 import com.stytch.sdk.migrations.ILegacyTokenReader
 import com.stytch.sdk.migrations.Migration
 import com.stytch.sdk.migrations.MigrationResult
+import com.stytch.sdk.migrations.PersistedLegacySessionData
 import com.stytch.sdk.persistence.StytchPersistenceClient
+import kotlinx.serialization.json.Json
 
 internal class LegacyTokenMigration(
     private val publicToken: String,
@@ -18,27 +22,37 @@ internal class LegacyTokenMigration(
     private val dispatchers: StytchDispatchers,
     override val id: Int = 1,
 ) : Migration {
-    private var decryptedTokenFromPreviousInstall: String? = null
+    private var persistedLegacySessionData: PersistedLegacySessionData? = null
 
     override suspend fun isApplicable(): Boolean =
         try {
-            decryptedTokenFromPreviousInstall =
-                tokenReader.getExistingToken(
+            persistedLegacySessionData =
+                tokenReader.getExistingSessionData(
                     publicToken = publicToken,
                     platform = platform,
                     platformPersistenceClient = persistenceClient.platformPersistenceClient,
                     dispatchers = dispatchers,
+                    vertical = Vertical.CONSUMER,
                 )
-            return decryptedTokenFromPreviousInstall != null
+            return persistedLegacySessionData != null
         } catch (_: StytchError) {
             // If something went wrong getting the previous token data, consider it unrecoverable, and therefore not applicable
             false
         }
 
     override suspend fun run(): MigrationResult {
-        // ALl we need to do is persist the OLD token (with new encryption). After the migration runs, the session token will be retrieved,
-        // the session validation will run and populate (or nuke, as appropriate) the other persisted session data
-        persistenceClient.save(SESSION_TOKEN_IDENTIFIER, decryptedTokenFromPreviousInstall)
+        val data = persistedLegacySessionData ?: return MigrationResult.Skipped("No persisted data recovered")
+        persistenceClient.save(SESSION_TOKEN_IDENTIFIER, data.token)
+        // we can't be sure that the persisted session data from the legacy SDKs contains a FULL session as defined by the OpenAPI spec,
+        // so rehydrating the session is optimistic, not guaranteed. This is fine, because the token is the only thing truly necessary
+        try {
+            data.sessionDataString?.let {
+                val session: ApiSessionV1Session = Json.decodeFromString(it)
+                persistenceClient.save(SESSION_IDENTIFIER, session)
+            }
+        } catch (_: Exception) {
+            // intentional NOOP
+        }
         return MigrationResult.Success
     }
 }
