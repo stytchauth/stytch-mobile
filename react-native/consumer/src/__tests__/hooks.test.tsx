@@ -1,5 +1,5 @@
+import { describe, it, expect, jest } from '@jest/globals';
 import React from 'react';
-import { describe, it, expect, vi } from 'vitest';
 import { renderHook } from '@testing-library/react-native';
 import { useStytch, useStytchUser, useStytchSession, useStytchAuthenticationState } from '../hooks';
 import {
@@ -9,7 +9,7 @@ import {
   StytchAuthenticationStateContext,
 } from '../contexts';
 
-vi.mock('../../lib/consumer-headless.mjs', () => ({
+jest.mock('../../lib/consumer-headless.mjs', () => ({
   ConsumerAuthenticationState: { Loading: class Loading {} },
 }));
 
