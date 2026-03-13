@@ -5,7 +5,6 @@ import com.stytch.sdk.b2b.StytchB2BAuthenticationStateManager.Companion.SESSION_
 import com.stytch.sdk.b2b.networking.models.ApiB2bSessionV1MemberSession
 import com.stytch.sdk.data.KMPPlatformType
 import com.stytch.sdk.data.StytchDispatchers
-import com.stytch.sdk.data.StytchError
 import com.stytch.sdk.data.Vertical
 import com.stytch.sdk.migrations.ILegacyTokenReader
 import com.stytch.sdk.migrations.Migration
@@ -35,7 +34,7 @@ internal class LegacyTokenMigration(
                     vertical = Vertical.B2B,
                 )
             return persistedLegacySessionData != null
-        } catch (_: StytchError) {
+        } catch (_: Exception) {
             // If something went wrong getting the previous token data, consider it unrecoverable, and therefore not applicable
             false
         }

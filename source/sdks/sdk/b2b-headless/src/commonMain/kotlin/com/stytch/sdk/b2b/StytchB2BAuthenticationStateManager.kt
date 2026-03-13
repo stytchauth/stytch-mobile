@@ -10,6 +10,7 @@ import com.stytch.sdk.b2b.networking.models.ApiOrganizationV1Organization
 import com.stytch.sdk.data.StytchDispatchers
 import com.stytch.sdk.persistence.StytchPersistenceClient
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
@@ -17,6 +18,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.minutes
@@ -36,20 +39,28 @@ internal class StytchB2BAuthenticationStateManager(
 
     private val loadingStateFlow: MutableStateFlow<Boolean> = MutableStateFlow(false)
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     override val authenticationStateFlow: StateFlow<B2BAuthenticationState> =
-        combine(
-            sessionFlow,
-            memberFlow,
-            organizationFlow,
-            sessionTokenFlow,
-            sessionJwtFlow,
-        ) { session, member, organization, token, jwt ->
-            if (!loadingStateFlow.value) return@combine B2BAuthenticationState.Loading()
-            if (session != null && member != null && organization != null && token != null && jwt != null) {
-                return@combine B2BAuthenticationState.Authenticated(member, session, organization, token, jwt)
-            }
-            B2BAuthenticationState.Unauthenticated()
-        }.stateIn(CoroutineScope(dispatchers.mainDispatcher), SharingStarted.WhileSubscribed(5000L), B2BAuthenticationState.Loading())
+        loadingStateFlow
+            .flatMapLatest { isLoaded ->
+                if (!isLoaded) {
+                    flowOf(B2BAuthenticationState.Loading())
+                } else {
+                    combine(
+                        sessionFlow,
+                        memberFlow,
+                        organizationFlow,
+                        sessionTokenFlow,
+                        sessionJwtFlow,
+                    ) { memberSession, member, organization, sessionToken, sessionJwt ->
+                        if (memberSession != null && member != null && organization != null && sessionToken != null && sessionJwt != null) {
+                            B2BAuthenticationState.Authenticated(member, memberSession, organization, sessionToken, sessionJwt)
+                        } else {
+                            B2BAuthenticationState.Unauthenticated()
+                        }
+                    }
+                }
+            }.stateIn(CoroutineScope(dispatchers.mainDispatcher), SharingStarted.WhileSubscribed(5000L), B2BAuthenticationState.Loading())
 
     override val currentSessionToken: String?
         get() = sessionTokenFlow.value

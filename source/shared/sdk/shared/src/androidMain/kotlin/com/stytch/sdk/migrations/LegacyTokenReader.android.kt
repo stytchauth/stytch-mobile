@@ -109,8 +109,9 @@ public actual class LegacyTokenReader : ILegacyTokenReader {
             // Native and RN are almost identical in how the encryption primitives are set up, only differing in the keysetName
             val keyStore: KeyStore = KeyStore.getInstance("AndroidKeyStore")
             keyStore.load(null)
-            val masterKeyUri = "android-keystore://stytch_master_key"
-            if (!keyStore.containsAlias(masterKeyUri)) {
+            val masterKeyAlias = "stytch_master_key"
+            val masterKeyUri = "android-keystore://$masterKeyAlias"
+            if (!keyStore.containsAlias(masterKeyAlias)) {
                 // if it doesn't exist, there's nothing to do
                 return@withContext null
             }
