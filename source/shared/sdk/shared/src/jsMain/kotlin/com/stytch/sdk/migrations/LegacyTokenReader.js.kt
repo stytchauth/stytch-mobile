@@ -17,7 +17,7 @@ public actual class LegacyTokenReader : ILegacyTokenReader {
         platform: KMPPlatformType,
         vertical: Vertical,
     ): PersistedLegacySessionData? =
-        StytchBridge.getLegacyToken(Json.encodeToString(vertical)).await()?.let {
+        StytchBridge.getLegacySessionData(Json.encodeToString(vertical)).await()?.let {
             Json.decodeFromString<PersistedLegacySessionData>(it)
         }
 }

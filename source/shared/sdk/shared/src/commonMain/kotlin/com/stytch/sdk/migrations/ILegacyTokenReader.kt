@@ -5,6 +5,7 @@ import com.stytch.sdk.data.StytchDispatchers
 import com.stytch.sdk.data.StytchError
 import com.stytch.sdk.data.Vertical
 import com.stytch.sdk.persistence.StytchPlatformPersistenceClient
+import kotlinx.serialization.Serializable
 
 public interface ILegacyTokenReader {
     public suspend fun getExistingSessionData(
@@ -26,6 +27,7 @@ public expect class LegacyTokenReader() : ILegacyTokenReader {
     ): PersistedLegacySessionData?
 }
 
+@Serializable
 public data class PersistedLegacySessionData(
     public val token: String,
     public val sessionDataString: String?,
