@@ -12,9 +12,12 @@ import com.facebook.react.module.annotations.ReactModule
 import com.stytch.sdk.biometrics.BiometricPromptData
 import com.stytch.sdk.biometrics.BiometricsParameters
 import com.stytch.sdk.biometrics.BiometricsProvider
+import com.stytch.sdk.data.KMPPlatformType
 import com.stytch.sdk.data.StytchDispatchers
+import com.stytch.sdk.data.Vertical
 import com.stytch.sdk.data.getDeviceInfo
 import com.stytch.sdk.data.getPublicTokenInfo
+import com.stytch.sdk.migrations.LegacyTokenReader
 import com.stytch.sdk.dfp.CAPTCHAProviderImpl
 import com.stytch.sdk.dfp.DFPProviderImpl
 import com.stytch.sdk.encryption.StytchEncryptionClient
@@ -429,6 +432,28 @@ class StytchBridgeModule(reactContext: ReactApplicationContext) :
         .onFailure { exception ->
           promise.reject(exception)
         }
+    }
+  }
+
+  override fun getLegacySessionData(publicToken: String, vertical: String, promise: Promise) {
+    ioScope.launch {
+      runCatching {
+        val tokenReader = LegacyTokenReader()
+        val verticalEnum = Json.decodeFromString<Vertical>(vertical)
+        tokenReader.getExistingSessionData(
+          publicToken = publicToken,
+          platformPersistenceClient = platformPersistenceClient,
+          dispatchers = dispatchers,
+          platform = KMPPlatformType.REACTNATIVE,
+          vertical = verticalEnum,
+        )
+      }
+      .onSuccess { data ->
+        promise.resolve(data?.let { Json.encodeToString(it) })
+      }
+      .onFailure { exception ->
+        promise.reject(exception)
+      }
     }
   }
 

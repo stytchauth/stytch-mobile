@@ -85,7 +85,10 @@ export interface Spec extends TurboModule {
   startBrowserFlow(
     url: string,
   ): Promise<string>;
-   getLegacySessionData(vertical: string): Promise<string|undefined>;
+   getLegacySessionData(
+    publicToken: string,
+    vertical: string,
+  ): Promise<string|undefined>;
 };
 
 // create an instance of the module

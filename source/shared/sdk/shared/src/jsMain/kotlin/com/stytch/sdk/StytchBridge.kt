@@ -1,5 +1,6 @@
 package com.stytch.sdk
 
+import com.stytch.sdk.data.Vertical
 import kotlin.js.Promise
 
 public external object StytchBridge {
@@ -120,5 +121,8 @@ public external object StytchBridge {
 
     public fun startBrowserFlow(url: String): Promise<String>
 
-    public fun getLegacySessionData(vertical: String): Promise<String?>
+    public fun getLegacySessionData(
+        publicToken: String,
+        vertical: String,
+    ): Promise<String?>
 }
