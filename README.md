@@ -123,7 +123,7 @@ React component
   → calls into StytchSharedSDK xcframework (iOS) or mavenLocal artifact (Android)
 ```
 
-Complex types are JSON-encoded across the bridge.
+Complex types are JSON-encoded across the bridge. The native bridge code is shared between the React Native B2B and Consumer clients, and lives in a `shared/` folder. Ensure that you run `yarn build` in the relevant package to copy the shared code into it before attempting to build the React Native example apps.
 
 **RN peer dependency:** `react-native >= 0.80.x`
 
@@ -154,6 +154,8 @@ cd source/shared
 ```
 
 Test framework: `kotlin.test` + MockK + `kotlinx-coroutines-test`.
+
+> **Known issue — incremental builds:** Running `jvmTest` locally on an incremental build (i.e. after a previous successful run with no clean) can fail with `Unresolved reference` errors because Gradle's UP-TO-DATE checks sometimes skip `kspCommonMainKotlinMetadata` before JVM compilation runs. This is a local-only issue: CI always starts from a clean state so all tasks run in the correct order. If you hit it locally, run with `--rerun-tasks` to force a full rebuild.
 
 ---
 
