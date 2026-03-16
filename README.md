@@ -155,8 +155,6 @@ cd source/shared
 
 Test framework: `kotlin.test` + MockK + `kotlinx-coroutines-test`.
 
-> **Known issue — incremental builds:** Running `jvmTest` locally on an incremental build (i.e. after a previous successful run with no clean) can fail with `Unresolved reference` errors because Gradle's UP-TO-DATE checks sometimes skip `kspCommonMainKotlinMetadata` before JVM compilation runs. This is a local-only issue: CI always starts from a clean state so all tasks run in the correct order. If you hit it locally, run with `--rerun-tasks` to force a full rebuild.
-
 ---
 
 ## SDK Module Reference
