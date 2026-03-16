@@ -1,14 +1,13 @@
 package com.stytch.mobile.demo
 
+import android.app.Application
+import android.content.Context
 import androidx.activity.ComponentActivity
+import androidx.core.content.edit
 import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
-import androidx.lifecycle.createSavedStateHandle
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.CreationExtras
+import com.stytch.sdk.biometrics.BiometricsAvailability
 import com.stytch.sdk.biometrics.BiometricsParameters
 import com.stytch.sdk.consumer.StytchConsumer
 import com.stytch.sdk.consumer.createStytchConsumer
@@ -16,79 +15,205 @@ import com.stytch.sdk.consumer.data.ConsumerAuthenticationState
 import com.stytch.sdk.consumer.networking.models.OTPsAuthenticateParameters
 import com.stytch.sdk.consumer.networking.models.OTPsSMSLoginOrCreateParameters
 import com.stytch.sdk.data.GoogleCredentialConfiguration
-import com.stytch.sdk.data.StytchAPIResponse
 import com.stytch.sdk.data.StytchClientConfiguration
 import com.stytch.sdk.data.StytchError
 import com.stytch.sdk.oauth.OAuthProviderType
 import com.stytch.sdk.oauth.OAuthStartParameters
-import com.stytch.sdk.passkeys.PasskeysParameters
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
+private const val PREFS_NAME = "demo_app_prefs"
+private const val KEY_DEMO_TYPE = "DEMO_APP_TYPE"
+private const val KEY_PUBLIC_TOKEN = "STYTCH_PUBLIC_TOKEN"
+private const val KEY_GOOGLE_CLIENT_ID = "GOOGLE_CLIENT_ID"
+
+sealed class AppScreen {
+    object Selector : AppScreen()
+
+    data class TokenEntry(
+        val demoType: String,
+    ) : AppScreen()
+
+    object Consumer : AppScreen()
+
+    object B2B : AppScreen()
+}
+
+enum class SmsStep { PHONE, CODE }
+
+data class DemoAppState(
+    val screen: AppScreen = AppScreen.Selector,
+    val authenticationState: ConsumerAuthenticationState = ConsumerAuthenticationState.Loading(),
+    val smsStep: SmsStep = SmsStep.PHONE,
+    val methodId: String? = null,
+    val biometricsAvailability: BiometricsAvailability? = null,
+    val lastResponse: String? = null,
+)
+
 class MainViewModel(
-    private val stytchConsumerClient: StytchConsumer,
-    private val savedStateHandle: SavedStateHandle,
-) : ViewModel() {
+    application: Application,
+) : AndroidViewModel(application) {
+    private val prefs = application.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+    private var stytchConsumer: StytchConsumer? = null
+
     private val _state = MutableStateFlow(DemoAppState())
     val state = _state.asStateFlow()
 
     init {
+        val demoType = prefs.getString(KEY_DEMO_TYPE, null)
+        if (demoType != null) {
+            val token = prefs.getString(KEY_PUBLIC_TOKEN, null)
+            if (token != null) {
+                if (demoType == "CONSUMER") {
+                    initConsumerClient(token)
+                    _state.value = _state.value.copy(screen = AppScreen.Consumer)
+                } else {
+                    _state.value = _state.value.copy(screen = AppScreen.B2B)
+                }
+            } else {
+                _state.value = _state.value.copy(screen = AppScreen.TokenEntry(demoType))
+            }
+        }
+        // default state already has screen = Selector
+    }
+
+    private fun initConsumerClient(publicToken: String) {
+        val googleClientId = prefs.getString(KEY_GOOGLE_CLIENT_ID, null)
+        val config =
+            StytchClientConfiguration(
+                context = getApplication<Application>().applicationContext,
+                publicToken = publicToken,
+                googleCredentialConfiguration =
+                    googleClientId?.let {
+                        GoogleCredentialConfiguration(googleClientId = it)
+                    },
+            )
+        stytchConsumer = createStytchConsumer(config)
         viewModelScope.launch {
-            stytchConsumerClient.authenticationStateFlow.collect { authenticationState ->
-                _state.value = _state.value.copy(authenticationState = authenticationState)
+            stytchConsumer!!.authenticationStateFlow.collect { authState ->
+                _state.value = _state.value.copy(authenticationState = authState)
             }
         }
     }
 
+    fun selectDemoType(demoType: String) {
+        prefs.edit { putString(KEY_DEMO_TYPE, demoType) }
+        _state.value = _state.value.copy(screen = AppScreen.TokenEntry(demoType))
+    }
+
+    fun submitToken(
+        publicToken: String,
+        googleClientId: String?,
+    ) {
+        prefs.edit { putString(KEY_PUBLIC_TOKEN, publicToken) }
+        if (!googleClientId.isNullOrBlank()) {
+            prefs.edit { putString(KEY_GOOGLE_CLIENT_ID, googleClientId) }
+        }
+        val demoType = prefs.getString(KEY_DEMO_TYPE, "CONSUMER")
+        if (demoType == "CONSUMER") {
+            initConsumerClient(publicToken)
+            _state.value = _state.value.copy(screen = AppScreen.Consumer)
+        } else {
+            _state.value = _state.value.copy(screen = AppScreen.B2B)
+        }
+    }
+
+    fun switchDemos() {
+        viewModelScope.launch {
+            val authState = _state.value.authenticationState
+            if (authState is ConsumerAuthenticationState.Authenticated) {
+                try {
+                    stytchConsumer?.session?.revoke()
+                } catch (_: Exception) {
+                }
+            }
+            prefs.edit {
+                remove(KEY_PUBLIC_TOKEN)
+                    .remove(KEY_GOOGLE_CLIENT_ID)
+                    .remove(KEY_DEMO_TYPE)
+            }
+            stytchConsumer = null
+            _state.value = DemoAppState(screen = AppScreen.Selector)
+        }
+    }
+
+    fun refreshBiometrics(context: FragmentActivity) {
+        val consumer = stytchConsumer ?: return
+        viewModelScope.launch {
+            val availability =
+                try {
+                    consumer.biometrics.getAvailability(
+                        BiometricsParameters(context = context, sessionDurationMinutes = 30),
+                    )
+                } catch (_: Exception) {
+                    BiometricsAvailability.Unavailable(reason = null)
+                }
+            _state.value = _state.value.copy(biometricsAvailability = availability)
+        }
+    }
+
+    fun biometricsAction(context: FragmentActivity) {
+        val consumer = stytchConsumer ?: return
+        viewModelScope.launch {
+            val params = BiometricsParameters(context = context, sessionDurationMinutes = 30)
+            try {
+                val response =
+                    when (_state.value.biometricsAvailability) {
+                        BiometricsAvailability.Available -> consumer.biometrics.register(params)
+                        BiometricsAvailability.AlreadyRegistered -> consumer.biometrics.authenticate(params)
+                        else -> return@launch
+                    }
+                _state.value = _state.value.copy(lastResponse = response.toString())
+            } catch (e: StytchError) {
+                _state.value = _state.value.copy(lastResponse = e.toString())
+            }
+            refreshBiometrics(context)
+        }
+    }
+
     fun sendSms(phoneNumber: String) {
-        val request =
-            OTPsSMSLoginOrCreateParameters(
-                phoneNumber = phoneNumber,
-                expirationMinutes = 5,
-            )
+        val consumer = stytchConsumer ?: return
         viewModelScope.launch {
             try {
-                val response = stytchConsumerClient.otp.sms.loginOrCreate(request)
-                _state.emit(
-                    state.value.copy(
+                val response =
+                    consumer.otp.sms.loginOrCreate(
+                        OTPsSMSLoginOrCreateParameters(phoneNumber = phoneNumber, expirationMinutes = 5),
+                    )
+                _state.value =
+                    _state.value.copy(
                         methodId = response.methodId,
-                        step = Step.SUBMIT_TOKEN,
-                        rawResponse = response,
-                        error = null,
-                    ),
-                )
+                        smsStep = SmsStep.CODE,
+                        lastResponse = response.toString(),
+                    )
             } catch (e: StytchError) {
-                _state.emit(
-                    state.value.copy(
-                        methodId = null,
-                        error = e,
-                    ),
-                )
+                _state.value = _state.value.copy(lastResponse = e.toString())
             }
         }
     }
 
     fun authSms(token: String) {
+        val consumer = stytchConsumer ?: return
         val methodId = _state.value.methodId ?: return
-        val request =
-            OTPsAuthenticateParameters(
-                token = token,
-                methodId = methodId,
-                sessionDurationMinutes = 5,
-            )
         viewModelScope.launch {
             try {
-                // let's do this one with a callback, instead of the regular coroutine:
-                val response = stytchConsumerClient.otp.authenticate(request)
+                val response =
+                    consumer.otp.authenticate(
+                        OTPsAuthenticateParameters(token = token, methodId = methodId, sessionDurationMinutes = 5),
+                    )
                 _state.value =
-                    DemoAppState(
-                        authenticationState = stytchConsumerClient.authenticationStateFlow.value,
-                        rawResponse = response,
-                        error = null,
+                    _state.value.copy(
+                        methodId = null,
+                        smsStep = SmsStep.PHONE,
+                        lastResponse = response.toString(),
                     )
             } catch (e: StytchError) {
-                _state.value = _state.value.copy(error = e)
+                _state.value =
+                    _state.value.copy(
+                        methodId = null,
+                        smsStep = SmsStep.PHONE,
+                        lastResponse = e.toString(),
+                    )
             }
         }
     }
@@ -97,6 +222,7 @@ class MainViewModel(
         activity: ComponentActivity,
         provider: OAuthProviderType,
     ) {
+        val consumer = stytchConsumer ?: return
         val request =
             OAuthStartParameters(
                 activity = activity,
@@ -107,119 +233,14 @@ class MainViewModel(
             try {
                 val response =
                     if (provider == OAuthProviderType.GOOGLE) {
-                        stytchConsumerClient.oauth.google.start(request)
+                        consumer.oauth.google.start(request)
                     } else {
-                        stytchConsumerClient.oauth.apple.start(request)
-                    } as StytchAPIResponse
-                _state.emit(state.value.copy(rawResponse = response))
+                        consumer.oauth.apple.start(request)
+                    }
+                _state.value = _state.value.copy(lastResponse = response.toString())
             } catch (e: StytchError) {
-                _state.value = _state.value.copy(error = e)
+                _state.value = _state.value.copy(lastResponse = e.toString())
             }
         }
     }
-
-    fun logout() {
-        viewModelScope.launch {
-            try {
-                val response = stytchConsumerClient.session.revoke()
-                _state.emit(
-                    _state.value.copy(
-                        rawResponse = response,
-                        error = null,
-                    ),
-                )
-            } catch (e: StytchError) {
-                _state.emit(_state.value.copy(error = e))
-            }
-        }
-    }
-
-    fun registerBiometrics(context: FragmentActivity) {
-        viewModelScope.launch {
-            try {
-                val request = BiometricsParameters(context = context, sessionDurationMinutes = 30)
-                stytchConsumerClient.biometrics.register(request)
-            } catch (e: StytchError) {
-                _state.value = _state.value.copy(error = e)
-            }
-        }
-    }
-
-    fun deleteBiometrics() {
-        viewModelScope.launch {
-            stytchConsumerClient.biometrics.removeRegistration()
-        }
-    }
-
-    fun authenticateBiometrics(context: FragmentActivity) {
-        viewModelScope.launch {
-            try {
-                val request = BiometricsParameters(context = context, sessionDurationMinutes = 30)
-                stytchConsumerClient.biometrics.authenticate(request)
-            } catch (e: StytchError) {
-                _state.value = _state.value.copy(error = e)
-            }
-        }
-    }
-
-    fun registerPasskey(context: FragmentActivity) {
-        viewModelScope.launch {
-            try {
-                val request = PasskeysParameters(activity = context, domain = "stytch.com")
-                stytchConsumerClient.passkeys.register(request)
-            } catch (e: StytchError) {
-                _state.value = _state.value.copy(error = e)
-            }
-        }
-    }
-
-    fun authenticatePasskey(context: FragmentActivity) {
-        viewModelScope.launch {
-            try {
-                val request = PasskeysParameters(activity = context, domain = "stytch.com")
-                stytchConsumerClient.passkeys.authenticate(request)
-            } catch (e: StytchError) {
-                _state.value = _state.value.copy(error = e)
-            }
-        }
-    }
-
-    companion object {
-        val Factory: ViewModelProvider.Factory =
-            object : ViewModelProvider.Factory {
-                @Suppress("UNCHECKED_CAST")
-                override fun <T : ViewModel> create(
-                    modelClass: Class<T>,
-                    extras: CreationExtras,
-                ): T {
-                    val application = checkNotNull(extras[APPLICATION_KEY])
-                    val savedStateHandle = extras.createSavedStateHandle()
-                    val stytchConsumer =
-                        createStytchConsumer(
-                            StytchClientConfiguration(
-                                context = application.applicationContext,
-                                publicToken = BuildConfig.STYTCH_PUBLIC_TOKEN,
-                                googleCredentialConfiguration =
-                                    GoogleCredentialConfiguration(
-                                        googleClientId = "447472228390-4pc1tf2tbj7iccu7sj2vfjs69ftmp4el.apps.googleusercontent.com",
-                                    ),
-                            ),
-                        )
-                    return MainViewModel(stytchConsumer, savedStateHandle) as T
-                }
-            }
-    }
-}
-
-data class DemoAppState(
-    val authenticationState: ConsumerAuthenticationState = ConsumerAuthenticationState.Loading(),
-    val methodId: String? = null,
-    val step: Step = Step.SUBMIT_PHONE_NUMBER,
-    val rawResponse: StytchAPIResponse? = null,
-    val error: StytchError? = null,
-)
-
-enum class Step {
-    SUBMIT_PHONE_NUMBER,
-    SUBMIT_TOKEN,
 }

@@ -1,23 +1,10 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import java.util.Properties
 
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
 }
-
-val properties = Properties()
-val localPropertiesFile = rootProject.file("local.properties")
-
-if (localPropertiesFile.exists()) {
-    localPropertiesFile.inputStream().use { inputStream ->
-        properties.load(inputStream)
-    }
-}
-
-// Access the property
-val stytchPublicToken: String? = properties.getProperty("STYTCH_PUBLIC_TOKEN", "MISSING_PUBLIC_TOKEN")
 
 kotlin {
     compilerOptions {
@@ -39,9 +26,6 @@ android {
     }
 
     buildTypes {
-        all {
-            buildConfigField("String", "STYTCH_PUBLIC_TOKEN", "\"$stytchPublicToken\"")
-        }
         release {
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
@@ -54,7 +38,6 @@ android {
 
     buildFeatures {
         compose = true
-        buildConfig = true
     }
 }
 
