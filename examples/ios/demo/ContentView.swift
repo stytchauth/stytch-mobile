@@ -180,7 +180,7 @@ struct ConsumerView: View {
             }
         }
         .task { await viewModel.refreshBiometrics() }
-        .onChange(of: viewModel.authStateVersion) { _, _ in
+        .onChange(of: viewModel.authState) { _, _ in
             Task { await viewModel.refreshBiometrics() }
         }
     }
@@ -190,7 +190,6 @@ struct ConsumerView: View {
 class ConsumerViewModel {
     private let consumerClient: StytchConsumer
     var authState: ConsumerAuthenticationState = ConsumerAuthenticationState.Loading()
-    var authStateVersion: Int = 0
     var smsStep: SmsStep = .phone
     var methodId: String? = nil
     var biometricsAvailability: BiometricsAvailability? = nil
@@ -209,7 +208,6 @@ class ConsumerViewModel {
         Task {
             for await state in consumerClient.authenticationStateFlow {
                 authState = state
-                authStateVersion += 1
             }
         }
     }
@@ -250,8 +248,9 @@ class ConsumerViewModel {
     func sendSms(phoneNumber: String) {
         Task {
             do {
+                let params: OTPsSMSLoginOrCreateParameters = .init(phoneNumber: phoneNumber)
                 let response = try await consumerClient.otp.sms.loginOrCreate(
-                    request: .init(phoneNumber: phoneNumber)
+                    request: params
                 )
                 methodId = response.methodId
                 smsStep = .code
@@ -266,8 +265,9 @@ class ConsumerViewModel {
         guard let methodId else { return }
         Task {
             do {
+                let params: OTPsAuthenticateParameters = .init(token: token, methodId: methodId, sessionDurationMinutes: 5)
                 let response = try await consumerClient.otp.authenticate(
-                    request: .init(token: token, methodId: methodId, sessionDurationMinutes: 5)
+                    request: params
                 )
                 self.methodId = nil
                 smsStep = .phone
