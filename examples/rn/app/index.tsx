@@ -198,6 +198,7 @@ function ConsumerScreen({ onSwitchDemos }: { onSwitchDemos: () => void }) {
     sessionDurationMinutes: 30,
     androidBiometricOptions: {
       allowDeviceCredentials: false,
+      allowFallbackToCleartext: false,
       title: 'Authenticate',
       subTitle: '',
       negativeButtonText: 'Cancel',
