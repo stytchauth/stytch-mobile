@@ -206,6 +206,7 @@ openApiGenerate {
 tasks.withType<KspAATask>().configureEach {
     if (name != "openApiGenerate") {
         dependsOn("openApiGenerate")
+        outputs.upToDateWhen { false }
     }
 }
 tasks.withType<KotlinCompileCommon>().configureEach {
@@ -213,10 +214,6 @@ tasks.withType<KotlinCompileCommon>().configureEach {
 }
 tasks.withType<ProcessLibraryArtProfileTask>().configureEach {
     dependsOn("openApiGenerate")
-}
-tasks.matching { it.name == "kspCommonMainKotlinMetadata" }.configureEach {
-    dependsOn("openApiGenerate")
-    outputs.upToDateWhen { false }
 }
 tasks.named("compileKotlinMetadata") {
     dependsOn("openApiGenerate")
