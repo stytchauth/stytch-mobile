@@ -22,7 +22,9 @@ import com.stytch.sdk.pkce.PKCEClient
 import kotlinx.coroutines.withContext
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.js.JsExport
+import com.stytch.sdk.StytchApi
 
+@StytchApi
 @JsExport
 public interface B2BDiscoveryClient {
     public val organizations: B2BDiscoveryOrganizationsClient
@@ -30,6 +32,7 @@ public interface B2BDiscoveryClient {
     public val passwords: B2BDiscoveryPasswordsClient
 }
 
+@StytchApi
 @JsExport
 public interface B2BDiscoveryOrganizationsClient {
     @Throws(StytchError::class, CancellationException::class)
@@ -39,6 +42,7 @@ public interface B2BDiscoveryOrganizationsClient {
     public suspend fun create(request: IB2BDiscoveryOrganizationsCreateParameters): B2BDiscoveryOrganizationsCreateResponse
 }
 
+@StytchApi
 @JsExport
 public interface B2BDiscoveryIntermediateSessionsClient {
     @Throws(StytchError::class, CancellationException::class)
@@ -47,6 +51,7 @@ public interface B2BDiscoveryIntermediateSessionsClient {
     ): B2BDiscoveryIntermediateSessionsExchangeResponse
 }
 
+@StytchApi
 @JsExport
 public interface B2BDiscoveryPasswordsClient {
     @Throws(StytchError::class, CancellationException::class)

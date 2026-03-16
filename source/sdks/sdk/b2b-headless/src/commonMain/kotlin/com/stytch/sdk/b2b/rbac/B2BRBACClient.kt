@@ -6,7 +6,9 @@ import com.stytch.sdk.data.StytchDispatchers
 import kotlinx.coroutines.withContext
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.js.JsExport
+import com.stytch.sdk.StytchApi
 
+@StytchApi
 @JsExport
 public interface B2BRBACClient {
     /**

@@ -25,7 +25,9 @@ import io.ktor.http.URLBuilder
 import kotlinx.coroutines.withContext
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.js.JsExport
+import com.stytch.sdk.StytchApi
 
+@StytchApi
 @JsExport
 public interface B2BOAuthClient {
     public val google: B2BOAuthProviderClient
@@ -39,6 +41,7 @@ public interface B2BOAuthClient {
     public suspend fun authenticate(request: IB2BOAuthAuthenticateParameters): B2BOAuthAuthenticateResponse
 }
 
+@StytchApi
 @JsExport
 public interface B2BOAuthProviderClient {
     @Throws(StytchError::class, CancellationException::class)
@@ -47,12 +50,14 @@ public interface B2BOAuthProviderClient {
     public val discovery: B2BOAuthProviderDiscoveryClient
 }
 
+@StytchApi
 @JsExport
 public interface B2BOAuthProviderDiscoveryClient {
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun start(parameters: B2BOAuthDiscoveryStartParameters): B2BOAuthDiscoveryAuthenticateResponse
 }
 
+@StytchApi
 @JsExport
 public interface B2BOAuthDiscoveryClient {
     @Throws(StytchError::class, CancellationException::class)

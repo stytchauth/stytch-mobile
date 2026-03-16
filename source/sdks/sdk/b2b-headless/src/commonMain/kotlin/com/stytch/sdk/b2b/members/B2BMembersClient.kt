@@ -31,7 +31,9 @@ import com.stytch.sdk.data.StytchError
 import kotlinx.coroutines.withContext
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.js.JsExport
+import com.stytch.sdk.StytchApi
 
+@StytchApi
 @JsExport
 public interface B2BMembersClient {
     public val admin: B2BMembersAdminClient
@@ -65,6 +67,7 @@ public interface B2BMembersClient {
     ): OrganizationsMemberUnlinkRetiredEmailResponse
 }
 
+@StytchApi
 @JsExport
 public interface B2BMembersAdminClient {
     @Throws(StytchError::class, CancellationException::class)

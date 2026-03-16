@@ -38,9 +38,11 @@ import io.ktor.http.URLBuilder
 import kotlinx.coroutines.withContext
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.js.JsExport
+import com.stytch.sdk.StytchApi
 
 public typealias B2BSSOAuthenticateResponse = B2BSSOAuthEnticateResponse
 
+@StytchApi
 @JsExport
 public interface B2BSSOClient {
     @Throws(StytchError::class, CancellationException::class)
@@ -60,6 +62,7 @@ public interface B2BSSOClient {
     public val external: B2BSSOExternalClient
 }
 
+@StytchApi
 @JsExport
 public interface B2BSSOSAMLClient {
     @Throws(StytchError::class, CancellationException::class)
@@ -84,6 +87,7 @@ public interface B2BSSOSAMLClient {
     ): B2BDeleteSAMLVerificationCertificateResponse
 }
 
+@StytchApi
 @JsExport
 public interface B2BSSOOIDCClient {
     @Throws(StytchError::class, CancellationException::class)
@@ -96,6 +100,7 @@ public interface B2BSSOOIDCClient {
     ): B2BUpdateOIDCConnectionResponse
 }
 
+@StytchApi
 @JsExport
 public interface B2BSSOExternalClient {
     @Throws(StytchError::class, CancellationException::class)

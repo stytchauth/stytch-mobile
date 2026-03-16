@@ -7,7 +7,9 @@ import com.stytch.sdk.dfp.DFPProvider
 import kotlinx.coroutines.withContext
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.js.JsExport
+import com.stytch.sdk.StytchApi
 
+@StytchApi
 @JsExport
 public interface DFPClient {
     /**

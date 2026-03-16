@@ -118,6 +118,10 @@ dependencies {
     add("kspJvm", project(":buildSrc"))
 }
 
+ksp {
+    arg("stytchCallbackOutputDir", layout.buildDirectory.dir("generated/callbacks/commonMain/kotlin").get().asFile.absolutePath)
+}
+
 ktorfit {
     compilerPluginVersion.set("2.3.3")
 }

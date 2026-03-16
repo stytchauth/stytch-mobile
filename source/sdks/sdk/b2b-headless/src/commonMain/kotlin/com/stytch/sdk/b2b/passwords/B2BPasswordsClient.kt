@@ -22,7 +22,9 @@ import com.stytch.sdk.pkce.PKCEClient
 import kotlinx.coroutines.withContext
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.js.JsExport
+import com.stytch.sdk.StytchApi
 
+@StytchApi
 @JsExport
 public interface B2BPasswordsClient {
     public val email: B2BPasswordsEmailClient
@@ -36,6 +38,7 @@ public interface B2BPasswordsClient {
     public suspend fun strengthCheck(request: IB2BPasswordStrengthCheckParameters): B2BPasswordStrengthCheckResponse
 }
 
+@StytchApi
 @JsExport
 public interface B2BPasswordsEmailClient {
     @Throws(StytchError::class, CancellationException::class)
@@ -45,12 +48,14 @@ public interface B2BPasswordsEmailClient {
     public suspend fun reset(request: IB2BPasswordEmailResetParameters): B2BPasswordEmailResetResponse
 }
 
+@StytchApi
 @JsExport
 public interface B2BPasswordsExistingPasswordClient {
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun reset(request: IB2BPasswordExistingPasswordResetParameters): B2BPasswordExistingPasswordResetResponse
 }
 
+@StytchApi
 @JsExport
 public interface B2BPasswordsSessionClient {
     @Throws(StytchError::class, CancellationException::class)

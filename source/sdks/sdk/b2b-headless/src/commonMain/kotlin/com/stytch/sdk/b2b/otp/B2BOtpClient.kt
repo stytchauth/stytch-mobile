@@ -20,13 +20,16 @@ import com.stytch.sdk.data.StytchError
 import kotlinx.coroutines.withContext
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.js.JsExport
+import com.stytch.sdk.StytchApi
 
+@StytchApi
 @JsExport
 public interface B2BOtpClient {
     public val sms: B2BSmsOtpClient
     public val email: B2BEmailOtpClient
 }
 
+@StytchApi
 @JsExport
 public interface B2BSmsOtpClient {
     @Throws(StytchError::class, CancellationException::class)
@@ -36,6 +39,7 @@ public interface B2BSmsOtpClient {
     public suspend fun authenticate(request: IB2BOTPsSMSAuthenticateParameters): B2BOTPsSMSAuthenticateResponse
 }
 
+@StytchApi
 @JsExport
 public interface B2BEmailOtpClient {
     public val discovery: B2BEmailOtpDiscoveryClient
@@ -47,6 +51,7 @@ public interface B2BEmailOtpClient {
     public suspend fun authenticate(request: IB2BOTPsEmailAuthenticateParameters): B2BOTPsEmailAuthenticateResponse
 }
 
+@StytchApi
 @JsExport
 public interface B2BEmailOtpDiscoveryClient {
     @Throws(StytchError::class, CancellationException::class)

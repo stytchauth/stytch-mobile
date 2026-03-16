@@ -53,7 +53,9 @@ import kotlinx.coroutines.withContext
 import kotlin.concurrent.Volatile
 import kotlin.js.JsExport
 import kotlin.js.JsName
+import com.stytch.sdk.StytchApi
 
+@StytchApi
 @JsExport
 @JsName("StytchConsumer")
 public interface StytchConsumer : StytchClient {

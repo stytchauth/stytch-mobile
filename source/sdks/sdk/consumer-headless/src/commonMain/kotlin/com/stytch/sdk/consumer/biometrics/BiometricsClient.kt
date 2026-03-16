@@ -21,7 +21,9 @@ import io.ktor.util.encodeBase64
 import kotlinx.coroutines.withContext
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.js.JsExport
+import com.stytch.sdk.StytchApi
 
+@StytchApi
 @JsExport
 public interface BiometricsClient {
     @Throws(StytchError::class, CancellationException::class)

@@ -22,7 +22,9 @@ import com.stytch.sdk.data.StytchError
 import kotlinx.coroutines.withContext
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.js.JsExport
+import com.stytch.sdk.StytchApi
 
+@StytchApi
 @JsExport
 public interface OtpClient {
     public val sms: SmsOtpClient
@@ -33,6 +35,7 @@ public interface OtpClient {
     public suspend fun authenticate(request: IOTPsAuthenticateParameters): OTPsAuthenticateResponse
 }
 
+@StytchApi
 @JsExport
 public interface SmsOtpClient {
     @Throws(StytchError::class, CancellationException::class)
@@ -42,6 +45,7 @@ public interface SmsOtpClient {
     public suspend fun send(request: IOTPsSMSSendSecondaryParameters): OTPsSMSSendSecondaryResponse
 }
 
+@StytchApi
 @JsExport
 public interface EmailOtpClient {
     @Throws(StytchError::class, CancellationException::class)
@@ -51,6 +55,7 @@ public interface EmailOtpClient {
     public suspend fun send(request: IOTPsEmailSendSecondaryParameters): OTPsEmailSendSecondaryResponse
 }
 
+@StytchApi
 @JsExport
 public interface WhatsAppOtpClient {
     @Throws(StytchError::class, CancellationException::class)

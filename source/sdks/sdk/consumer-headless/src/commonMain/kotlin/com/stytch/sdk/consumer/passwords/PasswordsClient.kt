@@ -23,7 +23,9 @@ import com.stytch.sdk.pkce.PKCEClient
 import kotlinx.coroutines.withContext
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.js.JsExport
+import com.stytch.sdk.StytchApi
 
+@StytchApi
 @JsExport
 public interface PasswordsClient {
     @Throws(StytchError::class, CancellationException::class)

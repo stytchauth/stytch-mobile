@@ -16,7 +16,9 @@ import com.stytch.sdk.pkce.PKCEClient
 import kotlinx.coroutines.withContext
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.js.JsExport
+import com.stytch.sdk.StytchApi
 
+@StytchApi
 @JsExport
 public interface MagicLinksClient {
     public val email: EmailMagicLinksClient
@@ -25,6 +27,7 @@ public interface MagicLinksClient {
     public suspend fun authenticate(request: IMagicLinksAuthenticateParameters): MagicLinksAuthenticateResponse
 }
 
+@StytchApi
 @JsExport
 public interface EmailMagicLinksClient {
     @Throws(StytchError::class, CancellationException::class)
