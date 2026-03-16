@@ -119,7 +119,13 @@ dependencies {
 }
 
 ksp {
-    arg("stytchCallbackOutputDir", layout.buildDirectory.dir("generated/callbacks/commonMain/kotlin").get().asFile.absolutePath)
+    arg(
+        "stytchCallbackOutputDir",
+        layout.buildDirectory
+            .dir("generated/callbacks/commonMain/kotlin")
+            .get()
+            .asFile.absolutePath,
+    )
 }
 
 ktorfit {

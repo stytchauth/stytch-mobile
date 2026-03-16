@@ -15,49 +15,55 @@ internal class SessionClientCallbacksTest {
     private val response = mockk<SessionsRevokeResponse>()
 
     @Test
-    fun `onSuccess fires when suspend function succeeds`() = runBlocking {
-        coEvery { client.revoke() } returns response
+    fun `onSuccess fires when suspend function succeeds`() =
+        runBlocking {
+            coEvery { client.revoke() } returns response
 
-        var successValue: SessionsRevokeResponse? = null
-        val job = client.revoke(
-            onSuccess = { successValue = it },
-            onFailure = { throw AssertionError("onFailure should not be called: $it") },
-        )
-        job.join()
+            var successValue: SessionsRevokeResponse? = null
+            val job =
+                client.revoke(
+                    onSuccess = { successValue = it },
+                    onFailure = { throw AssertionError("onFailure should not be called: $it") },
+                )
+            job.join()
 
-        assertEquals(response, successValue)
-    }
-
-    @Test
-    fun `onFailure fires when suspend function throws`() = runBlocking {
-        val error = RuntimeException("something went wrong")
-        coEvery { client.revoke() } throws error
-
-        var failureValue: Throwable? = null
-        val job = client.revoke(
-            onSuccess = { throw AssertionError("onSuccess should not be called") },
-            onFailure = { failureValue = it },
-        )
-        job.join()
-
-        assertEquals(error, failureValue)
-    }
+            assertEquals(response, successValue)
+        }
 
     @Test
-    fun `returned Job can be cancelled`() = runBlocking {
-        val latch = CompletableDeferred<SessionsRevokeResponse>()
-        coEvery { client.revoke() } coAnswers { latch.await() }
+    fun `onFailure fires when suspend function throws`() =
+        runBlocking {
+            val error = RuntimeException("something went wrong")
+            coEvery { client.revoke() } throws error
 
-        var failureValue: Throwable? = null
-        val job = client.revoke(
-            onSuccess = { throw AssertionError("onSuccess should not be called") },
-            onFailure = { failureValue = it },
-        )
+            var failureValue: Throwable? = null
+            val job =
+                client.revoke(
+                    onSuccess = { throw AssertionError("onSuccess should not be called") },
+                    onFailure = { failureValue = it },
+                )
+            job.join()
 
-        assertTrue(job.isActive)
-        job.cancel()
-        job.join()
+            assertEquals(error, failureValue)
+        }
 
-        assertTrue(failureValue is CancellationException)
-    }
+    @Test
+    fun `returned Job can be cancelled`() =
+        runBlocking {
+            val latch = CompletableDeferred<SessionsRevokeResponse>()
+            coEvery { client.revoke() } coAnswers { latch.await() }
+
+            var failureValue: Throwable? = null
+            val job =
+                client.revoke(
+                    onSuccess = { throw AssertionError("onSuccess should not be called") },
+                    onFailure = { failureValue = it },
+                )
+
+            assertTrue(job.isActive)
+            job.cancel()
+            job.join()
+
+            assertTrue(failureValue is CancellationException)
+        }
 }

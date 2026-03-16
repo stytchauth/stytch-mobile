@@ -1,5 +1,6 @@
 package com.stytch.sdk.consumer
 
+import com.stytch.sdk.StytchApi
 import com.stytch.sdk.StytchClient
 import com.stytch.sdk.consumer.biometrics.BiometricsClient
 import com.stytch.sdk.consumer.biometrics.BiometricsClientImpl
@@ -53,7 +54,6 @@ import kotlinx.coroutines.withContext
 import kotlin.concurrent.Volatile
 import kotlin.js.JsExport
 import kotlin.js.JsName
-import com.stytch.sdk.StytchApi
 
 @StytchApi
 @JsExport

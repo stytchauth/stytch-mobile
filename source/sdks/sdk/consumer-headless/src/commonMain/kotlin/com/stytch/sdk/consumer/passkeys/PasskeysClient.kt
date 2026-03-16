@@ -1,5 +1,6 @@
 package com.stytch.sdk.consumer.passkeys
 
+import com.stytch.sdk.StytchApi
 import com.stytch.sdk.consumer.StytchConsumerAuthenticationStateManager
 import com.stytch.sdk.consumer.networking.ConsumerNetworkingClient
 import com.stytch.sdk.consumer.networking.models.IWebAuthnUpdateParameters
@@ -19,7 +20,6 @@ import com.stytch.sdk.passkeys.PasskeysUnsupportedError
 import kotlinx.coroutines.withContext
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.js.JsExport
-import com.stytch.sdk.StytchApi
 
 @StytchApi
 @JsExport

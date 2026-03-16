@@ -1,5 +1,6 @@
 package com.stytch.sdk.consumer.oauth
 
+import com.stytch.sdk.StytchApi
 import com.stytch.sdk.consumer.networking.AuthenticatedResponse
 import com.stytch.sdk.consumer.networking.ConsumerNetworkingClient
 import com.stytch.sdk.consumer.networking.models.ApiUserV1Name
@@ -28,7 +29,6 @@ import com.stytch.sdk.pkce.PKCEClient
 import kotlinx.coroutines.withContext
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.js.JsExport
-import com.stytch.sdk.StytchApi
 
 @StytchApi
 @JsExport

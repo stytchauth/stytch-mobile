@@ -1,5 +1,6 @@
 package com.stytch.sdk.b2b.sso
 
+import com.stytch.sdk.StytchApi
 import com.stytch.sdk.b2b.StytchB2BAuthenticationStateManager
 import com.stytch.sdk.b2b.networking.AuthenticatedResponse
 import com.stytch.sdk.b2b.networking.B2BNetworkingClient
@@ -38,7 +39,6 @@ import io.ktor.http.URLBuilder
 import kotlinx.coroutines.withContext
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.js.JsExport
-import com.stytch.sdk.StytchApi
 
 public typealias B2BSSOAuthenticateResponse = B2BSSOAuthEnticateResponse
 

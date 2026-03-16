@@ -1,5 +1,6 @@
 package com.stytch.sdk.consumer.dfp
 
+import com.stytch.sdk.StytchApi
 import com.stytch.sdk.data.StytchDispatchers
 import com.stytch.sdk.data.StytchError
 import com.stytch.sdk.dfp.DFPNotConfiguredError
@@ -7,7 +8,6 @@ import com.stytch.sdk.dfp.DFPProvider
 import kotlinx.coroutines.withContext
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.js.JsExport
-import com.stytch.sdk.StytchApi
 
 @StytchApi
 @JsExport
