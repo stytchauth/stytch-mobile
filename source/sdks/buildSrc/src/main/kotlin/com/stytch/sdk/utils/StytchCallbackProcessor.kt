@@ -94,6 +94,7 @@ class StytchCallbackProcessor(
         val fileSpec =
             FileSpec
                 .builder(packageName, "${interfaceName}Callbacks")
+                .addImport("kotlinx.coroutines", "launch")
                 .apply { suspendFunctions.forEach { addFunction(buildCallbackExtension(classDecl, it)) } }
                 .build()
 

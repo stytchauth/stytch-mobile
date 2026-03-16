@@ -35,3 +35,5 @@ plugins {
 
 include(":sdk:b2b-headless")
 include(":sdk:consumer-headless")
+include(":sdk:consumer-headless-extensions")
+include(":sdk:b2b-headless-extensions")
