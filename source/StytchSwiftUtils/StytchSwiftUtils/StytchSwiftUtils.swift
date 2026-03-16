@@ -134,7 +134,7 @@ public class StytchEncryptionManagerSwift: NSObject {
         let query = baseKeyQuery(name: name).merging(
             [
                 kSecValueData: newKeyData,
-                kSecAttrAccessible: kSecAttrAccessibleAfterFirstUnlock,
+                kSecAttrAccessible: kSecAttrAccessibleWhenUnlocked,
             ]
         ) { $1 } as CFDictionary
         let status = SecItemAdd(query, nil)
