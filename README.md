@@ -4,10 +4,12 @@ This monorepo contains the Stytch mobile SDKs for Android, iOS, React Native, an
 
 ## SDKs
 
-| SDK | Android | iOS | React Native |
-|-----|---------|-----|--------------|
+| SDK | Android / JVM | iOS | React Native |
+|-----|---------------|-----|--------------|
 | Consumer | `com.stytch.sdk:consumer-headless` | `StytchConsumerSDK` (via SPM) | `@stytch/react-native-consumer` |
+| Consumer (callback extensions) | `com.stytch.sdk:consumer-headless-extensions` | — | — |
 | B2B | `com.stytch.sdk:b2b-headless` | `StytchB2BSDK` (via SPM) | `@stytch/react-native-b2b` |
+| B2B (callback extensions) | `com.stytch.sdk:b2b-headless-extensions` | — | — |
 
 ---
 
@@ -25,6 +27,8 @@ source/
   sdks/                        # Consumer + B2B SDKs — Kotlin 2.3.0 (Gradle: StytchMobile-External)
     sdk/consumer-headless/       # Consumer auth SDK (all auth modules)
     sdk/b2b-headless/            # B2B auth SDK
+    sdk/consumer-headless-extensions/  # Callback-style extensions for consumer SDK (Android + JVM)
+    sdk/b2b-headless-extensions/       # Callback-style extensions for B2B SDK (Android + JVM)
   react-native/
     shared/                    # Shared RN native bridge code (iOS ObjC + Android Kotlin)
     consumer/                  # @stytch/react-native-consumer npm package
@@ -145,8 +149,14 @@ Tests live in `jvmTest` source sets in both Gradle projects.
 cd source/sdks
 ./gradlew :sdk:consumer-headless:jvmTest
 
+# Consumer callback extensions tests
+./gradlew :sdk:consumer-headless-extensions:jvmTest
+
 # B2B SDK tests
 ./gradlew :sdk:b2b-headless:jvmTest
+
+# B2B callback extensions tests
+./gradlew :sdk:b2b-headless-extensions:jvmTest
 
 # Shared SDK tests
 cd source/shared
@@ -194,6 +204,32 @@ Test framework: `kotlin.test` + MockK + `kotlinx-coroutines-test`.
 | `recoveryCodes` | Recovery code management |
 | `dfp` | Device fingerprinting |
 
+### Callback Extensions (`source/sdks/sdk/*-headless-extensions/`)
+
+Optional add-on modules for Android and JVM that provide callback-style overloads for every suspend function in the Consumer and B2B SDKs. Each overload takes `onSuccess` and `onFailure` lambdas and returns a `Job`:
+
+```kotlin
+// Instead of:
+val result = stytch.session.revoke()
+
+// You can use:
+val job = stytch.session.revoke(
+    onSuccess = { response -> /* handle success */ },
+    onFailure = { error -> /* handle failure */ },
+)
+```
+
+The callback extensions are generated at build time by a KSP processor that reads `@StytchApi`-annotated interfaces in the base modules. These modules re-export (`api(...)`) the base headless module, so adding the extensions dependency replaces the base dependency.
+
+**Targets:** Android and JVM only — not necessary or available for iOS or React Native.
+
+| Artifact | Extends |
+|----------|---------|
+| `com.stytch.sdk:consumer-headless-extensions` | `com.stytch.sdk:consumer-headless` |
+| `com.stytch.sdk:b2b-headless-extensions` | `com.stytch.sdk:b2b-headless` |
+
+---
+
 ### Shared SDK (`source/shared/sdk/shared/`)
 
 Platform abstractions consumed by both consumer and B2B SDKs:
@@ -211,4 +247,6 @@ Platform abstractions consumed by both consumer and B2B SDKs:
 
 **Hybrid interface pattern for testability:** `expect class` types cannot be subclassed, so `I`-prefixed interfaces (`IBiometricsProvider`, `IPasskeyProvider`, `IOAuthProvider`) are defined in `commonMain`. Consumer and B2B clients depend on these interfaces rather than the concrete `expect class` types, enabling MockK-based unit testing.
 
-**Code generation:** The OpenAPI spec at `src/commonMain/resources/openapi.yml` drives Ktorfit HTTP interface + model generation. The `@NetworkModel` KSP annotation generates public DTO classes. Do not edit the spec or generated files by hand.
+**Code generation:** The OpenAPI spec at `source/sdks/sdk/resources/openapi.yml` drives Ktorfit HTTP interface + model generation. The `@NetworkModel` KSP annotation generates public DTO classes. Do not edit the spec or generated files by hand.
+
+**Callback extensions generation:** The `@StytchApi` annotation (defined in `source/shared`) marks client interfaces whose suspend functions should get callback overloads. A KSP processor (`StytchCallbackProcessor`) runs during the `consumer-headless` and `b2b-headless` builds and writes the generated `*Callbacks.kt` files to `build/generated/callbacks/commonMain/kotlin/`. The `*-extensions` modules then compile those files as their sole source. Do not edit the generated files by hand — modify the processor in `source/sdks/buildSrc/` instead.
