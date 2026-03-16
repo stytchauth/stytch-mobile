@@ -1,6 +1,5 @@
 package com.stytch.sdk
 
-import com.stytch.sdk.data.Vertical
 import kotlin.js.Promise
 
 public external object StytchBridge {

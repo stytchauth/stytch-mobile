@@ -302,4 +302,29 @@ SCSDKOAuthProvider *oauthProvider = [[SCSDKOAuthProvider alloc] initWithPackageN
 }
 // End OAuth stuff
 
+// Begin Migration stuff
+- (void)getLegacySessionData:(nonnull NSString *)publicToken vertical:(nonnull NSString *)vertical resolve:(nonnull RCTPromiseResolveBlock)resolve reject:(nonnull RCTPromiseRejectBlock)reject {
+    NSString *verticalStr = [vertical stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"\""]];
+    SCSDKVertical *verticalEnum = [verticalStr isEqualToString:@"CONSUMER"] ? SCSDKVertical.consumer : SCSDKVertical.b2b;
+    SCSDKLegacyTokenReader *tokenReader = [[SCSDKLegacyTokenReader alloc] init];
+    [tokenReader getExistingSessionDataPublicToken:publicToken platformPersistenceClient:platformPersistenceClient dispatchers:stytchDispatchers platform:SCSDKKMPPlatformType.reactnative vertical:verticalEnum completionHandler:^(SCSDKPersistedLegacySessionData * _Nullable data, NSError * _Nullable error) {
+        if (error != nil) {
+            reject(@"", [error description], error);
+            return;
+        }
+        if (data == nil) {
+            resolve(nil);
+            return;
+        }
+        NSError *encodeError = nil;
+        NSString *result = [[SCSDKJsonSerDeHelper alloc] encodePersistedLegacySessionDataData:data error:&encodeError];
+        if (encodeError != nil) {
+            reject(@"", [encodeError description], encodeError);
+            return;
+        }
+        resolve(result);
+    }];
+}
+// End Migration stuff
+
 @end
