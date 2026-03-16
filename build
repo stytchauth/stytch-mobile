@@ -66,7 +66,7 @@ buildAndPublishSharedSdkFirst() {
 buildConsumerAndroid() {
     cd $SDK_WORKING_DIR
     echo "Building consumer android artifact..."
-    ./gradlew :sdk:consumer-headless:publishToMavenLocal
+    ./gradlew :sdk:consumer-headless:publishToMavenLocal :sdk:consumer-headless-extensions:publishToMavenLocal
 }
 
 buildConsumerIos() {
@@ -102,7 +102,7 @@ updateConsumerRnDemoApp() {
 buildB2BAndroid() {
     cd $SDK_WORKING_DIR
     echo "Building B2B android artifact..."
-    ./gradlew :sdk:b2b-headless:publishToMavenLocal
+    ./gradlew :sdk:b2b-headless:publishToMavenLocal :sdk:b2b-headless-extensions:publishToMavenLocal
 }
 
 buildB2BIos() {

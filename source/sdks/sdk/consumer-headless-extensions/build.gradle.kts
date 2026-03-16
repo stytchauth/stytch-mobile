@@ -40,6 +40,11 @@ kotlin {
                 implementation(libs.kotlinx.coroutines.core)
             }
         }
+        jvmTest.dependencies {
+            implementation(kotlin("test"))
+            implementation(libs.mockk)
+            implementation(libs.kotlinx.coroutines.test)
+        }
     }
 }
 
