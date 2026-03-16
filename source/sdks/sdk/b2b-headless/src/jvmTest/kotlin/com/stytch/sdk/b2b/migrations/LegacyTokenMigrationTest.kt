@@ -31,7 +31,10 @@ internal class LegacyTokenMigrationTest {
         mockk<StytchPlatformPersistenceClient> {
             every { saveData(any(), any()) } answers { inMemoryStore[firstArg()] = secondArg() }
             every { getData(any()) } answers { inMemoryStore[firstArg()] }
-            every { removeData(any()) } answers { inMemoryStore.remove(firstArg()); Unit }
+            every { removeData(any()) } answers {
+                inMemoryStore.remove(firstArg())
+                Unit
+            }
         }
     private val encryptionClient =
         mockk<StytchEncryptionClient> {
