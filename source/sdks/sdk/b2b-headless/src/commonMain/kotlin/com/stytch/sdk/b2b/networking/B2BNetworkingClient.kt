@@ -34,14 +34,9 @@ internal class B2BNetworkingClient(
 
     init {
         CoroutineScope(dispatchers.ioDispatcher).launch {
-            // Collect the first non-null session emission (on start) and revoke or refresh as necessary
-            sessionManager.sessionFlow.firstOrNull { it != null }?.let { session ->
-                checkAndHandleInitialSession(
-                    session = session,
-                    now = Clock.System.now(),
-                    onExpired = { sessionManager.revoke() },
-                    onValid = { triggerSessionUpdateJobWithDelay(session.expiresAt) },
-                )
+            // Collect the first non-null session token emission, and trigger the heartbeat immediately
+            sessionManager.sessionTokenFlow.firstOrNull { it != null }?.let {
+                startSessionUpdateJob(0L)
             }
         }
     }

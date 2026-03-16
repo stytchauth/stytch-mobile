@@ -13,6 +13,7 @@ import com.stytch.sdk.b2b.magicLinks.B2BMagicLinksClient
 import com.stytch.sdk.b2b.magicLinks.B2BMagicLinksClientImpl
 import com.stytch.sdk.b2b.members.B2BMembersClient
 import com.stytch.sdk.b2b.members.B2BMembersClientImpl
+import com.stytch.sdk.b2b.migrations.LegacyTokenMigration
 import com.stytch.sdk.b2b.networking.AuthenticatedResponse
 import com.stytch.sdk.b2b.networking.B2BNetworkingClient
 import com.stytch.sdk.b2b.networking.models.B2BMagicLinksAuthenticateParameters
@@ -44,11 +45,15 @@ import com.stytch.sdk.data.PKCECodePair
 import com.stytch.sdk.data.StytchClientConfiguration
 import com.stytch.sdk.data.StytchClientConfigurationInternal
 import com.stytch.sdk.data.StytchError
+import com.stytch.sdk.migrations.LegacyTokenReader
+import com.stytch.sdk.migrations.MigrationRunner
+import com.stytch.sdk.migrations.MigrationStore
 import com.stytch.sdk.persistence.StytchPersistenceClient
 import com.stytch.sdk.pkce.PKCEClient
 import io.ktor.http.URLBuilder
 import io.ktor.utils.io.CancellationException
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -110,6 +115,21 @@ internal class DefaultStytchB2B(
     private val networkingClient = B2BNetworkingClient(configuration, dispatchers, sessionManager)
 
     private val pkceClient = PKCEClient(configuration.encryptionClient, persistenceClient)
+
+    private val migrationRunner =
+        MigrationRunner(
+            migrations =
+                listOf(
+                    LegacyTokenMigration(
+                        publicToken = configuration.tokenInfo.publicToken,
+                        platform = configuration.platform,
+                        tokenReader = LegacyTokenReader(),
+                        persistenceClient = persistenceClient,
+                        dispatchers = dispatchers,
+                    ),
+                ),
+            store = MigrationStore("b2b", configuration.platformPersistenceClient),
+        )
 
     override val session: B2BSessionsClient = B2BSessionsClientImpl(dispatchers, networkingClient)
 
@@ -258,14 +278,18 @@ internal class DefaultStytchB2B(
 
     init {
         CoroutineScope(dispatchers.ioDispatcher).launch {
-            // first, rehydrate any existing, cached, bootstrap data
-            val cachedBootstrapResponse = persistenceClient.get<BootstrapResponse>(BOOTSTRAP_IDENTIFIER, null)
-            // then, fetch the latest bootstrap from the network
-            bootstrapResponse =
-                networkingClient.refreshBootStrapData(cachedBootstrapResponse).also {
-                    // and persist whatever the latest bootstrap response was
-                    persistenceClient.save(BOOTSTRAP_IDENTIFIER, it)
+            // Bootstrap (unauthenticated) and migrations are independent — run concurrently.
+            val bootstrapJob =
+                async {
+                    val cached = persistenceClient.get<BootstrapResponse>(BOOTSTRAP_IDENTIFIER, null)
+                    networkingClient.refreshBootStrapData(cached).also {
+                        persistenceClient.save(BOOTSTRAP_IDENTIFIER, it)
+                    }
                 }
+            // Migrations must complete before hydration so session data is in the correct format.
+            migrationRunner.runPendingMigrations()
+            sessionManager.hydrate()
+            bootstrapResponse = bootstrapJob.await()
         }
     }
 

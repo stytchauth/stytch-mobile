@@ -10,6 +10,7 @@ import com.stytch.sdk.b2b.networking.models.ApiOrganizationV1Organization
 import com.stytch.sdk.data.StytchDispatchers
 import com.stytch.sdk.persistence.StytchPersistenceClient
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
@@ -17,8 +18,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Instant
@@ -37,20 +39,28 @@ internal class StytchB2BAuthenticationStateManager(
 
     private val loadingStateFlow: MutableStateFlow<Boolean> = MutableStateFlow(false)
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     override val authenticationStateFlow: StateFlow<B2BAuthenticationState> =
-        combine(
-            sessionFlow,
-            memberFlow,
-            organizationFlow,
-            sessionTokenFlow,
-            sessionJwtFlow,
-        ) { session, member, organization, token, jwt ->
-            if (!loadingStateFlow.value) return@combine B2BAuthenticationState.Loading()
-            if (session != null && member != null && organization != null && token != null && jwt != null) {
-                return@combine B2BAuthenticationState.Authenticated(member, session, organization, token, jwt)
-            }
-            B2BAuthenticationState.Unauthenticated()
-        }.stateIn(CoroutineScope(dispatchers.mainDispatcher), SharingStarted.WhileSubscribed(5000L), B2BAuthenticationState.Loading())
+        loadingStateFlow
+            .flatMapLatest { isLoaded ->
+                if (!isLoaded) {
+                    flowOf(B2BAuthenticationState.Loading())
+                } else {
+                    combine(
+                        sessionFlow,
+                        memberFlow,
+                        organizationFlow,
+                        sessionTokenFlow,
+                        sessionJwtFlow,
+                    ) { memberSession, member, organization, sessionToken, sessionJwt ->
+                        if (memberSession != null && member != null && organization != null && sessionToken != null && sessionJwt != null) {
+                            B2BAuthenticationState.Authenticated(member, memberSession, organization, sessionToken, sessionJwt)
+                        } else {
+                            B2BAuthenticationState.Unauthenticated()
+                        }
+                    }
+                }
+            }.stateIn(CoroutineScope(dispatchers.mainDispatcher), SharingStarted.WhileSubscribed(5000L), B2BAuthenticationState.Loading())
 
     override val currentSessionToken: String?
         get() = sessionTokenFlow.value
@@ -119,8 +129,8 @@ internal class StytchB2BAuthenticationStateManager(
         }
     }
 
-    init {
-        CoroutineScope(dispatchers.ioDispatcher).launch {
+    suspend fun hydrate() {
+        coroutineScope {
             listOf(
                 async(dispatchers.ioDispatcher) { memberFlow.value = persistenceClient.get(MEMBER_IDENTIFIER, null) },
                 async(dispatchers.ioDispatcher) { sessionFlow.value = persistenceClient.get(SESSION_IDENTIFIER, null) },
@@ -134,9 +144,9 @@ internal class StytchB2BAuthenticationStateManager(
         }
     }
 
-    private companion object {
-        private const val SESSION_IDENTIFIER = "stytch_session"
-        private const val SESSION_TOKEN_IDENTIFIER = "stytch_session_token"
+    internal companion object {
+        internal const val SESSION_IDENTIFIER = "stytch_session"
+        internal const val SESSION_TOKEN_IDENTIFIER = "stytch_session_token"
         private const val SESSION_JWT_IDENTIFIER = "stytch_session_jwt"
         private const val MEMBER_IDENTIFIER = "stytch_member"
         private const val ORGANIZATION_IDENTIFIER = "stytch_organization"

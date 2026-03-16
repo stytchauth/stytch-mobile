@@ -134,6 +134,9 @@ class StytchB2BAuthenticationStateManagerTest {
             val states = mutableListOf<B2BAuthenticationState>()
             val job = launch { manager.authenticationStateFlow.collect { states.add(it) } }
 
+            // Launch hydrate but don't advance — hydrate suspends on blockingDispatcher, so loadingState stays false
+            launch { manager.hydrate() }
+
             assertIs<B2BAuthenticationState.Loading>(states.first())
 
             job.cancel()
@@ -143,6 +146,7 @@ class StytchB2BAuthenticationStateManagerTest {
     fun `authenticationStateFlow emits Unauthenticated after init with no persisted data`() =
         runTest(testDispatcher) {
             val manager = createManager()
+            manager.hydrate()
             val states = mutableListOf<B2BAuthenticationState>()
             val job = launch { manager.authenticationStateFlow.collect { states.add(it) } }
             advanceUntilIdle()
@@ -155,6 +159,7 @@ class StytchB2BAuthenticationStateManagerTest {
     fun `authenticationStateFlow emits Authenticated when all five values are set`() =
         runTest(testDispatcher) {
             val manager = createManager()
+            manager.hydrate()
             val states = mutableListOf<B2BAuthenticationState>()
             val job = launch { manager.authenticationStateFlow.collect { states.add(it) } }
             advanceUntilIdle()
@@ -176,6 +181,7 @@ class StytchB2BAuthenticationStateManagerTest {
     fun `authenticationStateFlow emits Unauthenticated after revoke`() =
         runTest(testDispatcher) {
             val manager = createManager()
+            manager.hydrate()
             manager.update(fakeResponse)
             advanceUntilIdle()
 
@@ -379,10 +385,12 @@ class StytchB2BAuthenticationStateManagerTest {
     fun `init loads all values from persistence and emits Authenticated`() =
         runTest(testDispatcher) {
             val seedManager = createManager()
+            seedManager.hydrate()
             seedManager.update(fakeResponse)
             advanceUntilIdle()
 
             val manager = createManager()
+            manager.hydrate()
             advanceUntilIdle()
 
             val states = mutableListOf<B2BAuthenticationState>()

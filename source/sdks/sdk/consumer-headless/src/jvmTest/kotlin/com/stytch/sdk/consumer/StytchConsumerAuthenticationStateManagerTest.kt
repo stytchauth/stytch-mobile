@@ -93,7 +93,10 @@ class StytchConsumerAuthenticationStateManagerTest {
             val states = mutableListOf<ConsumerAuthenticationState>()
             val job = launch { manager.authenticationStateFlow.collect { states.add(it) } }
 
-            // Before advancing, init coroutine hasn't completed — should see Loading
+            // Launch hydrate but don't advance — hydrate suspends on blockingDispatcher, so loadingState stays false
+            launch { manager.hydrate() }
+
+            // Before advancing, hydrate hasn't completed — should see Loading
             assertIs<ConsumerAuthenticationState.Loading>(states.first())
 
             job.cancel()
@@ -103,6 +106,7 @@ class StytchConsumerAuthenticationStateManagerTest {
     fun `authenticationStateFlow emits Unauthenticated after init with no persisted data`() =
         runTest(testDispatcher) {
             val manager = createManager()
+            manager.hydrate()
             val states = mutableListOf<ConsumerAuthenticationState>()
             val job = launch { manager.authenticationStateFlow.collect { states.add(it) } }
             advanceUntilIdle()
@@ -115,6 +119,7 @@ class StytchConsumerAuthenticationStateManagerTest {
     fun `authenticationStateFlow emits Authenticated when all four values are set`() =
         runTest(testDispatcher) {
             val manager = createManager()
+            manager.hydrate()
             val states = mutableListOf<ConsumerAuthenticationState>()
             val job = launch { manager.authenticationStateFlow.collect { states.add(it) } }
             advanceUntilIdle()
@@ -135,6 +140,7 @@ class StytchConsumerAuthenticationStateManagerTest {
     fun `authenticationStateFlow emits Unauthenticated after revoke`() =
         runTest(testDispatcher) {
             val manager = createManager()
+            manager.hydrate()
             manager.update(fakeResponse)
             advanceUntilIdle()
 
@@ -245,11 +251,13 @@ class StytchConsumerAuthenticationStateManagerTest {
         runTest(testDispatcher) {
             // Pre-populate persistence with a full session by updating then re-creating the manager
             val seedManager = createManager()
+            seedManager.hydrate()
             seedManager.update(fakeResponse)
             advanceUntilIdle()
 
             // New manager should load from persistence and produce Authenticated state
             val manager = createManager()
+            manager.hydrate()
             advanceUntilIdle()
 
             val states = mutableListOf<ConsumerAuthenticationState>()

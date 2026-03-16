@@ -97,6 +97,7 @@ kotlin {
             implementation(libs.browser)
             implementation(libs.biometric.ktx)
             implementation(libs.bcprov.jdk18on)
+            implementation(libs.tink.android)
         }
         commonMain.dependencies {
             implementation(libs.kotlinx.serialization.json)
