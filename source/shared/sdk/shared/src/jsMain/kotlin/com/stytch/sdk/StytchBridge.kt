@@ -120,5 +120,8 @@ public external object StytchBridge {
 
     public fun startBrowserFlow(url: String): Promise<String>
 
-    public fun getLegacyToken(vertical: String): Promise<String?>
+    public fun getLegacySessionData(
+        publicToken: String,
+        vertical: String,
+    ): Promise<String?>
 }

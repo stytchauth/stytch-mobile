@@ -70,6 +70,10 @@ buildConsumerAndroid() {
 }
 
 buildConsumerIos() {
+    echo "Cleaning stale iOS artifacts"
+    cd $IOS_DIR
+    rm -rf StytchConsumerSDK.xcframework
+
     echo "Building consumer iOS artifacts..."
     cd $SDK_WORKING_DIR
     ./gradlew assembleStytchConsumerSDKXCFramework
@@ -84,7 +88,7 @@ buildConsumerRn() {
     cp -r sdk/consumer-headless/build/dist/js/productionLibrary/consumer-headless* $SRC_DIR/react-native/consumer/lib
     cd $SRC_DIR/react-native/consumer
     yarn build
-    updateConsumerRnDemoApp
+    #updateConsumerRnDemoApp
 }
 
 updateConsumerRnDemoApp() {
@@ -102,6 +106,10 @@ buildB2BAndroid() {
 }
 
 buildB2BIos() {
+    echo "Cleaning stale iOS artifacts"
+    cd $IOS_DIR
+    rm -rf StytchB2BSDK.xcframework
+
     echo "Building B2B iOS artifacts..."
     cd $SDK_WORKING_DIR
     ./gradlew assembleStytchB2BSDKXCFramework
