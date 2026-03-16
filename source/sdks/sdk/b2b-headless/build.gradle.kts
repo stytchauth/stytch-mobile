@@ -146,7 +146,9 @@ kover {
 }
 
 val generatedSourcesPath = "${layout.buildDirectory.dir("generated/openapi").get()}"
-val apiDescriptionFile = "$projectDir/src/commonMain/resources/openapi.yml"
+val resourcesDir = layout.projectDirectory.dir("../resources")
+val apiDescriptionFile = "${resourcesDir.file("openapi.yml")}"
+val templatesDir = resourcesDir.dir("templates")
 openApiGenerate {
     verbose.set(false)
     validateSpec.set(false)
@@ -160,7 +162,7 @@ openApiGenerate {
     outputDir.set(generatedSourcesPath)
     apiPackage.set("com.stytch.sdk.b2b.networking.api")
     modelPackage.set("com.stytch.sdk.b2b.networking.models")
-    templateDir.set("$projectDir/src/commonMain/resources/templates")
+    templateDir.set("$templatesDir")
     configOptions.set(
         mapOf(
             "library" to "jvm-retrofit2",
