@@ -1,5 +1,6 @@
 package com.stytch.sdk.b2b.totp
 
+import com.stytch.sdk.StytchApi
 import com.stytch.sdk.b2b.StytchB2BAuthenticationStateManager
 import com.stytch.sdk.b2b.networking.B2BNetworkingClient
 import com.stytch.sdk.b2b.networking.models.B2BTOTPsAuthenticateResponse
@@ -13,6 +14,7 @@ import kotlinx.coroutines.withContext
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.js.JsExport
 
+@StytchApi
 @JsExport
 public interface B2BTOTPClient {
     @Throws(StytchError::class, CancellationException::class)

@@ -1,5 +1,6 @@
 package com.stytch.sdk.consumer.biometrics
 
+import com.stytch.sdk.StytchApi
 import com.stytch.sdk.StytchAuthenticationStateManager
 import com.stytch.sdk.biometrics.BiometricsAvailability
 import com.stytch.sdk.biometrics.BiometricsParameters
@@ -22,6 +23,7 @@ import kotlinx.coroutines.withContext
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.js.JsExport
 
+@StytchApi
 @JsExport
 public interface BiometricsClient {
     @Throws(StytchError::class, CancellationException::class)

@@ -1,5 +1,6 @@
 package com.stytch.sdk.b2b.scim
 
+import com.stytch.sdk.StytchApi
 import com.stytch.sdk.b2b.networking.B2BNetworkingClient
 import com.stytch.sdk.b2b.networking.models.B2BGetSCIMConnectionGroupsResponse
 import com.stytch.sdk.b2b.networking.models.B2BGetSCIMConnectionResponse
@@ -22,6 +23,7 @@ import kotlinx.coroutines.withContext
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.js.JsExport
 
+@StytchApi
 @JsExport
 public interface B2BSCIMClient {
     @Throws(StytchError::class, CancellationException::class)

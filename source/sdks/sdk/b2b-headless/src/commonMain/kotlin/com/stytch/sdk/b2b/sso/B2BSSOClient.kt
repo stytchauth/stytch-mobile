@@ -1,5 +1,6 @@
 package com.stytch.sdk.b2b.sso
 
+import com.stytch.sdk.StytchApi
 import com.stytch.sdk.b2b.StytchB2BAuthenticationStateManager
 import com.stytch.sdk.b2b.networking.AuthenticatedResponse
 import com.stytch.sdk.b2b.networking.B2BNetworkingClient
@@ -41,6 +42,7 @@ import kotlin.js.JsExport
 
 public typealias B2BSSOAuthenticateResponse = B2BSSOAuthEnticateResponse
 
+@StytchApi
 @JsExport
 public interface B2BSSOClient {
     @Throws(StytchError::class, CancellationException::class)
@@ -60,6 +62,7 @@ public interface B2BSSOClient {
     public val external: B2BSSOExternalClient
 }
 
+@StytchApi
 @JsExport
 public interface B2BSSOSAMLClient {
     @Throws(StytchError::class, CancellationException::class)
@@ -84,6 +87,7 @@ public interface B2BSSOSAMLClient {
     ): B2BDeleteSAMLVerificationCertificateResponse
 }
 
+@StytchApi
 @JsExport
 public interface B2BSSOOIDCClient {
     @Throws(StytchError::class, CancellationException::class)
@@ -96,6 +100,7 @@ public interface B2BSSOOIDCClient {
     ): B2BUpdateOIDCConnectionResponse
 }
 
+@StytchApi
 @JsExport
 public interface B2BSSOExternalClient {
     @Throws(StytchError::class, CancellationException::class)

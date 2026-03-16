@@ -1,5 +1,6 @@
 package com.stytch.sdk.b2b.organizations
 
+import com.stytch.sdk.StytchApi
 import com.stytch.sdk.b2b.networking.B2BNetworkingClient
 import com.stytch.sdk.b2b.networking.models.B2BOrganizationsDeleteResponse
 import com.stytch.sdk.b2b.networking.models.B2BOrganizationsGetResponse
@@ -12,6 +13,7 @@ import kotlinx.coroutines.withContext
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.js.JsExport
 
+@StytchApi
 @JsExport
 public interface B2BOrganizationsClient {
     @Throws(StytchError::class, CancellationException::class)

@@ -1,5 +1,6 @@
 package com.stytch.sdk.consumer.session
 
+import com.stytch.sdk.StytchApi
 import com.stytch.sdk.consumer.networking.ConsumerNetworkingClient
 import com.stytch.sdk.consumer.networking.models.ISessionsAttestParameters
 import com.stytch.sdk.consumer.networking.models.ISessionsAuthenticateParameters
@@ -13,6 +14,7 @@ import kotlinx.coroutines.withContext
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.js.JsExport
 
+@StytchApi
 @JsExport
 public interface SessionClient {
     @Throws(StytchError::class, CancellationException::class)

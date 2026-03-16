@@ -1,5 +1,6 @@
 package com.stytch.sdk.b2b
 
+import com.stytch.sdk.StytchApi
 import com.stytch.sdk.StytchClient
 import com.stytch.sdk.b2b.data.B2BAuthenticationState
 import com.stytch.sdk.b2b.data.B2BTokenType
@@ -61,6 +62,7 @@ import kotlin.concurrent.Volatile
 import kotlin.js.JsExport
 import kotlin.js.JsName
 
+@StytchApi
 @JsExport
 @JsName("StytchB2B")
 public interface StytchB2B : StytchClient {

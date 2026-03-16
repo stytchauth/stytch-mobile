@@ -1,5 +1,6 @@
 package com.stytch.sdk.consumer.passwords
 
+import com.stytch.sdk.StytchApi
 import com.stytch.sdk.consumer.networking.ConsumerNetworkingClient
 import com.stytch.sdk.consumer.networking.models.IPasswordsAuthenticateParameters
 import com.stytch.sdk.consumer.networking.models.IPasswordsCreateParameters
@@ -24,6 +25,7 @@ import kotlinx.coroutines.withContext
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.js.JsExport
 
+@StytchApi
 @JsExport
 public interface PasswordsClient {
     @Throws(StytchError::class, CancellationException::class)

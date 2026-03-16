@@ -1,5 +1,6 @@
 package com.stytch.sdk.consumer.crypto
 
+import com.stytch.sdk.StytchApi
 import com.stytch.sdk.consumer.StytchConsumerAuthenticationStateManager
 import com.stytch.sdk.consumer.networking.ConsumerNetworkingClient
 import com.stytch.sdk.consumer.networking.models.CryptoWalletsAuthenticateRequest
@@ -12,6 +13,7 @@ import kotlinx.coroutines.withContext
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.js.JsExport
 
+@StytchApi
 @JsExport
 public interface CryptoClient {
     @Throws(StytchError::class, CancellationException::class)

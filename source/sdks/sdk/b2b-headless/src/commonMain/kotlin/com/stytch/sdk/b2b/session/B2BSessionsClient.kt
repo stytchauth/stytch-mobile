@@ -1,5 +1,6 @@
 package com.stytch.sdk.b2b.session
 
+import com.stytch.sdk.StytchApi
 import com.stytch.sdk.b2b.networking.B2BNetworkingClient
 import com.stytch.sdk.b2b.networking.models.B2BSessionsAccessTokenExchangeResponse
 import com.stytch.sdk.b2b.networking.models.B2BSessionsAttestResponse
@@ -17,6 +18,7 @@ import kotlinx.coroutines.withContext
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.js.JsExport
 
+@StytchApi
 @JsExport
 public interface B2BSessionsClient {
     @Throws(StytchError::class, CancellationException::class)

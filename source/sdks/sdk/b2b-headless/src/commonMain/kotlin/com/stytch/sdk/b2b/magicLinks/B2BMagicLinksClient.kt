@@ -1,5 +1,6 @@
 package com.stytch.sdk.b2b.magicLinks
 
+import com.stytch.sdk.StytchApi
 import com.stytch.sdk.b2b.StytchB2BAuthenticationStateManager
 import com.stytch.sdk.b2b.networking.B2BNetworkingClient
 import com.stytch.sdk.b2b.networking.models.B2BMagicLinksAuthenticateResponse
@@ -21,6 +22,7 @@ import kotlinx.coroutines.withContext
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.js.JsExport
 
+@StytchApi
 @JsExport
 public interface B2BMagicLinksClient {
     public val email: B2BEmailMagicLinksClient
@@ -30,6 +32,7 @@ public interface B2BMagicLinksClient {
     public suspend fun authenticate(request: IB2BMagicLinksAuthenticateParameters): B2BMagicLinksAuthenticateResponse
 }
 
+@StytchApi
 @JsExport
 public interface B2BEmailMagicLinksClient {
     @Throws(StytchError::class, CancellationException::class)
@@ -39,6 +42,7 @@ public interface B2BEmailMagicLinksClient {
     public suspend fun invite(request: IB2BMagicLinksInviteParameters): B2BMagicLinksInviteResponse
 }
 
+@StytchApi
 @JsExport
 public interface B2BMagicLinksDiscoveryClient {
     @Throws(StytchError::class, CancellationException::class)
