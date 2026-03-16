@@ -1,240 +1,393 @@
-//
-//  ContentView.swift
-//  demo
-//
-//  Created by Jordan Haven on 1/7/26.
-//
-import Combine
 import SwiftUI
 import StytchConsumerSDK
-import Security
+
+private let keyDemoType = "DEMO_APP_TYPE"
+private let keyPublicToken = "STYTCH_PUBLIC_TOKEN"
+
+// MARK: - Navigation
+
+enum AppScreen {
+    case selector
+    case tokenEntry(demoType: String)
+    case consumer
+    case b2b
+}
+
+// MARK: - Root
 
 struct ContentView: View {
-    @State private var viewModel = ViewModel()
+    @State private var screen: AppScreen = Self.initialScreen()
 
     var body: some View {
-        VStack {
-            switch onEnum(of: viewModel.state.authenticationState) {
-            case .loading:
-                Text("Loading...")
-            case .unauthenticated:
-                VStack {
-                    Button("Google OAuth") {
-                        viewModel.googleOauth()
-                    }
-                    Button("Apple OAuth") {
-                        viewModel.appleOauth()
-                    }
-                    Button("Auth Biometrics") {
-                        viewModel.authBiometrics()
-                    }
-                    Button("Auth Passkey") {
-                        viewModel.authPasskey()
-                    }
-                    Button("Delete biometrics") {
-                        viewModel.deleteBiometrics()
-                    }
-                }
-            case .authenticated:
-                Text("Authenticated!")
-                Button("Logout") {
-                    Task {
-                        await viewModel.logout()
-                    }
-                }
-                Button("Register Biometrics") {
-                    viewModel.registerBiometrics()
-                }
-                Button("Register Passkey") {
-                    viewModel.registerPasskey()
-                }
+        switch screen {
+        case .selector:
+            SelectorView { demoType in
+                UserDefaults.standard.set(demoType, forKey: keyDemoType)
+                screen = .tokenEntry(demoType: demoType)
             }
+        case .tokenEntry:
+            TokenEntryView { publicToken in
+                UserDefaults.standard.set(publicToken, forKey: keyPublicToken)
+                let demoType = UserDefaults.standard.string(forKey: keyDemoType)
+                screen = demoType == "CONSUMER" ? .consumer : .b2b
+            }
+        case .consumer:
+            ConsumerView(onSwitchDemos: switchDemos)
+        case .b2b:
+            B2BView(onSwitchDemos: switchDemos)
         }
-        .frame(maxHeight: .infinity, alignment: .top)
+    }
+
+    private func switchDemos() {
+        UserDefaults.standard.removeObject(forKey: keyPublicToken)
+        UserDefaults.standard.removeObject(forKey: keyDemoType)
+        screen = .selector
+    }
+
+    private static func initialScreen() -> AppScreen {
+        guard let demoType = UserDefaults.standard.string(forKey: keyDemoType) else {
+            return .selector
+        }
+        guard UserDefaults.standard.string(forKey: keyPublicToken) != nil else {
+            return .tokenEntry(demoType: demoType)
+        }
+        return demoType == "CONSUMER" ? .consumer : .b2b
+    }
+}
+
+// MARK: - Selector
+
+struct SelectorView: View {
+    let onSelect: (String) -> Void
+
+    var body: some View {
+        VStack(spacing: 16) {
+            Text("Stytch Demo")
+                .font(.largeTitle).bold()
+            Text("Select a demo to get started")
+                .foregroundStyle(.secondary)
+            Spacer().frame(height: 16)
+            Button("Consumer") { onSelect("CONSUMER") }
+                .buttonStyle(.borderedProminent)
+                .frame(maxWidth: .infinity)
+            Button("B2B") { onSelect("B2B") }
+                .buttonStyle(.borderedProminent)
+                .frame(maxWidth: .infinity)
+        }
         .padding()
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
 
-struct UnauthenticatedStateView: View {
-    var step: Step
-    @State private var input: String = ""
-    @State private var inputLabel: String = "Phone Number"
-    var sendSms: (String) async -> Void
-    var authSms: (String) async -> Void
+// MARK: - Token Entry
 
-    private func submit() {
-        Task {
-            switch step {
-            case .phoneNumber:
-                await sendSms(input)
-            case .token:
-                await authSms(input)
-            }
-        }
-    }
+struct TokenEntryView: View {
+    let onSubmit: (String) -> Void
+    @State private var publicToken = ""
+
     var body: some View {
-        VStack {
-            Text("Testing SMS OTP...")
-            HStack {
-                TextField(inputLabel, text: $input)
-                    .padding()
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                Button("Submit", systemImage: "paperplane") {
-                    submit()
-                }
-                .labelStyle(.iconOnly)
-            }.onChange(of: step) { oldValue, newValue in
-                self.input = ""
-                switch newValue {
-                case .phoneNumber:
-                    self.inputLabel = "Phone Number"
-                case .token:
-                    self.inputLabel = "Code"
-                }
+        VStack(spacing: 16) {
+            Text("Configure SDK")
+                .font(.largeTitle).bold()
+            Spacer().frame(height: 8)
+            TextField("Public Token", text: $publicToken)
+                .textFieldStyle(.roundedBorder)
+                .autocorrectionDisabled()
+                .textInputAutocapitalization(.never)
+            Button("Continue") {
+                let token = publicToken.trimmingCharacters(in: .whitespaces)
+                guard !token.isEmpty else { return }
+                onSubmit(token)
             }
+            .buttonStyle(.borderedProminent)
+            .frame(maxWidth: .infinity)
+            .disabled(publicToken.trimmingCharacters(in: .whitespaces).isEmpty)
+        }
+        .padding()
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+}
+
+// MARK: - Consumer
+
+struct ConsumerView: View {
+    let onSwitchDemos: () -> Void
+    @State private var viewModel: ConsumerViewModel
+
+    init(onSwitchDemos: @escaping () -> Void) {
+        self.onSwitchDemos = onSwitchDemos
+        let token = UserDefaults.standard.string(forKey: keyPublicToken) ?? ""
+        _viewModel = State(initialValue: ConsumerViewModel(publicToken: token))
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            VStack(spacing: 4) {
+                Text("Stytch Consumer Demo")
+                    .font(.headline)
+                Text(viewModel.statusText)
+                    .foregroundStyle(.secondary)
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 12)
+
+            Divider()
+
+            ScrollView {
+                VStack(spacing: 12) {
+                    Button("Google Login") { viewModel.startGoogleOAuth() }
+                        .buttonStyle(.borderedProminent)
+                        .frame(maxWidth: .infinity)
+
+                    Button("Apple Login") { viewModel.startAppleOAuth() }
+                        .buttonStyle(.borderedProminent)
+                        .frame(maxWidth: .infinity)
+
+                    SmsOtpForm(
+                        step: viewModel.smsStep,
+                        onSend: { viewModel.sendSms(phoneNumber: $0) },
+                        onVerify: { viewModel.authSms(token: $0) }
+                    )
+
+                    BiometricsButton(
+                        availability: viewModel.biometricsAvailability,
+                        onTap: { viewModel.biometricsAction() }
+                    )
+
+                    Button("SWITCH DEMOS") {
+                        Task { await viewModel.switchDemos(onComplete: onSwitchDemos) }
+                    }
+                    .buttonStyle(.bordered)
+                    .tint(.red)
+                    .frame(maxWidth: .infinity)
+                }
+                .padding()
+            }
+
+            if let response = viewModel.lastResponse {
+                Divider()
+                Text("Last response:")
+                    .font(.caption.bold())
+                    .padding([.horizontal, .top])
+                ScrollView {
+                    Text(response)
+                        .font(.caption.monospaced())
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.horizontal)
+                }
+                .frame(height: 140)
+                .padding(.bottom, 8)
+            }
+        }
+        .task { await viewModel.refreshBiometrics() }
+        .onChange(of: viewModel.authStateVersion) { _, _ in
+            Task { await viewModel.refreshBiometrics() }
         }
     }
 }
 
-extension ContentView {
-    @Observable
-    class ViewModel {
-        private let config: StytchClientConfiguration = .init(publicToken: ProcessInfo.processInfo.environment["STYTCH_PUBLIC_TOKEN"] ?? "")
-        private let consumerClient: StytchConsumer
-        var state: ContentViewState = .init()
-        
-        init() {
-            consumerClient = createStytchConsumer(configuration: config)
-            Task {
-                for await authenticationState in consumerClient.authenticationStateFlow {
-                    state.authenticationState = authenticationState
-                }
-            }
-        }
-        
-        func sendSms(phoneNumber: String) async {
-            do {
-                let request = OTPsSMSLoginOrCreateParameters.init(phoneNumber: phoneNumber)
-                let response = try await consumerClient.otp.sms.loginOrCreate(request: request)
-                state.methodId = response.methodId
-                state.step = .token
-            } catch(let error)  {
-                state.methodId = nil
-                state.step = .phoneNumber
-                state.error = error as? StytchError
-            }
-        }
+@Observable
+class ConsumerViewModel {
+    private let consumerClient: StytchConsumer
+    var authState: ConsumerAuthenticationState = ConsumerAuthenticationState.Loading()
+    var authStateVersion: Int = 0
+    var smsStep: SmsStep = .phone
+    var methodId: String? = nil
+    var biometricsAvailability: BiometricsAvailability? = nil
+    var lastResponse: String? = nil
 
-        func authSms(token: String) async {
+    var statusText: String {
+        switch onEnum(of: authState) {
+        case .loading: return "Loading..."
+        case .authenticated: return "Welcome Back"
+        case .unauthenticated: return "Please Login"
+        }
+    }
+
+    init(publicToken: String) {
+        consumerClient = createStytchConsumer(configuration: .init(publicToken: publicToken))
+        Task {
+            for await state in consumerClient.authenticationStateFlow {
+                authState = state
+                authStateVersion += 1
+            }
+        }
+    }
+
+    func refreshBiometrics() async {
+        let params = BiometricsParameters(
+            sessionDurationMinutes: 5,
+            promptData: .init(reason: "Authenticate", fallbackTitle: "Use Passcode", cancelTitle: "Cancel")
+        )
+        biometricsAvailability = try? await consumerClient.biometrics.getAvailability(parameters: params)
+    }
+
+    func biometricsAction() {
+        Task {
+            let params = BiometricsParameters(
+                sessionDurationMinutes: 5,
+                promptData: .init(reason: "Authenticate", fallbackTitle: "Use Passcode", cancelTitle: "Cancel")
+            )
             do {
-                guard let methodId = state.methodId else {
+                guard let availability = biometricsAvailability else { return }
+                switch onEnum(of: availability) {
+                case .available:
+                    let response = try await consumerClient.biometrics.register(parameters: params)
+                    lastResponse = "\(response)"
+                case .alreadyRegistered:
+                    let response = try await consumerClient.biometrics.authenticate(parameters: params)
+                    lastResponse = "\(response)"
+                default:
                     return
                 }
-                let request: OTPsAuthenticateParameters = .init(token: token, methodId: methodId, sessionDurationMinutes: 5)
-                let response = try await consumerClient.otp.authenticate(request: request)
-                state.methodId = nil
-                state.step = .phoneNumber
-            } catch (let error)  {
-                state.methodId = nil
-                state.step = .token
-                state.error = error as? StytchError
+            } catch {
+                lastResponse = "\(error)"
             }
+            await refreshBiometrics()
         }
+    }
 
-        func logout() async {
+    func sendSms(phoneNumber: String) {
+        Task {
             do {
-                let response = try await consumerClient.session.revoke()
-            } catch (let error) {
-                state.error = error.asStytchError
-            }
-        }
-        
-        func googleOauth() {
-            Task {
-                do {
-                    let params: OAuthStartParameters = .init(loginRedirectUrl: "login", signupRedirectUrl: "signup")
-                    let response = try await consumerClient.oauth.google.start(startParameters: params)
-                    print(response)
-                } catch (let error) {
-                    print(error.asStytchError?.cause ?? "UNKNOWN")
-                }
-            }
-        }
-        
-        func appleOauth() {
-            Task {
-                do {
-                    let params: OAuthStartParameters = .init(loginRedirectUrl: "login", signupRedirectUrl: "signup")
-                    let response = try await consumerClient.oauth.apple.start(startParameters: params)
-                    print(response)
-                } catch {
-                    print(error.asStytchError?.cause ?? "UNKNOWN")
-                }
-            }
-        }
-        
-        func registerBiometrics() {
-            Task {
-                do {
-                    let response = try await consumerClient.biometrics.register(parameters: .init(sessionDurationMinutes: 5, promptData: .init(reason: "Test", fallbackTitle: "Cancel", cancelTitle: "Cancel")))
-                    print(response)
-                } catch (let error) {
-                    print(error.asStytchError?.cause ?? "UNKNOWN")
-                }
-            }
-        }
-        func authBiometrics() {
-            Task {
-                do {
-                    let response = try await consumerClient.biometrics.authenticate(parameters: .init(sessionDurationMinutes: 5, promptData: .init(reason: "Test", fallbackTitle: "Cancel", cancelTitle: "Cancel")))
-                    print(response)
-                } catch (let error) {
-                    print(error.asStytchError?.cause ?? "UNKNOWN")
-                }
-            }
-        }
-        func registerPasskey() {
-            Task {
-                do {
-                    let response = try await consumerClient.passkeys.register(parameters: .init(domain: "stytch.com"))
-                    print(response)
-                } catch (let error) {
-                    print(error.asStytchError?.cause ?? "UNKNOWN")
-                }
-            }
-        }
-        func authPasskey() {
-            Task {
-                do {
-                    let response = try await consumerClient.passkeys.authenticate(parameters: .init(domain: "stytch.com"))
-                    print(response)
-                } catch (let error) {
-                    print(error.asStytchError?.cause ?? "UNKNOWN")
-                }
-            }
-        }
-        func deleteBiometrics() {
-            Task {
-                do {
-                    let response = try await consumerClient.biometrics.removeRegistration()
-                    print(response)
-                } catch (let error) {
-                    print(error.asStytchError?.cause ?? "UNKNOWN")
-                }
+                let response = try await consumerClient.otp.sms.loginOrCreate(
+                    request: .init(phoneNumber: phoneNumber)
+                )
+                methodId = response.methodId
+                smsStep = .code
+                lastResponse = "\(response)"
+            } catch {
+                lastResponse = "\(error)"
             }
         }
     }
+
+    func authSms(token: String) {
+        guard let methodId else { return }
+        Task {
+            do {
+                let response = try await consumerClient.otp.authenticate(
+                    request: .init(token: token, methodId: methodId, sessionDurationMinutes: 5)
+                )
+                self.methodId = nil
+                smsStep = .phone
+                lastResponse = "\(response)"
+            } catch {
+                self.methodId = nil
+                smsStep = .phone
+                lastResponse = "\(error)"
+            }
+        }
+    }
+
+    func startGoogleOAuth() {
+        Task {
+            do {
+                let params = OAuthStartParameters(
+                    loginRedirectUrl: "my-login-redirect-url",
+                    signupRedirectUrl: "my-signup-redirect-url"
+                )
+                let response = try await consumerClient.oauth.google.start(startParameters: params)
+                lastResponse = "\(response)"
+            } catch {
+                lastResponse = "\(error)"
+            }
+        }
+    }
+
+    func startAppleOAuth() {
+        Task {
+            do {
+                let params = OAuthStartParameters(
+                    loginRedirectUrl: "my-login-redirect-url",
+                    signupRedirectUrl: "my-signup-redirect-url"
+                )
+                let response = try await consumerClient.oauth.apple.start(startParameters: params)
+                lastResponse = "\(response)"
+            } catch {
+                lastResponse = "\(error)"
+            }
+        }
+    }
+
+    func switchDemos(onComplete: () -> Void) async {
+        if case .authenticated = onEnum(of: authState) {
+            try? await consumerClient.session.revoke()
+        }
+        onComplete()
+    }
 }
 
+enum SmsStep { case phone, code }
 
-struct ContentViewState {
-    var authenticationState: ConsumerAuthenticationState = .Loading()
-    var methodId: String? = nil
-    var step: Step = .phoneNumber
-    var error: StytchError? = nil
+// MARK: - Subviews
+
+struct SmsOtpForm: View {
+    let step: SmsStep
+    let onSend: (String) -> Void
+    let onVerify: (String) -> Void
+    @State private var input = ""
+
+    var body: some View {
+        HStack {
+            TextField(step == .phone ? "Phone Number" : "Code", text: $input)
+                .textFieldStyle(.roundedBorder)
+                .keyboardType(step == .phone ? .phonePad : .numberPad)
+                .autocorrectionDisabled()
+            Button(step == .phone ? "Send Code" : "Verify") {
+                let text = input.trimmingCharacters(in: .whitespaces)
+                guard !text.isEmpty else { return }
+                if step == .phone { onSend(text) } else { onVerify(text) }
+                input = ""
+            }
+            .buttonStyle(.borderedProminent)
+        }
+        .onChange(of: step) { _, _ in input = "" }
+    }
 }
 
-enum Step {
-    case phoneNumber
-    case token
+struct BiometricsButton: View {
+    let availability: BiometricsAvailability?
+    let onTap: () -> Void
+
+    private var label: String {
+        guard let availability else { return "Checking Biometrics..." }
+        switch onEnum(of: availability) {
+        case .available: return "Register Biometrics"
+        case .alreadyRegistered: return "Authenticate Biometrics"
+        default: return "Biometrics Unavailable"
+        }
+    }
+
+    private var isEnabled: Bool {
+        guard let availability else { return false }
+        switch onEnum(of: availability) {
+        case .available, .alreadyRegistered: return true
+        default: return false
+        }
+    }
+
+    var body: some View {
+        Button(label, action: onTap)
+            .buttonStyle(.borderedProminent)
+            .frame(maxWidth: .infinity)
+            .disabled(!isEnabled)
+    }
+}
+
+// MARK: - B2B
+
+struct B2BView: View {
+    let onSwitchDemos: () -> Void
+
+    var body: some View {
+        VStack(spacing: 24) {
+            Text("B2B — coming soon!")
+                .font(.largeTitle).bold()
+            Button("SWITCH DEMOS", action: onSwitchDemos)
+                .buttonStyle(.bordered)
+                .tint(.red)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
 }
