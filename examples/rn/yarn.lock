@@ -1826,7 +1826,7 @@
   dependencies:
     "@sinonjs/commons" "^3.0.0"
 
-"@stytch/react-native-consumer@file:/Users/jhaven/Documents/stytch-mobile/source/react-native/consumer":
+"@stytch/react-native-consumer@file:../../source/react-native/consumer":
   version "0.0.1"
   dependencies:
     "@js-joda/core" "3.2.0"
@@ -3658,6 +3658,11 @@ expo-router@~6.0.22:
     shallowequal "^1.1.0"
     use-latest-callback "^0.2.1"
     vaul "^1.1.2"
+
+expo-secure-store@^55.0.8:
+  version "55.0.8"
+  resolved "https://registry.yarnpkg.com/expo-secure-store/-/expo-secure-store-55.0.8.tgz#741eb2c074cc6754e650f35f4e33df8213c95f0d"
+  integrity sha512-8w9tQe8U6oRo5YIzqCqVhRrOnfoODNDoitBtLXEx+zS6WLUnkRq5kH7ViJuOgiM7PzLr9pvAliRiDOKyvFbTuQ==
 
 expo-server@^1.0.5:
   version "1.0.5"
