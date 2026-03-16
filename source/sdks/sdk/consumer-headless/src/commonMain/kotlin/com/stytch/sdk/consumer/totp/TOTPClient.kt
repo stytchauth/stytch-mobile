@@ -1,5 +1,6 @@
 package com.stytch.sdk.consumer.totp
 
+import com.stytch.sdk.StytchApi
 import com.stytch.sdk.consumer.networking.ConsumerNetworkingClient
 import com.stytch.sdk.consumer.networking.models.ITOTPsAuthenticateParameters
 import com.stytch.sdk.consumer.networking.models.ITOTPsCreateParameters
@@ -15,6 +16,7 @@ import kotlinx.coroutines.withContext
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.js.JsExport
 
+@StytchApi
 @JsExport
 public interface TOTPClient {
     @Throws(StytchError::class, CancellationException::class)

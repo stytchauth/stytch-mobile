@@ -1,5 +1,6 @@
 package com.stytch.sdk.consumer.magicLinks
 
+import com.stytch.sdk.StytchApi
 import com.stytch.sdk.consumer.StytchConsumerAuthenticationStateManager
 import com.stytch.sdk.consumer.networking.ConsumerNetworkingClient
 import com.stytch.sdk.consumer.networking.models.IMagicLinksAuthenticateParameters
@@ -17,6 +18,7 @@ import kotlinx.coroutines.withContext
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.js.JsExport
 
+@StytchApi
 @JsExport
 public interface MagicLinksClient {
     public val email: EmailMagicLinksClient
@@ -25,6 +27,7 @@ public interface MagicLinksClient {
     public suspend fun authenticate(request: IMagicLinksAuthenticateParameters): MagicLinksAuthenticateResponse
 }
 
+@StytchApi
 @JsExport
 public interface EmailMagicLinksClient {
     @Throws(StytchError::class, CancellationException::class)

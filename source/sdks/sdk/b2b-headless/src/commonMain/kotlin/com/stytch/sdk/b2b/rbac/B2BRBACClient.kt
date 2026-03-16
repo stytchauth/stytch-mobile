@@ -1,5 +1,6 @@
 package com.stytch.sdk.b2b.rbac
 
+import com.stytch.sdk.StytchApi
 import com.stytch.sdk.b2b.StytchB2BAuthenticationStateManager
 import com.stytch.sdk.data.RBACPolicy
 import com.stytch.sdk.data.StytchDispatchers
@@ -7,6 +8,7 @@ import kotlinx.coroutines.withContext
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.js.JsExport
 
+@StytchApi
 @JsExport
 public interface B2BRBACClient {
     /**

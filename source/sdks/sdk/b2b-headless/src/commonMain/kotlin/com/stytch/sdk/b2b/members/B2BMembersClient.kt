@@ -1,5 +1,6 @@
 package com.stytch.sdk.b2b.members
 
+import com.stytch.sdk.StytchApi
 import com.stytch.sdk.b2b.networking.B2BNetworkingClient
 import com.stytch.sdk.b2b.networking.models.B2BGetMeResponse
 import com.stytch.sdk.b2b.networking.models.IOrganizationsAdminMemberStartEmailUpdateParameters
@@ -32,6 +33,7 @@ import kotlinx.coroutines.withContext
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.js.JsExport
 
+@StytchApi
 @JsExport
 public interface B2BMembersClient {
     public val admin: B2BMembersAdminClient
@@ -65,6 +67,7 @@ public interface B2BMembersClient {
     ): OrganizationsMemberUnlinkRetiredEmailResponse
 }
 
+@StytchApi
 @JsExport
 public interface B2BMembersAdminClient {
     @Throws(StytchError::class, CancellationException::class)

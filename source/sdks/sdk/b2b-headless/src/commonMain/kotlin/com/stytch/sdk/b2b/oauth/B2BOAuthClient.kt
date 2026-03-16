@@ -1,5 +1,6 @@
 package com.stytch.sdk.b2b.oauth
 
+import com.stytch.sdk.StytchApi
 import com.stytch.sdk.b2b.StytchB2BAuthenticationStateManager
 import com.stytch.sdk.b2b.networking.AuthenticatedResponse
 import com.stytch.sdk.b2b.networking.B2BNetworkingClient
@@ -26,6 +27,7 @@ import kotlinx.coroutines.withContext
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.js.JsExport
 
+@StytchApi
 @JsExport
 public interface B2BOAuthClient {
     public val google: B2BOAuthProviderClient
@@ -39,6 +41,7 @@ public interface B2BOAuthClient {
     public suspend fun authenticate(request: IB2BOAuthAuthenticateParameters): B2BOAuthAuthenticateResponse
 }
 
+@StytchApi
 @JsExport
 public interface B2BOAuthProviderClient {
     @Throws(StytchError::class, CancellationException::class)
@@ -47,12 +50,14 @@ public interface B2BOAuthProviderClient {
     public val discovery: B2BOAuthProviderDiscoveryClient
 }
 
+@StytchApi
 @JsExport
 public interface B2BOAuthProviderDiscoveryClient {
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun start(parameters: B2BOAuthDiscoveryStartParameters): B2BOAuthDiscoveryAuthenticateResponse
 }
 
+@StytchApi
 @JsExport
 public interface B2BOAuthDiscoveryClient {
     @Throws(StytchError::class, CancellationException::class)
