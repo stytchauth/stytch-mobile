@@ -48,7 +48,7 @@ export type StytchB2BProviderProps = {
   children?: React.ReactNode;
 };
 
-export const StytchProvider = ({
+export const StytchB2BProvider = ({
   stytch,
   children,
 }: StytchB2BProviderProps): React.JSX.Element => {
