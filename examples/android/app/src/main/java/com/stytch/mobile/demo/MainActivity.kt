@@ -44,6 +44,7 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.FragmentActivity
 import com.stytch.mobile.demo.ui.theme.StytchMobileAndroidDemoTheme
+import com.stytch.sdk.b2b.data.B2BAuthenticationState
 import com.stytch.sdk.biometrics.BiometricsAvailability
 import com.stytch.sdk.consumer.data.ConsumerAuthenticationState
 import com.stytch.sdk.oauth.OAuthProviderType
@@ -74,6 +75,7 @@ class MainActivity : FragmentActivity() {
                                 onSelect = viewModel::selectDemoType,
                             )
                             is AppScreen.TokenEntry -> TokenEntryScreen(
+                                demoType = (state.screen as AppScreen.TokenEntry).demoType,
                                 onSubmit = viewModel::submitToken,
                             )
                             is AppScreen.Consumer -> ConsumerScreen(
@@ -86,6 +88,9 @@ class MainActivity : FragmentActivity() {
                                 onSwitchDemos = viewModel::switchDemos,
                             )
                             is AppScreen.B2B -> B2BScreen(
+                                b2bAuthenticationState = state.b2bAuthenticationState,
+                                lastResponse = state.lastResponse,
+                                onStartB2BOAuth = viewModel::startB2BOAuth,
                                 onSwitchDemos = viewModel::switchDemos,
                             )
                         }
@@ -131,9 +136,13 @@ fun SelectorScreen(onSelect: (String) -> Unit) {
 }
 
 @Composable
-fun TokenEntryScreen(onSubmit: (publicToken: String, googleClientId: String?) -> Unit) {
+fun TokenEntryScreen(
+    demoType: String,
+    onSubmit: (publicToken: String, googleClientId: String?, orgId: String?) -> Unit,
+) {
     var publicToken by remember { mutableStateOf("") }
     var googleClientId by remember { mutableStateOf("") }
+    var orgId by remember { mutableStateOf("") }
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -154,19 +163,36 @@ fun TokenEntryScreen(onSubmit: (publicToken: String, googleClientId: String?) ->
             singleLine = true,
         )
         Spacer(modifier = Modifier.height(12.dp))
-        OutlinedTextField(
-            modifier = Modifier.fillMaxWidth(),
-            value = googleClientId,
-            onValueChange = { googleClientId = it },
-            label = { Text("Google Client ID (optional)") },
-            singleLine = true,
-        )
-        Spacer(modifier = Modifier.height(24.dp))
+        if (demoType == "CONSUMER") {
+            OutlinedTextField(
+                modifier = Modifier.fillMaxWidth(),
+                value = googleClientId,
+                onValueChange = { googleClientId = it },
+                label = { Text("Google Client ID (optional)") },
+                singleLine = true,
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+        }
+        if (demoType == "B2B") {
+            OutlinedTextField(
+                modifier = Modifier.fillMaxWidth(),
+                value = orgId,
+                onValueChange = { orgId = it },
+                label = { Text("Organization ID (optional)") },
+                singleLine = true,
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+        }
+        Spacer(modifier = Modifier.height(12.dp))
         Button(
             modifier = Modifier.fillMaxWidth(),
             onClick = {
                 if (publicToken.isNotBlank()) {
-                    onSubmit(publicToken.trim(), googleClientId.trim().ifBlank { null })
+                    onSubmit(
+                        publicToken.trim(),
+                        googleClientId.trim().ifBlank { null },
+                        orgId.trim().ifBlank { null },
+                    )
                 }
             },
         ) {
@@ -344,25 +370,78 @@ fun BiometricsButton(
 }
 
 @Composable
-fun B2BScreen(onSwitchDemos: () -> Unit) {
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
+fun B2BScreen(
+    b2bAuthenticationState: B2BAuthenticationState,
+    lastResponse: String?,
+    onStartB2BOAuth: (ComponentActivity) -> Unit,
+    onSwitchDemos: () -> Unit,
+) {
+    val activity = LocalActivity.current as ComponentActivity
+
+    val statusText = when (b2bAuthenticationState) {
+        is B2BAuthenticationState.Loading -> "Loading..."
+        is B2BAuthenticationState.Authenticated -> "Welcome Back"
+        is B2BAuthenticationState.Unauthenticated -> "Please Login"
+    }
+
+    Column(modifier = Modifier.fillMaxSize()) {
+        Spacer(modifier = Modifier.height(16.dp))
         Text(
-            text = "B2B — coming soon!",
-            style = MaterialTheme.typography.headlineMedium,
+            text = "Stytch B2B Demo",
+            style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold,
+            modifier = Modifier.align(Alignment.CenterHorizontally),
         )
-        Spacer(modifier = Modifier.height(32.dp))
-        Button(
-            onClick = onSwitchDemos,
-            colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.error,
-            ),
+        Text(
+            text = statusText,
+            style = MaterialTheme.typography.bodyLarge,
+            modifier = Modifier.align(Alignment.CenterHorizontally),
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .verticalScroll(rememberScrollState()),
         ) {
-            Text("SWITCH DEMOS")
+            Button(
+                modifier = Modifier.fillMaxWidth(),
+                onClick = { onStartB2BOAuth(activity) },
+            ) {
+                Text("Google Login")
+            }
+            Spacer(modifier = Modifier.height(24.dp))
+            Button(
+                modifier = Modifier.fillMaxWidth(),
+                onClick = onSwitchDemos,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.error,
+                ),
+            ) {
+                Text("SWITCH DEMOS")
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+        }
+
+        lastResponse?.let { response ->
+            Text(
+                text = "Last response:",
+                style = MaterialTheme.typography.labelMedium,
+                fontWeight = FontWeight.Bold,
+            )
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(160.dp)
+                    .verticalScroll(rememberScrollState()),
+            ) {
+                Text(
+                    text = response,
+                    style = MaterialTheme.typography.bodySmall,
+                    fontFamily = FontFamily.Monospace,
+                )
+            }
+            Spacer(modifier = Modifier.height(8.dp))
         }
     }
 }

@@ -7,6 +7,9 @@ import androidx.core.content.edit
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.stytch.sdk.b2b.StytchB2B
+import com.stytch.sdk.b2b.createStytchB2B
+import com.stytch.sdk.b2b.data.B2BAuthenticationState
 import com.stytch.sdk.biometrics.BiometricsAvailability
 import com.stytch.sdk.biometrics.BiometricsParameters
 import com.stytch.sdk.consumer.StytchConsumer
@@ -17,6 +20,8 @@ import com.stytch.sdk.consumer.networking.models.OTPsSMSLoginOrCreateParameters
 import com.stytch.sdk.data.GoogleCredentialConfiguration
 import com.stytch.sdk.data.StytchClientConfiguration
 import com.stytch.sdk.data.StytchError
+import com.stytch.sdk.oauth.B2BOAuthDiscoveryStartParameters
+import com.stytch.sdk.oauth.B2BOAuthStartParameters
 import com.stytch.sdk.oauth.OAuthProviderType
 import com.stytch.sdk.oauth.OAuthStartParameters
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,6 +32,7 @@ private const val PREFS_NAME = "demo_app_prefs"
 private const val KEY_DEMO_TYPE = "DEMO_APP_TYPE"
 private const val KEY_PUBLIC_TOKEN = "STYTCH_PUBLIC_TOKEN"
 private const val KEY_GOOGLE_CLIENT_ID = "GOOGLE_CLIENT_ID"
+private const val KEY_ORG_ID = "STYTCH_ORG_ID"
 
 sealed class AppScreen {
     object Selector : AppScreen()
@@ -45,6 +51,7 @@ enum class SmsStep { PHONE, CODE }
 data class DemoAppState(
     val screen: AppScreen = AppScreen.Selector,
     val authenticationState: ConsumerAuthenticationState = ConsumerAuthenticationState.Loading(),
+    val b2bAuthenticationState: B2BAuthenticationState = B2BAuthenticationState.Loading(),
     val smsStep: SmsStep = SmsStep.PHONE,
     val methodId: String? = null,
     val biometricsAvailability: BiometricsAvailability? = null,
@@ -56,6 +63,8 @@ class MainViewModel(
 ) : AndroidViewModel(application) {
     private val prefs = application.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
     private var stytchConsumer: StytchConsumer? = null
+    private var stytchB2B: StytchB2B? = null
+    private var b2bOrgId: String? = null
 
     private val _state = MutableStateFlow(DemoAppState())
     val state = _state.asStateFlow()
@@ -69,6 +78,7 @@ class MainViewModel(
                     initConsumerClient(token)
                     _state.value = _state.value.copy(screen = AppScreen.Consumer)
                 } else {
+                    initB2BClient(token)
                     _state.value = _state.value.copy(screen = AppScreen.B2B)
                 }
             } else {
@@ -76,6 +86,21 @@ class MainViewModel(
             }
         }
         // default state already has screen = Selector
+    }
+
+    private fun initB2BClient(publicToken: String) {
+        b2bOrgId = prefs.getString(KEY_ORG_ID, null)
+        val config =
+            StytchClientConfiguration(
+                context = getApplication<Application>().applicationContext,
+                publicToken = publicToken,
+            )
+        stytchB2B = createStytchB2B(config)
+        viewModelScope.launch {
+            stytchB2B!!.authenticationStateFlow.collect { authState ->
+                _state.value = _state.value.copy(b2bAuthenticationState = authState)
+            }
+        }
     }
 
     private fun initConsumerClient(publicToken: String) {
@@ -105,35 +130,44 @@ class MainViewModel(
     fun submitToken(
         publicToken: String,
         googleClientId: String?,
+        orgId: String?,
     ) {
         prefs.edit { putString(KEY_PUBLIC_TOKEN, publicToken) }
         if (!googleClientId.isNullOrBlank()) {
             prefs.edit { putString(KEY_GOOGLE_CLIENT_ID, googleClientId) }
+        }
+        if (!orgId.isNullOrBlank()) {
+            prefs.edit { putString(KEY_ORG_ID, orgId) }
         }
         val demoType = prefs.getString(KEY_DEMO_TYPE, "CONSUMER")
         if (demoType == "CONSUMER") {
             initConsumerClient(publicToken)
             _state.value = _state.value.copy(screen = AppScreen.Consumer)
         } else {
+            initB2BClient(publicToken)
             _state.value = _state.value.copy(screen = AppScreen.B2B)
         }
     }
 
     fun switchDemos() {
         viewModelScope.launch {
-            val authState = _state.value.authenticationState
-            if (authState is ConsumerAuthenticationState.Authenticated) {
-                try {
+            try {
+                if (_state.value.authenticationState is ConsumerAuthenticationState.Authenticated) {
                     stytchConsumer?.session?.revoke()
-                } catch (_: Exception) {
+                } else if (_state.value.b2bAuthenticationState is B2BAuthenticationState.Authenticated) {
+                    stytchB2B?.session?.revoke()
                 }
+            } catch (_: Exception) {
             }
             prefs.edit {
                 remove(KEY_PUBLIC_TOKEN)
                     .remove(KEY_GOOGLE_CLIENT_ID)
+                    .remove(KEY_ORG_ID)
                     .remove(KEY_DEMO_TYPE)
             }
             stytchConsumer = null
+            stytchB2B = null
+            b2bOrgId = null
             _state.value = DemoAppState(screen = AppScreen.Selector)
         }
     }
@@ -214,6 +248,35 @@ class MainViewModel(
                         smsStep = SmsStep.PHONE,
                         lastResponse = e.toString(),
                     )
+            }
+        }
+    }
+
+    fun startB2BOAuth(activity: ComponentActivity) {
+        val b2b = stytchB2B ?: return
+        viewModelScope.launch {
+            try {
+                val response =
+                    if (!b2bOrgId.isNullOrBlank()) {
+                        b2b.oauth.google.start(
+                            B2BOAuthStartParameters(
+                                activity = activity,
+                                loginRedirectUrl = "my-login-redirect-url",
+                                signupRedirectUrl = "my-signup-redirect-url",
+                                organizationId = b2bOrgId,
+                            ),
+                        )
+                    } else {
+                        b2b.oauth.google.discovery.start(
+                            B2BOAuthDiscoveryStartParameters(
+                                activity = activity,
+                                discoveryRedirectUrl = "my-discovery-redirect-url",
+                            ),
+                        )
+                    }
+                _state.value = _state.value.copy(lastResponse = response.toString())
+            } catch (e: StytchError) {
+                _state.value = _state.value.copy(lastResponse = e.toString())
             }
         }
     }
