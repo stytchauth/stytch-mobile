@@ -9,6 +9,21 @@ public actual class B2BSSOStartParameters(
     public actual val sessionDurationMinutes: Int? = null,
     public val oauthPresentationContextProvider: ASWebAuthenticationPresentationContextProvidingProtocol? = null,
 ) {
+    public constructor(connectionId: String) : this(connectionId, null, null, null, null)
+
+    public constructor(
+        connectionId: String,
+        loginRedirectUrl: String,
+        signupRedirectUrl: String,
+    ) : this(connectionId, loginRedirectUrl, signupRedirectUrl, null, null)
+
+    public constructor(
+        connectionId: String,
+        loginRedirectUrl: String,
+        signupRedirectUrl: String,
+        sessionDurationMinutes: Int,
+    ) : this(connectionId, loginRedirectUrl, signupRedirectUrl, sessionDurationMinutes, null)
+
     public actual fun toOAuthStartParameters(): OAuthStartParameters =
         OAuthStartParameters(oauthPresentationContextProvider = oauthPresentationContextProvider)
 }
