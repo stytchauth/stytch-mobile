@@ -296,9 +296,9 @@ function ConsumerScreen({ onSwitchDemos }: { onSwitchDemos: () => void }) {
   const handleBiometrics = async () => {
     try {
       let response;
-      if (biometricsAvailability instanceof BiometricsAvailability.Available) {
+      if (biometricsAvailability === BiometricsAvailability.Available) {
         response = await stytch.biometrics.register(biometricsOptions);
-      } else if (biometricsAvailability instanceof BiometricsAvailability.AlreadyRegistered) {
+      } else if (biometricsAvailability === BiometricsAvailability.AlreadyRegistered) {
         response = await stytch.biometrics.authenticate(biometricsOptions);
       } else {
         return;
@@ -312,14 +312,14 @@ function ConsumerScreen({ onSwitchDemos }: { onSwitchDemos: () => void }) {
 
   const biometricsLabel = () => {
     if (!biometricsAvailability) return 'Checking Biometrics...';
-    if (biometricsAvailability instanceof BiometricsAvailability.Available) return 'Register Biometrics';
-    if (biometricsAvailability instanceof BiometricsAvailability.AlreadyRegistered) return 'Authenticate Biometrics';
+    if (biometricsAvailability === BiometricsAvailability.Available) return 'Register Biometrics';
+    if (biometricsAvailability === BiometricsAvailability.AlreadyRegistered) return 'Authenticate Biometrics';
     return 'Biometrics Unavailable';
   };
 
   const biometricsEnabled = () =>
-    biometricsAvailability instanceof BiometricsAvailability.Available ||
-    biometricsAvailability instanceof BiometricsAvailability.AlreadyRegistered;
+    biometricsAvailability === BiometricsAvailability.Available ||
+    biometricsAvailability === BiometricsAvailability.AlreadyRegistered;
 
   const handleSwitchDemos = async () => {
     if (authState instanceof ConsumerAuthenticationState.Authenticated) {
@@ -453,7 +453,7 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   responseScroll: {
-    flex: 1,
+    maxHeight: 120,
   },
   responseText: {
     fontSize: 11,
