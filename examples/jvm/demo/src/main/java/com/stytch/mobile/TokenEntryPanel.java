@@ -5,14 +5,16 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
 /**
- * Second screen. Collects the Stytch public token (and optionally a keystore password) before
- * launching the chosen experience.
+ * Second screen. Collects the Stytch public token (and, for B2B, an optional Organization ID)
+ * before launching the chosen experience.
  */
 public class TokenEntryPanel extends JPanel {
 
     public TokenEntryPanel(AppFrame frame) {
         setLayout(new GridBagLayout());
         setBorder(new EmptyBorder(32, 40, 32, 40));
+
+        boolean isB2B = AppPreferences.TYPE_B2B.equals(frame.getPrefs().getDemoAppType());
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -36,12 +38,28 @@ public class TokenEntryPanel extends JPanel {
         gbc.insets = new Insets(0, 0, 16, 0);
         add(tokenField, gbc);
 
+        // Optional Organization ID — shown only for the B2B experience.
+        JTextField orgIdField = null;
+        if (isB2B) {
+            JLabel orgIdLabel = new JLabel("Organization ID (optional)");
+            gbc.gridy = 3;
+            gbc.insets = new Insets(4, 0, 2, 0);
+            add(orgIdLabel, gbc);
+
+            orgIdField = new JTextField(20);
+            orgIdField.setToolTipText("organization-id-...");
+            gbc.gridy = 4;
+            gbc.insets = new Insets(0, 0, 16, 0);
+            add(orgIdField, gbc);
+        }
+
         JButton submitButton = new JButton("Launch");
         submitButton.setFont(submitButton.getFont().deriveFont(14f));
-        gbc.gridy = 3;
+        gbc.gridy = isB2B ? 5 : 3;
         gbc.insets = new Insets(16, 64, 0, 64);
         add(submitButton, gbc);
 
+        final JTextField finalOrgIdField = orgIdField;
         Runnable onSubmit = () -> {
             String token = tokenField.getText().trim();
             if (token.isEmpty()) {
@@ -49,11 +67,14 @@ public class TokenEntryPanel extends JPanel {
                         JOptionPane.WARNING_MESSAGE);
                 return;
             }
-            frame.onTokenSubmitted(token);
+            String orgId = (finalOrgIdField != null) ? finalOrgIdField.getText().trim() : "";
+            frame.onTokenSubmitted(token, orgId);
         };
 
         submitButton.addActionListener(e -> onSubmit.run());
-        // Allow pressing Enter in the text field to submit.
         tokenField.addActionListener(e -> onSubmit.run());
+        if (orgIdField != null) {
+            orgIdField.addActionListener(e -> onSubmit.run());
+        }
     }
 }

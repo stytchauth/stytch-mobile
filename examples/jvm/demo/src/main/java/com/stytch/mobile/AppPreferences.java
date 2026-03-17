@@ -13,6 +13,7 @@ public class AppPreferences {
 
     private static final String KEY_DEMO_APP_TYPE = "DEMO_APP_TYPE";
     private static final String KEY_PUBLIC_TOKEN = "STYTCH_PUBLIC_TOKEN";
+    private static final String KEY_ORG_ID = "STYTCH_ORG_ID";
 
     private final Preferences prefs;
 
@@ -36,8 +37,21 @@ public class AppPreferences {
         prefs.put(KEY_PUBLIC_TOKEN, token);
     }
 
+    public String getOrgId() {
+        return prefs.get(KEY_ORG_ID, null);
+    }
+
+    public void setOrgId(String orgId) {
+        if (orgId == null || orgId.isEmpty()) {
+            prefs.remove(KEY_ORG_ID);
+        } else {
+            prefs.put(KEY_ORG_ID, orgId);
+        }
+    }
+
     public void clearAll() {
         prefs.remove(KEY_DEMO_APP_TYPE);
         prefs.remove(KEY_PUBLIC_TOKEN);
+        prefs.remove(KEY_ORG_ID);
     }
 }

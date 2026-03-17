@@ -21,10 +21,11 @@ application {
 }
 
 dependencies {
-    // consumer-headless-extensions re-exports consumer-headless, so we only need one dependency.
-    // It adds callback-style (onSuccess/onFailure) overloads for every suspend function, which
-    // lets Java callers avoid raw Kotlin coroutine machinery.
+    // *-headless-extensions re-export their respective headless SDK, so we only need one dependency
+    // each. They add callback-style (onSuccess/onFailure) overloads for every suspend function,
+    // which lets Java callers avoid raw Kotlin coroutine machinery.
     implementation("com.stytch.sdk:consumer-headless-extensions:0.0.1")
+    implementation("com.stytch.sdk:b2b-headless-extensions:0.0.1")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.3.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
     // kotlinx-coroutines-swing makes Dispatchers.Main == the Swing EDT, which the SDK uses for

@@ -49,12 +49,16 @@ public class AppFrame extends JFrame {
     /** User tapped a type button on the selector — save type, show token entry. */
     public void onTypeSelected(String type) {
         prefs.setDemoAppType(type);
+        // Recreate the panel now that the type is known so it can show the correct fields.
+        replaceCard(CARD_TOKEN_ENTRY, new TokenEntryPanel(this));
         cardLayout.show(cardPanel, CARD_TOKEN_ENTRY);
+        revalidate();
     }
 
     /** User submitted a token — launch the appropriate experience. */
-    public void onTokenSubmitted(String token) {
+    public void onTokenSubmitted(String token, String orgId) {
         prefs.setPublicToken(token);
+        prefs.setOrgId(orgId);
         if (AppPreferences.TYPE_CONSUMER.equals(prefs.getDemoAppType())) {
             launchConsumer();
         } else {
