@@ -46,6 +46,7 @@ public fun getStytchHttpClient(
                         prettyPrint = true
                         isLenient = true
                         ignoreUnknownKeys = true
+                        coerceInputValues = true
                     },
             )
         }
