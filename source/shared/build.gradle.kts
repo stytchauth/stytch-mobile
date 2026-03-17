@@ -9,10 +9,41 @@ plugins {
     alias(libs.plugins.skie) apply false
     alias(libs.plugins.ktlint) apply false
     alias(libs.plugins.kover) apply false
+    alias(libs.plugins.mavenPublish) apply false
 }
 
 group = "com.stytch.sdk"
 version = file("../../version.txt").readText().trim()
+
+subprojects {
+    plugins.withId("com.vanniktech.maven.publish") {
+        configure<com.vanniktech.maven.publish.MavenPublishBaseExtension> {
+            publishToMavenCentral()
+            signAllPublications()
+            pom {
+                url.set("https://github.com/stytchauth/stytch-mobile")
+                licenses {
+                    license {
+                        name.set("MIT License")
+                        url.set("https://opensource.org/licenses/MIT")
+                    }
+                }
+                developers {
+                    developer {
+                        id.set("stytchauth")
+                        name.set("Stytch")
+                        url.set("https://github.com/stytchauth")
+                    }
+                }
+                scm {
+                    url.set("https://github.com/stytchauth/stytch-mobile")
+                    connection.set("scm:git:git://github.com/stytchauth/stytch-mobile.git")
+                    developerConnection.set("scm:git:ssh://git@github.com/stytchauth/stytch-mobile.git")
+                }
+            }
+        }
+    }
+}
 
 subprojects {
     apply(plugin = "org.jlleitschuh.gradle.ktlint")

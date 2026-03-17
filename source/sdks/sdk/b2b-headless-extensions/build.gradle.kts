@@ -8,11 +8,18 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.android.kotlin.multiplatform.library)
-    id("maven-publish")
+    alias(libs.plugins.mavenPublish)
 }
 
 group = rootProject.group
 version = rootProject.version
+
+mavenPublishing {
+    pom {
+        name.set("Stytch B2B SDK - Callback Extensions")
+        description.set("Callback-style extensions for the Stytch B2B SDK (Android and JVM)")
+    }
+}
 
 val b2bHeadless = project(":sdk:b2b-headless")
 
