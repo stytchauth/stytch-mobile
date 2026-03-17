@@ -13,7 +13,7 @@ plugins {
 }
 
 group = "com.stytch.sdk"
-version = "0.0.1"
+version = file("../../version.txt").readText().trim()
 
 subprojects {
     apply(plugin = "org.jlleitschuh.gradle.ktlint")
