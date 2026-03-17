@@ -1,0 +1,100 @@
+name: Publish
+
+on:
+  push:
+    tags:
+      - '[0-9]*.[0-9]*.[0-9]*'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry run — build and package only, skip publishing'
+        type: boolean
+        default: true
+
+jobs:
+  build-shared:
+    name: Build Shared
+    runs-on: macos-latest
+    env:
+      DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run == true }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: zulu
+          java-version: 17
+          cache: gradle
+
+      - name: Build StytchSwiftUtils
+        working-directory: source/StytchSwiftUtils
+        run: |
+          rm -rf derived archives StytchSwiftUtils.xcframework
+
+          xcodebuild -project StytchSwiftUtils.xcodeproj -scheme StytchSwiftUtils \
+            -configuration Release -destination 'generic/platform=iOS' \
+            -derivedDataPath ./derived IPHONEOS_DEPLOYMENT_TARGET=15.0 \
+            SKIP_INSTALL=NO BUILD_LIBRARIES_FOR_DISTRIBUTION=YES ONLY_ACTIVE_ARCH=NO build
+
+          xcodebuild -project StytchSwiftUtils.xcodeproj -scheme StytchSwiftUtils \
+            -configuration Release -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath ./derived IPHONEOS_DEPLOYMENT_TARGET=15.0 \
+            SKIP_INSTALL=NO BUILD_LIBRARIES_FOR_DISTRIBUTION=YES ONLY_ACTIVE_ARCH=NO build
+
+          xcodebuild -project StytchSwiftUtils.xcodeproj -scheme StytchSwiftUtils \
+            -configuration Release -archivePath "./archives/iOS" \
+            -destination 'generic/platform=iOS' -derivedDataPath ./derived \
+            IPHONEOS_DEPLOYMENT_TARGET=15.0 SKIP_INSTALL=NO \
+            BUILD_LIBRARIES_FOR_DISTRIBUTION=YES ONLY_ACTIVE_ARCH=NO archive
+
+          xcodebuild -project StytchSwiftUtils.xcodeproj -scheme StytchSwiftUtils \
+            -configuration Release -archivePath "./archives/Simulator" \
+            -destination 'generic/platform=iOS Simulator' -derivedDataPath ./derived \
+            IPHONEOS_DEPLOYMENT_TARGET=15.0 SKIP_INSTALL=NO \
+            BUILD_LIBRARIES_FOR_DISTRIBUTION=YES ONLY_ACTIVE_ARCH=NO archive
+
+          xcodebuild -create-xcframework \
+            -framework archives/iOS.xcarchive/Products/Library/Frameworks/StytchSwiftUtils.framework \
+            -framework archives/Simulator.xcarchive/Products/Library/Frameworks/StytchSwiftUtils.framework \
+            -output StytchSwiftUtils.xcframework
+
+          cp ./derived/Build/Intermediates.noindex/StytchSwiftUtils.build/Release-iphoneos/StytchSwiftUtils.build/DerivedSources/StytchSwiftUtils-Swift.h \
+            ../shared/sdk/shared/src/iosMain/interop/StytchSwiftUtils-device.h
+          cp ./derived/Build/Intermediates.noindex/StytchSwiftUtils.build/Release-iphonesimulator/StytchSwiftUtils.build/DerivedSources/StytchSwiftUtils-Swift.h \
+            ../shared/sdk/shared/src/iosMain/interop/StytchSwiftUtils-simulator.h
+
+          cp -r ./StytchSwiftUtils.xcframework ../shared/sdk/shared/src/iosMain/interop/
+
+      - name: Verify SwiftUtils headers are unchanged
+        run: |
+          git diff --exit-code \
+            source/shared/sdk/shared/src/iosMain/interop/StytchSwiftUtils-device.h \
+            source/shared/sdk/shared/src/iosMain/interop/StytchSwiftUtils-simulator.h
+
+      - name: Build and publish shared to mavenLocal
+        working-directory: source/shared
+        run: ./gradlew :sdk:shared:assembleStytchSharedSDKXCFramework :sdk:shared:publishToMavenLocal
+
+      - name: Publish shared to Maven Central
+        if: env.DRY_RUN != 'true'
+        working-directory: source/shared
+        env:
+          ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
+          ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
+          ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.SIGNING_KEY }}
+          ORG_GRADLE_PROJECT_signingInMemoryKeyId: ${{ secrets.SIGNING_KEY_ID }}
+          ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.SIGNING_KEY_PASSWORD }}
+        run: ./gradlew :sdk:shared:publishAllPublicationsToMavenCentralRepository
+
+      - name: Upload SwiftUtils interop artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: swift-utils-interop
+          path: source/shared/sdk/shared/src/iosMain/interop/
+
+      - name: Upload StytchSharedSDK xcframework
+        uses: actions/upload-artifact@v4
+        with:
+          name: shared-xcframework
+          path: source/shared/sdk/shared/build/XCFrameworks/release/StytchSharedSDK.xcframework
