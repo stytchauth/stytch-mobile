@@ -3,9 +3,10 @@ const path = require('path');
 
 const config = getDefaultConfig(__dirname);
 
-const packageRoot = path.resolve(__dirname, '../../source/react-native/consumer');
+const consumerPackageRoot = path.resolve(__dirname, '../../source/react-native/consumer');
+const b2bPackageRoot = path.resolve(__dirname, '../../source/react-native/b2b');
 
-config.watchFolders = [packageRoot];
+config.watchFolders = [consumerPackageRoot, b2bPackageRoot];
 
 // Force all React/React Native imports to resolve from the app's node_modules,
 // regardless of which package is requiring them. This prevents duplicate React

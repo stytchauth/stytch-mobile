@@ -21,16 +21,30 @@ import {
   useStytch,
   useStytchAuthenticationState,
 } from '@stytch/react-native-consumer';
+import {
+  B2BAuthenticationState,
+  B2BOAuthDiscoveryStartParameters,
+  B2BOAuthStartParameters,
+  StytchB2BProvider,
+  StytchClientConfiguration as B2BStytchClientConfiguration,
+  createStytchB2B,
+  useStytchB2B,
+  useStytchB2BAuthenticationState,
+} from '@stytch/react-native-b2b';
 
 const KEY_DEMO_TYPE = 'DEMO_APP_TYPE';
 const KEY_PUBLIC_TOKEN = 'STYTCH_PUBLIC_TOKEN';
 const KEY_GOOGLE_CLIENT_ID = 'GOOGLE_CLIENT_ID';
+const KEY_ORG_ID = 'STYTCH_ORG_ID';
 
 type Screen = 'loading' | 'selector' | 'tokenEntry' | 'consumer' | 'b2b';
 
 export default function App() {
   const [screen, setScreen] = useState<Screen>('loading');
+  const [selectedDemoType, setSelectedDemoType] = useState<string | null>(null);
   const [stytchClient, setStytchClient] = useState<ReturnType<typeof createStytchConsumer> | null>(null);
+  const [b2bClient, setB2bClient] = useState<ReturnType<typeof createStytchB2B> | null>(null);
+  const [b2bOrgId, setB2bOrgId] = useState<string | null>(null);
 
   useEffect(() => {
     initScreen();
@@ -42,6 +56,7 @@ export default function App() {
       setScreen('selector');
       return;
     }
+    setSelectedDemoType(demoType);
     const token = await SecureStore.getItemAsync(KEY_PUBLIC_TOKEN);
     if (!token) {
       setScreen('tokenEntry');
@@ -52,16 +67,20 @@ export default function App() {
       setStytchClient(buildClient(token, googleClientId));
       setScreen('consumer');
     } else {
+      const orgId = await SecureStore.getItemAsync(KEY_ORG_ID);
+      setB2bClient(buildB2BClient(token));
+      setB2bOrgId(orgId);
       setScreen('b2b');
     }
   };
 
   const handleSelectDemo = async (demoType: string) => {
     await SecureStore.setItemAsync(KEY_DEMO_TYPE, demoType);
+    setSelectedDemoType(demoType);
     setScreen('tokenEntry');
   };
 
-  const handleSubmitToken = async (publicToken: string, googleClientId: string | null) => {
+  const handleSubmitToken = async (publicToken: string, googleClientId: string | null, orgId: string | null) => {
     await SecureStore.setItemAsync(KEY_PUBLIC_TOKEN, publicToken);
     if (googleClientId) {
       await SecureStore.setItemAsync(KEY_GOOGLE_CLIENT_ID, googleClientId);
@@ -71,6 +90,11 @@ export default function App() {
       setStytchClient(buildClient(publicToken, googleClientId));
       setScreen('consumer');
     } else {
+      if (orgId) {
+        await SecureStore.setItemAsync(KEY_ORG_ID, orgId);
+      }
+      setB2bClient(buildB2BClient(publicToken));
+      setB2bOrgId(orgId);
       setScreen('b2b');
     }
   };
@@ -78,8 +102,12 @@ export default function App() {
   const handleSwitchDemos = async () => {
     await SecureStore.deleteItemAsync(KEY_PUBLIC_TOKEN);
     await SecureStore.deleteItemAsync(KEY_GOOGLE_CLIENT_ID);
+    await SecureStore.deleteItemAsync(KEY_ORG_ID);
     await SecureStore.deleteItemAsync(KEY_DEMO_TYPE);
     setStytchClient(null);
+    setB2bClient(null);
+    setB2bOrgId(null);
+    setSelectedDemoType(null);
     setScreen('selector');
   };
 
@@ -96,7 +124,7 @@ export default function App() {
   }
 
   if (screen === 'tokenEntry') {
-    return <TokenEntryScreen onSubmit={handleSubmitToken} />;
+    return <TokenEntryScreen demoType={selectedDemoType ?? 'CONSUMER'} onSubmit={handleSubmitToken} />;
   }
 
   if (screen === 'consumer' && stytchClient) {
@@ -107,8 +135,12 @@ export default function App() {
     );
   }
 
-  if (screen === 'b2b') {
-    return <B2BScreen onSwitchDemos={handleSwitchDemos} />;
+  if (screen === 'b2b' && b2bClient) {
+    return (
+      <StytchB2BProvider stytch={b2bClient}>
+        <B2BScreen orgId={b2bOrgId} onSwitchDemos={handleSwitchDemos} />
+      </StytchB2BProvider>
+    );
   }
 
   return null;
@@ -123,6 +155,10 @@ function buildClient(publicToken: string, googleClientId: string | null | undefi
       googleClientId ? { googleClientId, autoSelectEnabled: false } : undefined,
     ),
   );
+}
+
+function buildB2BClient(publicToken: string) {
+  return createStytchB2B(new B2BStytchClientConfiguration(publicToken));
 }
 
 // MARK: - Selector
@@ -144,17 +180,20 @@ function SelectorScreen({ onSelect }: { onSelect: (demoType: string) => void }) 
 // MARK: - Token Entry
 
 function TokenEntryScreen({
+  demoType,
   onSubmit,
 }: {
-  onSubmit: (publicToken: string, googleClientId: string | null) => void;
+  demoType: string;
+  onSubmit: (publicToken: string, googleClientId: string | null, orgId: string | null) => void;
 }) {
   const [publicToken, setPublicToken] = useState('');
   const [googleClientId, setGoogleClientId] = useState('');
+  const [orgId, setOrgId] = useState('');
 
   const handleSubmit = () => {
     const token = publicToken.trim();
     if (!token) return;
-    onSubmit(token, googleClientId.trim() || null);
+    onSubmit(token, googleClientId.trim() || null, orgId.trim() || null);
   };
 
   return (
@@ -169,14 +208,26 @@ function TokenEntryScreen({
           autoCapitalize="none"
           autoCorrect={false}
         />
-        <TextInput
-          style={styles.input}
-          placeholder="Google Client ID (optional)"
-          value={googleClientId}
-          onChangeText={setGoogleClientId}
-          autoCapitalize="none"
-          autoCorrect={false}
-        />
+        {demoType === 'CONSUMER' && (
+          <TextInput
+            style={styles.input}
+            placeholder="Google Client ID (optional)"
+            value={googleClientId}
+            onChangeText={setGoogleClientId}
+            autoCapitalize="none"
+            autoCorrect={false}
+          />
+        )}
+        {demoType === 'B2B' && (
+          <TextInput
+            style={styles.input}
+            placeholder="Organization ID (optional)"
+            value={orgId}
+            onChangeText={setOrgId}
+            autoCapitalize="none"
+            autoCorrect={false}
+          />
+        )}
         <Button title="Continue" onPress={handleSubmit} disabled={!publicToken.trim()} />
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -383,12 +434,73 @@ function ConsumerScreen({ onSwitchDemos }: { onSwitchDemos: () => void }) {
 
 // MARK: - B2B
 
-function B2BScreen({ onSwitchDemos }: { onSwitchDemos: () => void }) {
+function B2BScreen({ orgId, onSwitchDemos }: { orgId: string | null; onSwitchDemos: () => void }) {
+  const stytch = useStytchB2B();
+  const authState = useStytchB2BAuthenticationState();
+  const [lastResponse, setLastResponse] = useState<string | null>(null);
+
+  const statusText = () => {
+    if (authState instanceof B2BAuthenticationState.Loading) return 'Loading...';
+    if (authState instanceof B2BAuthenticationState.Authenticated) return 'Welcome Back';
+    return 'Please Login';
+  };
+
+  const handleGoogleOAuth = async () => {
+    try {
+      let response;
+      if (orgId) {
+        response = await stytch.oauth.google.start(
+          new B2BOAuthStartParameters(
+            'my-login-redirect-url',
+            'my-signup-redirect-url',
+            orgId,
+            null,
+            null,
+            null,
+            5,
+          ),
+        );
+      } else {
+        response = await stytch.oauth.google.discovery.start(
+          new B2BOAuthDiscoveryStartParameters('my-discovery-redirect-url', null, null),
+        );
+      }
+      setLastResponse(JSON.stringify(response, null, 2));
+    } catch (e) {
+      setLastResponse(String(e));
+    }
+  };
+
+  const handleSwitchDemos = async () => {
+    if (authState instanceof B2BAuthenticationState.Authenticated) {
+      try {
+        await stytch.session.revoke();
+      } catch {}
+    }
+    onSwitchDemos();
+  };
+
   return (
-    <SafeAreaView style={styles.centered}>
-      <Text style={styles.title}>B2B — coming soon!</Text>
-      <View style={styles.spacer} />
-      <Button title="SWITCH DEMOS" onPress={onSwitchDemos} color="red" />
+    <SafeAreaView style={styles.flex}>
+      <View style={styles.header}>
+        <Text style={styles.title}>Stytch B2B Demo</Text>
+        <Text style={styles.subtitle}>{statusText()}</Text>
+      </View>
+
+      <ScrollView contentContainerStyle={styles.scrollContent}>
+        <Button title="Google Login" onPress={handleGoogleOAuth} />
+        <View style={styles.spacer} />
+        <Button title="SWITCH DEMOS" onPress={handleSwitchDemos} color="red" />
+      </ScrollView>
+
+      {lastResponse && (
+        <View style={styles.responseContainer}>
+          <Text style={styles.responseLabel}>Last response:</Text>
+          <ScrollView style={styles.responseScroll}>
+            <Text style={styles.responseText}>{lastResponse}</Text>
+          </ScrollView>
+        </View>
+      )}
     </SafeAreaView>
   );
 }

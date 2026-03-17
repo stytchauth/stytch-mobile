@@ -1826,6 +1826,12 @@
   dependencies:
     "@sinonjs/commons" "^3.0.0"
 
+"@stytch/react-native-b2b@file:../../source/react-native/b2b":
+  version "0.0.1"
+  dependencies:
+    "@js-joda/core" "3.2.0"
+    react-native-get-random-values "^2.0.0"
+
 "@stytch/react-native-consumer@file:../../source/react-native/consumer":
   version "0.0.1"
   dependencies:
