@@ -20,7 +20,9 @@ subprojects {
     plugins.withId("com.vanniktech.maven.publish") {
         configure<com.vanniktech.maven.publish.MavenPublishBaseExtension> {
             publishToMavenCentral()
-            signAllPublications()
+            if (!System.getenv("ORG_GRADLE_PROJECT_signingInMemoryKey").isNullOrEmpty()) {
+                signAllPublications()
+            }
             pom {
                 url.set("https://github.com/stytchauth/stytch-mobile")
                 licenses {
