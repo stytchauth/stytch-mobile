@@ -22,6 +22,7 @@ stytchDfp = "1.1.2"
 recaptcha = "18.7.0"
 ktlint = "1.5.0"
 ktlint-gradle = "12.1.2"
+vanniktech = "0.36.0"
 mockk = "1.13.12"
 kover = "0.9.7"
 tink = "1.8.0"
@@ -66,3 +67,4 @@ buildconfig = { id = "com.github.gmazzo.buildconfig", version.ref = "buildconfig
 skie = { id = "co.touchlab.skie", version.ref = "skie" }
 ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint-gradle" }
 kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
+mavenPublish = { id = "com.vanniktech.maven.publish", version.ref = "vanniktech" }

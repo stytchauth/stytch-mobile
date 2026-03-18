@@ -1,0 +1,58 @@
+// swift-tools-version:5.5
+
+import PackageDescription
+
+let package = Package(
+    name: "Stytch",
+    platforms: [
+        .iOS("15.0")
+      ],
+    products: [
+        .library(name: "StytchConsumerSDK", targets: ["StytchConsumerTarget"]),
+        .library(name: "StytchB2BSDK", targets: ["StytchB2BTarget"]),
+    ],
+    dependencies: [
+        .package(url: "https://github.com/GoogleCloudPlatform/recaptcha-enterprise-mobile-sdk", from: "18.8.1"),
+        .package(url: "https://github.com/stytchauth/stytch-ios-dfp.git", from: "1.0.5"),
+    ],
+    targets: [
+        .binaryTarget(
+            name: "StytchConsumerFramework",
+            url: "__CONSUMER_URL__",
+            checksum: "__CONSUMER_CHECKSUM__"
+        ),
+        .binaryTarget(
+            name: "StytchB2BFramework",
+            url: "__B2B_URL__",
+            checksum: "__B2B_CHECKSUM__"
+        ),
+        .binaryTarget(
+            name: "StytchSwiftUtilsFramework",
+            url: "__SWIFTUTILS_URL__",
+            checksum: "__SWIFTUTILS_CHECKSUM__"
+        ),
+        .binaryTarget(
+            name: "StytchSharedFramework",
+            url: "__SHARED_URL__",
+            checksum: "__SHARED_CHECKSUM__"
+        ),
+        .target(
+            name: "StytchConsumerTarget",
+            dependencies: [
+                "StytchConsumerFramework",
+                "StytchSwiftUtilsFramework",
+                "StytchSharedFramework",
+                .product(name: "StytchDFP", package: "stytch-ios-dfp")
+            ]
+        ),
+        .target(
+            name: "StytchB2BTarget",
+            dependencies: [
+                "StytchB2BFramework",
+                "StytchSwiftUtilsFramework",
+                "StytchSharedFramework",
+                .product(name: "StytchDFP", package: "stytch-ios-dfp")
+            ]
+        ),
+    ]
+)

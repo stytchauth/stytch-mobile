@@ -8,11 +8,18 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.android.kotlin.multiplatform.library)
-    id("maven-publish")
+    alias(libs.plugins.mavenPublish)
 }
 
 group = rootProject.group
 version = rootProject.version
+
+mavenPublishing {
+    pom {
+        name.set("Stytch Consumer SDK - Callback Extensions")
+        description.set("Callback-style extensions for the Stytch Consumer SDK (Android and JVM)")
+    }
+}
 
 val consumerHeadless = project(":sdk:consumer-headless")
 

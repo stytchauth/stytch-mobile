@@ -11,11 +11,18 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.ktorfit)
     alias(libs.plugins.kover)
-    id("maven-publish")
+    alias(libs.plugins.mavenPublish)
 }
 
 group = rootProject.group
 version = rootProject.version
+
+mavenPublishing {
+    pom {
+        name.set("Stytch Mobile SDK - Shared")
+        description.set("Shared platform abstractions for the Stytch Mobile SDKs (Android, iOS, JVM, and React Native)")
+    }
+}
 
 kotlin {
     explicitApi()

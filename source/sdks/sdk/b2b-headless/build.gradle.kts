@@ -16,12 +16,19 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.skie)
     alias(libs.plugins.kover)
-    id("maven-publish")
+    alias(libs.plugins.mavenPublish)
     alias(libs.plugins.openapi)
 }
 
 group = rootProject.group
 version = rootProject.version
+
+mavenPublishing {
+    pom {
+        name.set("Stytch B2B SDK")
+        description.set("Stytch headless B2B authentication SDK for Android, iOS, JVM, and React Native")
+    }
+}
 
 kotlin {
     explicitApi()

@@ -1,0 +1,378 @@
+name: Publish
+
+on:
+  push:
+    tags:
+      - '[0-9]*.[0-9]*.[0-9]*'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry run — build and package only, skip publishing'
+        type: boolean
+        default: true
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  build-shared:
+    name: Build Shared
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: zulu
+          java-version: 17
+          cache: gradle
+
+      - name: Build StytchSwiftUtils
+        working-directory: source/StytchSwiftUtils
+        run: |
+          rm -rf derived archives StytchSwiftUtils.xcframework
+
+          xcodebuild -project StytchSwiftUtils.xcodeproj -scheme StytchSwiftUtils \
+            -configuration Release -destination 'generic/platform=iOS' \
+            -derivedDataPath ./derived IPHONEOS_DEPLOYMENT_TARGET=15.0 \
+            SKIP_INSTALL=NO BUILD_LIBRARIES_FOR_DISTRIBUTION=YES ONLY_ACTIVE_ARCH=NO build
+
+          xcodebuild -project StytchSwiftUtils.xcodeproj -scheme StytchSwiftUtils \
+            -configuration Release -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath ./derived IPHONEOS_DEPLOYMENT_TARGET=15.0 \
+            SKIP_INSTALL=NO BUILD_LIBRARIES_FOR_DISTRIBUTION=YES ONLY_ACTIVE_ARCH=NO build
+
+          xcodebuild -project StytchSwiftUtils.xcodeproj -scheme StytchSwiftUtils \
+            -configuration Release -archivePath "./archives/iOS" \
+            -destination 'generic/platform=iOS' -derivedDataPath ./derived \
+            IPHONEOS_DEPLOYMENT_TARGET=15.0 SKIP_INSTALL=NO \
+            BUILD_LIBRARIES_FOR_DISTRIBUTION=YES ONLY_ACTIVE_ARCH=NO archive
+
+          xcodebuild -project StytchSwiftUtils.xcodeproj -scheme StytchSwiftUtils \
+            -configuration Release -archivePath "./archives/Simulator" \
+            -destination 'generic/platform=iOS Simulator' -derivedDataPath ./derived \
+            IPHONEOS_DEPLOYMENT_TARGET=15.0 SKIP_INSTALL=NO \
+            BUILD_LIBRARIES_FOR_DISTRIBUTION=YES ONLY_ACTIVE_ARCH=NO archive
+
+          xcodebuild -create-xcframework \
+            -framework archives/iOS.xcarchive/Products/Library/Frameworks/StytchSwiftUtils.framework \
+            -framework archives/Simulator.xcarchive/Products/Library/Frameworks/StytchSwiftUtils.framework \
+            -output StytchSwiftUtils.xcframework
+
+          cp ./derived/Build/Intermediates.noindex/StytchSwiftUtils.build/Release-iphoneos/StytchSwiftUtils.build/DerivedSources/StytchSwiftUtils-Swift.h \
+            ../shared/sdk/shared/src/iosMain/interop/StytchSwiftUtils-device.h
+          cp ./derived/Build/Intermediates.noindex/StytchSwiftUtils.build/Release-iphonesimulator/StytchSwiftUtils.build/DerivedSources/StytchSwiftUtils-Swift.h \
+            ../shared/sdk/shared/src/iosMain/interop/StytchSwiftUtils-simulator.h
+
+          cp -r ./StytchSwiftUtils.xcframework ../shared/sdk/shared/src/iosMain/interop/
+
+      - name: Verify SwiftUtils headers are unchanged
+        run: |
+          git diff --exit-code \
+            source/shared/sdk/shared/src/iosMain/interop/StytchSwiftUtils-device.h \
+            source/shared/sdk/shared/src/iosMain/interop/StytchSwiftUtils-simulator.h
+
+      - name: Build StytchSharedSDK XCFramework
+        working-directory: source/shared
+        run: ./gradlew :sdk:shared:assembleStytchSharedSDKXCFramework
+
+      - name: Upload SwiftUtils interop artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: swift-utils-interop
+          path: source/shared/sdk/shared/src/iosMain/interop/
+
+      - name: Upload StytchSharedSDK xcframework
+        uses: actions/upload-artifact@v4
+        with:
+          name: shared-xcframework
+          path: source/shared/sdk/shared/build/XCFrameworks/release/StytchSharedSDK.xcframework
+
+
+  publish-kmp:
+    name: Publish Multiplatform Artifacts
+    runs-on: macos-latest
+    needs: build-shared
+    env:
+      DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run == true }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: zulu
+          java-version: 17
+          cache: gradle
+
+      - name: Download SwiftUtils interop artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: swift-utils-interop
+          path: source/shared/sdk/shared/src/iosMain/interop/
+
+      - name: Download StytchSharedSDK xcframework
+        uses: actions/download-artifact@v4
+        with:
+          name: shared-xcframework
+          path: source/shared/sdk/shared/build/XCFrameworks/release/StytchSharedSDK.xcframework
+
+      - name: Publish shared to mavenLocal
+        working-directory: source/shared
+        run: ./gradlew :sdk:shared:publishToMavenLocal
+
+      - name: Publish shared to Maven Central
+        if: env.DRY_RUN != 'true'
+        working-directory: source/shared
+        env:
+          ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
+          ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
+          ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.SIGNING_KEY }}
+          ORG_GRADLE_PROJECT_signingInMemoryKeyId: ${{ secrets.SIGNING_KEY_ID }}
+          ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.SIGNING_KEY_PASSWORD }}
+        run: ./gradlew :sdk:shared:publishAllPublicationsToMavenCentralRepository
+
+      - name: Publish SDKs to mavenLocal
+        working-directory: source/sdks
+        run: >
+          ./gradlew
+          :sdk:consumer-headless:publishToMavenLocal
+          :sdk:b2b-headless:publishToMavenLocal
+          :sdk:consumer-headless-extensions:publishToMavenLocal
+          :sdk:b2b-headless-extensions:publishToMavenLocal
+
+      - name: Publish SDKs to Maven Central
+        if: env.DRY_RUN != 'true'
+        working-directory: source/sdks
+        env:
+          ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
+          ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
+          ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.SIGNING_KEY }}
+          ORG_GRADLE_PROJECT_signingInMemoryKeyId: ${{ secrets.SIGNING_KEY_ID }}
+          ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.SIGNING_KEY_PASSWORD }}
+        run: >
+          ./gradlew
+          :sdk:consumer-headless:publishAllPublicationsToMavenCentralRepository
+          :sdk:b2b-headless:publishAllPublicationsToMavenCentralRepository
+          :sdk:consumer-headless-extensions:publishAllPublicationsToMavenCentralRepository
+          :sdk:b2b-headless-extensions:publishAllPublicationsToMavenCentralRepository
+
+
+  publish-ios:
+    name: Publish iOS
+    runs-on: macos-latest
+    needs: build-shared
+    env:
+      DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run == true }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: zulu
+          java-version: 17
+          cache: gradle
+
+      - name: Download SwiftUtils interop artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: swift-utils-interop
+          path: source/shared/sdk/shared/src/iosMain/interop/
+
+      - name: Download StytchSharedSDK xcframework
+        uses: actions/download-artifact@v4
+        with:
+          name: shared-xcframework
+          path: source/shared/sdk/shared/build/XCFrameworks/release/StytchSharedSDK.xcframework
+
+      - name: Publish shared to mavenLocal
+        working-directory: source/shared
+        run: ./gradlew :sdk:shared:publishToMavenLocal
+
+      - name: Build consumer and B2B xcframeworks
+        working-directory: source/sdks
+        run: ./gradlew assembleStytchConsumerSDKXCFramework assembleStytchB2BSDKXCFramework
+
+      - name: Zip xcframeworks
+        run: |
+          ARTIFACTS_DIR=$GITHUB_WORKSPACE/xcframework-artifacts
+          mkdir -p "$ARTIFACTS_DIR"
+
+          cd source/sdks/sdk/consumer-headless/build/XCFrameworks/release
+          zip -r "$ARTIFACTS_DIR/StytchConsumerSDK.xcframework.zip" StytchConsumerSDK.xcframework
+
+          cd $GITHUB_WORKSPACE/source/sdks/sdk/b2b-headless/build/XCFrameworks/release
+          zip -r "$ARTIFACTS_DIR/StytchB2BSDK.xcframework.zip" StytchB2BSDK.xcframework
+
+          cd $GITHUB_WORKSPACE/source/shared/sdk/shared/build/XCFrameworks/release
+          zip -r "$ARTIFACTS_DIR/StytchSharedSDK.xcframework.zip" StytchSharedSDK.xcframework
+
+          cd $GITHUB_WORKSPACE/source/shared/sdk/shared/src/iosMain/interop
+          zip -r "$ARTIFACTS_DIR/StytchSwiftUtils.xcframework.zip" StytchSwiftUtils.xcframework
+
+      - name: Compute checksums and update Package.swift
+        run: |
+          VERSION=$(cat version.txt)
+          ARTIFACTS_DIR=$GITHUB_WORKSPACE/xcframework-artifacts
+          BASE_URL="https://github.com/stytchauth/stytch-ios/releases/download/${VERSION}"
+
+          CONSUMER_URL="${BASE_URL}/StytchConsumerSDK.xcframework.zip"
+          B2B_URL="${BASE_URL}/StytchB2BSDK.xcframework.zip"
+          SHARED_URL="${BASE_URL}/StytchSharedSDK.xcframework.zip"
+          SWIFTUTILS_URL="${BASE_URL}/StytchSwiftUtils.xcframework.zip"
+
+          CONSUMER_CHECKSUM=$(shasum -a 256 "$ARTIFACTS_DIR/StytchConsumerSDK.xcframework.zip" | awk '{print $1}')
+          B2B_CHECKSUM=$(shasum -a 256 "$ARTIFACTS_DIR/StytchB2BSDK.xcframework.zip" | awk '{print $1}')
+          SHARED_CHECKSUM=$(shasum -a 256 "$ARTIFACTS_DIR/StytchSharedSDK.xcframework.zip" | awk '{print $1}')
+          SWIFTUTILS_CHECKSUM=$(shasum -a 256 "$ARTIFACTS_DIR/StytchSwiftUtils.xcframework.zip" | awk '{print $1}')
+
+          sed \
+            -e "s|__CONSUMER_URL__|${CONSUMER_URL}|g" \
+            -e "s|__CONSUMER_CHECKSUM__|${CONSUMER_CHECKSUM}|g" \
+            -e "s|__B2B_URL__|${B2B_URL}|g" \
+            -e "s|__B2B_CHECKSUM__|${B2B_CHECKSUM}|g" \
+            -e "s|__SHARED_URL__|${SHARED_URL}|g" \
+            -e "s|__SHARED_CHECKSUM__|${SHARED_CHECKSUM}|g" \
+            -e "s|__SWIFTUTILS_URL__|${SWIFTUTILS_URL}|g" \
+            -e "s|__SWIFTUTILS_CHECKSUM__|${SWIFTUTILS_CHECKSUM}|g" \
+            ios/Package.swift.template > ios/Package.swift
+
+          cat ios/Package.swift
+
+      - name: Upload xcframework zips
+        uses: actions/upload-artifact@v4
+        with:
+          name: xcframework-zips
+          path: xcframework-artifacts/
+
+      - name: Upload Package.swift and Sources
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-spm-package
+          path: |
+            ios/Package.swift
+            ios/Sources
+
+      - name: Publish to SPM repo and create GitHub release
+        if: env.DRY_RUN != 'true'
+        env:
+          GH_TOKEN: ${{ secrets.SPM_REPO_TOKEN }}
+        run: |
+          VERSION=$(cat version.txt)
+          SPM_REPO="stytchauth/stytch-ios"
+          ARTIFACTS_DIR=$GITHUB_WORKSPACE/xcframework-artifacts
+
+          git clone "https://x-access-token:${GH_TOKEN}@github.com/${SPM_REPO}.git" spm-repo
+          cd spm-repo
+
+          cp $GITHUB_WORKSPACE/ios/Package.swift Package.swift
+          cp -r $GITHUB_WORKSPACE/ios/Sources Sources
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add Package.swift Sources
+          git commit -m "Release ${VERSION}"
+          git tag "${VERSION}"
+          git push origin HEAD --tags
+
+          gh release create "${VERSION}" \
+            --repo "${SPM_REPO}" \
+            --title "${VERSION}" \
+            --notes "Release ${VERSION}" \
+            "$ARTIFACTS_DIR/StytchConsumerSDK.xcframework.zip" \
+            "$ARTIFACTS_DIR/StytchB2BSDK.xcframework.zip" \
+            "$ARTIFACTS_DIR/StytchSharedSDK.xcframework.zip" \
+            "$ARTIFACTS_DIR/StytchSwiftUtils.xcframework.zip"
+
+
+  publish-rn:
+    name: Publish React Native
+    runs-on: macos-latest
+    needs: build-shared
+    env:
+      DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run == true }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: zulu
+          java-version: 17
+          cache: gradle
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install yarn
+        run: npm install -g yarn
+
+      - name: Download SwiftUtils interop artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: swift-utils-interop
+          path: source/shared/sdk/shared/src/iosMain/interop/
+
+      - name: Publish shared to mavenLocal
+        working-directory: source/shared
+        run: ./gradlew :sdk:shared:publishToMavenLocal
+
+      - name: Build consumer JS output
+        working-directory: source/sdks
+        run: |
+          ./gradlew :sdk:consumer-headless:assemble :sdk:consumer-headless:publishToMavenLocal :sdk:consumer-headless:jsBrowserProductionLibraryDistribution
+          mkdir -p $GITHUB_WORKSPACE/source/react-native/consumer/lib
+          cp -r sdk/consumer-headless/build/dist/js/productionLibrary/consumer-headless* $GITHUB_WORKSPACE/source/react-native/consumer/lib
+
+      - name: Build B2B JS output
+        working-directory: source/sdks
+        run: |
+          ./gradlew :sdk:b2b-headless:assemble :sdk:b2b-headless:publishToMavenLocal :sdk:b2b-headless:jsBrowserProductionLibraryDistribution
+          mkdir -p $GITHUB_WORKSPACE/source/react-native/b2b/lib
+          cp -r sdk/b2b-headless/build/dist/js/productionLibrary/b2b-headless* $GITHUB_WORKSPACE/source/react-native/b2b/lib
+
+      - name: Stamp version into package.json and build.gradle files
+        run: |
+          VERSION=$(cat version.txt)
+          npm version "$VERSION" --no-git-tag-version --prefix source/react-native/consumer
+          npm version "$VERSION" --no-git-tag-version --prefix source/react-native/b2b
+          sed -i '' "s|com.stytch.sdk:shared:[^\"]*|com.stytch.sdk:shared:${VERSION}|g" source/react-native/shared/android/build.gradle
+
+      - name: Install dependencies and build consumer RN package
+        working-directory: source/react-native/consumer
+        run: yarn install --frozen-lockfile && yarn build
+
+      - name: Install dependencies and build B2B RN package
+        working-directory: source/react-native/b2b
+        run: yarn install --frozen-lockfile && yarn build
+
+      - name: Pack consumer RN package
+        working-directory: source/react-native/consumer
+        run: npm pack
+
+      - name: Upload consumer npm pack
+        uses: actions/upload-artifact@v4
+        with:
+          name: rn-consumer-pack
+          path: source/react-native/consumer/*.tgz
+
+      - name: Pack B2B RN package
+        working-directory: source/react-native/b2b
+        run: npm pack
+
+      - name: Upload B2B npm pack
+        uses: actions/upload-artifact@v4
+        with:
+          name: rn-b2b-pack
+          path: source/react-native/b2b/*.tgz
+
+      - name: Publish to npm
+        if: env.DRY_RUN != 'true'
+        run: |
+          npm publish source/react-native/consumer --access public
+          npm publish source/react-native/b2b --access public
