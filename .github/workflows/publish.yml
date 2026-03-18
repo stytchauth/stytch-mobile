@@ -72,37 +72,16 @@ jobs:
             source/shared/sdk/shared/src/iosMain/interop/StytchSwiftUtils-device.h \
             source/shared/sdk/shared/src/iosMain/interop/StytchSwiftUtils-simulator.h
 
-      - name: Build and publish shared to mavenLocal
-        working-directory: source/shared
-        run: ./gradlew :sdk:shared:assembleStytchSharedSDKXCFramework :sdk:shared:publishToMavenLocal
-
-      - name: Publish shared to Maven Central
-        if: env.DRY_RUN != 'true'
-        working-directory: source/shared
-        env:
-          ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
-          ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
-          ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.SIGNING_KEY }}
-          ORG_GRADLE_PROJECT_signingInMemoryKeyId: ${{ secrets.SIGNING_KEY_ID }}
-          ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.SIGNING_KEY_PASSWORD }}
-        run: ./gradlew :sdk:shared:publishAllPublicationsToMavenCentralRepository
-
       - name: Upload SwiftUtils interop artifacts
         uses: actions/upload-artifact@v4
         with:
           name: swift-utils-interop
           path: source/shared/sdk/shared/src/iosMain/interop/
 
-      - name: Upload StytchSharedSDK xcframework
-        uses: actions/upload-artifact@v4
-        with:
-          name: shared-xcframework
-          path: source/shared/sdk/shared/build/XCFrameworks/release/StytchSharedSDK.xcframework
 
-
-  publish-android-jvm:
-    name: Publish Android/JVM
-    runs-on: ubuntu-latest
+  publish-kmp:
+    name: Publish Multiplatform Artifacts
+    runs-on: macos-latest
     needs: build-shared
     env:
       DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run == true }}
@@ -122,9 +101,9 @@ jobs:
           name: swift-utils-interop
           path: source/shared/sdk/shared/src/iosMain/interop/
 
-      - name: Publish shared to mavenLocal
+      - name: Build shared XCFramework and publish to mavenLocal
         working-directory: source/shared
-        run: ./gradlew :sdk:shared:publishToMavenLocal
+        run: ./gradlew :sdk:shared:assembleSharedSDKXCFramework :sdk:shared:publishToMavenLocal
 
       - name: Publish SDKs to mavenLocal
         working-directory: source/sdks
@@ -150,3 +129,125 @@ jobs:
           :sdk:b2b-headless:publishAllPublicationsToMavenCentralRepository
           :sdk:consumer-headless-extensions:publishAllPublicationsToMavenCentralRepository
           :sdk:b2b-headless-extensions:publishAllPublicationsToMavenCentralRepository
+
+
+  publish-ios:
+    name: Publish iOS
+    runs-on: macos-latest
+    needs: build-shared
+    env:
+      DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run == true }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: zulu
+          java-version: 17
+          cache: gradle
+
+      - name: Download SwiftUtils interop artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: swift-utils-interop
+          path: source/shared/sdk/shared/src/iosMain/interop/
+
+      - name: Build shared XCFramework and publish to mavenLocal
+        working-directory: source/shared
+        run: ./gradlew :sdk:shared:assembleSharedSDKXCFramework :sdk:shared:publishToMavenLocal
+
+      - name: Build consumer and B2B xcframeworks
+        working-directory: source/sdks
+        run: ./gradlew assembleStytchConsumerSDKXCFramework assembleStytchB2BSDKXCFramework
+
+      - name: Zip xcframeworks
+        run: |
+          ARTIFACTS_DIR=$GITHUB_WORKSPACE/xcframework-artifacts
+          mkdir -p "$ARTIFACTS_DIR"
+
+          cd source/sdks/sdk/consumer-headless/build/XCFrameworks/release
+          zip -r "$ARTIFACTS_DIR/StytchConsumerSDK.xcframework.zip" StytchConsumerSDK.xcframework
+
+          cd $GITHUB_WORKSPACE/source/sdks/sdk/b2b-headless/build/XCFrameworks/release
+          zip -r "$ARTIFACTS_DIR/StytchB2BSDK.xcframework.zip" StytchB2BSDK.xcframework
+
+          cd $GITHUB_WORKSPACE/source/shared/sdk/shared/build/XCFrameworks/release
+          zip -r "$ARTIFACTS_DIR/StytchSharedSDK.xcframework.zip" StytchSharedSDK.xcframework
+
+          cd $GITHUB_WORKSPACE/source/shared/sdk/shared/src/iosMain/interop
+          zip -r "$ARTIFACTS_DIR/StytchSwiftUtils.xcframework.zip" StytchSwiftUtils.xcframework
+
+      - name: Compute checksums and update Package.swift
+        run: |
+          VERSION=$(cat version.txt)
+          ARTIFACTS_DIR=$GITHUB_WORKSPACE/xcframework-artifacts
+          BASE_URL="https://github.com/stytchauth/stytch-ios/releases/download/${VERSION}"
+
+          CONSUMER_URL="${BASE_URL}/StytchConsumerSDK.xcframework.zip"
+          B2B_URL="${BASE_URL}/StytchB2BSDK.xcframework.zip"
+          SHARED_URL="${BASE_URL}/StytchSharedSDK.xcframework.zip"
+          SWIFTUTILS_URL="${BASE_URL}/StytchSwiftUtils.xcframework.zip"
+
+          CONSUMER_CHECKSUM=$(shasum -a 256 "$ARTIFACTS_DIR/StytchConsumerSDK.xcframework.zip" | awk '{print $1}')
+          B2B_CHECKSUM=$(shasum -a 256 "$ARTIFACTS_DIR/StytchB2BSDK.xcframework.zip" | awk '{print $1}')
+          SHARED_CHECKSUM=$(shasum -a 256 "$ARTIFACTS_DIR/StytchSharedSDK.xcframework.zip" | awk '{print $1}')
+          SWIFTUTILS_CHECKSUM=$(shasum -a 256 "$ARTIFACTS_DIR/StytchSwiftUtils.xcframework.zip" | awk '{print $1}')
+
+          sed \
+            -e "s|__CONSUMER_URL__|${CONSUMER_URL}|g" \
+            -e "s|__CONSUMER_CHECKSUM__|${CONSUMER_CHECKSUM}|g" \
+            -e "s|__B2B_URL__|${B2B_URL}|g" \
+            -e "s|__B2B_CHECKSUM__|${B2B_CHECKSUM}|g" \
+            -e "s|__SHARED_URL__|${SHARED_URL}|g" \
+            -e "s|__SHARED_CHECKSUM__|${SHARED_CHECKSUM}|g" \
+            -e "s|__SWIFTUTILS_URL__|${SWIFTUTILS_URL}|g" \
+            -e "s|__SWIFTUTILS_CHECKSUM__|${SWIFTUTILS_CHECKSUM}|g" \
+            ios/Package.swift.template > ios/Package.swift
+
+          cat ios/Package.swift
+
+      - name: Upload xcframework zips
+        uses: actions/upload-artifact@v4
+        with:
+          name: xcframework-zips
+          path: xcframework-artifacts/
+
+      - name: Upload Package.swift and Sources
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-spm-package
+          path: |
+            ios/Package.swift
+            ios/Sources
+
+      - name: Publish to SPM repo and create GitHub release
+        if: env.DRY_RUN != 'true'
+        env:
+          GH_TOKEN: ${{ secrets.SPM_REPO_TOKEN }}
+        run: |
+          VERSION=$(cat version.txt)
+          SPM_REPO="stytchauth/stytch-ios"
+          ARTIFACTS_DIR=$GITHUB_WORKSPACE/xcframework-artifacts
+
+          git clone "https://x-access-token:${GH_TOKEN}@github.com/${SPM_REPO}.git" spm-repo
+          cd spm-repo
+
+          cp $GITHUB_WORKSPACE/ios/Package.swift Package.swift
+          cp -r $GITHUB_WORKSPACE/ios/Sources Sources
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add Package.swift Sources
+          git commit -m "Release ${VERSION}"
+          git tag "${VERSION}"
+          git push origin HEAD --tags
+
+          gh release create "${VERSION}" \
+            --repo "${SPM_REPO}" \
+            --title "${VERSION}" \
+            --notes "Release ${VERSION}" \
+            "$ARTIFACTS_DIR/StytchConsumerSDK.xcframework.zip" \
+            "$ARTIFACTS_DIR/StytchB2BSDK.xcframework.zip" \
+            "$ARTIFACTS_DIR/StytchSharedSDK.xcframework.zip" \
+            "$ARTIFACTS_DIR/StytchSwiftUtils.xcframework.zip"
