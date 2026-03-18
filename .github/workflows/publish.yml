@@ -103,7 +103,7 @@ jobs:
 
       - name: Build shared XCFramework and publish to mavenLocal
         working-directory: source/shared
-        run: ./gradlew :sdk:shared:assembleSharedSDKXCFramework :sdk:shared:publishToMavenLocal
+        run: ./gradlew :sdk:shared:assembleStytchSharedSDKXCFramework :sdk:shared:publishToMavenLocal
 
       - name: Publish SDKs to mavenLocal
         working-directory: source/sdks
@@ -155,7 +155,7 @@ jobs:
 
       - name: Build shared XCFramework and publish to mavenLocal
         working-directory: source/shared
-        run: ./gradlew :sdk:shared:assembleSharedSDKXCFramework :sdk:shared:publishToMavenLocal
+        run: ./gradlew :sdk:shared:assembleStytchSharedSDKXCFramework :sdk:shared:publishToMavenLocal
 
       - name: Build consumer and B2B xcframeworks
         working-directory: source/sdks
@@ -251,3 +251,83 @@ jobs:
             "$ARTIFACTS_DIR/StytchB2BSDK.xcframework.zip" \
             "$ARTIFACTS_DIR/StytchSharedSDK.xcframework.zip" \
             "$ARTIFACTS_DIR/StytchSwiftUtils.xcframework.zip"
+
+
+  publish-rn:
+    name: Publish React Native
+    runs-on: macos-latest
+    needs: build-shared
+    env:
+      DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run == true }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: zulu
+          java-version: 17
+          cache: gradle
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Download SwiftUtils interop artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: swift-utils-interop
+          path: source/shared/sdk/shared/src/iosMain/interop/
+
+      - name: Publish shared to mavenLocal
+        working-directory: source/shared
+        run: ./gradlew :sdk:shared:publishToMavenLocal
+
+      - name: Build consumer JS output
+        working-directory: source/sdks
+        run: |
+          ./gradlew :sdk:consumer-headless:assemble :sdk:consumer-headless:publishToMavenLocal :sdk:consumer-headless:jsBrowserProductionLibraryDistribution
+          mkdir -p $GITHUB_WORKSPACE/source/react-native/consumer/lib
+          cp -r sdk/consumer-headless/build/dist/js/productionLibrary/consumer-headless* $GITHUB_WORKSPACE/source/react-native/consumer/lib
+
+      - name: Build B2B JS output
+        working-directory: source/sdks
+        run: |
+          ./gradlew :sdk:b2b-headless:assemble :sdk:b2b-headless:publishToMavenLocal :sdk:b2b-headless:jsBrowserProductionLibraryDistribution
+          mkdir -p $GITHUB_WORKSPACE/source/react-native/b2b/lib
+          cp -r sdk/b2b-headless/build/dist/js/productionLibrary/b2b-headless* $GITHUB_WORKSPACE/source/react-native/b2b/lib
+
+      - name: Stamp version into package.json files
+        run: |
+          VERSION=$(cat version.txt)
+          npm version "$VERSION" --no-git-tag-version --prefix source/react-native/consumer
+          npm version "$VERSION" --no-git-tag-version --prefix source/react-native/b2b
+
+      - name: Install dependencies and build consumer RN package
+        working-directory: source/react-native/consumer
+        run: yarn install --frozen-lockfile && yarn build
+
+      - name: Install dependencies and build B2B RN package
+        working-directory: source/react-native/b2b
+        run: yarn install --frozen-lockfile && yarn build
+
+      - name: Upload consumer dist
+        uses: actions/upload-artifact@v4
+        with:
+          name: rn-consumer-dist
+          path: source/react-native/consumer/dist/
+
+      - name: Upload B2B dist
+        uses: actions/upload-artifact@v4
+        with:
+          name: rn-b2b-dist
+          path: source/react-native/b2b/dist/
+
+      - name: Publish to npm
+        if: env.DRY_RUN != 'true'
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          npm publish source/react-native/consumer --access public
+          npm publish source/react-native/b2b --access public
