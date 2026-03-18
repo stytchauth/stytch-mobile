@@ -11,6 +11,10 @@ on:
         type: boolean
         default: true
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   build-shared:
     name: Build Shared
@@ -300,10 +304,13 @@ jobs:
           java-version: 17
           cache: gradle
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
-          node-version: '20'
+          node-version: '24'
           registry-url: 'https://registry.npmjs.org'
+
+      - name: Install yarn
+        run: npm install -g yarn
 
       - name: Download SwiftUtils interop artifacts
         uses: actions/download-artifact@v4
@@ -366,8 +373,6 @@ jobs:
 
       - name: Publish to npm
         if: env.DRY_RUN != 'true'
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           npm publish source/react-native/consumer --access public
           npm publish source/react-native/b2b --access public
