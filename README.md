@@ -11,8 +11,6 @@
 
 Headless authentication SDKs for Android, iOS, and React Native, built on a shared [Kotlin Multiplatform](https://www.jetbrains.com/kotlin-multiplatform/) core. Bring your own UI — Stytch handles the auth.
 
-> **Docs:** TKTKTK
-
 ---
 
 ## Consumer vs. B2B: What's Right for You?
@@ -24,7 +22,7 @@ Headless authentication SDKs for Android, iOS, and React Native, built on a shar
 | **Additional features** | Session + user management, DFP | Organizations, members, RBAC, SCIM, discovery flows, recovery codes |
 | **Packages** | `consumer-headless` · `StytchConsumerSDK` · `@stytch/react-native-consumer` | `b2b-headless` · `StytchB2BSDK` · `@stytch/react-native-b2b` |
 
-If you're building a consumer-facing app, you want the **Consumer SDK**. If you're building a B2B SaaS product where your customers belong to organizations, you want the **B2B SDK**. For a deeper comparison, see the docs (TKTKTK).
+If you're building a consumer-facing app, you want the **Consumer SDK**. If you're building a B2B SaaS product where your customers belong to organizations, you want the **B2B SDK**. For a deeper comparison, see the [docs](https://stytch.com/docs).
 
 ---
 
@@ -370,16 +368,22 @@ Callback extensions are available on Android and JVM only. iOS uses native `asyn
 
 ## Support
 
-> TKTKTK
+If you have questions, found a bug or want help troubleshooting, join us in [Slack](https://stytch.com/docs/resources/support/overview) or email [support@stytch.com](mailto:support@stytch.com).
 
----
+If you've found a security vulnerability, please follow our [responsible disclosure instructions](https://stytch.com/docs/resources/security-and-trust/security#:~:text=Responsible%20disclosure%20program).
+
+## Contributing
+
+We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details on how to submit issues, pull requests, and contribute to the project.
+
+## Development
+
+See [DEVELOPMENT.md](DEVELOPMENT.md)
 
 ## Security
 
-> TKTKTK
-
----
+If you discover a security vulnerability, please report it to us at `security@stytch.com`. See our [Security Policy](SECURITY.md) for more details.
 
 ## Code of Conduct
 
-> TKTKTK
+Everyone interacting in Stytch codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](CODE_OF_CONDUCT.md).
