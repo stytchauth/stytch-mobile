@@ -1,8 +1,9 @@
 #!/bin/sh
 set -e
 
-SDK=$1
-PLATFORM=$2
+TOOL=$1
+SDK=$2
+PLATFORM=$3
 
 ROOT_DIR=`pwd`
 IOS_DIR=$ROOT_DIR/ios
@@ -11,17 +12,20 @@ SDK_WORKING_DIR=$SRC_DIR/sdks
 SHARED_WORKING_DIR=$SRC_DIR/shared
 
 usage() {
-    echo "Usage: ./build [sdk] [platform]"
-    echo "  sdk:      consumer | b2b | shared | (omit for both)"
-    echo "  platform: android | ios | rn | (omit for all)"
+    echo "Usage: ./build <tool> [sdk] [platform]"
+    echo "  tool:     lint | test | bundle"
+    echo "  sdk:      consumer | b2b | shared | (omit for both)  [bundle only]"
+    echo "  platform: android | ios | rn | (omit for all)        [bundle only]"
     echo ""
     echo "Examples:"
-    echo "  ./build                  # build everything"
-    echo "  ./build shared           # shared SDK only"
-    echo "  ./build consumer         # consumer SDK, all platforms"
-    echo "  ./build b2b              # B2B SDK, all platforms"
-    echo "  ./build consumer ios     # consumer iOS only"
-    echo "  ./build b2b android      # B2B android only"
+    echo "  ./build lint             # run ktlintCheck across all modules"
+    echo "  ./build test             # run jvmTest across all modules"
+    echo "  ./build bundle           # build everything"
+    echo "  ./build bundle shared    # shared SDK only"
+    echo "  ./build bundle consumer  # consumer SDK, all platforms"
+    echo "  ./build bundle b2b       # B2B SDK, all platforms"
+    echo "  ./build bundle consumer ios  # consumer iOS only"
+    echo "  ./build bundle b2b android   # B2B android only"
 }
 
 buildAndPublishSwiftUtils() {
@@ -126,6 +130,24 @@ buildB2BRn() {
     yarn build
 }
 
+# --- Lint / Test ---
+
+runLint() {
+    echo "Running ktlintCheck..."
+    cd $SHARED_WORKING_DIR
+    ./gradlew ktlintCheck :sdk:shared:publishToMavenLocal
+    cd $SDK_WORKING_DIR
+    ./gradlew ktlintCheck
+}
+
+runTests() {
+    echo "Running jvmTest..."
+    cd $SHARED_WORKING_DIR
+    ./gradlew jvmTest :sdk:shared:publishToMavenLocal
+    cd $SDK_WORKING_DIR
+    ./gradlew jvmTest
+}
+
 # --- Dispatch ---
 
 buildConsumer() {
@@ -156,7 +178,7 @@ buildB2B() {
     fi
 }
 
-main() {
+runBundle() {
     if [ "$SDK" = "shared" ]; then
         buildAndPublishSharedSdkFirst
         cd $ROOT_DIR
@@ -192,6 +214,24 @@ main() {
 
     cd $ROOT_DIR
     echo "Done."
+}
+
+main() {
+    if [ "$TOOL" = "lint" ]; then
+        runLint
+        cd $ROOT_DIR
+        echo "Done."
+    elif [ "$TOOL" = "test" ]; then
+        runTests
+        cd $ROOT_DIR
+        echo "Done."
+    elif [ "$TOOL" = "bundle" ]; then
+        runBundle
+    else
+        echo "Error: unknown tool '$TOOL'."
+        usage
+        exit 1
+    fi
 }
 
 main
