@@ -15,8 +15,6 @@ jobs:
   build-shared:
     name: Build Shared
     runs-on: macos-latest
-    env:
-      DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run == true }}
 
     steps:
       - uses: actions/checkout@v4
@@ -120,6 +118,17 @@ jobs:
       - name: Publish shared to mavenLocal
         working-directory: source/shared
         run: ./gradlew :sdk:shared:publishToMavenLocal
+
+      - name: Publish shared to Maven Central
+        if: env.DRY_RUN != 'true'
+        working-directory: source/shared
+        env:
+          ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
+          ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
+          ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.SIGNING_KEY }}
+          ORG_GRADLE_PROJECT_signingInMemoryKeyId: ${{ secrets.SIGNING_KEY_ID }}
+          ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.SIGNING_KEY_PASSWORD }}
+        run: ./gradlew :sdk:shared:publishAllPublicationsToMavenCentralRepository
 
       - name: Publish SDKs to mavenLocal
         working-directory: source/sdks
@@ -334,17 +343,25 @@ jobs:
         working-directory: source/react-native/b2b
         run: yarn install --frozen-lockfile && yarn build
 
-      - name: Upload consumer dist
-        uses: actions/upload-artifact@v4
-        with:
-          name: rn-consumer-dist
-          path: source/react-native/consumer/dist/
+      - name: Pack consumer RN package
+        working-directory: source/react-native/consumer
+        run: npm pack
 
-      - name: Upload B2B dist
+      - name: Upload consumer npm pack
         uses: actions/upload-artifact@v4
         with:
-          name: rn-b2b-dist
-          path: source/react-native/b2b/dist/
+          name: rn-consumer-pack
+          path: source/react-native/consumer/*.tgz
+
+      - name: Pack B2B RN package
+        working-directory: source/react-native/b2b
+        run: npm pack
+
+      - name: Upload B2B npm pack
+        uses: actions/upload-artifact@v4
+        with:
+          name: rn-b2b-pack
+          path: source/react-native/b2b/*.tgz
 
       - name: Publish to npm
         if: env.DRY_RUN != 'true'
