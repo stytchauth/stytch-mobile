@@ -135,7 +135,7 @@ buildB2BRn() {
 runLint() {
     echo "Running ktlintCheck..."
     cd $SHARED_WORKING_DIR
-    ./gradlew ktlintCheck
+    ./gradlew ktlintCheck :sdk:shared:publishToMavenLocal
     cd $SDK_WORKING_DIR
     ./gradlew ktlintCheck
 }
@@ -143,7 +143,7 @@ runLint() {
 runTests() {
     echo "Running jvmTest..."
     cd $SHARED_WORKING_DIR
-    ./gradlew jvmTest
+    ./gradlew jvmTest :sdk:shared:publishToMavenLocal
     cd $SDK_WORKING_DIR
     ./gradlew jvmTest
 }

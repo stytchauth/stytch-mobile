@@ -45,25 +45,30 @@ examples/
 
 ## Building
 
+> **Xcode required.** Building any iOS artifact (including the `StytchSwiftUtils` framework that the shared SDK depends on) requires Xcode. There is no way to build the iOS targets without it. Android-only and JVM-only workflows still require a macOS machine with Xcode installed, because the Kotlin Multiplatform toolchain compiles iOS targets even when building non-iOS artifacts.
+
 ```bash
-./build [sdk] [platform]
+./build <tool> [sdk] [platform]
 ```
 
 | Argument | Values |
 |----------|--------|
-| `sdk` | `consumer`, `b2b`, `shared`, or omit for all |
-| `platform` | `android`, `ios`, `rn`, or omit for all |
+| `tool` | `lint`, `test`, `bundle` |
+| `sdk` | `consumer`, `b2b`, `shared`, or omit for all — `bundle` only |
+| `platform` | `android`, `ios`, `rn`, or omit for all — `bundle` only |
 
 **Examples:**
 
 ```bash
-./build                   # Build everything (shared + consumer + B2B, all platforms)
-./build shared            # Build shared SDK only (no consumer/B2B artifacts)
-./build consumer          # Consumer SDK, all platforms
-./build b2b               # B2B SDK, all platforms
-./build consumer ios      # Consumer iOS xcframework only
-./build b2b android       # B2B Android artifact only
-./build consumer rn       # Consumer RN package (also updates the RN demo app)
+./build lint                      # Run ktlintCheck across all modules
+./build test                      # Run jvmTest across all modules
+./build bundle                    # Build everything (shared + consumer + B2B, all platforms)
+./build bundle shared             # Build shared SDK only (no consumer/B2B artifacts)
+./build bundle consumer           # Consumer SDK, all platforms
+./build bundle b2b                # B2B SDK, all platforms
+./build bundle consumer ios       # Consumer iOS xcframework only
+./build bundle b2b android        # B2B Android artifact only
+./build bundle consumer rn        # Consumer RN package (also updates the RN demo app)
 ```
 
 **Build order** (handled automatically by the script):
@@ -142,7 +147,13 @@ Complex types are JSON-encoded across the bridge. The native bridge code is shar
 
 ## Running Tests
 
-Tests live in `jvmTest` source sets in both Gradle projects.
+Tests live in `jvmTest` source sets in both Gradle projects. The easiest way to run them all:
+
+```bash
+./build test
+```
+
+Or run individual modules directly:
 
 ```bash
 # Consumer SDK tests
