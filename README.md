@@ -35,7 +35,7 @@ If you're building a consumer-facing app, you want the **Consumer SDK**. If you'
 | React Native | 0.80.x | `@stytch/react-native-consumer` | `@stytch/react-native-b2b` |
 | JVM / Desktop | — | `com.stytch.sdk:consumer-headless` | `com.stytch.sdk:b2b-headless` |
 
-> **JVM/Desktop** support is functional but limited — platform-specific features such as biometrics, OAuth, and passkeys are not available outside of Android. It is primarily useful for tooling and server-adjacent scenarios.
+> **JVM/Desktop** support is functional but limited — platform-specific features such as biometrics, OAuth, and passkeys are not available outside of the mobile platforms.
 
 ---
 
