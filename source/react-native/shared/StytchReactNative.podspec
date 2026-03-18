@@ -19,7 +19,7 @@ Pod::Spec.new do |s|
   s.public_header_files = "ios/**/*.h"
 
   spm_dependency(s,
-    url: File.dirname('/Users/jhaven/Documents/stytch-mobile/ios/Package.swift'), # this obviously needs to point to the git repo when we actually publish
+    url: File.dirname('/Users/jhaven/Documents/stytch-mobile/ios/Package.swift'), # TODO: update this with the repo once public
     requirement: {},
     products: ['StytchConsumerSDK'] # We're only using the shared module from this, so it doesn't matter if it's the consumer or b2b one :)
   )

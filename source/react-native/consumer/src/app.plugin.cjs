@@ -3,6 +3,7 @@
 const { withXcodeProject } = require('@expo/config-plugins');
 
 const addSPMDependenciesToMainTarget = (config) => withXcodeProject(config, config => {
+    // TODO: update this with the repo once public
     const repositoryUrl = "/Users/jhaven/Documents/stytch-mobile/ios/Package.swift"
     const repoName = "stytch-mobile"
     const productName = "StytchConsumerSDK"

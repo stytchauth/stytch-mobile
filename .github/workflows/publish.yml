@@ -238,9 +238,9 @@ jobs:
             -e "s|__SHARED_CHECKSUM__|${SHARED_CHECKSUM}|g" \
             -e "s|__SWIFTUTILS_URL__|${SWIFTUTILS_URL}|g" \
             -e "s|__SWIFTUTILS_CHECKSUM__|${SWIFTUTILS_CHECKSUM}|g" \
-            ios/Package.swift.template > ios/Package.swift
+            source/ios/Package.swift.template > source/ios/Package.swift
 
-          cat ios/Package.swift
+          cat source/ios/Package.swift
 
       - name: Upload xcframework zips
         uses: actions/upload-artifact@v4
@@ -253,8 +253,8 @@ jobs:
         with:
           name: ios-spm-package
           path: |
-            ios/Package.swift
-            ios/Sources
+            source/ios/Package.swift
+            source/ios/Sources
 
       - name: Publish to SPM repo and create GitHub release
         if: env.DRY_RUN != 'true'
@@ -268,8 +268,8 @@ jobs:
           git clone "https://x-access-token:${GH_TOKEN}@github.com/${SPM_REPO}.git" spm-repo
           cd spm-repo
 
-          cp $GITHUB_WORKSPACE/ios/Package.swift Package.swift
-          cp -r $GITHUB_WORKSPACE/ios/Sources Sources
+          cp $GITHUB_WORKSPACE/source/ios/Package.swift Package.swift
+          cp -r $GITHUB_WORKSPACE/source/ios/Sources Sources
 
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
