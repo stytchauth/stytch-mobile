@@ -72,11 +72,21 @@ jobs:
             source/shared/sdk/shared/src/iosMain/interop/StytchSwiftUtils-device.h \
             source/shared/sdk/shared/src/iosMain/interop/StytchSwiftUtils-simulator.h
 
+      - name: Build StytchSharedSDK XCFramework
+        working-directory: source/shared
+        run: ./gradlew :sdk:shared:assembleStytchSharedSDKXCFramework
+
       - name: Upload SwiftUtils interop artifacts
         uses: actions/upload-artifact@v4
         with:
           name: swift-utils-interop
           path: source/shared/sdk/shared/src/iosMain/interop/
+
+      - name: Upload StytchSharedSDK xcframework
+        uses: actions/upload-artifact@v4
+        with:
+          name: shared-xcframework
+          path: source/shared/sdk/shared/build/XCFrameworks/release/StytchSharedSDK.xcframework
 
 
   publish-kmp:
@@ -101,9 +111,15 @@ jobs:
           name: swift-utils-interop
           path: source/shared/sdk/shared/src/iosMain/interop/
 
-      - name: Build shared XCFramework and publish to mavenLocal
+      - name: Download StytchSharedSDK xcframework
+        uses: actions/download-artifact@v4
+        with:
+          name: shared-xcframework
+          path: source/shared/sdk/shared/build/XCFrameworks/release/StytchSharedSDK.xcframework
+
+      - name: Publish shared to mavenLocal
         working-directory: source/shared
-        run: ./gradlew :sdk:shared:assembleStytchSharedSDKXCFramework :sdk:shared:publishToMavenLocal
+        run: ./gradlew :sdk:shared:publishToMavenLocal
 
       - name: Publish SDKs to mavenLocal
         working-directory: source/sdks
@@ -153,9 +169,15 @@ jobs:
           name: swift-utils-interop
           path: source/shared/sdk/shared/src/iosMain/interop/
 
-      - name: Build shared XCFramework and publish to mavenLocal
+      - name: Download StytchSharedSDK xcframework
+        uses: actions/download-artifact@v4
+        with:
+          name: shared-xcframework
+          path: source/shared/sdk/shared/build/XCFrameworks/release/StytchSharedSDK.xcframework
+
+      - name: Publish shared to mavenLocal
         working-directory: source/shared
-        run: ./gradlew :sdk:shared:assembleStytchSharedSDKXCFramework :sdk:shared:publishToMavenLocal
+        run: ./gradlew :sdk:shared:publishToMavenLocal
 
       - name: Build consumer and B2B xcframeworks
         working-directory: source/sdks
