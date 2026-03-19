@@ -360,6 +360,12 @@ jobs:
           name: swift-utils-interop
           path: source/shared/sdk/shared/src/iosMain/interop/
 
+      - name: Download StytchSharedSDK xcframework
+        uses: actions/download-artifact@v8
+        with:
+          name: shared-xcframework
+          path: source/shared/sdk/shared/build/XCFrameworks/release/StytchSharedSDK.xcframework
+
       - name: Publish shared to mavenLocal
         working-directory: source/shared
         run: ./gradlew :sdk:shared:publishToMavenLocal
