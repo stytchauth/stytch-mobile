@@ -11,7 +11,7 @@ import com.stytch.sdk.consumer.networking.models.ApiOrganizationV1Organization
 
 internal interface AuthenticatedResponse {
     val member: ApiOrganizationV1Member
-    val memberSession: ApiB2bSessionV1MemberSession
+    val memberSession: ApiB2bSessionV1MemberSession?
     val organization: ApiOrganizationV1Organization
     val sessionToken: String
     val sessionJwt: String

@@ -10,7 +10,7 @@ public interface AuthenticatedResponse {
     public val member: ApiOrganizationV1Member
 
     /** The active member session. */
-    public val memberSession: ApiB2bSessionV1MemberSession
+    public val memberSession: ApiB2bSessionV1MemberSession?
 
     /** The organization the member belongs to. */
     public val organization: ApiOrganizationV1Organization

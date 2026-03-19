@@ -9778,6 +9778,9 @@ components:
         intermediate_session_token:
           type: string
           x-overridden-field: true
+        status_code:
+          type: integer
+          format: int32
         member_session:
           $ref: '#/components/schemas/api_b2b_session_v1_MemberSession'
           x-overridden-field: true
@@ -9786,9 +9789,6 @@ components:
           x-overridden-field: true
         primary_required:
           $ref: '#/components/schemas/api_b2b_session_v1_PrimaryRequired'
-        status_code:
-          type: integer
-          format: int32
       description: Response type
       x-implements:
       - com.stytch.sdk.data.StytchAPIResponse
@@ -9803,9 +9803,6 @@ components:
       - organization
       - member_authenticated
       - intermediate_session_token
-      - member_session
-      - mfa_required
-      - primary_required
       - status_code
     B2BDiscoveryOrganizationsCreateRequest:
       type: object
@@ -9815,18 +9812,6 @@ components:
         session_duration_minutes:
           type: integer
           format: int32
-        email_allowed_domains:
-          type: array
-          items:
-            type: string
-        allowed_auth_methods:
-          type: array
-          items:
-            type: string
-        allowed_mfa_methods:
-          type: array
-          items:
-            type: string
         organization_name:
           type: string
         organization_slug:
@@ -9835,14 +9820,26 @@ components:
           type: string
         sso_jit_provisioning:
           type: string
+        email_allowed_domains:
+          type: array
+          items:
+            type: string
         email_jit_provisioning:
           type: string
         email_invites:
           type: string
         auth_methods:
           type: string
+        allowed_auth_methods:
+          type: array
+          items:
+            type: string
         mfa_methods:
           type: string
+        allowed_mfa_methods:
+          type: array
+          items:
+            type: string
         mfa_policy:
           type: string
         oauth_tenant_jit_provisioning:
@@ -9854,9 +9851,6 @@ components:
       required:
       - intermediate_session_token
       - session_duration_minutes
-      - email_allowed_domains
-      - allowed_auth_methods
-      - allowed_mfa_methods
     B2BDiscoveryOrganizationsCreateResponse:
       type: object
       properties:
@@ -9878,20 +9872,20 @@ components:
         intermediate_session_token:
           type: string
           x-overridden-field: true
-        member_session:
-          $ref: '#/components/schemas/api_b2b_session_v1_MemberSession'
-          x-overridden-field: true
         organization:
           $ref: '#/components/schemas/api_organization_v1_Organization'
+          x-overridden-field: true
+        status_code:
+          type: integer
+          format: int32
+        member_session:
+          $ref: '#/components/schemas/api_b2b_session_v1_MemberSession'
           x-overridden-field: true
         mfa_required:
           $ref: '#/components/schemas/api_b2b_mfa_v1_MfaRequired'
           x-overridden-field: true
         primary_required:
           $ref: '#/components/schemas/api_b2b_session_v1_PrimaryRequired'
-        status_code:
-          type: integer
-          format: int32
       description: Response type
       x-implements:
       - com.stytch.sdk.data.StytchAPIResponse
@@ -9905,10 +9899,7 @@ components:
       - member
       - member_authenticated
       - intermediate_session_token
-      - member_session
       - organization
-      - mfa_required
-      - primary_required
       - status_code
     B2BDiscoveryOrganizationsRequest:
       type: object
@@ -10065,9 +10056,6 @@ components:
         session_jwt:
           type: string
           x-overridden-field: true
-        member_session:
-          $ref: '#/components/schemas/api_b2b_session_v1_MemberSession'
-          x-overridden-field: true
         organization:
           $ref: '#/components/schemas/api_organization_v1_Organization'
           x-overridden-field: true
@@ -10076,12 +10064,15 @@ components:
           x-overridden-field: true
         member_authenticated:
           type: boolean
-        mfa_required:
-          $ref: '#/components/schemas/api_b2b_mfa_v1_MfaRequired'
-          x-overridden-field: true
         status_code:
           type: integer
           format: int32
+        member_session:
+          $ref: '#/components/schemas/api_b2b_session_v1_MemberSession'
+          x-overridden-field: true
+        mfa_required:
+          $ref: '#/components/schemas/api_b2b_mfa_v1_MfaRequired'
+          x-overridden-field: true
       description: Response type
       x-implements:
       - com.stytch.sdk.data.StytchAPIResponse
@@ -10094,11 +10085,9 @@ components:
       - member
       - session_token
       - session_jwt
-      - member_session
       - organization
       - intermediate_session_token
       - member_authenticated
-      - mfa_required
       - status_code
     SDKDeviceInfo:
       type: object
@@ -10159,9 +10148,6 @@ components:
         session_jwt:
           type: string
           x-overridden-field: true
-        member_session:
-          $ref: '#/components/schemas/api_b2b_session_v1_MemberSession'
-          x-overridden-field: true
         organization:
           $ref: '#/components/schemas/api_organization_v1_Organization'
           x-overridden-field: true
@@ -10170,6 +10156,12 @@ components:
           x-overridden-field: true
         member_authenticated:
           type: boolean
+        status_code:
+          type: integer
+          format: int32
+        member_session:
+          $ref: '#/components/schemas/api_b2b_session_v1_MemberSession'
+          x-overridden-field: true
         mfa_required:
           $ref: '#/components/schemas/api_b2b_mfa_v1_MfaRequired'
           x-overridden-field: true
@@ -10177,9 +10169,6 @@ components:
           $ref: '#/components/schemas/api_b2b_session_v1_PrimaryRequired'
         member_device:
           $ref: '#/components/schemas/SDKDeviceInfo'
-        status_code:
-          type: integer
-          format: int32
       description: Response type
       x-implements:
       - com.stytch.sdk.data.StytchAPIResponse
@@ -10194,13 +10183,9 @@ components:
       - member
       - session_token
       - session_jwt
-      - member_session
       - organization
       - intermediate_session_token
       - member_authenticated
-      - mfa_required
-      - primary_required
-      - member_device
       - status_code
     B2BMagicLinksDiscoveryAuthenticateRequest:
       type: object
@@ -10286,10 +10271,6 @@ components:
       properties:
         email_address:
           type: string
-        roles:
-          type: array
-          items:
-            type: string
         invite_redirect_url:
           type: string
         invite_template_id:
@@ -10301,10 +10282,13 @@ components:
           additionalProperties: true
         locale:
           type: string
+        roles:
+          type: array
+          items:
+            type: string
       description: Request type
       required:
       - email_address
-      - roles
     B2BMagicLinksInviteResponse:
       type: object
       properties:
@@ -10397,17 +10381,12 @@ components:
           type: string
         provider_type:
           type: string
-        member_session:
-          $ref: '#/components/schemas/api_b2b_session_v1_MemberSession'
-          x-overridden-field: true
         session_token:
           type: string
           x-overridden-field: true
         session_jwt:
           type: string
           x-overridden-field: true
-        provider_values:
-          $ref: '#/components/schemas/api_b2b_oauth_v1_ProviderValues'
         member:
           $ref: '#/components/schemas/api_organization_v1_Member'
           x-overridden-field: true
@@ -10423,6 +10402,14 @@ components:
         intermediate_session_token:
           type: string
           x-overridden-field: true
+        status_code:
+          type: integer
+          format: int32
+        member_session:
+          $ref: '#/components/schemas/api_b2b_session_v1_MemberSession'
+          x-overridden-field: true
+        provider_values:
+          $ref: '#/components/schemas/api_b2b_oauth_v1_ProviderValues'
         mfa_required:
           $ref: '#/components/schemas/api_b2b_mfa_v1_MfaRequired'
           x-overridden-field: true
@@ -10430,9 +10417,6 @@ components:
           $ref: '#/components/schemas/api_b2b_session_v1_PrimaryRequired'
         member_device:
           $ref: '#/components/schemas/SDKDeviceInfo'
-        status_code:
-          type: integer
-          format: int32
       description: Response type
       x-implements:
       - com.stytch.sdk.data.StytchAPIResponse
@@ -10443,19 +10427,14 @@ components:
       - member_id
       - provider_subject
       - provider_type
-      - member_session
       - session_token
       - session_jwt
-      - provider_values
       - member
       - organization_id
       - organization
       - reset_sessions
       - member_authenticated
       - intermediate_session_token
-      - mfa_required
-      - primary_required
-      - member_device
       - status_code
     B2BOAuthDiscoveryAuthenticateRequest:
       type: object
@@ -10553,9 +10532,6 @@ components:
         session_jwt:
           type: string
           x-overridden-field: true
-        member_session:
-          $ref: '#/components/schemas/api_b2b_session_v1_MemberSession'
-          x-overridden-field: true
         organization:
           $ref: '#/components/schemas/api_organization_v1_Organization'
           x-overridden-field: true
@@ -10564,6 +10540,12 @@ components:
           x-overridden-field: true
         member_authenticated:
           type: boolean
+        status_code:
+          type: integer
+          format: int32
+        member_session:
+          $ref: '#/components/schemas/api_b2b_session_v1_MemberSession'
+          x-overridden-field: true
         mfa_required:
           $ref: '#/components/schemas/api_b2b_mfa_v1_MfaRequired'
           x-overridden-field: true
@@ -10571,9 +10553,6 @@ components:
           $ref: '#/components/schemas/api_b2b_session_v1_PrimaryRequired'
         member_device:
           $ref: '#/components/schemas/SDKDeviceInfo'
-        status_code:
-          type: integer
-          format: int32
       description: Response type
       x-implements:
       - com.stytch.sdk.data.StytchAPIResponse
@@ -10587,13 +10566,9 @@ components:
       - member
       - session_token
       - session_jwt
-      - member_session
       - organization
       - intermediate_session_token
       - member_authenticated
-      - mfa_required
-      - primary_required
-      - member_device
       - status_code
     B2BOTPsEmailDiscoveryAuthenticateRequest:
       type: object
@@ -10759,14 +10734,14 @@ components:
         session_jwt:
           type: string
           x-overridden-field: true
+        status_code:
+          type: integer
+          format: int32
         member_session:
           $ref: '#/components/schemas/api_b2b_session_v1_MemberSession'
           x-overridden-field: true
         member_device:
           $ref: '#/components/schemas/SDKDeviceInfo'
-        status_code:
-          type: integer
-          format: int32
       description: Response type
       x-implements:
       - com.stytch.sdk.data.StytchAPIResponse
@@ -10778,8 +10753,6 @@ components:
       - organization
       - session_token
       - session_jwt
-      - member_session
-      - member_device
       - status_code
     B2BOTPsSMSSendRequest:
       type: object
@@ -10947,9 +10920,6 @@ components:
         session_jwt:
           type: string
           x-overridden-field: true
-        member_session:
-          $ref: '#/components/schemas/api_b2b_session_v1_MemberSession'
-          x-overridden-field: true
         organization:
           $ref: '#/components/schemas/api_organization_v1_Organization'
           x-overridden-field: true
@@ -10958,6 +10928,12 @@ components:
           x-overridden-field: true
         member_authenticated:
           type: boolean
+        status_code:
+          type: integer
+          format: int32
+        member_session:
+          $ref: '#/components/schemas/api_b2b_session_v1_MemberSession'
+          x-overridden-field: true
         mfa_required:
           $ref: '#/components/schemas/api_b2b_mfa_v1_MfaRequired'
           x-overridden-field: true
@@ -10965,9 +10941,6 @@ components:
           $ref: '#/components/schemas/api_b2b_session_v1_PrimaryRequired'
         member_device:
           $ref: '#/components/schemas/SDKDeviceInfo'
-        status_code:
-          type: integer
-          format: int32
       description: Response type
       x-implements:
       - com.stytch.sdk.data.StytchAPIResponse
@@ -10980,13 +10953,9 @@ components:
       - member
       - session_token
       - session_jwt
-      - member_session
       - organization
       - intermediate_session_token
       - member_authenticated
-      - mfa_required
-      - primary_required
-      - member_device
       - status_code
     B2BPasswordDiscoveryAuthenticateRequest:
       type: object
@@ -11075,9 +11044,6 @@ components:
         session_jwt:
           type: string
           x-overridden-field: true
-        member_session:
-          $ref: '#/components/schemas/api_b2b_session_v1_MemberSession'
-          x-overridden-field: true
         organization:
           $ref: '#/components/schemas/api_organization_v1_Organization'
           x-overridden-field: true
@@ -11086,6 +11052,12 @@ components:
           x-overridden-field: true
         member_authenticated:
           type: boolean
+        status_code:
+          type: integer
+          format: int32
+        member_session:
+          $ref: '#/components/schemas/api_b2b_session_v1_MemberSession'
+          x-overridden-field: true
         mfa_required:
           $ref: '#/components/schemas/api_b2b_mfa_v1_MfaRequired'
           x-overridden-field: true
@@ -11093,9 +11065,6 @@ components:
           $ref: '#/components/schemas/api_b2b_session_v1_PrimaryRequired'
         member_device:
           $ref: '#/components/schemas/SDKDeviceInfo'
-        status_code:
-          type: integer
-          format: int32
       description: Response type
       x-implements:
       - com.stytch.sdk.data.StytchAPIResponse
@@ -11109,13 +11078,9 @@ components:
       - member
       - session_token
       - session_jwt
-      - member_session
       - organization
       - intermediate_session_token
       - member_authenticated
-      - mfa_required
-      - primary_required
-      - member_device
       - status_code
     B2BPasswordEmailResetStartRequest:
       type: object
@@ -11195,9 +11160,6 @@ components:
           type: string
         member_id:
           type: string
-        member_session:
-          $ref: '#/components/schemas/api_b2b_session_v1_MemberSession'
-          x-overridden-field: true
         member:
           $ref: '#/components/schemas/api_organization_v1_Member'
           x-overridden-field: true
@@ -11215,6 +11177,12 @@ components:
           x-overridden-field: true
         member_authenticated:
           type: boolean
+        status_code:
+          type: integer
+          format: int32
+        member_session:
+          $ref: '#/components/schemas/api_b2b_session_v1_MemberSession'
+          x-overridden-field: true
         mfa_required:
           $ref: '#/components/schemas/api_b2b_mfa_v1_MfaRequired'
           x-overridden-field: true
@@ -11222,9 +11190,6 @@ components:
           $ref: '#/components/schemas/api_b2b_session_v1_PrimaryRequired'
         member_device:
           $ref: '#/components/schemas/SDKDeviceInfo'
-        status_code:
-          type: integer
-          format: int32
       description: Response type
       x-implements:
       - com.stytch.sdk.data.StytchAPIResponse
@@ -11233,16 +11198,12 @@ components:
       required:
       - request_id
       - member_id
-      - member_session
       - member
       - session_token
       - session_jwt
       - organization
       - intermediate_session_token
       - member_authenticated
-      - mfa_required
-      - primary_required
-      - member_device
       - status_code
     B2BPasswordSessionResetRequest:
       type: object
@@ -11263,9 +11224,6 @@ components:
           type: string
         member_id:
           type: string
-        member_session:
-          $ref: '#/components/schemas/api_b2b_session_v1_MemberSession'
-          x-overridden-field: true
         member:
           $ref: '#/components/schemas/api_organization_v1_Member'
           x-overridden-field: true
@@ -11283,14 +11241,17 @@ components:
           x-overridden-field: true
         member_authenticated:
           type: boolean
+        status_code:
+          type: integer
+          format: int32
+        member_session:
+          $ref: '#/components/schemas/api_b2b_session_v1_MemberSession'
+          x-overridden-field: true
         mfa_required:
           $ref: '#/components/schemas/api_b2b_mfa_v1_MfaRequired'
           x-overridden-field: true
         member_device:
           $ref: '#/components/schemas/SDKDeviceInfo'
-        status_code:
-          type: integer
-          format: int32
       description: Response type
       x-implements:
       - com.stytch.sdk.data.StytchAPIResponse
@@ -11299,15 +11260,12 @@ components:
       required:
       - request_id
       - member_id
-      - member_session
       - member
       - organization
       - session_token
       - session_jwt
       - intermediate_session_token
       - member_authenticated
-      - mfa_required
-      - member_device
       - status_code
     B2BPasswordStrengthCheckRequest:
       type: object
@@ -11335,13 +11293,13 @@ components:
           type: string
         breach_detection_on_create:
           type: boolean
+        status_code:
+          type: integer
+          format: int32
         luds_feedback:
           $ref: '#/components/schemas/api_b2b_password_v1_LudsFeedback'
         zxcvbn_feedback:
           $ref: '#/components/schemas/api_b2b_password_v1_ZxcvbnFeedback'
-        status_code:
-          type: integer
-          format: int32
       description: Response type
       x-implements:
       - com.stytch.sdk.data.StytchAPIResponse
@@ -11352,8 +11310,6 @@ components:
       - breached_password
       - strength_policy
       - breach_detection_on_create
-      - luds_feedback
-      - zxcvbn_feedback
       - status_code
     B2BRecoveryCodesGetRequest:
       type: object
@@ -11433,14 +11389,14 @@ components:
         recovery_codes_remaining:
           type: integer
           format: int32
+        status_code:
+          type: integer
+          format: int32
         member_session:
           $ref: '#/components/schemas/api_b2b_session_v1_MemberSession'
           x-overridden-field: true
         member_device:
           $ref: '#/components/schemas/SDKDeviceInfo'
-        status_code:
-          type: integer
-          format: int32
       description: Response type
       x-implements:
       - com.stytch.sdk.data.StytchAPIResponse
@@ -11453,8 +11409,6 @@ components:
       - session_token
       - session_jwt
       - recovery_codes_remaining
-      - member_session
-      - member_device
       - status_code
     B2BRecoveryCodesRotateRequest:
       type: object
@@ -11529,17 +11483,16 @@ components:
       properties:
         request_id:
           type: string
-        connection:
-          $ref: '#/components/schemas/api_b2b_scim_v1_SCIMConnection'
         status_code:
           type: integer
           format: int32
+        connection:
+          $ref: '#/components/schemas/api_b2b_scim_v1_SCIMConnection'
       description: Response type
       x-implements:
       - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
-      - connection
       - status_code
     B2BSCIMCreateConnectionRequest:
       type: object
@@ -11556,17 +11509,16 @@ components:
       properties:
         request_id:
           type: string
-        connection:
-          $ref: '#/components/schemas/api_b2b_scim_v1_SCIMConnectionWithToken'
         status_code:
           type: integer
           format: int32
+        connection:
+          $ref: '#/components/schemas/api_b2b_scim_v1_SCIMConnectionWithToken'
       description: Response type
       x-implements:
       - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
-      - connection
       - status_code
     B2BSCIMDeleteConnectionResponse:
       type: object
@@ -11602,17 +11554,16 @@ components:
       properties:
         request_id:
           type: string
-        connection:
-          $ref: '#/components/schemas/api_b2b_scim_v1_SCIMConnection'
         status_code:
           type: integer
           format: int32
+        connection:
+          $ref: '#/components/schemas/api_b2b_scim_v1_SCIMConnection'
       description: Response type
       x-implements:
       - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
-      - connection
       - status_code
     SCIMRotateTokenCancelRequest:
       type: object
@@ -11627,17 +11578,16 @@ components:
       properties:
         request_id:
           type: string
-        connection:
-          $ref: '#/components/schemas/api_b2b_scim_v1_SCIMConnection'
         status_code:
           type: integer
           format: int32
+        connection:
+          $ref: '#/components/schemas/api_b2b_scim_v1_SCIMConnection'
       description: Response type
       x-implements:
       - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
-      - connection
       - status_code
     SCIMRotateTokenCompleteRequest:
       type: object
@@ -11652,17 +11602,16 @@ components:
       properties:
         request_id:
           type: string
-        connection:
-          $ref: '#/components/schemas/api_b2b_scim_v1_SCIMConnection'
         status_code:
           type: integer
           format: int32
+        connection:
+          $ref: '#/components/schemas/api_b2b_scim_v1_SCIMConnection'
       description: Response type
       x-implements:
       - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
-      - connection
       - status_code
     SCIMRotateTokenStartRequest:
       type: object
@@ -11677,17 +11626,16 @@ components:
       properties:
         request_id:
           type: string
-        connection:
-          $ref: '#/components/schemas/api_b2b_scim_v1_SCIMConnectionWithNextToken'
         status_code:
           type: integer
           format: int32
+        connection:
+          $ref: '#/components/schemas/api_b2b_scim_v1_SCIMConnectionWithNextToken'
       description: Response type
       x-implements:
       - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
-      - connection
       - status_code
     B2BSessionsAccessTokenExchangeRequest:
       type: object
@@ -11708,9 +11656,6 @@ components:
           type: string
         member_id:
           type: string
-        member_session:
-          $ref: '#/components/schemas/api_b2b_session_v1_MemberSession'
-          x-overridden-field: true
         session_token:
           type: string
           x-overridden-field: true
@@ -11726,6 +11671,9 @@ components:
         status_code:
           type: integer
           format: int32
+        member_session:
+          $ref: '#/components/schemas/api_b2b_session_v1_MemberSession'
+          x-overridden-field: true
       description: Response type
       x-implements:
       - com.stytch.sdk.data.StytchAPIResponse
@@ -11733,7 +11681,6 @@ components:
       required:
       - request_id
       - member_id
-      - member_session
       - session_token
       - session_jwt
       - member
@@ -11820,11 +11767,11 @@ components:
         organization:
           $ref: '#/components/schemas/api_organization_v1_Organization'
           x-overridden-field: true
-        verdict:
-          $ref: '#/components/schemas/api_b2b_session_v1_AuthorizationVerdict'
         status_code:
           type: integer
           format: int32
+        verdict:
+          $ref: '#/components/schemas/api_b2b_session_v1_AuthorizationVerdict'
       description: Response type
       x-implements:
       - com.stytch.sdk.data.StytchAPIResponse
@@ -11836,7 +11783,6 @@ components:
       - session_jwt
       - member
       - organization
-      - verdict
       - status_code
     B2BSessionsExchangeRequest:
       type: object
@@ -11859,9 +11805,6 @@ components:
           type: string
         member_id:
           type: string
-        member_session:
-          $ref: '#/components/schemas/api_b2b_session_v1_MemberSession'
-          x-overridden-field: true
         session_token:
           type: string
           x-overridden-field: true
@@ -11879,14 +11822,17 @@ components:
         intermediate_session_token:
           type: string
           x-overridden-field: true
+        status_code:
+          type: integer
+          format: int32
+        member_session:
+          $ref: '#/components/schemas/api_b2b_session_v1_MemberSession'
+          x-overridden-field: true
         mfa_required:
           $ref: '#/components/schemas/api_b2b_mfa_v1_MfaRequired'
           x-overridden-field: true
         primary_required:
           $ref: '#/components/schemas/api_b2b_session_v1_PrimaryRequired'
-        status_code:
-          type: integer
-          format: int32
       description: Response type
       x-implements:
       - com.stytch.sdk.data.StytchAPIResponse
@@ -11895,15 +11841,12 @@ components:
       required:
       - request_id
       - member_id
-      - member_session
       - session_token
       - session_jwt
       - member
       - organization
       - member_authenticated
       - intermediate_session_token
-      - mfa_required
-      - primary_required
       - status_code
     B2BSessionsRevokeByMemberIDRequest:
       type: object
@@ -11988,14 +11931,14 @@ components:
         session_jwt:
           type: string
           x-overridden-field: true
+        status_code:
+          type: integer
+          format: int32
         member_session:
           $ref: '#/components/schemas/api_b2b_session_v1_MemberSession'
           x-overridden-field: true
         member_device:
           $ref: '#/components/schemas/SDKDeviceInfo'
-        status_code:
-          type: integer
-          format: int32
       description: Response type
       x-implements:
       - com.stytch.sdk.data.StytchAPIResponse
@@ -12007,8 +11950,6 @@ components:
       - organization
       - session_token
       - session_jwt
-      - member_session
-      - member_device
       - status_code
     B2BTOTPsCreateRequest:
       type: object
@@ -12107,11 +12048,11 @@ components:
         user:
           $ref: '#/components/schemas/api_user_v1_User'
           x-overridden-field: true
-        user_device:
-          $ref: '#/components/schemas/SDKDeviceInfo'
         status_code:
           type: integer
           format: int32
+        user_device:
+          $ref: '#/components/schemas/SDKDeviceInfo'
       description: Response type
       x-implements:
       - com.stytch.sdk.data.StytchAPIResponse
@@ -12124,7 +12065,6 @@ components:
       - session
       - session_jwt
       - user
-      - user_device
       - status_code
     BiometricsAuthenticateStartRequest:
       type: object
@@ -12304,13 +12244,13 @@ components:
         user:
           $ref: '#/components/schemas/api_user_v1_User'
           x-overridden-field: true
+        status_code:
+          type: integer
+          format: int32
         siwe_params:
           $ref: '#/components/schemas/api_crypto_wallet_v1_SIWEParamsResponse'
         user_device:
           $ref: '#/components/schemas/SDKDeviceInfo'
-        status_code:
-          type: integer
-          format: int32
       description: Response type
       x-implements:
       - com.stytch.sdk.data.StytchAPIResponse
@@ -12322,8 +12262,6 @@ components:
       - session
       - session_jwt
       - user
-      - siwe_params
-      - user_device
       - status_code
     CryptoWalletsAuthenticateStartPrimaryResponse:
       type: object
@@ -12742,8 +12680,6 @@ components:
         session:
           $ref: '#/components/schemas/api_session_v1_Session'
           x-overridden-field: true
-        user_session:
-          $ref: '#/components/schemas/api_session_v1_Session'
         session_token:
           type: string
           x-overridden-field: true
@@ -12762,6 +12698,8 @@ components:
         status_code:
           type: integer
           format: int32
+        user_session:
+          $ref: '#/components/schemas/api_session_v1_Session'
       description: Response type
       x-implements:
       - com.stytch.sdk.data.StytchAPIResponse
@@ -12772,7 +12710,6 @@ components:
       - provider_subject
       - provider_type
       - session
-      - user_session
       - session_token
       - session_jwt
       - provider_values
@@ -12848,17 +12785,16 @@ components:
       properties:
         request_id:
           type: string
-        member:
-          $ref: '#/components/schemas/api_organization_v1_Member'
         status_code:
           type: integer
           format: int32
+        member:
+          $ref: '#/components/schemas/api_organization_v1_Member'
       description: Response type
       x-implements:
       - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
-      - member
       - status_code
     B2BOrganizationsDeleteResponse:
       type: object
@@ -12886,17 +12822,16 @@ components:
       properties:
         request_id:
           type: string
-        organization:
-          $ref: '#/components/schemas/api_organization_v1_Organization'
         status_code:
           type: integer
           format: int32
+        organization:
+          $ref: '#/components/schemas/api_organization_v1_Organization'
       description: Response type
       x-implements:
       - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
-      - organization
       - status_code
     B2BOrganizationsUpdateRequest:
       type: object
@@ -12966,17 +12901,16 @@ components:
       properties:
         request_id:
           type: string
-        organization:
-          $ref: '#/components/schemas/api_organization_v1_Organization'
         status_code:
           type: integer
           format: int32
+        organization:
+          $ref: '#/components/schemas/api_organization_v1_Organization'
       description: Response type
       x-implements:
       - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
-      - organization
       - status_code
     OrganizationsAdminMemberDeleteMFAPhoneNumberResponse:
       type: object
@@ -13475,8 +13409,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/api_organization_v1_Member'
-        results_metadata:
-          $ref: '#/components/schemas/api_organization_v1_ResultsMetadata'
         organizations:
           type: object
           additionalProperties:
@@ -13484,13 +13416,14 @@ components:
         status_code:
           type: integer
           format: int32
+        results_metadata:
+          $ref: '#/components/schemas/api_organization_v1_ResultsMetadata'
       description: Response type
       x-implements:
       - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - members
-      - results_metadata
       - organizations
       - status_code
     OrganizationsMemberStartEmailUpdateRequest:
@@ -13643,11 +13576,11 @@ components:
           x-overridden-field: true
         reset_sessions:
           type: boolean
-        user_device:
-          $ref: '#/components/schemas/SDKDeviceInfo'
         status_code:
           type: integer
           format: int32
+        user_device:
+          $ref: '#/components/schemas/SDKDeviceInfo'
       description: Response type
       x-implements:
       - com.stytch.sdk.data.StytchAPIResponse
@@ -13661,7 +13594,6 @@ components:
       - session_jwt
       - user
       - reset_sessions
-      - user_device
       - status_code
     OTPsEmailLoginOrCreateRequest:
       type: object
@@ -13915,11 +13847,11 @@ components:
         user:
           $ref: '#/components/schemas/api_user_v1_User'
           x-overridden-field: true
-        user_device:
-          $ref: '#/components/schemas/SDKDeviceInfo'
         status_code:
           type: integer
           format: int32
+        user_device:
+          $ref: '#/components/schemas/SDKDeviceInfo'
       description: Response type
       x-implements:
       - com.stytch.sdk.data.StytchAPIResponse
@@ -13931,7 +13863,6 @@ components:
       - session
       - session_jwt
       - user
-      - user_device
       - status_code
     PasswordsCreateRequest:
       type: object
@@ -13973,11 +13904,11 @@ components:
         user:
           $ref: '#/components/schemas/api_user_v1_User'
           x-overridden-field: true
-        user_device:
-          $ref: '#/components/schemas/SDKDeviceInfo'
         status_code:
           type: integer
           format: int32
+        user_device:
+          $ref: '#/components/schemas/SDKDeviceInfo'
       description: Response type
       x-implements:
       - com.stytch.sdk.data.StytchAPIResponse
@@ -13990,7 +13921,6 @@ components:
       - session
       - session_jwt
       - user
-      - user_device
       - status_code
     PasswordsEmailResetRequest:
       type: object
@@ -14032,11 +13962,11 @@ components:
         user:
           $ref: '#/components/schemas/api_user_v1_User'
           x-overridden-field: true
-        user_device:
-          $ref: '#/components/schemas/SDKDeviceInfo'
         status_code:
           type: integer
           format: int32
+        user_device:
+          $ref: '#/components/schemas/SDKDeviceInfo'
       description: Response type
       x-implements:
       - com.stytch.sdk.data.StytchAPIResponse
@@ -14048,7 +13978,6 @@ components:
       - session
       - session_jwt
       - user
-      - user_device
       - status_code
     PasswordsEmailResetStartRequest:
       type: object
@@ -14127,11 +14056,11 @@ components:
         user:
           $ref: '#/components/schemas/api_user_v1_User'
           x-overridden-field: true
-        user_device:
-          $ref: '#/components/schemas/SDKDeviceInfo'
         status_code:
           type: integer
           format: int32
+        user_device:
+          $ref: '#/components/schemas/SDKDeviceInfo'
       description: Response type
       x-implements:
       - com.stytch.sdk.data.StytchAPIResponse
@@ -14143,7 +14072,6 @@ components:
       - session
       - session_jwt
       - user
-      - user_device
       - status_code
     PasswordsSessionResetRequest:
       type: object
@@ -14179,11 +14107,11 @@ components:
         session_jwt:
           type: string
           x-overridden-field: true
-        user_device:
-          $ref: '#/components/schemas/SDKDeviceInfo'
         status_code:
           type: integer
           format: int32
+        user_device:
+          $ref: '#/components/schemas/SDKDeviceInfo'
       description: Response type
       x-implements:
       - com.stytch.sdk.data.StytchAPIResponse
@@ -14195,7 +14123,6 @@ components:
       - user
       - session_token
       - session_jwt
-      - user_device
       - status_code
     PasswordsStrengthCheckRequest:
       type: object
@@ -14219,8 +14146,6 @@ components:
           format: int32
         breached_password:
           type: boolean
-        feedback:
-          $ref: '#/components/schemas/api_password_v1_Feedback'
         strength_policy:
           type: string
         breach_detection_on_create:
@@ -14228,6 +14153,8 @@ components:
         status_code:
           type: integer
           format: int32
+        feedback:
+          $ref: '#/components/schemas/api_password_v1_Feedback'
       description: Response type
       x-implements:
       - com.stytch.sdk.data.StytchAPIResponse
@@ -14236,7 +14163,6 @@ components:
       - valid_password
       - score
       - breached_password
-      - feedback
       - strength_policy
       - breach_detection_on_create
       - status_code
@@ -14614,15 +14540,14 @@ components:
     B2BCreateExternalConnectionRequest:
       type: object
       properties:
-        display_name:
-          type: string
         external_connection_id:
           type: string
         external_organization_id:
           type: string
+        display_name:
+          type: string
       description: Request type
       required:
-      - display_name
       - external_connection_id
       - external_organization_id
     B2BCreateExternalConnectionResponse:
@@ -14630,17 +14555,16 @@ components:
       properties:
         request_id:
           type: string
-        connection:
-          $ref: '#/components/schemas/api_sso_v1_ExternalConnection'
         status_code:
           type: integer
           format: int32
+        connection:
+          $ref: '#/components/schemas/api_sso_v1_ExternalConnection'
       description: Response type
       x-implements:
       - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
-      - connection
       - status_code
     B2BCreateOIDCConnectionRequest:
       type: object
@@ -14650,24 +14574,21 @@ components:
         identity_provider:
           type: string
       description: Request type
-      required:
-      - display_name
     B2BCreateOIDCConnectionResponse:
       type: object
       properties:
         request_id:
           type: string
-        connection:
-          $ref: '#/components/schemas/api_sso_v1_OIDCConnection'
         status_code:
           type: integer
           format: int32
+        connection:
+          $ref: '#/components/schemas/api_sso_v1_OIDCConnection'
       description: Response type
       x-implements:
       - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
-      - connection
       - status_code
     B2BCreateSAMLConnectionRequest:
       type: object
@@ -14677,24 +14598,21 @@ components:
         identity_provider:
           type: string
       description: Request type
-      required:
-      - display_name
     B2BCreateSAMLConnectionResponse:
       type: object
       properties:
         request_id:
           type: string
-        connection:
-          $ref: '#/components/schemas/api_sso_v1_SAMLConnection'
         status_code:
           type: integer
           format: int32
+        connection:
+          $ref: '#/components/schemas/api_sso_v1_SAMLConnection'
       description: Response type
       x-implements:
       - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
-      - connection
       - status_code
     B2BDeleteSAMLEncryptionPrivateKeyResponse:
       type: object
@@ -14820,9 +14738,6 @@ components:
         session_jwt:
           type: string
           x-overridden-field: true
-        member_session:
-          $ref: '#/components/schemas/api_b2b_session_v1_MemberSession'
-          x-overridden-field: true
         reset_session:
           type: boolean
         organization:
@@ -14833,6 +14748,12 @@ components:
           x-overridden-field: true
         member_authenticated:
           type: boolean
+        status_code:
+          type: integer
+          format: int32
+        member_session:
+          $ref: '#/components/schemas/api_b2b_session_v1_MemberSession'
+          x-overridden-field: true
         mfa_required:
           $ref: '#/components/schemas/api_b2b_mfa_v1_MfaRequired'
           x-overridden-field: true
@@ -14840,9 +14761,6 @@ components:
           $ref: '#/components/schemas/api_b2b_session_v1_PrimaryRequired'
         member_device:
           $ref: '#/components/schemas/SDKDeviceInfo'
-        status_code:
-          type: integer
-          format: int32
       description: Response type
       x-implements:
       - com.stytch.sdk.data.StytchAPIResponse
@@ -14855,14 +14773,10 @@ components:
       - member
       - session_token
       - session_jwt
-      - member_session
       - reset_session
       - organization
       - intermediate_session_token
       - member_authenticated
-      - mfa_required
-      - primary_required
-      - member_device
       - status_code
     B2BUpdateExternalConnectionRequest:
       type: object
@@ -14885,17 +14799,16 @@ components:
       properties:
         request_id:
           type: string
-        connection:
-          $ref: '#/components/schemas/api_sso_v1_ExternalConnection'
         status_code:
           type: integer
           format: int32
+        connection:
+          $ref: '#/components/schemas/api_sso_v1_ExternalConnection'
       description: Response type
       x-implements:
       - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
-      - connection
       - status_code
     B2BUpdateOIDCConnectionRequest:
       type: object
@@ -14912,37 +14825,28 @@ components:
           type: string
         token_url:
           type: string
-        jwks_url:
-          type: string
-        custom_scopes:
-          type: string
         userinfo_url:
           type: string
+        jwks_url:
+          type: string
         identity_provider:
+          type: string
+        custom_scopes:
           type: string
         attribute_mapping:
           type: object
           additionalProperties: true
       description: Request type
-      required:
-      - display_name
-      - client_id
-      - client_secret
-      - issuer
-      - authorization_url
-      - token_url
-      - jwks_url
-      - custom_scopes
     B2BUpdateOIDCConnectionResponse:
       type: object
       properties:
         request_id:
           type: string
-        connection:
-          $ref: '#/components/schemas/api_sso_v1_OIDCConnection'
         status_code:
           type: integer
           format: int32
+        connection:
+          $ref: '#/components/schemas/api_sso_v1_OIDCConnection'
         warning:
           type: string
       description: Response type
@@ -14950,7 +14854,6 @@ components:
       - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
-      - connection
       - status_code
     B2BUpdateSAMLConnectionByURLRequest:
       type: object
@@ -14965,17 +14868,16 @@ components:
       properties:
         request_id:
           type: string
-        connection:
-          $ref: '#/components/schemas/api_sso_v1_SAMLConnection'
         status_code:
           type: integer
           format: int32
+        connection:
+          $ref: '#/components/schemas/api_sso_v1_SAMLConnection'
       description: Response type
       x-implements:
       - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
-      - connection
       - status_code
     B2BUpdateSAMLConnectionRequest:
       type: object
@@ -14984,13 +14886,13 @@ components:
           type: string
         display_name:
           type: string
+        attribute_mapping:
+          type: object
+          additionalProperties: true
         x509_certificate:
           type: string
         idp_sso_url:
           type: string
-        attribute_mapping:
-          type: object
-          additionalProperties: true
         saml_connection_implicit_role_assignments:
           type: array
           items:
@@ -15008,27 +14910,21 @@ components:
         allow_gateway_callback:
           type: boolean
       description: Request type
-      required:
-      - idp_entity_id
-      - display_name
-      - x509_certificate
-      - idp_sso_url
     B2BUpdateSAMLConnectionResponse:
       type: object
       properties:
         request_id:
           type: string
-        connection:
-          $ref: '#/components/schemas/api_sso_v1_SAMLConnection'
         status_code:
           type: integer
           format: int32
+        connection:
+          $ref: '#/components/schemas/api_sso_v1_SAMLConnection'
       description: Response type
       x-implements:
       - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
-      - connection
       - status_code
     api_totp_v1_TOTP:
       type: object
@@ -15082,11 +14978,11 @@ components:
         user:
           $ref: '#/components/schemas/api_user_v1_User'
           x-overridden-field: true
-        user_device:
-          $ref: '#/components/schemas/SDKDeviceInfo'
         status_code:
           type: integer
           format: int32
+        user_device:
+          $ref: '#/components/schemas/SDKDeviceInfo'
       description: Response type
       x-implements:
       - com.stytch.sdk.data.StytchAPIResponse
@@ -15099,7 +14995,6 @@ components:
       - session_jwt
       - session
       - user
-      - user_device
       - status_code
     TOTPsCreateRequest:
       type: object
@@ -15205,11 +15100,11 @@ components:
         user:
           $ref: '#/components/schemas/api_user_v1_User'
           x-overridden-field: true
-        user_device:
-          $ref: '#/components/schemas/SDKDeviceInfo'
         status_code:
           type: integer
           format: int32
+        user_device:
+          $ref: '#/components/schemas/SDKDeviceInfo'
       description: Response type
       x-implements:
       - com.stytch.sdk.data.StytchAPIResponse
@@ -15222,7 +15117,6 @@ components:
       - session_jwt
       - session
       - user
-      - user_device
       - status_code
     DeleteBiometricRegistrationResponse:
       type: object
@@ -15398,8 +15292,6 @@ components:
           type: string
         user_id:
           type: string
-        name:
-          $ref: '#/components/schemas/api_user_v1_Name'
         emails:
           type: array
           items:
@@ -15426,8 +15318,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/api_user_v1_CryptoWallet'
-        password:
-          $ref: '#/components/schemas/api_user_v1_Password'
         biometric_registrations:
           type: array
           items:
@@ -15435,9 +15325,13 @@ components:
         status_code:
           type: integer
           format: int32
+        name:
+          $ref: '#/components/schemas/api_user_v1_Name'
         created_at:
           type: string
           format: date-time
+        password:
+          $ref: '#/components/schemas/api_user_v1_Password'
         trusted_metadata:
           type: object
           additionalProperties: true
@@ -15450,7 +15344,6 @@ components:
       required:
       - request_id
       - user_id
-      - name
       - emails
       - status
       - phone_numbers
@@ -15458,7 +15351,6 @@ components:
       - providers
       - totps
       - crypto_wallets
-      - password
       - biometric_registrations
       - status_code
     RevokeConnectedAppRequest:
@@ -15574,11 +15466,11 @@ components:
         user:
           $ref: '#/components/schemas/api_user_v1_User'
           x-overridden-field: true
-        user_device:
-          $ref: '#/components/schemas/SDKDeviceInfo'
         status_code:
           type: integer
           format: int32
+        user_device:
+          $ref: '#/components/schemas/SDKDeviceInfo'
       description: Response type
       x-implements:
       - com.stytch.sdk.data.StytchAPIResponse
@@ -15591,7 +15483,6 @@ components:
       - session
       - session_jwt
       - user
-      - user_device
       - status_code
     WebAuthnAuthenticateStartSecondaryRequest:
       type: object
@@ -15724,17 +15615,16 @@ components:
       properties:
         request_id:
           type: string
-        webauthn_registration:
-          $ref: '#/components/schemas/api_user_v1_WebAuthnRegistration'
         status_code:
           type: integer
           format: int32
+        webauthn_registration:
+          $ref: '#/components/schemas/api_user_v1_WebAuthnRegistration'
       description: Response type
       x-implements:
       - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
-      - webauthn_registration
       - status_code
     ActiveSSOConnection:
       type: object
@@ -15877,22 +15767,19 @@ components:
     B2BAdminPortalConfigResponse:
       type: object
       properties:
+        status_code:
+          type: integer
+          format: int32
         sso_config:
           $ref: '#/components/schemas/B2BSSOConfig'
         scim_config:
           $ref: '#/components/schemas/B2BSCIMConfig'
         organization_config:
           $ref: '#/components/schemas/B2BOrganizationConfig'
-        status_code:
-          type: integer
-          format: int32
       description: Response type
       x-implements:
       - com.stytch.sdk.data.StytchAPIResponse
       required:
-      - sso_config
-      - scim_config
-      - organization_config
       - status_code
     B2BOAuthAuthorizeRequest:
       type: object
@@ -15968,8 +15855,6 @@ components:
           type: string
         consent_required:
           type: boolean
-        oidc_client:
-          $ref: '#/components/schemas/api_connectedapps_v1_ConnectedAppPublic'
         grantable_scope:
           type: string
         ungrantable_scope:
@@ -15977,13 +15862,14 @@ components:
         status_code:
           type: integer
           format: int32
+        oidc_client:
+          $ref: '#/components/schemas/api_connectedapps_v1_ConnectedAppPublic'
       description: Response type
       x-implements:
       - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - consent_required
-      - oidc_client
       - grantable_scope
       - ungrantable_scope
       - status_code
@@ -16109,8 +15995,6 @@ components:
           type: array
           items:
             type: string
-        captcha_settings:
-          $ref: '#/components/schemas/BootstrapDataCaptcha'
         pkce_required_for_email_magic_links:
           type: boolean
         pkce_required_for_password_resets:
@@ -16121,12 +16005,8 @@ components:
           type: boolean
         create_organization_enabled:
           type: boolean
-        password_config:
-          $ref: '#/components/schemas/BootstrapPasswordConfig'
         dfp_protected_auth_enabled:
           type: boolean
-        rbac_policy:
-          $ref: '#/components/schemas/api_b2b_rbac_v1_Policy'
         siwe_required_for_crypto_wallets:
           type: boolean
         opaque_errors:
@@ -16138,10 +16018,16 @@ components:
           format: int32
         cname_domain:
           type: string
+        captcha_settings:
+          $ref: '#/components/schemas/BootstrapDataCaptcha'
         slug_pattern:
           type: string
+        password_config:
+          $ref: '#/components/schemas/BootstrapPasswordConfig'
         dfp_protected_auth_mode:
           type: string
+        rbac_policy:
+          $ref: '#/components/schemas/api_b2b_rbac_v1_Policy'
         vertical:
           $ref: '#/components/schemas/api_attribute_v1_Vertical'
       description: Response type
@@ -16151,15 +16037,12 @@ components:
       - request_id
       - disable_sdk_watermark
       - email_domains
-      - captcha_settings
       - pkce_required_for_email_magic_links
       - pkce_required_for_password_resets
       - pkce_required_for_oauth
       - pkce_required_for_sso
       - create_organization_enabled
-      - password_config
       - dfp_protected_auth_enabled
-      - rbac_policy
       - siwe_required_for_crypto_wallets
       - opaque_errors
       - project_name
@@ -16180,17 +16063,16 @@ components:
       properties:
         request_id:
           type: string
-        member:
-          $ref: '#/components/schemas/Member'
         status_code:
           type: integer
           format: int32
+        member:
+          $ref: '#/components/schemas/Member'
       description: Response type
       x-implements:
       - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
-      - member
       - status_code
     OAuthAuthorizeRequest:
       type: object
@@ -16266,8 +16148,6 @@ components:
           type: string
         consent_required:
           type: boolean
-        oidc_client:
-          $ref: '#/components/schemas/api_connectedapps_v1_ConnectedAppPublic'
         grantable_scope:
           type: string
         ungrantable_scope:
@@ -16275,13 +16155,14 @@ components:
         status_code:
           type: integer
           format: int32
+        oidc_client:
+          $ref: '#/components/schemas/api_connectedapps_v1_ConnectedAppPublic'
       description: Response type
       x-implements:
       - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
       - consent_required
-      - oidc_client
       - grantable_scope
       - ungrantable_scope
       - status_code
@@ -16331,17 +16212,16 @@ components:
       properties:
         request_id:
           type: string
-        organization:
-          $ref: '#/components/schemas/Organization'
         status_code:
           type: integer
           format: int32
+        organization:
+          $ref: '#/components/schemas/Organization'
       description: Response type
       x-implements:
       - com.stytch.sdk.data.StytchAPIResponse
       required:
       - request_id
-      - organization
       - status_code
     UserSearchByEmailRequest:
       type: object
