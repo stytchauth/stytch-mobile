@@ -138,6 +138,9 @@ runLint() {
     ./gradlew ktlintCheck :sdk:shared:publishToMavenLocal
     cd $SDK_WORKING_DIR
     ./gradlew ktlintCheck
+
+    echo "Running checkLegacyAbi..."
+    ./gradlew checkLegacyAbi
 }
 
 runTests() {
