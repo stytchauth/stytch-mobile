@@ -146,6 +146,15 @@ jobs:
         working-directory: source/shared
         run: ./gradlew :sdk:shared:publishToMavenLocal
 
+      - name: Publish SDKs to mavenLocal
+        working-directory: source/sdks
+        run: >
+          ./gradlew
+          :sdk:consumer-headless:publishToMavenLocal
+          :sdk:b2b-headless:publishToMavenLocal
+          :sdk:consumer-headless-extensions:publishToMavenLocal
+          :sdk:b2b-headless-extensions:publishToMavenLocal
+
       - name: Publish shared to Maven Central
         if: env.DRY_RUN != 'true'
         working-directory: source/shared
@@ -156,15 +165,6 @@ jobs:
           ORG_GRADLE_PROJECT_signingInMemoryKeyId: ${{ secrets.SIGNING_KEY_ID }}
           ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.SIGNING_KEY_PASSWORD }}
         run: ./gradlew :sdk:shared:publishAllPublicationsToMavenCentralRepository
-
-      - name: Publish SDKs to mavenLocal
-        working-directory: source/sdks
-        run: >
-          ./gradlew
-          :sdk:consumer-headless:publishToMavenLocal
-          :sdk:b2b-headless:publishToMavenLocal
-          :sdk:consumer-headless-extensions:publishToMavenLocal
-          :sdk:b2b-headless-extensions:publishToMavenLocal
 
       - name: Publish SDKs to Maven Central
         if: env.DRY_RUN != 'true'
