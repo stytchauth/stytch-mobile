@@ -21,9 +21,9 @@ jobs:
     runs-on: macos-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@v5
         with:
           distribution: zulu
           java-version: 17
@@ -79,13 +79,13 @@ jobs:
         run: ./gradlew :sdk:shared:assembleStytchSharedSDKXCFramework
 
       - name: Upload SwiftUtils interop artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: swift-utils-interop
           path: source/shared/sdk/shared/src/iosMain/interop/
 
       - name: Upload StytchSharedSDK xcframework
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: shared-xcframework
           path: source/shared/sdk/shared/build/XCFrameworks/release/StytchSharedSDK.xcframework
@@ -99,22 +99,22 @@ jobs:
       DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run == true }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@v5
         with:
           distribution: zulu
           java-version: 17
           cache: gradle
 
       - name: Download SwiftUtils interop artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: swift-utils-interop
           path: source/shared/sdk/shared/src/iosMain/interop/
 
       - name: Download StytchSharedSDK xcframework
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: shared-xcframework
           path: source/shared/sdk/shared/build/XCFrameworks/release/StytchSharedSDK.xcframework
@@ -168,22 +168,22 @@ jobs:
       DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run == true }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@v5
         with:
           distribution: zulu
           java-version: 17
           cache: gradle
 
       - name: Download SwiftUtils interop artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: swift-utils-interop
           path: source/shared/sdk/shared/src/iosMain/interop/
 
       - name: Download StytchSharedSDK xcframework
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: shared-xcframework
           path: source/shared/sdk/shared/build/XCFrameworks/release/StytchSharedSDK.xcframework
@@ -243,13 +243,13 @@ jobs:
           cat ios/Package.swift
 
       - name: Upload xcframework zips
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: xcframework-zips
           path: xcframework-artifacts/
 
       - name: Upload Package.swift and Sources
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ios-spm-package
           path: |
@@ -296,9 +296,9 @@ jobs:
       DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run == true }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@v5
         with:
           distribution: zulu
           java-version: 17
@@ -313,7 +313,7 @@ jobs:
         run: npm install -g yarn
 
       - name: Download SwiftUtils interop artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: swift-utils-interop
           path: source/shared/sdk/shared/src/iosMain/interop/
@@ -356,7 +356,7 @@ jobs:
         run: npm pack
 
       - name: Upload consumer npm pack
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: rn-consumer-pack
           path: source/react-native/consumer/*.tgz
@@ -366,7 +366,7 @@ jobs:
         run: npm pack
 
       - name: Upload B2B npm pack
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: rn-b2b-pack
           path: source/react-native/b2b/*.tgz
