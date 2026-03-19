@@ -50,7 +50,7 @@ public interface SmsOtpClient {
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun loginOrCreate(request: IOTPsSMSLoginOrCreateParameters): OTPsSMSLoginOrCreateResponse
 
-    /** Sends an OTP to an existing user's secondary phone number. */
+    /** Sends an OTP to an existing user's phone number. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun send(request: IOTPsSMSSendSecondaryParameters): OTPsSMSSendSecondaryResponse
 }
@@ -63,7 +63,7 @@ public interface EmailOtpClient {
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun loginOrCreate(request: IOTPsEmailLoginOrCreateParameters): OTPsEmailLoginOrCreateResponse
 
-    /** Sends an OTP to an existing user's secondary email address. */
+    /** Sends an OTP to an existing user's email address. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun send(request: IOTPsEmailSendSecondaryParameters): OTPsEmailSendSecondaryResponse
 }
@@ -76,7 +76,7 @@ public interface WhatsAppOtpClient {
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun loginOrCreate(request: IOTPsWhatsAppLoginOrCreateParameters): OTPsWhatsAppLoginOrCreateResponse
 
-    /** Sends an OTP via WhatsApp to an existing user's secondary phone number. */
+    /** Sends an OTP via WhatsApp to an existing user's phone number. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun send(request: IOTPsWhatsAppSendSecondaryParameters): OTPsWhatsAppSendSecondaryResponse
 }

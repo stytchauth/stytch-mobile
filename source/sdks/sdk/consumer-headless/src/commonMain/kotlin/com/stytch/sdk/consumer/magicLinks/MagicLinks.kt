@@ -38,7 +38,7 @@ public interface EmailMagicLinksClient {
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun loginOrCreate(request: IMagicLinksEmailLoginOrCreateParameters): MagicLinksEmailLoginOrCreateResponse
 
-    /** Sends a magic link email to an existing user's secondary email address. */
+    /** Sends a magic link email to an existing user's email address. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun send(request: IMagicLinksEmailSendSecondaryParameters): MagicLinksEmailSendSecondaryResponse
 }
