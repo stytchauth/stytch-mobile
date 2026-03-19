@@ -13,9 +13,16 @@ import kotlinx.coroutines.withContext
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.js.JsExport
 
+/** Crypto wallet authentication methods. */
 @StytchApi
 @JsExport
 public interface CryptoClient {
+    /**
+     * Authenticates a crypto wallet by signing a server-issued challenge.
+     *
+     * @param signChallenge A suspend function that signs the challenge string with the wallet's private key
+     * and returns the hex-encoded signature.
+     */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun authenticate(
         request: ICryptoWalletsAuthenticateParameters,

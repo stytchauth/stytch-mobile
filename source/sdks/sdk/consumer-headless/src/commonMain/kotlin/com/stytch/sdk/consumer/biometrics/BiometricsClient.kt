@@ -23,18 +23,35 @@ import kotlinx.coroutines.withContext
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.js.JsExport
 
+/** Biometric authentication methods. */
 @StytchApi
 @JsExport
 public interface BiometricsClient {
+    /**
+     * Registers the device's biometric credential for the current user.
+     * Requires an active session. Throws [BiometricsAlreadyEnrolled] if already registered,
+     * [NoSessionExists] if no session is present, or [com.stytch.sdk.biometrics.BiometricsUnsupportedError]
+     * if the device does not support biometrics.
+     */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun register(parameters: BiometricsParameters): BiometricsRegisterResponse
 
+    /**
+     * Authenticates the user using a registered biometric credential.
+     * Throws [NoBiometricsRegistered] if no registration exists for this device.
+     */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun authenticate(parameters: BiometricsParameters): BiometricsAuthenticateResponse
 
+    /**
+     * Removes the locally stored biometric registration from this device.
+     * Requires an active session. Throws [NoSessionExists] if no session is present.
+     * Returns `true` on success.
+     */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun removeRegistration(): Boolean
 
+    /** Returns the biometric availability status for the current device and user. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun getAvailability(parameters: BiometricsParameters): BiometricsAvailability
 }

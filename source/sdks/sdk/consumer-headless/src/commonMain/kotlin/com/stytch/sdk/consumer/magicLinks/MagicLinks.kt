@@ -18,21 +18,27 @@ import kotlinx.coroutines.withContext
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.js.JsExport
 
+/** Magic link authentication methods. */
 @StytchApi
 @JsExport
 public interface MagicLinksClient {
+    /** Email magic link methods. */
     public val email: EmailMagicLinksClient
 
+    /** Authenticates a magic link token received via deeplink. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun authenticate(request: IMagicLinksAuthenticateParameters): MagicLinksAuthenticateResponse
 }
 
+/** Email magic link methods. */
 @StytchApi
 @JsExport
 public interface EmailMagicLinksClient {
+    /** Sends a magic link email to the provided address, creating a new user if one does not exist. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun loginOrCreate(request: IMagicLinksEmailLoginOrCreateParameters): MagicLinksEmailLoginOrCreateResponse
 
+    /** Sends a magic link email to an existing user's secondary email address. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun send(request: IMagicLinksEmailSendSecondaryParameters): MagicLinksEmailSendSecondaryResponse
 }
