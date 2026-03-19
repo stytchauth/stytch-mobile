@@ -33,70 +33,89 @@ import kotlinx.coroutines.withContext
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.js.JsExport
 
+/** B2B member management methods for the authenticated member and organization members. */
 @StytchApi
 @JsExport
 public interface B2BMembersClient {
+    /** Admin-level member management methods requiring elevated permissions. */
     public val admin: B2BMembersAdminClient
 
+    /** Returns the currently authenticated member and their organization. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun me(): B2BGetMeResponse
 
+    /** Updates profile fields on the currently authenticated member. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun update(request: IOrganizationsMemberUpdateParameters): OrganizationsMemberUpdateResponse
 
+    /** Searches for members within the organization matching the provided criteria. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun search(request: IOrganizationsMemberSearchParameters): OrganizationsMemberSearchResponse
 
+    /** Creates a new member in the organization. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun create(request: IOrganizationsMemberCreateParameters): OrganizationsMemberCreateResponse
 
+    /** Removes the MFA phone number from the currently authenticated member. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun deleteMFAPhoneNumber(): OrganizationsMemberDeleteMFAPhoneNumberResponse
 
+    /** Removes the TOTP authenticator registration from the currently authenticated member. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun deleteMFATOTP(): OrganizationsMemberDeleteMFATOTPResponse
 
+    /** Initiates an email address update for the currently authenticated member. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun startEmailUpdate(
         request: IOrganizationsMemberStartEmailUpdateParameters,
     ): OrganizationsMemberStartEmailUpdateResponse
 
+    /** Removes a retired email address from the currently authenticated member. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun unlinkRetiredEmail(
         request: IOrganizationsMemberUnlinkRetiredEmailParameters,
     ): OrganizationsMemberUnlinkRetiredEmailResponse
 }
 
+/** Admin-level operations on organization members, requiring appropriate RBAC permissions. */
 @StytchApi
 @JsExport
 public interface B2BMembersAdminClient {
+    /** Updates profile fields on any member in the organization. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun update(
         memberId: String,
         request: IOrganizationsAdminMemberUpdateParameters,
     ): OrganizationsAdminMemberUpdateResponse
 
+    /** Permanently deletes the specified member from the organization. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun delete(memberId: String): OrganizationsAdminMemberDeleteResponse
 
+    /** Removes the MFA phone number from the specified member. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun deleteMFAPhoneNumber(memberId: String): OrganizationsAdminMemberDeleteMFAPhoneNumberResponse
 
+    /** Removes the TOTP authenticator registration from the specified member. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun deleteMFATOTP(memberId: String): OrganizationsAdminMemberDeleteMFATOTPResponse
 
+    /** Deletes the specified password credential from the organization. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun deletePassword(memberPasswordId: String): OrganizationsAdminMemberDeletePasswordResponse
 
+    /** Reactivates a previously deleted member in the organization. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun reactivate(memberId: String): OrganizationsAdminMemberReactivateResponse
 
+    /** Initiates an email address update for the specified member. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun startEmailUpdate(
         memberId: String,
         request: IOrganizationsAdminMemberStartEmailUpdateParameters,
     ): OrganizationsAdminMemberStartEmailUpdateResponse
 
+    /** Removes a retired email address from the specified member. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun unlinkRetiredEmail(
         memberId: String,

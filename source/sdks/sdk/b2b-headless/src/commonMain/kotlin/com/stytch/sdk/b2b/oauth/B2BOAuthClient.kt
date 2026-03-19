@@ -27,39 +27,65 @@ import kotlinx.coroutines.withContext
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.js.JsExport
 
+/** B2B OAuth authentication methods for supported identity providers. */
 @StytchApi
 @JsExport
 public interface B2BOAuthClient {
+    /** Google OAuth provider client. */
     public val google: B2BOAuthProviderClient
+
+    /** Microsoft OAuth provider client. */
     public val microsoft: B2BOAuthProviderClient
+
+    /** HubSpot OAuth provider client. */
     public val hubspot: B2BOAuthProviderClient
+
+    /** Slack OAuth provider client. */
     public val slack: B2BOAuthProviderClient
+
+    /** GitHub OAuth provider client. */
     public val github: B2BOAuthProviderClient
+
+    /** Cross-org OAuth discovery methods for enumerating organizations before authentication. */
     public val discovery: B2BOAuthDiscoveryClient
 
+    /** Authenticates an OAuth token received via deeplink after the browser flow completes. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun authenticate(request: IB2BOAuthAuthenticateParameters): B2BOAuthAuthenticateResponse
 }
 
+/** OAuth authentication and discovery methods for a single identity provider. */
 @StytchApi
 @JsExport
 public interface B2BOAuthProviderClient {
+    /** Discovery OAuth methods for listing organizations before a session is established. */
+    public val discovery: B2BOAuthProviderDiscoveryClient
+
+    /**
+     * Initiates an OAuth browser flow for the provider, scoped to the specified organization.
+     * Automatically exchanges the resulting token for a member session on success.
+     */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun start(parameters: B2BOAuthStartParameters): AuthenticatedResponse
-
-    public val discovery: B2BOAuthProviderDiscoveryClient
 }
 
+/** Discovery OAuth start for a single provider — returns discovered organizations instead of a session. */
 @StytchApi
 @JsExport
 public interface B2BOAuthProviderDiscoveryClient {
+    /**
+     * Initiates a discovery OAuth browser flow for the provider.
+     * Returns an intermediate session token and a list of discovered organizations.
+     */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun start(parameters: B2BOAuthDiscoveryStartParameters): B2BOAuthDiscoveryAuthenticateResponse
 }
 
+/** Cross-provider OAuth discovery authentication — exchanges a discovery token for an intermediate session. */
 @StytchApi
 @JsExport
 public interface B2BOAuthDiscoveryClient {
+    /** Authenticates a discovery OAuth token received via deeplink, returning discovered organizations. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun authenticate(request: IB2BOAuthDiscoveryAuthenticateParameters): B2BOAuthDiscoveryAuthenticateResponse
 }

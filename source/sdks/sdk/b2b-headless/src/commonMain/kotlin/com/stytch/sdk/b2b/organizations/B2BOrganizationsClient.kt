@@ -13,15 +13,19 @@ import kotlinx.coroutines.withContext
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.js.JsExport
 
+/** Organization management methods for the current member's organization. */
 @StytchApi
 @JsExport
 public interface B2BOrganizationsClient {
+    /** Fetches the current member's organization. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun get(): B2BOrganizationsGetResponse
 
+    /** Updates the current member's organization settings. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun update(request: IB2BOrganizationsUpdateParameters): B2BOrganizationsUpdateResponse
 
+    /** Deletes the current member's organization. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun delete(): B2BOrganizationsDeleteResponse
 }

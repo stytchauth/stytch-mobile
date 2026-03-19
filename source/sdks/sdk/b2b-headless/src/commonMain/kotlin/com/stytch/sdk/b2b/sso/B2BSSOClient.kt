@@ -40,46 +40,65 @@ import kotlinx.coroutines.withContext
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.js.JsExport
 
+/** Alias for [B2BSSOAuthEnticateResponse], correcting the typo in the generated type name. */
 public typealias B2BSSOAuthenticateResponse = B2BSSOAuthEnticateResponse
 
+/** B2B SSO (Single Sign-On) authentication methods via SAML, OIDC, and external connections. */
 @StytchApi
 @JsExport
 public interface B2BSSOClient {
+    /** SAML SSO connection management methods. */
+    public val saml: B2BSSOSAMLClient
+
+    /** OIDC SSO connection management methods. */
+    public val oidc: B2BSSOOIDCClient
+
+    /** External SSO connection management methods. */
+    public val external: B2BSSOExternalClient
+
+    /**
+     * Initiates an SSO authentication flow by opening a browser to the SSO provider.
+     * Automatically exchanges the resulting token for a member session on success.
+     */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun start(parameters: B2BSSOStartParameters): AuthenticatedResponse
 
+    /** Authenticates an SSO token received via deeplink after the browser flow completes. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun authenticate(request: IB2BSSOAuthEnticateParameters): B2BSSOAuthenticateResponse
 
+    /** Returns all SSO connections configured for the organization. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun getConnections(): B2BGetSSOConnectionsResponse
 
+    /** Deletes the specified SSO connection from the organization. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun deleteConnection(connectionId: String): B2BDeleteSSOConnectionResponse
-
-    public val saml: B2BSSOSAMLClient
-    public val oidc: B2BSSOOIDCClient
-    public val external: B2BSSOExternalClient
 }
 
+/** SAML SSO connection management methods. */
 @StytchApi
 @JsExport
 public interface B2BSSOSAMLClient {
+    /** Creates a new SAML SSO connection for the organization. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun createConnection(request: IB2BCreateSAMLConnectionParameters): B2BCreateSAMLConnectionResponse
 
+    /** Updates an existing SAML SSO connection. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun updateConnection(
         connectionId: String,
         request: IB2BUpdateSAMLConnectionParameters,
     ): B2BUpdateSAMLConnectionResponse
 
+    /** Updates a SAML SSO connection by fetching its metadata from the provided URL. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun updateConnectionByUrl(
         connectionId: String,
         request: IB2BUpdateSAMLConnectionByURLParameters,
     ): B2BUpdateSAMLConnectionByURLResponse
 
+    /** Deletes a verification certificate from the specified SAML SSO connection. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun deleteVerificationCertificate(
         connectionId: String,
@@ -87,12 +106,15 @@ public interface B2BSSOSAMLClient {
     ): B2BDeleteSAMLVerificationCertificateResponse
 }
 
+/** OIDC SSO connection management methods. */
 @StytchApi
 @JsExport
 public interface B2BSSOOIDCClient {
+    /** Creates a new OIDC SSO connection for the organization. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun createConnection(request: IB2BCreateOIDCConnectionParameters): B2BCreateOIDCConnectionResponse
 
+    /** Updates an existing OIDC SSO connection. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun updateConnection(
         connectionId: String,
@@ -100,12 +122,15 @@ public interface B2BSSOOIDCClient {
     ): B2BUpdateOIDCConnectionResponse
 }
 
+/** External SSO connection management methods. */
 @StytchApi
 @JsExport
 public interface B2BSSOExternalClient {
+    /** Creates a new external SSO connection for the organization. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun createConnection(request: IB2BCreateExternalConnectionParameters): B2BCreateExternalConnectionResponse
 
+    /** Updates an existing external SSO connection. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun updateConnection(
         connectionId: String,
