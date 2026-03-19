@@ -254,6 +254,7 @@ jobs:
           name: ios-spm-package
           path: |
             source/ios/Package.swift
+            source/ios/README.md
             source/ios/Sources
 
       - name: Publish to SPM repo and create GitHub release
@@ -269,11 +270,12 @@ jobs:
           cd spm-repo
 
           cp $GITHUB_WORKSPACE/source/ios/Package.swift Package.swift
+          cp $GITHUB_WORKSPACE/source/ios/README.md README.md
           cp -r $GITHUB_WORKSPACE/source/ios/Sources Sources
 
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add Package.swift Sources
+          git add Package.swift README.md Sources
           git commit -m "Release ${VERSION}"
           git tag "${VERSION}"
           git push origin HEAD --tags
