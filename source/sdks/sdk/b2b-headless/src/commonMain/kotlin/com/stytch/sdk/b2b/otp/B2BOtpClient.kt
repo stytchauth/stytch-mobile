@@ -22,41 +22,55 @@ import kotlinx.coroutines.withContext
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.js.JsExport
 
+/** B2B OTP (one-time passcode) authentication via SMS and email. */
 @StytchApi
 @JsExport
 public interface B2BOtpClient {
+    /** SMS OTP methods. */
     public val sms: B2BSmsOtpClient
+
+    /** Email OTP methods. */
     public val email: B2BEmailOtpClient
 }
 
+/** B2B SMS OTP methods. */
 @StytchApi
 @JsExport
 public interface B2BSmsOtpClient {
+    /** Sends an OTP to the member's phone number for MFA verification. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun send(request: IB2BOTPsSMSSendParameters): B2BOTPsSMSSendResponse
 
+    /** Authenticates an SMS OTP code submitted by the member. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun authenticate(request: IB2BOTPsSMSAuthenticateParameters): B2BOTPsSMSAuthenticateResponse
 }
 
+/** B2B email OTP methods. */
 @StytchApi
 @JsExport
 public interface B2BEmailOtpClient {
+    /** Email OTP discovery methods for listing organizations before a session is established. */
     public val discovery: B2BEmailOtpDiscoveryClient
 
+    /** Sends an email OTP to the provided address for login or signup within the organization. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun loginOrSignup(request: IB2BOTPsEmailLoginOrSignupParameters): B2BOTPsEmailLoginOrSignupResponse
 
+    /** Authenticates an email OTP code submitted by the member. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun authenticate(request: IB2BOTPsEmailAuthenticateParameters): B2BOTPsEmailAuthenticateResponse
 }
 
+/** Email OTP discovery methods for enumerating organizations before authentication. */
 @StytchApi
 @JsExport
 public interface B2BEmailOtpDiscoveryClient {
+    /** Sends a discovery email OTP to enumerate organizations for the given email address. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun send(request: IB2BOTPsEmailDiscoverySendParameters): B2BOTPsEmailDiscoverySendResponse
 
+    /** Authenticates the discovery email OTP, returning an intermediate session token and discovered organizations. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun authenticate(request: IB2BOTPsEmailDiscoveryAuthenticateParameters): B2BOTPsEmailDiscoveryAuthenticateResponse
 }

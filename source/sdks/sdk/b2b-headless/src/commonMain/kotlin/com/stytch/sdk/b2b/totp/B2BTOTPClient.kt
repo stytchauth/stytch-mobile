@@ -14,12 +14,15 @@ import kotlinx.coroutines.withContext
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.js.JsExport
 
+/** TOTP (time-based one-time passcode) MFA methods for B2B members. */
 @StytchApi
 @JsExport
 public interface B2BTOTPClient {
+    /** Creates a new TOTP instance for the current member, returning a secret and QR code URL. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun create(request: IB2BTOTPsCreateParameters): B2BTOTPsCreateResponse
 
+    /** Authenticates a TOTP code from the member's authenticator app. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun authenticate(request: IB2BTOTPsAuthenticateParameters): B2BTOTPsAuthenticateResponse
 }

@@ -18,21 +18,27 @@ import kotlinx.coroutines.withContext
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.js.JsExport
 
+/** B2B session management methods. */
 @StytchApi
 @JsExport
 public interface B2BSessionsClient {
+    /** Validates the current session token and optionally extends the session expiry. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun authenticate(request: IB2BSessionsAuthenticateParameters): B2BSessionsAuthenticateResponse
 
+    /** Revokes the current session, signing the member out. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun revoke(): B2BSessionsRevokeResponse
 
+    /** Exchanges the current session for a session in a different organization. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun exchange(request: IB2BSessionsExchangeParameters): B2BSessionsExchangeResponse
 
+    /** Exchanges the current session for an OAuth access token for a connected provider. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun exchangeAccessToken(request: IB2BSessionsAccessTokenExchangeParameters): B2BSessionsAccessTokenExchangeResponse
 
+    /** Attests the current session using a device integrity token. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun attest(request: IB2BSessionsAttestParameters): B2BSessionsAttestResponse
 }

@@ -23,33 +23,42 @@ import kotlinx.coroutines.withContext
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.js.JsExport
 
+/** SCIM (System for Cross-domain Identity Management) provisioning methods. */
 @StytchApi
 @JsExport
 public interface B2BSCIMClient {
+    /** Retrieves the organization's SCIM connection. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun getConnection(): B2BGetSCIMConnectionResponse
 
+    /** Retrieves the groups associated with the organization's SCIM connection. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun getConnectionGroups(request: IB2BGetSCIMConnectionGroupsParameters): B2BGetSCIMConnectionGroupsResponse
 
+    /** Creates a new SCIM connection for the organization. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun createConnection(request: IB2BSCIMCreateConnectionParameters): B2BSCIMCreateConnectionResponse
 
+    /** Deletes the specified SCIM connection. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun deleteConnection(connectionId: String): B2BSCIMDeleteConnectionResponse
 
+    /** Updates settings on the specified SCIM connection. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun updateConnection(
         connectionId: String,
         request: IB2BSCIMUpdateConnectionParameters,
     ): B2BSCIMUpdateConnectionResponse
 
+    /** Initiates a SCIM bearer token rotation, returning the new token in a pending state. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun rotateTokenStart(request: ISCIMRotateTokenStartParameters): SCIMRotateTokenStartResponse
 
+    /** Completes a SCIM bearer token rotation, activating the new token and invalidating the old one. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun rotateTokenComplete(request: ISCIMRotateTokenCompleteParameters): SCIMRotateTokenCompleteResponse
 
+    /** Cancels an in-progress SCIM bearer token rotation, keeping the existing token active. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun rotateTokenCancel(request: ISCIMRotateTokenCancelParameters): SCIMRotateTokenCancelResponse
 }
