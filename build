@@ -136,6 +136,7 @@ runLint() {
     echo "Running ktlintCheck..."
     cd $SHARED_WORKING_DIR
     ./gradlew ktlintCheck :sdk:shared:publishToMavenLocal
+
     cd $SDK_WORKING_DIR
     ./gradlew ktlintCheck
 
@@ -144,6 +145,10 @@ runLint() {
     ./gradlew detekt
     cd $SDK_WORKING_DIR
     ./gradlew detekt
+
+    echo "Running checkLegacyAbi..."
+    cd $SDK_WORKING_DIR
+    ./gradlew checkLegacyAbi
 }
 
 runTests() {
