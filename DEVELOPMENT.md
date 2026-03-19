@@ -43,6 +43,28 @@ examples/
 
 ---
 
+## Architecture Overview
+
+```mermaid
+flowchart TB
+    SW["StytchSwiftUtils\nSwift · Xcode"]
+    SH["StytchMobile-Shared\nsource/shared — Kotlin 2.1.0\nnetworking · encryption · persistence · providers"]
+    EX["StytchMobile-External\nsource/sdks — Kotlin 2.3.0\nconsumer-headless · b2b-headless · extensions"]
+
+    SW -->|"cinterop headers"| SH
+    SH -->|"mavenLocal"| EX
+
+    SW & SH & EX -->|"xcframeworks"| IOS["Swift Package  ·  source/ios/\n────────────────────────────\nStytchConsumerSDK = Consumer + Shared + SwiftUtils\nStytchB2BSDK = B2B + Shared + SwiftUtils"]
+
+    SH & EX -->|"Android / JVM artifacts"| MVN["Maven Central\n────────────────────────────\ncom.stytch.sdk:shared\ncom.stytch.sdk:consumer-headless  +  -extensions\ncom.stytch.sdk:b2b-headless  +  -extensions"]
+
+    EX -->|"KMP JS output"| RN["npm\n────────────────────────────\n@stytch/react-native-consumer\n@stytch/react-native-b2b"]
+```
+
+The three source projects have a strict build order: `StytchSwiftUtils` must be built first (its C interop headers are consumed by `StytchMobile-Shared`), then `StytchMobile-Shared` is published to mavenLocal before `StytchMobile-External` can compile. The `./build` script handles this automatically.
+
+---
+
 ## Building
 
 > **Xcode required.** Building any iOS artifact (including the `StytchSwiftUtils` framework that the shared SDK depends on) requires Xcode. There is no way to build the iOS targets without it. Android-only and JVM-only workflows still require a macOS machine with Xcode installed, because the Kotlin Multiplatform toolchain compiles iOS targets even when building non-iOS artifacts.
