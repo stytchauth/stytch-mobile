@@ -34,7 +34,7 @@ internal class B2BNetworkingClientMiddleware(
         }
         if (data is AuthenticatedResponse) {
             sessionManager.update(data)
-            onSessionAuthenticated(data.memberSession.expiresAt ?: Instant.DISTANT_PAST)
+            onSessionAuthenticated(data.memberSession?.expiresAt ?: Instant.DISTANT_PAST)
         } else if (data is SessionsRevokeResponse) {
             sessionManager.revoke()
         }
