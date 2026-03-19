@@ -1,3 +1,3 @@
-@jhaven-stytch @stytchauth/frontend
+@jhaven-stytch @stytchauth/frontend @stytchauth/engineering @stytchauth/twilio-mobile
 # Snyk File changes can only be approved by Security & Compliance team members
 .snyk @shawn-stytch @howard-stytch
