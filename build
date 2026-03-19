@@ -138,6 +138,12 @@ runLint() {
     ./gradlew ktlintCheck :sdk:shared:publishToMavenLocal
     cd $SDK_WORKING_DIR
     ./gradlew ktlintCheck
+
+    echo "Running detekt..."
+    cd $SHARED_WORKING_DIR
+    ./gradlew detekt
+    cd $SDK_WORKING_DIR
+    ./gradlew detekt
 }
 
 runTests() {

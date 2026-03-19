@@ -1,0 +1,15 @@
+# Detekt configuration for source/sdks (consumer + B2B public SDKs).
+#
+# UndocumentedPublic rules are active here so that every public API surface
+# must carry a KDoc comment. Test sources and generated code are excluded.
+
+comments:
+  UndocumentedPublicClass:
+    active: true
+    excludes: ["**/test/**", "**/jvmTest/**", "**/commonTest/**", "**/androidTest/**", "**/build/**"]
+  UndocumentedPublicFunction:
+    active: true
+    excludes: ["**/test/**", "**/jvmTest/**", "**/commonTest/**", "**/androidTest/**", "**/build/**"]
+  UndocumentedPublicProperty:
+    active: true
+    excludes: ["**/test/**", "**/jvmTest/**", "**/commonTest/**", "**/androidTest/**", "**/build/**"]
