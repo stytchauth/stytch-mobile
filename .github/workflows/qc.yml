@@ -107,6 +107,12 @@ jobs:
             ONLY_ACTIVE_ARCH=NO \
             build
 
+      - name: Install StytchSwiftUtils to interop directory
+        run: |
+          mkdir -p source/shared/sdk/shared/src/iosMain/interop/StytchSwiftUtils.xcframework/ios-arm64_x86_64-simulator
+          cp -R source/StytchSwiftUtils/derived/Build/Products/Release-iphonesimulator/StytchSwiftUtils.framework \
+            source/shared/sdk/shared/src/iosMain/interop/StytchSwiftUtils.xcframework/ios-arm64_x86_64-simulator/
+
       - name: Run iOS simulator tests
         working-directory: source/shared
         run: ./gradlew :sdk:shared:iosSimulatorArm64Test
