@@ -8,4 +8,4 @@ export const ConsumerAuthenticationState = {
   Loading: class Loading {},
   Authenticated: class Authenticated {},
   Unauthenticated: class Unauthenticated {},
-}
+};

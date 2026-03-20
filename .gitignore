@@ -28,7 +28,7 @@ source/react-native/b2b/.prettierignore
 source/react-native/b2b/.prettierrc
 source/react-native/b2b/.swcrc
 source/react-native/b2b/babel.config.js
-source/react-native/b2b/eslint.config.js
+source/react-native/b2b/eslint.config.ts
 source/react-native/b2b/jest.config.js
 source/react-native/b2b/jest.setup.js
 source/react-native/b2b/tsconfig.json
@@ -42,7 +42,7 @@ source/react-native/consumer/.prettierignore
 source/react-native/consumer/.prettierrc
 source/react-native/consumer/.swcrc
 source/react-native/consumer/babel.config.js
-source/react-native/consumer/eslint.config.js
+source/react-native/b2b/eslint.config.ts
 source/react-native/consumer/jest.config.js
 source/react-native/consumer/jest.setup.js
 source/react-native/consumer/tsconfig.json

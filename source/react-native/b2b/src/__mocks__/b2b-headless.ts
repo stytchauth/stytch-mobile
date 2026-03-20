@@ -8,4 +8,4 @@ export const B2BAuthenticationState = {
   Loading: class Loading {},
   Authenticated: class Authenticated {},
   Unauthenticated: class Unauthenticated {},
-}
+};
