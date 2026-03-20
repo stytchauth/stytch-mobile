@@ -1,11 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { StytchConsumer, ApiUserV1User, ApiSessionV1Session, ConsumerAuthenticationState } from '../lib/consumer-headless.mjs'
+import {
+  StytchConsumer,
+  ApiUserV1User,
+  ApiSessionV1Session,
+  ConsumerAuthenticationState,
+} from '../lib/consumer-headless.mjs';
 import { AppState, AppStateStatus } from 'react-native';
 import { useStytch, useStytchUser, useStytchSession, useStytchAuthenticationState } from './hooks';
-import { StytchContext, StytchUserContext, StytchSessionContext, StytchAuthenticationStateContext } from './contexts';
+import {
+  StytchContext,
+  StytchUserContext,
+  StytchSessionContext,
+  StytchAuthenticationStateContext,
+} from './contexts';
 import { mergeWithStableProps } from './utils';
 
-export const withStytch = <T extends object>(Component: React.ComponentType<T & { stytch: StytchConsumer }>): React.ComponentType<T> => {
+export const withStytch = <T extends object>(
+  Component: React.ComponentType<T & { stytch: StytchConsumer }>,
+): React.ComponentType<T> => {
   const WithStytch: React.ComponentType<T> = (props) => {
     return <Component {...props} stytch={useStytch()} />;
   };
@@ -48,15 +60,17 @@ export type StytchProviderProps = {
   children?: React.ReactNode;
 };
 
-export const StytchProvider = ({
-  stytch,
-  children,
-}: StytchProviderProps): React.JSX.Element => {
-  const [{ user, session }, setClientState] = useState<{ user: ApiUserV1User | undefined, session: ApiSessionV1Session | undefined}>({
+export const StytchProvider = ({ stytch, children }: StytchProviderProps): React.JSX.Element => {
+  const [{ user, session }, setClientState] = useState<{
+    user: ApiUserV1User | undefined;
+    session: ApiSessionV1Session | undefined;
+  }>({
     session: undefined,
     user: undefined,
   });
-  const [authenticationState, setAuthenticationState] = useState<ConsumerAuthenticationState>(new ConsumerAuthenticationState.Loading())
+  const [authenticationState, setAuthenticationState] = useState<ConsumerAuthenticationState>(
+    new ConsumerAuthenticationState.Loading(),
+  );
 
   useEffect(() => {
     const handleAppStateChange = async (appState: AppStateStatus) => {
@@ -66,41 +80,44 @@ export const StytchProvider = ({
     };
     const appStateSubscription = AppState.addEventListener('change', handleAppStateChange);
     const tryAuthenticate = async () => {
-      const observationJob = stytch.authenticationStateObserver(async (state: ConsumerAuthenticationState) => {
-        if (state instanceof ConsumerAuthenticationState.Authenticated) {
-          try {
-            await stytch.session.authenticate({ sessionDurationMinutes: null });
-          } catch {
-            // log it
+      const observationJob = stytch.authenticationStateObserver(
+        async (state: ConsumerAuthenticationState) => {
+          if (state instanceof ConsumerAuthenticationState.Authenticated) {
+            try {
+              await stytch.session.authenticate({ sessionDurationMinutes: null });
+            } catch {
+              // log it
+            }
           }
-        }
-        observationJob.stop();
-      });
+          observationJob.stop();
+        },
+      );
     };
     return () => {
       appStateSubscription.remove();
     };
   }, [stytch]);
 
-  useEffect(
-    () => {
-      const observationJob = stytch.authenticationStateObserver((state: ConsumerAuthenticationState) => {
-        let newUser: ApiUserV1User | undefined = undefined
-        let newSession: ApiSessionV1Session | undefined = undefined
+  useEffect(() => {
+    const observationJob = stytch.authenticationStateObserver(
+      (state: ConsumerAuthenticationState) => {
+        let newUser: ApiUserV1User | undefined = undefined;
+        let newSession: ApiSessionV1Session | undefined = undefined;
         if (state instanceof ConsumerAuthenticationState.Authenticated) {
-          newUser = (state as ConsumerAuthenticationState.Authenticated).user
-          newSession = (state as ConsumerAuthenticationState.Authenticated).session
+          newUser = (state as ConsumerAuthenticationState.Authenticated).user;
+          newSession = (state as ConsumerAuthenticationState.Authenticated).session;
         }
         setClientState((oldState) => {
           const newState = { user: newUser, session: newSession };
           return mergeWithStableProps(oldState, newState);
         });
         setAuthenticationState(state);
-      });
-      return () => { observationJob.stop() }
-    },
-    [setClientState, stytch],
-  );
+      },
+    );
+    return () => {
+      observationJob.stop();
+    };
+  }, [setClientState, stytch]);
 
   return (
     <StytchContext.Provider value={stytch}>
