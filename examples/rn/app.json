@@ -49,11 +49,7 @@
         "expo-build-properties",
         {
           "android": {
-            "extraMavenRepos": [
-              {
-                "url": "/Users/jhaven/.m2/repository"
-              }
-            ],
+            "extraMavenRepos": [{ "url": "~/.m2/repository" }],
             "packagingOptions": {
               "exclude": ["META-INF/versions/9/OSGI-INF/MANIFEST.MF"]
             }
