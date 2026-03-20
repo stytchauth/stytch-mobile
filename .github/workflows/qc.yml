@@ -92,7 +92,7 @@ jobs:
         run: |
           xcodebuild \
             -project StytchSwiftUtils.xcodeproj \
-            -target StytchSwiftUtils \
+            -scheme StytchSwiftUtils \
             -configuration Release \
             -destination 'generic/platform=iOS Simulator' \
             -derivedDataPath ./derived \
