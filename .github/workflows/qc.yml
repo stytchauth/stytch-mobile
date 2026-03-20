@@ -81,23 +81,18 @@ jobs:
           title: Coverage — Consumer & B2B SDKs
           update-comment: true
 
-  check-ios-simulator:
-    name: Test (iOS Simulator)
+  build-swift-utils:
+    name: Build StytchSwiftUtils
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v6
-
-      - uses: actions/setup-java@v5
-        with:
-          distribution: zulu
-          java-version: 17
 
       - name: Build StytchSwiftUtils for simulator
         working-directory: source/StytchSwiftUtils
         run: |
           xcodebuild \
             -project StytchSwiftUtils.xcodeproj \
-            -scheme StytchSwiftUtils \
+            -target StytchSwiftUtils \
             -configuration Release \
             -destination 'generic/platform=iOS Simulator' \
             -derivedDataPath ./derived \
@@ -106,6 +101,30 @@ jobs:
             BUILD_LIBRARIES_FOR_DISTRIBUTION=YES \
             ONLY_ACTIVE_ARCH=NO \
             build
+
+      - name: Upload StytchSwiftUtils simulator build
+        uses: actions/upload-artifact@v7
+        with:
+          name: swift-utils-simulator-build
+          path: source/StytchSwiftUtils/derived/Build/Products/Release-iphonesimulator/
+
+  check-ios-simulator:
+    name: Test (iOS Simulator)
+    runs-on: macos-latest
+    needs: build-swift-utils
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-java@v5
+        with:
+          distribution: zulu
+          java-version: 17
+
+      - name: Download StytchSwiftUtils simulator build
+        uses: actions/download-artifact@v4
+        with:
+          name: swift-utils-simulator-build
+          path: source/StytchSwiftUtils/derived/Build/Products/Release-iphonesimulator/
 
       - name: Run iOS simulator tests
         working-directory: source/shared
@@ -134,20 +153,20 @@ jobs:
           api-level: 29
           arch: x86_64
           working-directory: source/shared
-          script: ./gradlew :sdk:shared:connectedAndroidTest :sdk:shared:createDebugAndroidTestCoverageReport
+          script: ./gradlew :sdk:shared:connectedAndroidTest :sdk:shared:koverXmlReportAndroid
 
       - name: Upload Android instrumented coverage report
         if: always()
         uses: actions/upload-artifact@v7
         with:
           name: coverage-android-instrumented
-          path: source/shared/sdk/shared/build/reports/coverage/androidTest/debug/report.xml
+          path: source/shared/sdk/shared/build/reports/kover/reportAndroid.xml
 
       - name: Post coverage comment
         if: github.event_name == 'pull_request'
         uses: madrapps/jacoco-report@v1.7.2
         with:
-          paths: source/shared/sdk/shared/build/reports/coverage/androidTest/debug/report.xml
+          paths: source/shared/sdk/shared/build/reports/kover/reportAndroid.xml
           token: ${{ secrets.GITHUB_TOKEN }}
           title: Coverage — Shared SDK (Android Instrumented)
           update-comment: true
