@@ -8,6 +8,7 @@ import kotlinx.coroutines.withContext
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.js.JsExport
 
+/** Role-based access control (RBAC) authorization checks for the current member. */
 @StytchApi
 @JsExport
 public interface B2BRBACClient {

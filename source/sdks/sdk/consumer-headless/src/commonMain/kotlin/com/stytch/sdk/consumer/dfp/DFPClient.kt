@@ -9,6 +9,7 @@ import kotlinx.coroutines.withContext
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.js.JsExport
 
+/** Device fingerprinting (DFP) integration. Provides a telemetry ID for Stytch's fraud prevention layer. */
 @StytchApi
 @JsExport
 public interface DFPClient {

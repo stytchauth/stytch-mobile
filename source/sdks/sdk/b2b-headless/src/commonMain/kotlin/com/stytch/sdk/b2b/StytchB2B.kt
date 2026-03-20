@@ -62,41 +62,95 @@ import kotlin.concurrent.Volatile
 import kotlin.js.JsExport
 import kotlin.js.JsName
 
+/**
+ * Main entry point for the Stytch B2B SDK.
+ *
+ * Provides access to all B2B authentication methods and session management.
+ * Create an instance with [createStytchB2B].
+ */
 @StytchApi
 @JsExport
 @JsName("StytchB2B")
 public interface StytchB2B : StytchClient {
+    /** Session management methods. */
     public val session: B2BSessionsClient
+
+    /** Magic link authentication methods. */
     public val magicLinks: B2BMagicLinksClient
+
+    /** OTP (SMS and email) authentication methods. */
     public val otp: B2BOtpClient
+
+    /** Password-based authentication methods. */
     public val passwords: B2BPasswordsClient
+
+    /** TOTP authenticator methods. */
     public val totp: B2BTOTPClient
+
+    /** Cross-org discovery flow methods for listing and joining organizations. */
     public val discovery: B2BDiscoveryClient
+
+    /** Member management methods. */
     public val members: B2BMembersClient
+
+    /** Organization management methods. */
     public val organizations: B2BOrganizationsClient
+
+    /** Recovery code management methods. */
     public val recoveryCodes: B2BRecoveryCodesClient
+
+    /** SCIM provisioning methods. */
     public val scim: B2BSCIMClient
+
+    /** OAuth authentication methods. */
     public val oauth: B2BOAuthClient
+
+    /** SSO authentication methods. */
     public val sso: B2BSSOClient
+
+    /** Role-based access control (RBAC) methods. */
     public val rbac: B2BRBACClient
+
+    /** Device fingerprinting (DFP) methods. */
     public val dfp: DFPClient
 
+    /** A [StateFlow] emitting the current authentication state whenever it changes. */
     public val authenticationStateFlow: StateFlow<B2BAuthenticationState>
 
+    /**
+     * Subscribes to authentication state changes via a callback.
+     * Returns a [JsCleanup] whose [JsCleanup.stop] cancels the subscription.
+     */
     @JsName("authenticationStateObserver")
     public fun authenticationStateObserver(callback: (authenticationState: B2BAuthenticationState) -> Unit): JsCleanup
 
+    /**
+     * Handles an incoming deeplink URL, authenticating the token it contains if possible.
+     *
+     * Returns [DeeplinkAuthenticationStatus.Authenticated] for magic links, OAuth, and SSO tokens.
+     * Returns [DeeplinkAuthenticationStatus.ManualHandlingRequired] for password reset and
+     * discovery tokens, which require additional user interaction.
+     * Returns [DeeplinkAuthenticationStatus.UnknownDeeplink] if the URL is not a Stytch deeplink.
+     */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun authenticate(
         url: String,
         sessionDurationMinutes: Int?,
     ): DeeplinkAuthenticationStatus
 
+    /** Returns the current PKCE code pair if one exists (used for advanced manual flows). */
     public suspend fun getPKCECodePair(): PKCECodePair?
 
+    /** Parses a URL and returns a [DeeplinkToken] if it contains a Stytch token, or null otherwise. */
     public fun parseDeeplink(url: String): DeeplinkToken?
 }
 
+/**
+ * Creates a new [StytchB2B] instance with the given [configuration].
+ *
+ * The returned instance is a singleton — subsequent calls with different configurations
+ * return the same instance created on the first call.
+ */
 @JsExport
 @JsName("createStytchB2B")
 public fun createStytchB2B(configuration: StytchClientConfiguration): StytchB2B = DefaultStytchB2B.getInstance(configuration)

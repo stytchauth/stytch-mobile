@@ -55,46 +55,82 @@ import kotlin.concurrent.Volatile
 import kotlin.js.JsExport
 import kotlin.js.JsName
 
+/** The main entry point for the Stytch Consumer SDK. */
 @StytchApi
 @JsExport
 @JsName("StytchConsumer")
 public interface StytchConsumer : StytchClient {
+    /** OTP (one-time passcode) authentication via SMS, email, or WhatsApp. */
     public val otp: OtpClient
+
+    /** Session management. */
     public val session: SessionClient
+
+    /** Crypto wallet authentication. */
     public val crypto: CryptoClient
 
+    /** Magic link authentication. */
     public val magicLinks: MagicLinksClient
 
+    /** TOTP (time-based one-time passcode) authentication. */
     public val totp: TOTPClient
 
+    /** Password-based authentication. */
     public val passwords: PasswordsClient
 
+    /** User account management. */
     public val user: UserClient
 
+    /** Passkey (WebAuthn) authentication. */
     public val passkeys: PasskeysClient
 
+    /** Biometric authentication. */
     public val biometrics: BiometricsClient
 
+    /** OAuth authentication (browser-based and native provider flows). */
     public val oauth: OAuthClient
 
+    /** Device fingerprinting (DFP) integration. */
     public val dfp: DFPClient
 
+    /** A [StateFlow] that emits the current authentication state whenever it changes. */
     public val authenticationStateFlow: StateFlow<ConsumerAuthenticationState>
 
+    /**
+     * Registers a callback that is invoked whenever the authentication state changes.
+     * Returns a [JsCleanup] that stops the observer when [JsCleanup.stop] is called.
+     */
     @JsName("authenticationStateObserver")
     public fun authenticationStateObserver(callback: (authenticationState: ConsumerAuthenticationState) -> Unit): JsCleanup
 
+    /**
+     * Authenticates a Stytch deeplink URL, dispatching to the appropriate auth method based on
+     * the token type embedded in the URL. Returns [DeeplinkAuthenticationStatus.ManualHandlingRequired]
+     * for password reset tokens, which must be handled by the caller.
+     *
+     * @param url The full deeplink URL to authenticate.
+     * @param sessionDurationMinutes The desired session duration. Defaults to the SDK's configured value.
+     */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun authenticate(
         url: String,
         sessionDurationMinutes: Int?,
     ): DeeplinkAuthenticationStatus
 
+    /** Returns the current PKCE code pair if one has been generated and not yet consumed. */
     public suspend fun getPKCECodePair(): PKCECodePair?
 
+    /**
+     * Parses a URL and returns the Stytch token it contains, or `null` if the URL is not a
+     * recognized Stytch deeplink.
+     */
     public fun parseDeeplink(url: String): DeeplinkToken?
 }
 
+/**
+ * Creates and returns a [StytchConsumer] instance configured with the provided [configuration].
+ * Repeated calls with the same process return the same singleton instance.
+ */
 @JsExport
 @JsName("createStytchConsumer")
 public fun createStytchConsumer(configuration: StytchClientConfiguration): StytchConsumer = DefaultStytchConsumer.getInstance(configuration)

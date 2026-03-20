@@ -138,14 +138,13 @@ buildB2BRn() {
 # --- Lint / Test ---
 
 runLint() {
-    echo "Running ktlintCheck..."
+    echo "Checking shared SDK"
     cd $SHARED_WORKING_DIR
-    ./gradlew ktlintCheck :sdk:shared:publishToMavenLocal
-    cd $SDK_WORKING_DIR
-    ./gradlew ktlintCheck
+    ./gradlew ktlintCheck detekt :sdk:shared:publishToMavenLocal
 
-    echo "Running checkLegacyAbi..."
-    ./gradlew checkLegacyAbi
+    echo "Checking public SDKs"
+    cd $SDK_WORKING_DIR
+    ./gradlew ktlintCheck detekt checkLegacyAbi
 }
 
 runTests() {

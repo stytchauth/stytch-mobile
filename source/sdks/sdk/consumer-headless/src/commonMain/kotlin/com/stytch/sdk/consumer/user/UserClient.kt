@@ -22,56 +22,71 @@ import kotlinx.coroutines.withContext
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.js.JsExport
 
+/** User account management methods. */
 @StytchApi
 @JsExport
 public interface UserClient {
+    /** Fetches the current user's profile. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun getUser(): GetMeResponse
 
+    /** Deletes an authentication factor from the current user's account. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun deleteFactor(factor: AuthenticationFactor): DeleteFactorResponse
 
+    /** Updates the current user's profile (e.g. name, untrusted metadata). */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun update(request: IUpdateMeParameters): UpdateMeResponse
 }
 
+/** A user authentication factor that can be deleted from the user's account. */
 @JsExport
 public sealed class AuthenticationFactor(
+    /** The unique ID of the factor. */
     public open val factorId: String,
 ) {
+    /** A TOTP authenticator factor. */
     public data class TOTP(
         override val factorId: String,
     ) : AuthenticationFactor(factorId)
 
+    /** An email address factor. */
     public data class Email(
         override val factorId: String,
     ) : AuthenticationFactor(factorId)
 
+    /** An OAuth provider registration factor. */
     public data class OAuth(
         override val factorId: String,
     ) : AuthenticationFactor(factorId)
 
+    /** A WebAuthn (passkey) factor. */
     public data class WebAuthn(
         override val factorId: String,
     ) : AuthenticationFactor(factorId)
 
+    /** A biometric factor. */
     public data class Biometric(
         override val factorId: String,
     ) : AuthenticationFactor(factorId)
 
+    /** A crypto wallet factor. */
     public data class CryptoWallet(
         override val factorId: String,
     ) : AuthenticationFactor(factorId)
 
+    /** A phone number factor. */
     public data class PhoneNumber(
         override val factorId: String,
     ) : AuthenticationFactor(factorId)
 }
 
+/** The response returned after successfully deleting an authentication factor. */
 @JsExport
 public data class DeleteFactorResponse(
     override val requestId: String,
     override val statusCode: Int,
+    /** The updated user object after the factor was removed. */
     val user: ApiUserV1User,
 ) : BasicResponse
 

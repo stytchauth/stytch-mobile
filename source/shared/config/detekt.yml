@@ -1,0 +1,13 @@
+# Detekt configuration for source/shared.
+#
+# The shared SDK is internal infrastructure consumed only by our own SDKs,
+# not by external developers. UndocumentedPublic rules are intentionally
+# disabled here — documentation enforcement lives in source/sdks instead.
+
+comments:
+  UndocumentedPublicClass:
+    active: false
+  UndocumentedPublicFunction:
+    active: false
+  UndocumentedPublicProperty:
+    active: false
