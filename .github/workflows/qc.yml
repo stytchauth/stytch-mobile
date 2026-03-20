@@ -162,15 +162,6 @@ jobs:
           name: coverage-android-instrumented
           path: source/shared/sdk/shared/build/reports/kover/reportAndroid.xml
 
-      - name: Post coverage comment
-        if: github.event_name == 'pull_request'
-        uses: madrapps/jacoco-report@v1.7.2
-        with:
-          paths: source/shared/sdk/shared/build/reports/kover/reportAndroid.xml
-          token: ${{ secrets.GITHUB_TOKEN }}
-          title: Coverage — Shared SDK (Android Instrumented)
-          update-comment: true
-
   check-swift-utils:
     name: Test (StytchSwiftUtils)
     runs-on: macos-latest
