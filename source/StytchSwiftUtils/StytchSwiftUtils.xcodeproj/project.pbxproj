@@ -9,16 +9,46 @@
 /* Begin PBXBuildFile section */
 		390728442F2BCB94007A0E0B /* RecaptchaEnterprise in Frameworks */ = {isa = PBXBuildFile; productRef = 390728432F2BCB94007A0E0B /* RecaptchaEnterprise */; };
 		390728472F2BCB9D007A0E0B /* StytchDFP in Frameworks */ = {isa = PBXBuildFile; productRef = 390728462F2BCB9D007A0E0B /* StytchDFP */; };
+		AA0002002F2BCB65007A0E0B /* StytchSwiftUtils.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 390728382F2BCB65007A0E0B /* StytchSwiftUtils.framework */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		394F95902F6DAE99005FDD69 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3907282F2F2BCB65007A0E0B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 394F95842F6DAD90005FDD69;
+			remoteInfo = StytchSwiftUtilsTestHost;
+		};
+		AA0008002F2BCB65007A0E0B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3907282F2F2BCB65007A0E0B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 390728372F2BCB65007A0E0B;
+			remoteInfo = StytchSwiftUtils;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		390728382F2BCB65007A0E0B /* StytchSwiftUtils.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = StytchSwiftUtils.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		394F95852F6DAD90005FDD69 /* StytchSwiftUtilsTestHost.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StytchSwiftUtilsTestHost.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		AA0001002F2BCB65007A0E0B /* StytchSwiftUtilsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StytchSwiftUtilsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		3907283A2F2BCB65007A0E0B /* StytchSwiftUtils */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = StytchSwiftUtils;
+			sourceTree = "<group>";
+		};
+		394F95862F6DAD90005FDD69 /* StytchSwiftUtilsTestHost */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = StytchSwiftUtilsTestHost;
+			sourceTree = "<group>";
+		};
+		AA0003002F2BCB65007A0E0B /* StytchSwiftUtilsTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = StytchSwiftUtilsTests;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -33,6 +63,21 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		394F95822F6DAD90005FDD69 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AA0004002F2BCB65007A0E0B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA0002002F2BCB65007A0E0B /* StytchSwiftUtils.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -40,6 +85,8 @@
 			isa = PBXGroup;
 			children = (
 				3907283A2F2BCB65007A0E0B /* StytchSwiftUtils */,
+				AA0003002F2BCB65007A0E0B /* StytchSwiftUtilsTests */,
+				394F95862F6DAD90005FDD69 /* StytchSwiftUtilsTestHost */,
 				390728392F2BCB65007A0E0B /* Products */,
 			);
 			sourceTree = "<group>";
@@ -48,6 +95,8 @@
 			isa = PBXGroup;
 			children = (
 				390728382F2BCB65007A0E0B /* StytchSwiftUtils.framework */,
+				AA0001002F2BCB65007A0E0B /* StytchSwiftUtilsTests.xctest */,
+				394F95852F6DAD90005FDD69 /* StytchSwiftUtilsTestHost.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -90,6 +139,50 @@
 			productReference = 390728382F2BCB65007A0E0B /* StytchSwiftUtils.framework */;
 			productType = "com.apple.product-type.framework";
 		};
+		394F95842F6DAD90005FDD69 /* StytchSwiftUtilsTestHost */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 394F958F2F6DAD91005FDD69 /* Build configuration list for PBXNativeTarget "StytchSwiftUtilsTestHost" */;
+			buildPhases = (
+				394F95812F6DAD90005FDD69 /* Sources */,
+				394F95822F6DAD90005FDD69 /* Frameworks */,
+				394F95832F6DAD90005FDD69 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				394F95862F6DAD90005FDD69 /* StytchSwiftUtilsTestHost */,
+			);
+			name = StytchSwiftUtilsTestHost;
+			packageProductDependencies = (
+			);
+			productName = StytchSwiftUtilsTestHost;
+			productReference = 394F95852F6DAD90005FDD69 /* StytchSwiftUtilsTestHost.app */;
+			productType = "com.apple.product-type.application";
+		};
+		AA0007002F2BCB65007A0E0B /* StytchSwiftUtilsTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AA000C002F2BCB65007A0E0B /* Build configuration list for PBXNativeTarget "StytchSwiftUtilsTests" */;
+			buildPhases = (
+				AA0005002F2BCB65007A0E0B /* Sources */,
+				AA0004002F2BCB65007A0E0B /* Frameworks */,
+				AA0006002F2BCB65007A0E0B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				AA0009002F2BCB65007A0E0B /* PBXTargetDependency */,
+				394F95912F6DAE99005FDD69 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				AA0003002F2BCB65007A0E0B /* StytchSwiftUtilsTests */,
+			);
+			name = StytchSwiftUtilsTests;
+			productName = StytchSwiftUtilsTests;
+			productReference = AA0001002F2BCB65007A0E0B /* StytchSwiftUtilsTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -102,6 +195,13 @@
 				TargetAttributes = {
 					390728372F2BCB65007A0E0B = {
 						CreatedOnToolsVersion = 26.1.1;
+					};
+					394F95842F6DAD90005FDD69 = {
+						CreatedOnToolsVersion = 26.1.1;
+					};
+					AA0007002F2BCB65007A0E0B = {
+						CreatedOnToolsVersion = 26.1.1;
+						TestTargetID = 394F95842F6DAD90005FDD69;
 					};
 				};
 			};
@@ -124,12 +224,28 @@
 			projectRoot = "";
 			targets = (
 				390728372F2BCB65007A0E0B /* StytchSwiftUtils */,
+				AA0007002F2BCB65007A0E0B /* StytchSwiftUtilsTests */,
+				394F95842F6DAD90005FDD69 /* StytchSwiftUtilsTestHost */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		390728362F2BCB65007A0E0B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		394F95832F6DAD90005FDD69 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AA0006002F2BCB65007A0E0B /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -146,7 +262,34 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		394F95812F6DAD90005FDD69 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AA0005002F2BCB65007A0E0B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		394F95912F6DAE99005FDD69 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 394F95842F6DAD90005FDD69 /* StytchSwiftUtilsTestHost */;
+			targetProxy = 394F95902F6DAE99005FDD69 /* PBXContainerItemProxy */;
+		};
+		AA0009002F2BCB65007A0E0B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 390728372F2BCB65007A0E0B /* StytchSwiftUtils */;
+			targetProxy = AA0008002F2BCB65007A0E0B /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		3907283D2F2BCB65007A0E0B /* Debug */ = {
@@ -182,6 +325,7 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_ENTITLEMENTS = "";
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
@@ -211,6 +355,7 @@
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				TEST_HOST = "";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -249,6 +394,7 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_ENTITLEMENTS = "";
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -270,6 +416,7 @@
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
+				TEST_HOST = "";
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -361,6 +508,124 @@
 			};
 			name = Release;
 		};
+		394F958D2F6DAD91005FDD69 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = StytchSwiftUtilsTestHost.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 22B584A5Q6;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.stytch.mobile.StytchSwiftUtilsTestHost;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		394F958E2F6DAD91005FDD69 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = StytchSwiftUtilsTestHost.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 22B584A5Q6;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.stytch.mobile.StytchSwiftUtilsTestHost;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		AA000A002F2BCB65007A0E0B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 22B584A5Q6;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.stytch.mobile.StytchSwiftUtilsTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/StytchSwiftUtilsTestHost.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/StytchSwiftUtilsTestHost";
+			};
+			name = Debug;
+		};
+		AA000B002F2BCB65007A0E0B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 22B584A5Q6;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.stytch.mobile.StytchSwiftUtilsTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/StytchSwiftUtilsTestHost.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/StytchSwiftUtilsTestHost";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -378,6 +643,24 @@
 			buildConfigurations = (
 				390728402F2BCB65007A0E0B /* Debug */,
 				390728412F2BCB65007A0E0B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		394F958F2F6DAD91005FDD69 /* Build configuration list for PBXNativeTarget "StytchSwiftUtilsTestHost" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				394F958D2F6DAD91005FDD69 /* Debug */,
+				394F958E2F6DAD91005FDD69 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		AA000C002F2BCB65007A0E0B /* Build configuration list for PBXNativeTarget "StytchSwiftUtilsTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AA000A002F2BCB65007A0E0B /* Debug */,
+				AA000B002F2BCB65007A0E0B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

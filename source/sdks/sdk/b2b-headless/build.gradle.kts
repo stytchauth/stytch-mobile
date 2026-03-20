@@ -1,10 +1,11 @@
-@file:OptIn(ExperimentalKotlinGradlePluginApi::class)
+@file:OptIn(ExperimentalKotlinGradlePluginApi::class, ExperimentalAbiValidation::class)
 
 import com.android.build.api.dsl.androidLibrary
 import com.android.build.gradle.tasks.ProcessLibraryArtProfileTask
 import com.google.devtools.ksp.gradle.KspAATask
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompileCommon
 
@@ -32,6 +33,9 @@ mavenPublishing {
 
 kotlin {
     explicitApi()
+    abiValidation {
+        enabled.set(true)
+    }
 
     compilerOptions {
         optIn.add("kotlin.js.ExperimentalJsExport")

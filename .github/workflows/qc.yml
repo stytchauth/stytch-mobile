@@ -13,9 +13,9 @@ jobs:
     name: Lint & Test (Shared)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5.2.0
         with:
           distribution: zulu
           java-version: 17
@@ -25,27 +25,27 @@ jobs:
         run: ./gradlew ktlintCheck koverXmlReportJvm
 
       - name: Upload coverage report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         with:
           name: coverage-shared
           path: source/shared/sdk/shared/build/reports/kover/reportJvm.xml
 
       - name: Post coverage comment
         if: github.event_name == 'pull_request'
-        uses: madrapps/jacoco-report@v1.7.2
+        uses: madrapps/jacoco-report@50d3aff4548aa991e6753342d9ba291084e63848 # v1.7.2
         with:
           paths: source/shared/sdk/shared/build/reports/kover/reportJvm.xml
           token: ${{ secrets.GITHUB_TOKEN }}
           title: Coverage — Shared SDK
           update-comment: true
 
-  check-consumer:
-    name: Lint & Test (External SDK)
+  check-sdks:
+    name: Lint & Test (Consumer & B2B)
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5.2.0
         with:
           distribution: zulu
           java-version: 17
@@ -56,32 +56,137 @@ jobs:
 
       - name: Lint, Test & Coverage
         working-directory: source/sdks
-        run: ./gradlew ktlintCheck koverXmlReportJvm
+        run: ./gradlew ktlintCheck checkLegacyAbi koverXmlReportJvm
 
-      - name: Upload coverage report
-        uses: actions/upload-artifact@v4
+      - name: Upload consumer coverage report
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         with:
           name: coverage-consumer
           path: source/sdks/sdk/consumer-headless/build/reports/kover/reportJvm.xml
 
+      - name: Upload B2B coverage report
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+        with:
+          name: coverage-b2b
+          path: source/sdks/sdk/b2b-headless/build/reports/kover/reportJvm.xml
+
       - name: Post coverage comment
         if: github.event_name == 'pull_request'
-        uses: madrapps/jacoco-report@v1.7.2
+        uses: madrapps/jacoco-report@50d3aff4548aa991e6753342d9ba291084e63848 # v1.7.2
         with:
-          paths: source/sdks/sdk/consumer-headless/build/reports/kover/reportJvm.xml
+          paths: |
+            source/sdks/sdk/consumer-headless/build/reports/kover/reportJvm.xml
+            source/sdks/sdk/b2b-headless/build/reports/kover/reportJvm.xml
           token: ${{ secrets.GITHUB_TOKEN }}
-          title: Coverage — External SDK
+          title: Coverage — Consumer & B2B SDKs
           update-comment: true
+
+  check-ios-simulator:
+    name: Test (iOS Simulator)
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5.2.0
+        with:
+          distribution: zulu
+          java-version: 17
+
+      - name: Build StytchSwiftUtils for simulator
+        working-directory: source/StytchSwiftUtils
+        run: |
+          xcodebuild \
+            -project StytchSwiftUtils.xcodeproj \
+            -scheme StytchSwiftUtils \
+            -configuration Release \
+            -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath ./derived \
+            IPHONEOS_DEPLOYMENT_TARGET=15.0 \
+            SKIP_INSTALL=NO \
+            BUILD_LIBRARIES_FOR_DISTRIBUTION=YES \
+            ONLY_ACTIVE_ARCH=NO \
+            build
+
+      - name: Install StytchSwiftUtils to interop directory
+        run: |
+          mkdir -p source/shared/sdk/shared/src/iosMain/interop/StytchSwiftUtils.xcframework/ios-arm64_x86_64-simulator
+          cp -R source/StytchSwiftUtils/derived/Build/Products/Release-iphonesimulator/StytchSwiftUtils.framework \
+            source/shared/sdk/shared/src/iosMain/interop/StytchSwiftUtils.xcframework/ios-arm64_x86_64-simulator/
+
+      - name: Run iOS simulator tests
+        working-directory: source/shared
+        run: ./gradlew :sdk:shared:iosSimulatorArm64Test
+
+  check-android-instrumented:
+    name: Test (Android Instrumented)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5.2.0
+        with:
+          distribution: zulu
+          java-version: 17
+
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Run Android instrumented tests
+        uses: reactivecircus/android-emulator-runner@e89f39f1abbbd05b1113a29cf4db69e7540cae5a # v2.37.0
+        with:
+          api-level: 29
+          arch: x86_64
+          working-directory: source/shared
+          script: ./gradlew :sdk:shared:connectedAndroidTest :sdk:shared:koverXmlReportAndroid
+
+      - name: Upload Android instrumented coverage report
+        if: always()
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+        with:
+          name: coverage-android-instrumented
+          path: source/shared/sdk/shared/build/reports/kover/reportAndroid.xml
+
+  check-swift-utils:
+    name: Test (StytchSwiftUtils)
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - uses: ./.github/actions/import-apple-certificate
+        with:
+          certificate_base64: ${{ secrets.APPLE_CERTIFICATE_BASE64 }}
+          certificate_password: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+          keychain_password: ${{ secrets.KEYCHAIN_PASSWORD }}
+
+      - name: Test StytchSwiftUtils
+        run: |
+          xcodebuild test \
+            -project source/StytchSwiftUtils/StytchSwiftUtils.xcodeproj \
+            -scheme StytchSwiftUtils \
+            -destination 'platform=iOS Simulator,name=iPhone 16' \
+            -allowProvisioningUpdates \
+            -enableCodeCoverage YES \
+            -resultBundlePath /tmp/StytchSwiftUtils.xcresult
+
+      - name: Upload StytchSwiftUtils coverage bundle
+        if: always()
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+        with:
+          name: coverage-swift-utils
+          path: /tmp/StytchSwiftUtils.xcresult
 
   check-rn:
     name: Test (React Native)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
         with:
-          node-version: 22
+          node-version: 24
           cache: yarn
           cache-dependency-path: |
             source/react-native/consumer/yarn.lock
