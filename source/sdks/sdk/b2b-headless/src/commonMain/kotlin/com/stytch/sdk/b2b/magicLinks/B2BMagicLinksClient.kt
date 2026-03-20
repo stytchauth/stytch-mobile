@@ -22,32 +22,43 @@ import kotlinx.coroutines.withContext
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.js.JsExport
 
+/** B2B magic link authentication methods. */
 @StytchApi
 @JsExport
 public interface B2BMagicLinksClient {
+    /** Email magic link methods. */
     public val email: B2BEmailMagicLinksClient
+
+    /** Discovery magic link methods (cross-org, unauthenticated). */
     public val discovery: B2BMagicLinksDiscoveryClient
 
+    /** Authenticates a magic link token received via deeplink. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun authenticate(request: IB2BMagicLinksAuthenticateParameters): B2BMagicLinksAuthenticateResponse
 }
 
+/** Email magic link methods for org-scoped authentication. */
 @StytchApi
 @JsExport
 public interface B2BEmailMagicLinksClient {
+    /** Sends a magic link email to the provided address for login or signup within the organization. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun loginOrSignup(request: IB2BMagicLinksLoginOrSignupParameters): B2BMagicLinksLoginOrSignupResponse
 
+    /** Sends a magic link invitation email to a new member. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun invite(request: IB2BMagicLinksInviteParameters): B2BMagicLinksInviteResponse
 }
 
+/** Magic link discovery methods for listing organizations before a session is established. */
 @StytchApi
 @JsExport
 public interface B2BMagicLinksDiscoveryClient {
+    /** Sends a discovery magic link email to enumerate organizations for the given email address. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun emailSend(request: IB2BMagicLinksDiscoveryEmailSendParameters): B2BMagicLinksDiscoveryEmailSendResponse
 
+    /** Authenticates the discovery magic link token, returning an intermediate session token and discovered organizations. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun authenticate(request: IB2BMagicLinksDiscoveryAuthenticateParameters): B2BMagicLinksDiscoveryAuthenticateResponse
 }

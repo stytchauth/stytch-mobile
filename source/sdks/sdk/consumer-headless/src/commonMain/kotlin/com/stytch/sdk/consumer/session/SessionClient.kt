@@ -14,15 +14,19 @@ import kotlinx.coroutines.withContext
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.js.JsExport
 
+/** Session management methods. */
 @StytchApi
 @JsExport
 public interface SessionClient {
+    /** Validates the current session token and optionally extends the session expiry. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun authenticate(request: ISessionsAuthenticateParameters): SessionsAuthenticateResponse
 
+    /** Revokes the current session, signing the user out. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun revoke(): SessionsRevokeResponse
 
+    /** Attests the current session using a device integrity token. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun attest(request: ISessionsAttestParameters): SessionsAttestResponse
 }

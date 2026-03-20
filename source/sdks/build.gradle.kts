@@ -11,6 +11,7 @@ plugins {
     alias(libs.plugins.ktlint) apply false
     alias(libs.plugins.kover) apply false
     alias(libs.plugins.mavenPublish) apply false
+    alias(libs.plugins.detekt) apply false
 }
 
 group = "com.stytch.sdk"
@@ -46,9 +47,13 @@ subprojects {
             }
         }
     }
-}
 
-subprojects {
+    apply(plugin = "io.gitlab.arturbosch.detekt")
+    extensions.configure<io.gitlab.arturbosch.detekt.extensions.DetektExtension> {
+        config.setFrom(rootProject.file("config/detekt.yml"))
+        source.setFrom(project.fileTree("src") { include("**/kotlin/**") })
+    }
+
     apply(plugin = "org.jlleitschuh.gradle.ktlint")
     extensions.configure<org.jlleitschuh.gradle.ktlint.KtlintExtension> {
         version.set("1.5.0")

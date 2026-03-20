@@ -21,17 +21,22 @@ import kotlinx.coroutines.withContext
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.js.JsExport
 
+/** Passkey (WebAuthn) authentication methods. */
 @StytchApi
 @JsExport
 public interface PasskeysClient {
+    /** Whether passkeys are supported on the current platform. */
     public val isSupported: Boolean
 
+    /** Registers a new passkey for the current user. Throws [com.stytch.sdk.passkeys.PasskeysUnsupportedError] if not supported. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun register(parameters: PasskeysParameters): WebAuthnRegisterResponse
 
+    /** Authenticates the user with an existing registered passkey. Throws [com.stytch.sdk.passkeys.PasskeysUnsupportedError] if not supported. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun authenticate(parameters: PasskeysParameters): WebAuthnAuthenticateResponse
 
+    /** Updates metadata (e.g. a friendly name) for a passkey registration. Throws [com.stytch.sdk.passkeys.PasskeysUnsupportedError] if not supported. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun update(
         id: String,

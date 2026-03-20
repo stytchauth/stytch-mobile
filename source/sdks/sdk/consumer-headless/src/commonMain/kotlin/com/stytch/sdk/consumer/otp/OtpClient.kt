@@ -24,43 +24,59 @@ import kotlinx.coroutines.withContext
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.js.JsExport
 
+/** OTP (one-time passcode) authentication via SMS, email, or WhatsApp. */
 @StytchApi
 @JsExport
 public interface OtpClient {
+    /** SMS OTP methods. */
     public val sms: SmsOtpClient
+
+    /** Email OTP methods. */
     public val email: EmailOtpClient
+
+    /** WhatsApp OTP methods. */
     public val whatsapp: WhatsAppOtpClient
 
+    /** Authenticates a one-time passcode. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun authenticate(request: IOTPsAuthenticateParameters): OTPsAuthenticateResponse
 }
 
+/** SMS OTP methods. */
 @StytchApi
 @JsExport
 public interface SmsOtpClient {
+    /** Sends an OTP to the provided phone number, creating a new user if one does not exist. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun loginOrCreate(request: IOTPsSMSLoginOrCreateParameters): OTPsSMSLoginOrCreateResponse
 
+    /** Sends an OTP to an existing user's phone number. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun send(request: IOTPsSMSSendSecondaryParameters): OTPsSMSSendSecondaryResponse
 }
 
+/** Email OTP methods. */
 @StytchApi
 @JsExport
 public interface EmailOtpClient {
+    /** Sends an OTP to the provided email address, creating a new user if one does not exist. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun loginOrCreate(request: IOTPsEmailLoginOrCreateParameters): OTPsEmailLoginOrCreateResponse
 
+    /** Sends an OTP to an existing user's email address. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun send(request: IOTPsEmailSendSecondaryParameters): OTPsEmailSendSecondaryResponse
 }
 
+/** WhatsApp OTP methods. */
 @StytchApi
 @JsExport
 public interface WhatsAppOtpClient {
+    /** Sends an OTP via WhatsApp to the provided phone number, creating a new user if one does not exist. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun loginOrCreate(request: IOTPsWhatsAppLoginOrCreateParameters): OTPsWhatsAppLoginOrCreateResponse
 
+    /** Sends an OTP via WhatsApp to an existing user's phone number. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun send(request: IOTPsWhatsAppSendSecondaryParameters): OTPsWhatsAppSendSecondaryResponse
 }

@@ -30,63 +30,92 @@ import kotlinx.coroutines.withContext
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.js.JsExport
 
+/** OAuth authentication methods for browser-based and native provider flows. */
 @StytchApi
 @JsExport
 public interface OAuthClient {
+    /** Authenticates an OAuth token received from a deeplink after the browser OAuth flow completes. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun authenticate(request: IOAuthAuthenticateParameters): OAuthAuthenticateResponse
 
+    /** Authenticates a Google ID token (for native Android Google Sign-In). */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun authenticateGoogleIdToken(request: IOAuthGoogleIDTokenAuthenticateParameters): OAuthGoogleIDTokenAuthenticateResponse
 
+    /** Authenticates an Apple ID token (for native iOS Sign In with Apple). */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun authenticateAppleIdToken(request: IOAuthAppleIDTokenAuthenticateParameters): OAuthGoogleIDTokenAuthenticateResponse
 
+    /** Creates an OAuth attach token to link an OAuth provider to an existing authenticated session. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun attach(request: IOAuthAttachParameters): OAuthAttachResponse
 
+    /** Apple OAuth. */
     public val apple: OAuthType
 
+    /** Amazon OAuth. */
     public val amazon: OAuthType
 
+    /** Bitbucket OAuth. */
     public val bitbucket: OAuthType
 
+    /** Coinbase OAuth. */
     public val coinbase: OAuthType
 
+    /** Discord OAuth. */
     public val discord: OAuthType
 
+    /** Facebook OAuth. */
     public val facebook: OAuthType
 
+    /** Figma OAuth. */
     public val figma: OAuthType
 
+    /** GitHub OAuth. */
     public val github: OAuthType
 
+    /** GitLab OAuth. */
     public val gitlab: OAuthType
 
+    /** Google OAuth. */
     public val google: OAuthType
 
+    /** LinkedIn OAuth. */
     public val linkedin: OAuthType
 
+    /** Microsoft OAuth. */
     public val microsoft: OAuthType
 
+    /** Salesforce OAuth. */
     public val salesforce: OAuthType
 
+    /** Slack OAuth. */
     public val slack: OAuthType
 
+    /** Snapchat OAuth. */
     public val snapchat: OAuthType
 
+    /** TikTok OAuth. */
     public val tiktok: OAuthType
 
+    /** Twitch OAuth. */
     public val twitch: OAuthType
 
+    /** Twitter/X OAuth. */
     public val twitter: OAuthType
 
+    /** Yahoo OAuth. */
     public val yahoo: OAuthType
 }
 
+/** An individual OAuth provider integration. */
 @StytchApi
 @JsExport
 public interface OAuthType {
+    /**
+     * Initiates the browser-based OAuth flow for this provider and authenticates the result.
+     * On Android this opens a Custom Tab; on iOS it uses ASWebAuthenticationSession.
+     */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun start(startParameters: OAuthStartParameters): AuthenticatedResponse
 }

@@ -1,15 +1,15 @@
 // Credit: https://www.reactnativecrossroads.com/posts/expo-plugin-add-spm-dependency/
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const { withXcodeProject } = require('@expo/config-plugins');
-
+// TODO: Figure out how to make this agnostic/not me
+// TODO: Update publish workflow to replace this with the live repo URL
+const spmUrl = `/Users/jhaven/Documents/stytch-mobile/source/ios/Package.swift`
 const addSPMDependenciesToMainTarget = (config) =>
   withXcodeProject(config, (config) => {
-    const repositoryUrl = '/Users/jhaven/Documents/stytch-mobile/ios/Package.swift';
+    const repositoryUrl = spmUrl;
     const repoName = 'stytch-mobile';
     const productName = 'StytchConsumerSDK';
     const xcodeProject = config.modResults;
-
-    // update XCRemoteSwiftPackageReference
     const spmReferences = xcodeProject.hash.project.objects['XCRemoteSwiftPackageReference'];
 
     if (!spmReferences) {

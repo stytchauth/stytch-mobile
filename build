@@ -6,7 +6,7 @@ SDK=$2
 PLATFORM=$3
 
 ROOT_DIR=`pwd`
-IOS_DIR=$ROOT_DIR/ios
+IOS_DIR=$ROOT_DIR/source/ios
 SRC_DIR=$ROOT_DIR/source
 SDK_WORKING_DIR=$SRC_DIR/sdks
 SHARED_WORKING_DIR=$SRC_DIR/shared
@@ -138,14 +138,13 @@ buildB2BRn() {
 # --- Lint / Test ---
 
 runLint() {
-    echo "Running ktlintCheck..."
+    echo "Checking shared SDK"
     cd $SHARED_WORKING_DIR
-    ./gradlew ktlintCheck :sdk:shared:publishToMavenLocal
-    cd $SDK_WORKING_DIR
-    ./gradlew ktlintCheck
+    ./gradlew ktlintCheck detekt :sdk:shared:publishToMavenLocal
 
-    echo "Running checkLegacyAbi..."
-    ./gradlew checkLegacyAbi
+    echo "Checking public SDKs"
+    cd $SDK_WORKING_DIR
+    ./gradlew ktlintCheck detekt checkLegacyAbi
 }
 
 runTests() {

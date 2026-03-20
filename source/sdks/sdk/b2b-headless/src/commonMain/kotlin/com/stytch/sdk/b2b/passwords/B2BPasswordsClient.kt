@@ -24,40 +24,55 @@ import kotlinx.coroutines.withContext
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.js.JsExport
 
+/** B2B password-based authentication methods. */
 @StytchApi
 @JsExport
 public interface B2BPasswordsClient {
+    /** Email password reset methods. */
     public val email: B2BPasswordsEmailClient
+
+    /** Existing-password reset methods. */
     public val existingPassword: B2BPasswordsExistingPasswordClient
+
+    /** Session-based password reset methods. */
     public val session: B2BPasswordsSessionClient
 
+    /** Authenticates a member with their email address and password. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun authenticate(request: IB2BPasswordAuthenticateParameters): B2BPasswordAuthenticateResponse
 
+    /** Checks the strength of a provided password and returns feedback. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun strengthCheck(request: IB2BPasswordStrengthCheckParameters): B2BPasswordStrengthCheckResponse
 }
 
+/** Email-based password reset methods. */
 @StytchApi
 @JsExport
 public interface B2BPasswordsEmailClient {
+    /** Initiates an email-based password reset by sending a reset link to the member's email. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun resetStart(request: IB2BPasswordEmailResetStartParameters): B2BPasswordEmailResetStartResponse
 
+    /** Completes the email password reset flow, updating the password using the token from the reset link. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun reset(request: IB2BPasswordEmailResetParameters): B2BPasswordEmailResetResponse
 }
 
+/** Existing-password reset — updates the password using the current password for verification. */
 @StytchApi
 @JsExport
 public interface B2BPasswordsExistingPasswordClient {
+    /** Resets a member's password using their existing password for verification. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun reset(request: IB2BPasswordExistingPasswordResetParameters): B2BPasswordExistingPasswordResetResponse
 }
 
+/** Session-based password reset — updates the password using an active session for verification. */
 @StytchApi
 @JsExport
 public interface B2BPasswordsSessionClient {
+    /** Resets a member's password using their active session for verification (no existing password required). */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun reset(request: IB2BPasswordSessionResetParameters): B2BPasswordSessionResetResponse
 }

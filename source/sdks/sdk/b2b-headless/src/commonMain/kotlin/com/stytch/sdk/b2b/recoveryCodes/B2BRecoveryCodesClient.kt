@@ -15,15 +15,19 @@ import kotlinx.coroutines.withContext
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.js.JsExport
 
+/** Recovery code management methods for the current member. */
 @StytchApi
 @JsExport
 public interface B2BRecoveryCodesClient {
+    /** Retrieves the recovery codes for the current member. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun get(): B2BRecoveryCodesGetResponse
 
+    /** Authenticates the member using a recovery code as an MFA fallback. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun recover(request: IB2BRecoveryCodesRecoverParameters): B2BRecoveryCodesRecoverResponse
 
+    /** Rotates the recovery codes, invalidating the previous set and generating new ones. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun rotate(request: IB2BRecoveryCodesRotateParameters): B2BRecoveryCodesRotateResponse
 }

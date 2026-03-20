@@ -25,27 +25,35 @@ import kotlinx.coroutines.withContext
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.js.JsExport
 
+/** Password-based authentication methods. */
 @StytchApi
 @JsExport
 public interface PasswordsClient {
+    /** Authenticates a user with their email address and password. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun authenticate(request: IPasswordsAuthenticateParameters): PasswordsAuthenticateResponse
 
+    /** Creates a new user with an email address and password. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun create(request: IPasswordsCreateParameters): PasswordsCreateResponse
 
+    /** Initiates an email-based password reset by sending a reset link to the user's email. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun resetByEmailStart(request: IPasswordsEmailResetStartParameters): PasswordsEmailResetStartResponse
 
+    /** Completes the email password reset flow, updating the password using the token from the reset link. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun resetByEmail(request: IPasswordsEmailResetParameters): PasswordsEmailResetResponse
 
+    /** Resets a user's password using their existing password for verification. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun resetByExistingPassword(request: IPasswordsExistingPasswordResetParameters): PasswordsExistingPasswordResetResponse
 
+    /** Resets a user's password using their active session for verification (no existing password required). */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun resetBySession(request: IPasswordsSessionResetParameters): PasswordsSessionResetResponse
 
+    /** Checks the strength of a provided password and returns feedback. */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun strengthCheck(request: IPasswordsStrengthCheckParameters): PasswordsStrengthCheckResponse
 }
