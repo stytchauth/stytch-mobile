@@ -39,8 +39,8 @@ jobs:
           title: Coverage — Shared SDK
           update-comment: true
 
-  check-consumer:
-    name: Lint & Test (External SDK)
+  check-sdks:
+    name: Lint & Test (Consumer & B2B)
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v6
@@ -58,19 +58,27 @@ jobs:
         working-directory: source/sdks
         run: ./gradlew ktlintCheck checkLegacyAbi koverXmlReportJvm
 
-      - name: Upload coverage report
+      - name: Upload consumer coverage report
         uses: actions/upload-artifact@v7
         with:
           name: coverage-consumer
           path: source/sdks/sdk/consumer-headless/build/reports/kover/reportJvm.xml
 
+      - name: Upload B2B coverage report
+        uses: actions/upload-artifact@v7
+        with:
+          name: coverage-b2b
+          path: source/sdks/sdk/b2b-headless/build/reports/kover/reportJvm.xml
+
       - name: Post coverage comment
         if: github.event_name == 'pull_request'
         uses: madrapps/jacoco-report@v1.7.2
         with:
-          paths: source/sdks/sdk/consumer-headless/build/reports/kover/reportJvm.xml
+          paths: |
+            source/sdks/sdk/consumer-headless/build/reports/kover/reportJvm.xml
+            source/sdks/sdk/b2b-headless/build/reports/kover/reportJvm.xml
           token: ${{ secrets.GITHUB_TOKEN }}
-          title: Coverage — External SDK
+          title: Coverage — Consumer & B2B SDKs
           update-comment: true
 
   check-ios-simulator:
@@ -126,7 +134,23 @@ jobs:
           api-level: 29
           arch: x86_64
           working-directory: source/shared
-          script: ./gradlew :sdk:shared:connectedAndroidTest
+          script: ./gradlew :sdk:shared:connectedAndroidTest :sdk:shared:createDebugAndroidTestCoverageReport
+
+      - name: Upload Android instrumented coverage report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: coverage-android-instrumented
+          path: source/shared/sdk/shared/build/reports/coverage/androidTest/debug/report.xml
+
+      - name: Post coverage comment
+        if: github.event_name == 'pull_request'
+        uses: madrapps/jacoco-report@v1.7.2
+        with:
+          paths: source/shared/sdk/shared/build/reports/coverage/androidTest/debug/report.xml
+          token: ${{ secrets.GITHUB_TOKEN }}
+          title: Coverage — Shared SDK (Android Instrumented)
+          update-comment: true
 
   check-swift-utils:
     name: Test (StytchSwiftUtils)
@@ -146,7 +170,16 @@ jobs:
             -project source/StytchSwiftUtils/StytchSwiftUtils.xcodeproj \
             -scheme StytchSwiftUtils \
             -destination 'platform=iOS Simulator,name=iPhone 16' \
-            -allowProvisioningUpdates
+            -allowProvisioningUpdates \
+            -enableCodeCoverage YES \
+            -resultBundlePath /tmp/StytchSwiftUtils.xcresult
+
+      - name: Upload StytchSwiftUtils coverage bundle
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: coverage-swift-utils
+          path: /tmp/StytchSwiftUtils.xcresult
 
   check-rn:
     name: Test (React Native)
