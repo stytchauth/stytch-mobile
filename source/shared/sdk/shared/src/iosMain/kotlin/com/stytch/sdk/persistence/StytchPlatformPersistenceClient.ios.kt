@@ -19,6 +19,9 @@ public actual class StytchPlatformPersistenceClient {
     }
 
     public actual fun reset() {
-        userDefaults.removeSuiteNamed(STYTCH_PERSISTENCE_FILE_NAME)
+        userDefaults.dictionaryRepresentation().keys.forEach { key ->
+            userDefaults.removeObjectForKey(key as String)
+        }
+        NSUserDefaults.standardUserDefaults.removePersistentDomainForName(STYTCH_PERSISTENCE_FILE_NAME)
     }
 }
