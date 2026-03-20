@@ -21,6 +21,7 @@ derived/
 source/react-native/b2b/lib
 source/react-native/b2b/ios/
 source/react-native/b2b/android/
+source/react-native/b2b/src/__mocks__
 source/react-native/b2b/src/NativeStytchBridge.ts
 source/react-native/b2b/StytchReactNative.podspec
 source/react-native/b2b/.nvmrc
@@ -35,6 +36,7 @@ source/react-native/b2b/tsconfig.json
 source/react-native/consumer/lib
 source/react-native/consumer/ios/
 source/react-native/consumer/android/
+source/react-native/consumer/src/__mocks__
 source/react-native/consumer/src/NativeStytchBridge.ts
 source/react-native/consumer/StytchReactNative.podspec
 source/react-native/consumer/.nvmrc
@@ -42,7 +44,7 @@ source/react-native/consumer/.prettierignore
 source/react-native/consumer/.prettierrc
 source/react-native/consumer/.swcrc
 source/react-native/consumer/babel.config.js
-source/react-native/b2b/eslint.config.ts
+source/react-native/consumer/eslint.config.ts
 source/react-native/consumer/jest.config.js
 source/react-native/consumer/jest.setup.js
 source/react-native/consumer/tsconfig.json

@@ -9,4 +9,8 @@ export default {
   transformIgnorePatterns: [
     'node_modules/(?!(react-native|@react-native|@testing-library/react-native)/)',
   ],
+  moduleNameMapper: {
+    'consumer-headless\\.mjs$': '<rootDir>/src/__mocks__/consumer-headless.ts',
+    'b2b-headless\\.mjs$': '<rootDir>/src/__mocks__/b2b-headless.ts',
+  },
 };
