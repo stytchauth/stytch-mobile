@@ -85,6 +85,22 @@ kotlin {
             linkerOpts("-framework", "StytchSwiftUtils")
         }
     }
+    iosSimulatorArm64().binaries.getTest("DEBUG").linkerOpts(
+        "-F$interopDirectory/StytchSwiftUtils.xcframework/ios-arm64_x86_64-simulator",
+        "-framework",
+        "StytchSwiftUtils",
+    )
+
+    val copyFrameworksForIosSimulatorTest by tasks.registering(Copy::class) {
+        from(rootDir.resolve("../StytchSwiftUtils/derived/Build/Products/Release-iphonesimulator")) {
+            include("*.framework/**")
+        }
+        into(layout.buildDirectory.dir("bin/iosSimulatorArm64/debugTest/Frameworks"))
+        mustRunAfter("linkDebugTestIosSimulatorArm64")
+    }
+    tasks.named("iosSimulatorArm64Test") {
+        dependsOn(copyFrameworksForIosSimulatorTest)
+    }
 
     js {
         browser()
@@ -137,13 +153,10 @@ kotlin {
             implementation(libs.mockk)
             implementation(libs.kotlinx.coroutines.test)
         }
-        getByName("androidDeviceTest") {
-            dependsOn(androidMain.get())
-            dependencies {
-                implementation(kotlin("test"))
-                implementation(libs.androidx.test.runner)
-                implementation(libs.androidx.test.ext.junit)
-            }
+        getByName("androidDeviceTest").dependencies {
+            implementation(kotlin("test"))
+            implementation(libs.androidx.test.runner)
+            implementation(libs.androidx.test.ext.junit)
         }
     }
 }
