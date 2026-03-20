@@ -1,0 +1,36 @@
+name: Import Apple Signing Certificate
+description: Imports an Apple Development certificate into a temporary keychain for code signing
+
+runs:
+  using: composite
+  steps:
+    - name: Import Apple signing certificate
+      shell: bash
+      env:
+        APPLE_CERTIFICATE_BASE64: ${{ inputs.certificate_base64 }}
+        APPLE_CERTIFICATE_PASSWORD: ${{ inputs.certificate_password }}
+        KEYCHAIN_PASSWORD: ${{ inputs.keychain_password }}
+      run: |
+        KEYCHAIN_PATH=$RUNNER_TEMP/build.keychain
+        CERT_PATH=$RUNNER_TEMP/certificate.p12
+
+        echo -n "$APPLE_CERTIFICATE_BASE64" | base64 --decode -o "$CERT_PATH"
+
+        security create-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+        security set-keychain-settings -lut 21600 "$KEYCHAIN_PATH"
+        security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+        security import "$CERT_PATH" -k "$KEYCHAIN_PATH" -P "$APPLE_CERTIFICATE_PASSWORD" \
+          -T /usr/bin/codesign -T /usr/bin/security
+        security list-keychain -d user -s "$KEYCHAIN_PATH"
+        security set-key-partition-list -S apple-tool:,apple: -s -k "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+
+inputs:
+  certificate_base64:
+    description: Base64-encoded Apple Development certificate (.p12)
+    required: true
+  certificate_password:
+    description: Password for the .p12 certificate
+    required: true
+  keychain_password:
+    description: Password to use for the temporary keychain
+    required: true

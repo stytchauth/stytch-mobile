@@ -37,7 +37,7 @@ public class StytchEncryptionManagerSwift: NSObject {
     @objc public func deleteEncryptionKey(name: String) throws {
         let query: [CFString: Any] = baseKeyQuery(name: name)
         let status = SecItemDelete(query as CFDictionary)
-        if status != errSecSuccess || status != errSecItemNotFound {
+        if status != errSecSuccess && status != errSecItemNotFound {
           throw NSError(
               domain: "com.stytch.swift.encryption", code: Int(status),
               userInfo: ["Error deleting encryption key": "Status=\(status)"]
@@ -149,14 +149,13 @@ public class StytchEncryptionManagerSwift: NSObject {
                 kSecAttrAccount: name,
                 kSecClass: kSecClassGenericPassword,
                 kSecAttrService: name,
-                kSecUseDataProtectionKeychain: true,
             ]
         }
         return query
     }
 
     @objc public func getLegacyNativeEncryptionKey() -> Data? {
-        var query = [
+        let query = [
             kSecAttrService: "stytch_encryption_key",
             kSecAttrAccount: "EncryptedUserDefaultsKey",
             kSecClass: kSecClassGenericPassword,
