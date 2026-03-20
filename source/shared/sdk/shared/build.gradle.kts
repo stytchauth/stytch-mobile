@@ -49,6 +49,9 @@ kotlin {
         withHostTest {
             enableCoverage = true
         }
+        withDeviceTest {
+            enableCoverage = true
+        }
     }
 
     val xcFramework = XCFramework("StytchSharedSDK")
@@ -133,6 +136,14 @@ kotlin {
             implementation(kotlin("test"))
             implementation(libs.mockk)
             implementation(libs.kotlinx.coroutines.test)
+        }
+        getByName("androidDeviceTest") {
+            dependsOn(androidMain.get())
+            dependencies {
+                implementation(kotlin("test"))
+                implementation(libs.androidx.test.runner)
+                implementation(libs.androidx.test.ext.junit)
+            }
         }
     }
 }
