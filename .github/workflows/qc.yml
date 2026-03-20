@@ -13,9 +13,9 @@ jobs:
     name: Lint & Test (Shared)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v6
 
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@v5
         with:
           distribution: zulu
           java-version: 17
@@ -25,7 +25,7 @@ jobs:
         run: ./gradlew ktlintCheck koverXmlReportJvm
 
       - name: Upload coverage report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: coverage-shared
           path: source/shared/sdk/shared/build/reports/kover/reportJvm.xml
@@ -43,9 +43,9 @@ jobs:
     name: Lint & Test (External SDK)
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v6
 
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@v5
         with:
           distribution: zulu
           java-version: 17
@@ -59,7 +59,7 @@ jobs:
         run: ./gradlew ktlintCheck checkLegacyAbi koverXmlReportJvm
 
       - name: Upload coverage report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: coverage-consumer
           path: source/sdks/sdk/consumer-headless/build/reports/kover/reportJvm.xml
@@ -160,11 +160,11 @@ jobs:
     name: Test (React Native)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v6
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
-          node-version: 22
+          node-version: 24
           cache: yarn
           cache-dependency-path: |
             source/react-native/consumer/yarn.lock
