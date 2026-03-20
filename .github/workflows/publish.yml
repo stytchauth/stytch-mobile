@@ -29,24 +29,11 @@ jobs:
           java-version: 17
           cache: gradle
 
-      - name: Import Apple signing certificate
-        env:
-          APPLE_CERTIFICATE_BASE64: ${{ secrets.APPLE_CERTIFICATE_BASE64 }}
-          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
-          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
-        run: |
-          KEYCHAIN_PATH=$RUNNER_TEMP/build.keychain
-          CERT_PATH=$RUNNER_TEMP/certificate.p12
-
-          echo -n "$APPLE_CERTIFICATE_BASE64" | base64 --decode -o "$CERT_PATH"
-
-          security create-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
-          security set-keychain-settings -lut 21600 "$KEYCHAIN_PATH"
-          security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
-          security import "$CERT_PATH" -k "$KEYCHAIN_PATH" -P "$APPLE_CERTIFICATE_PASSWORD" \
-            -T /usr/bin/codesign -T /usr/bin/security
-          security list-keychain -d user -s "$KEYCHAIN_PATH"
-          security set-key-partition-list -S apple-tool:,apple: -s -k "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+      - uses: ./.github/actions/import-apple-certificate
+        with:
+          certificate_base64: ${{ secrets.APPLE_CERTIFICATE_BASE64 }}
+          certificate_password: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+          keychain_password: ${{ secrets.KEYCHAIN_PASSWORD }}
 
       - name: Build StytchSwiftUtils
         working-directory: source/StytchSwiftUtils
@@ -215,24 +202,11 @@ jobs:
         working-directory: source/shared
         run: ./gradlew :sdk:shared:publishToMavenLocal
 
-      - name: Import Apple signing certificate
-        env:
-          APPLE_CERTIFICATE_BASE64: ${{ secrets.APPLE_CERTIFICATE_BASE64 }}
-          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
-          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
-        run: |
-          KEYCHAIN_PATH=$RUNNER_TEMP/build.keychain
-          CERT_PATH=$RUNNER_TEMP/certificate.p12
-
-          echo -n "$APPLE_CERTIFICATE_BASE64" | base64 --decode -o "$CERT_PATH"
-
-          security create-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
-          security set-keychain-settings -lut 21600 "$KEYCHAIN_PATH"
-          security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
-          security import "$CERT_PATH" -k "$KEYCHAIN_PATH" -P "$APPLE_CERTIFICATE_PASSWORD" \
-            -T /usr/bin/codesign -T /usr/bin/security
-          security list-keychain -d user -s "$KEYCHAIN_PATH"
-          security set-key-partition-list -S apple-tool:,apple: -s -k "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+      - uses: ./.github/actions/import-apple-certificate
+        with:
+          certificate_base64: ${{ secrets.APPLE_CERTIFICATE_BASE64 }}
+          certificate_password: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+          keychain_password: ${{ secrets.KEYCHAIN_PASSWORD }}
 
       - name: Build consumer and B2B xcframeworks
         working-directory: source/sdks
