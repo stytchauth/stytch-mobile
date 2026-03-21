@@ -32,7 +32,43 @@ public interface B2BMagicLinksClient {
     /** Discovery magic link methods (cross-org, unauthenticated). */
     public val discovery: B2BMagicLinksDiscoveryClient
 
-    /** Authenticates a magic link token received via deeplink. */
+    /**
+     * Authenticates a magic link token received via deeplink, establishing a member session.
+     * Calls the `POST /sdk/v1/b2b/magic_links/authenticate` endpoint. Retrieves the PKCE code
+     * verifier stored during the corresponding [B2BEmailMagicLinksClient.loginOrSignup] call, and
+     * automatically includes the intermediate session token if one is present.
+     *
+     * **Kotlin:**
+     * ```kotlin
+     * StytchB2B.magicLinks.authenticate(
+     *     B2BMagicLinksAuthenticateParameters(
+     *         magicLinksToken = "token",
+     *         sessionDurationMinutes = 30,
+     *     )
+     * )
+     * ```
+     *
+     * **iOS:**
+     * ```swift
+     * let params = B2BMagicLinksAuthenticateParameters(magicLinksToken: "token", sessionDurationMinutes: 30)
+     * let response = try await StytchB2B.magicLinks.authenticate(params)
+     * ```
+     *
+     * **React Native:**
+     * ```js
+     * StytchB2B.magicLinks.authenticate({ magicLinksToken: "token", sessionDurationMinutes: 30 })
+     * ```
+     *
+     * @param request - [IB2BMagicLinksAuthenticateParameters]
+     *   - `magicLinksToken` — The token extracted from the magic link deeplink URL.
+     *   - `sessionDurationMinutes` — Duration of the session to create, in minutes.
+     *   - `locale?` — Locale used for any follow-up communications.
+     *
+     * @return [B2BMagicLinksAuthenticateResponse] containing the authenticated member session.
+     *
+     * @throws [StytchError] if the token is invalid, expired, or no PKCE verifier is found in storage.
+     * @throws [CancellationException] if the coroutine is cancelled.
+     */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun authenticate(request: IB2BMagicLinksAuthenticateParameters): B2BMagicLinksAuthenticateResponse
 }
@@ -41,11 +77,91 @@ public interface B2BMagicLinksClient {
 @StytchApi
 @JsExport
 public interface B2BEmailMagicLinksClient {
-    /** Sends a magic link email to the provided address for login or signup within the organization. */
+    /**
+     * Sends a magic link email to the provided address for login or signup within an organization.
+     * Calls the `POST /sdk/v1/b2b/magic_links/email/login_or_signup` endpoint. Generates and stores
+     * a PKCE code pair for use in the subsequent [B2BMagicLinksClient.authenticate] call.
+     *
+     * **Kotlin:**
+     * ```kotlin
+     * StytchB2B.magicLinks.email.loginOrSignup(
+     *     B2BMagicLinksLoginOrSignupParameters(
+     *         emailAddress = "user@example.com",
+     *         organizationId = "org-test-d5a3b680-e8a3-40c0-b815-ab79986666d0",
+     *     )
+     * )
+     * ```
+     *
+     * **iOS:**
+     * ```swift
+     * let params = B2BMagicLinksLoginOrSignupParameters(
+     *     emailAddress: "user@example.com",
+     *     organizationId: "org-test-d5a3b680-e8a3-40c0-b815-ab79986666d0"
+     * )
+     * let response = try await StytchB2B.magicLinks.email.loginOrSignup(params)
+     * ```
+     *
+     * **React Native:**
+     * ```js
+     * StytchB2B.magicLinks.email.loginOrSignup({
+     *     emailAddress: "user@example.com",
+     *     organizationId: "org-test-d5a3b680-e8a3-40c0-b815-ab79986666d0",
+     * })
+     * ```
+     *
+     * @param request - [IB2BMagicLinksLoginOrSignupParameters]
+     *   - `emailAddress` — The email address of the member.
+     *   - `organizationId` — The ID of the organization the member belongs to.
+     *   - `loginRedirectUrl?` — URL to redirect to after a successful login magic link click.
+     *   - `signupRedirectUrl?` — URL to redirect to after a successful signup magic link click.
+     *   - `loginTemplateId?` — Custom email template ID for the login email.
+     *   - `signupTemplateId?` — Custom email template ID for the signup email.
+     *   - `locale?` — Locale used for the email content.
+     *
+     * @return [B2BMagicLinksLoginOrSignupResponse] confirming the magic link email was sent.
+     *
+     * @throws [StytchError] if the request fails.
+     * @throws [CancellationException] if the coroutine is cancelled.
+     */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun loginOrSignup(request: IB2BMagicLinksLoginOrSignupParameters): B2BMagicLinksLoginOrSignupResponse
 
-    /** Sends a magic link invitation email to a new member. */
+    /**
+     * Sends a magic link invitation email to a new member of the organization.
+     * Calls the `POST /sdk/v1/b2b/magic_links/email/invite` endpoint. Requires an active session.
+     *
+     * **Kotlin:**
+     * ```kotlin
+     * StytchB2B.magicLinks.email.invite(
+     *     B2BMagicLinksInviteParameters(emailAddress = "newmember@example.com")
+     * )
+     * ```
+     *
+     * **iOS:**
+     * ```swift
+     * let params = B2BMagicLinksInviteParameters(emailAddress: "newmember@example.com")
+     * let response = try await StytchB2B.magicLinks.email.invite(params)
+     * ```
+     *
+     * **React Native:**
+     * ```js
+     * StytchB2B.magicLinks.email.invite({ emailAddress: "newmember@example.com" })
+     * ```
+     *
+     * @param request - [IB2BMagicLinksInviteParameters]
+     *   - `emailAddress` — The email address of the person to invite.
+     *   - `inviteRedirectUrl?` — URL to redirect to when the invite is accepted.
+     *   - `inviteTemplateId?` — Custom email template ID for the invitation email.
+     *   - `name?` — Display name to pre-populate for the new member.
+     *   - `untrustedMetadata?` — Client-settable key-value metadata to assign to the new member.
+     *   - `locale?` — Locale used for the invitation email.
+     *   - `roles?` — List of RBAC role IDs to assign to the new member.
+     *
+     * @return [B2BMagicLinksInviteResponse] confirming the invitation email was sent.
+     *
+     * @throws [StytchError] if the request fails or the caller lacks permission to invite members.
+     * @throws [CancellationException] if the coroutine is cancelled.
+     */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun invite(request: IB2BMagicLinksInviteParameters): B2BMagicLinksInviteResponse
 }
@@ -54,11 +170,79 @@ public interface B2BEmailMagicLinksClient {
 @StytchApi
 @JsExport
 public interface B2BMagicLinksDiscoveryClient {
-    /** Sends a discovery magic link email to enumerate organizations for the given email address. */
+    /**
+     * Sends a discovery magic link email to enumerate the organizations associated with the given
+     * email address. Calls the `POST /sdk/v1/b2b/magic_links/email/discovery/send` endpoint.
+     * Generates and stores a PKCE code pair for use in the subsequent [authenticate] call.
+     *
+     * **Kotlin:**
+     * ```kotlin
+     * StytchB2B.magicLinks.discovery.emailSend(
+     *     B2BMagicLinksDiscoveryEmailSendParameters(emailAddress = "user@example.com")
+     * )
+     * ```
+     *
+     * **iOS:**
+     * ```swift
+     * let params = B2BMagicLinksDiscoveryEmailSendParameters(emailAddress: "user@example.com")
+     * let response = try await StytchB2B.magicLinks.discovery.emailSend(params)
+     * ```
+     *
+     * **React Native:**
+     * ```js
+     * StytchB2B.magicLinks.discovery.emailSend({ emailAddress: "user@example.com" })
+     * ```
+     *
+     * @param request - [IB2BMagicLinksDiscoveryEmailSendParameters]
+     *   - `emailAddress` — The email address to send the discovery link to.
+     *   - `discoveryRedirectUrl?` — URL to redirect to after the user clicks the discovery link.
+     *   - `loginTemplateId?` — Custom email template ID for the discovery email.
+     *   - `locale?` — Locale used for the email content.
+     *   - `discoveryExpirationMinutes?` — Expiration time for the discovery link, in minutes.
+     *
+     * @return [B2BMagicLinksDiscoveryEmailSendResponse] confirming the discovery email was sent.
+     *
+     * @throws [StytchError] if the request fails.
+     * @throws [CancellationException] if the coroutine is cancelled.
+     */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun emailSend(request: IB2BMagicLinksDiscoveryEmailSendParameters): B2BMagicLinksDiscoveryEmailSendResponse
 
-    /** Authenticates the discovery magic link token, returning an intermediate session token and discovered organizations. */
+    /**
+     * Authenticates the discovery magic link token received via deeplink, returning an intermediate
+     * session token and the list of discovered organizations. Calls the
+     * `POST /sdk/v1/b2b/magic_links/discovery/authenticate` endpoint. Retrieves the PKCE code
+     * verifier stored during the corresponding [emailSend] call.
+     *
+     * **Kotlin:**
+     * ```kotlin
+     * StytchB2B.magicLinks.discovery.authenticate(
+     *     B2BMagicLinksDiscoveryAuthenticateParameters(
+     *         discoveryMagicLinksToken = "token",
+     *     )
+     * )
+     * ```
+     *
+     * **iOS:**
+     * ```swift
+     * let params = B2BMagicLinksDiscoveryAuthenticateParameters(discoveryMagicLinksToken: "token")
+     * let response = try await StytchB2B.magicLinks.discovery.authenticate(params)
+     * ```
+     *
+     * **React Native:**
+     * ```js
+     * StytchB2B.magicLinks.discovery.authenticate({ discoveryMagicLinksToken: "token" })
+     * ```
+     *
+     * @param request - [IB2BMagicLinksDiscoveryAuthenticateParameters]
+     *   - `discoveryMagicLinksToken` — The discovery token extracted from the magic link deeplink URL.
+     *
+     * @return [B2BMagicLinksDiscoveryAuthenticateResponse] containing an intermediate session token
+     *   and a list of discovered organizations.
+     *
+     * @throws [StytchError] if the token is invalid, expired, or no PKCE verifier is found in storage.
+     * @throws [CancellationException] if the coroutine is cancelled.
+     */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun authenticate(request: IB2BMagicLinksDiscoveryAuthenticateParameters): B2BMagicLinksDiscoveryAuthenticateResponse
 }

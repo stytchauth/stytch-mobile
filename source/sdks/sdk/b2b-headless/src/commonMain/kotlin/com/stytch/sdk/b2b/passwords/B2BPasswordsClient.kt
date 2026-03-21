@@ -37,11 +37,93 @@ public interface B2BPasswordsClient {
     /** Session-based password reset methods. */
     public val session: B2BPasswordsSessionClient
 
-    /** Authenticates a member with their email address and password. */
+    /**
+     * Authenticates a member with their email address and password, establishing a member session.
+     * Calls the `POST /sdk/v1/b2b/passwords/authenticate` endpoint. Automatically includes the
+     * intermediate session token if one is present.
+     *
+     * **Kotlin:**
+     * ```kotlin
+     * StytchB2B.passwords.authenticate(
+     *     B2BPasswordAuthenticateParameters(
+     *         organizationId = "org-test-d5a3b680-e8a3-40c0-b815-ab79986666d0",
+     *         emailAddress = "user@example.com",
+     *         password = "secretpassword",
+     *         sessionDurationMinutes = 30,
+     *     )
+     * )
+     * ```
+     *
+     * **iOS:**
+     * ```swift
+     * let params = B2BPasswordAuthenticateParameters(
+     *     organizationId: "org-test-d5a3b680-e8a3-40c0-b815-ab79986666d0",
+     *     emailAddress: "user@example.com",
+     *     password: "secretpassword",
+     *     sessionDurationMinutes: 30
+     * )
+     * let response = try await StytchB2B.passwords.authenticate(params)
+     * ```
+     *
+     * **React Native:**
+     * ```js
+     * StytchB2B.passwords.authenticate({
+     *     organizationId: "org-test-d5a3b680-e8a3-40c0-b815-ab79986666d0",
+     *     emailAddress: "user@example.com",
+     *     password: "secretpassword",
+     *     sessionDurationMinutes: 30,
+     * })
+     * ```
+     *
+     * @param request - [IB2BPasswordAuthenticateParameters]
+     *   - `organizationId` — The ID of the organization the member belongs to.
+     *   - `emailAddress` — The member's email address.
+     *   - `password` — The member's password.
+     *   - `sessionDurationMinutes` — Duration of the session to create, in minutes.
+     *   - `locale?` — Locale for any follow-up communications.
+     *
+     * @return [B2BPasswordAuthenticateResponse] containing the authenticated member session.
+     *
+     * @throws [StytchError] if the credentials are invalid.
+     * @throws [CancellationException] if the coroutine is cancelled.
+     */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun authenticate(request: IB2BPasswordAuthenticateParameters): B2BPasswordAuthenticateResponse
 
-    /** Checks the strength of a provided password and returns feedback. */
+    /**
+     * Checks the strength of a password and returns a score with actionable feedback.
+     * Calls the `POST /sdk/v1/b2b/passwords/strength_check` endpoint. Does not require a session.
+     *
+     * **Kotlin:**
+     * ```kotlin
+     * StytchB2B.passwords.strengthCheck(
+     *     B2BPasswordStrengthCheckParameters(
+     *         password = "mypassword",
+     *         emailAddress = "user@example.com",
+     *     )
+     * )
+     * ```
+     *
+     * **iOS:**
+     * ```swift
+     * let params = B2BPasswordStrengthCheckParameters(password: "mypassword", emailAddress: "user@example.com")
+     * let response = try await StytchB2B.passwords.strengthCheck(params)
+     * ```
+     *
+     * **React Native:**
+     * ```js
+     * StytchB2B.passwords.strengthCheck({ password: "mypassword", emailAddress: "user@example.com" })
+     * ```
+     *
+     * @param request - [IB2BPasswordStrengthCheckParameters]
+     *   - `password` — The password to evaluate.
+     *   - `emailAddress?` — The member's email address, used to improve scoring by checking against personal information.
+     *
+     * @return [B2BPasswordStrengthCheckResponse] containing a strength score, breach detection result, and feedback.
+     *
+     * @throws [StytchError] if the request fails.
+     * @throws [CancellationException] if the coroutine is cancelled.
+     */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun strengthCheck(request: IB2BPasswordStrengthCheckParameters): B2BPasswordStrengthCheckResponse
 }
@@ -50,11 +132,103 @@ public interface B2BPasswordsClient {
 @StytchApi
 @JsExport
 public interface B2BPasswordsEmailClient {
-    /** Initiates an email-based password reset by sending a reset link to the member's email. */
+    /**
+     * Initiates an email-based password reset by sending a reset link to the member's email address.
+     * Calls the `POST /sdk/v1/b2b/passwords/email/reset/start` endpoint. Generates and stores a
+     * PKCE code pair for use in the subsequent [reset] call.
+     *
+     * **Kotlin:**
+     * ```kotlin
+     * StytchB2B.passwords.email.resetStart(
+     *     B2BPasswordEmailResetStartParameters(
+     *         organizationId = "org-test-d5a3b680-e8a3-40c0-b815-ab79986666d0",
+     *         emailAddress = "user@example.com",
+     *     )
+     * )
+     * ```
+     *
+     * **iOS:**
+     * ```swift
+     * let params = B2BPasswordEmailResetStartParameters(
+     *     organizationId: "org-test-d5a3b680-e8a3-40c0-b815-ab79986666d0",
+     *     emailAddress: "user@example.com"
+     * )
+     * let response = try await StytchB2B.passwords.email.resetStart(params)
+     * ```
+     *
+     * **React Native:**
+     * ```js
+     * StytchB2B.passwords.email.resetStart({
+     *     organizationId: "org-test-d5a3b680-e8a3-40c0-b815-ab79986666d0",
+     *     emailAddress: "user@example.com",
+     * })
+     * ```
+     *
+     * @param request - [IB2BPasswordEmailResetStartParameters]
+     *   - `organizationId` — The ID of the organization the member belongs to.
+     *   - `emailAddress` — The email address of the member requesting a password reset.
+     *   - `loginRedirectUrl?` — URL to redirect to if the member clicks the link but already has a valid session.
+     *   - `resetPasswordRedirectUrl?` — URL to redirect to for completing the password reset.
+     *   - `resetPasswordExpirationMinutes?` — Expiration for the reset link, in minutes.
+     *   - `resetPasswordTemplateId?` — Custom email template ID for the reset email.
+     *   - `locale?` — Locale for the email content.
+     *   - `verifyEmailTemplateId?` — Custom email template ID for an email verification step, if required.
+     *
+     * @return [B2BPasswordEmailResetStartResponse] confirming the reset email was sent.
+     *
+     * @throws [StytchError] if no member with the given email exists in the organization.
+     * @throws [CancellationException] if the coroutine is cancelled.
+     */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun resetStart(request: IB2BPasswordEmailResetStartParameters): B2BPasswordEmailResetStartResponse
 
-    /** Completes the email password reset flow, updating the password using the token from the reset link. */
+    /**
+     * Completes the email password reset flow by setting a new password using the token from the
+     * reset link. Calls the `POST /sdk/v1/b2b/passwords/email/reset` endpoint. Retrieves the PKCE
+     * code verifier stored during the corresponding [resetStart] call, and automatically includes
+     * the intermediate session token if one is present.
+     *
+     * **Kotlin:**
+     * ```kotlin
+     * StytchB2B.passwords.email.reset(
+     *     B2BPasswordEmailResetParameters(
+     *         passwordResetToken = "token",
+     *         password = "newpassword",
+     *         sessionDurationMinutes = 30,
+     *     )
+     * )
+     * ```
+     *
+     * **iOS:**
+     * ```swift
+     * let params = B2BPasswordEmailResetParameters(
+     *     passwordResetToken: "token",
+     *     password: "newpassword",
+     *     sessionDurationMinutes: 30
+     * )
+     * let response = try await StytchB2B.passwords.email.reset(params)
+     * ```
+     *
+     * **React Native:**
+     * ```js
+     * StytchB2B.passwords.email.reset({
+     *     passwordResetToken: "token",
+     *     password: "newpassword",
+     *     sessionDurationMinutes: 30,
+     * })
+     * ```
+     *
+     * @param request - [IB2BPasswordEmailResetParameters]
+     *   - `passwordResetToken` — The password reset token extracted from the deeplink URL.
+     *   - `password` — The new password to set for the member.
+     *   - `sessionDurationMinutes` — Duration of the session to create, in minutes.
+     *   - `locale?` — Locale for any follow-up communications.
+     *
+     * @return [B2BPasswordEmailResetResponse] containing the authenticated member session.
+     *
+     * @throws [StytchError] if the token is invalid or expired, or if no PKCE verifier is found in storage.
+     * @throws [CancellationException] if the coroutine is cancelled.
+     */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun reset(request: IB2BPasswordEmailResetParameters): B2BPasswordEmailResetResponse
 }
@@ -63,7 +237,59 @@ public interface B2BPasswordsEmailClient {
 @StytchApi
 @JsExport
 public interface B2BPasswordsExistingPasswordClient {
-    /** Resets a member's password using their existing password for verification. */
+    /**
+     * Resets a member's password by verifying their existing password, then setting a new one.
+     * Calls the `POST /sdk/v1/b2b/passwords/existing_password/reset` endpoint.
+     *
+     * **Kotlin:**
+     * ```kotlin
+     * StytchB2B.passwords.existingPassword.reset(
+     *     B2BPasswordExistingPasswordResetParameters(
+     *         organizationId = "org-test-d5a3b680-e8a3-40c0-b815-ab79986666d0",
+     *         emailAddress = "user@example.com",
+     *         existingPassword = "oldpassword",
+     *         newPassword = "newpassword",
+     *         sessionDurationMinutes = 30,
+     *     )
+     * )
+     * ```
+     *
+     * **iOS:**
+     * ```swift
+     * let params = B2BPasswordExistingPasswordResetParameters(
+     *     organizationId: "org-test-d5a3b680-e8a3-40c0-b815-ab79986666d0",
+     *     emailAddress: "user@example.com",
+     *     existingPassword: "oldpassword",
+     *     newPassword: "newpassword",
+     *     sessionDurationMinutes: 30
+     * )
+     * let response = try await StytchB2B.passwords.existingPassword.reset(params)
+     * ```
+     *
+     * **React Native:**
+     * ```js
+     * StytchB2B.passwords.existingPassword.reset({
+     *     organizationId: "org-test-d5a3b680-e8a3-40c0-b815-ab79986666d0",
+     *     emailAddress: "user@example.com",
+     *     existingPassword: "oldpassword",
+     *     newPassword: "newpassword",
+     *     sessionDurationMinutes: 30,
+     * })
+     * ```
+     *
+     * @param request - [IB2BPasswordExistingPasswordResetParameters]
+     *   - `organizationId` — The ID of the organization.
+     *   - `emailAddress` — The member's email address.
+     *   - `existingPassword` — The member's current password for verification.
+     *   - `newPassword` — The new password to set.
+     *   - `sessionDurationMinutes` — Duration of the session to create, in minutes.
+     *   - `locale?` — Locale for any follow-up communications.
+     *
+     * @return [B2BPasswordExistingPasswordResetResponse] containing the authenticated member session.
+     *
+     * @throws [StytchError] if the existing password is incorrect or the new password is too weak.
+     * @throws [CancellationException] if the coroutine is cancelled.
+     */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun reset(request: IB2BPasswordExistingPasswordResetParameters): B2BPasswordExistingPasswordResetResponse
 }
@@ -72,7 +298,37 @@ public interface B2BPasswordsExistingPasswordClient {
 @StytchApi
 @JsExport
 public interface B2BPasswordsSessionClient {
-    /** Resets a member's password using their active session for verification (no existing password required). */
+    /**
+     * Resets a member's password using their active session for verification (no existing password
+     * required). Calls the `POST /sdk/v1/b2b/passwords/session/reset` endpoint. Requires an active
+     * session.
+     *
+     * **Kotlin:**
+     * ```kotlin
+     * StytchB2B.passwords.session.reset(
+     *     B2BPasswordSessionResetParameters(password = "newpassword")
+     * )
+     * ```
+     *
+     * **iOS:**
+     * ```swift
+     * let params = B2BPasswordSessionResetParameters(password: "newpassword")
+     * let response = try await StytchB2B.passwords.session.reset(params)
+     * ```
+     *
+     * **React Native:**
+     * ```js
+     * StytchB2B.passwords.session.reset({ password: "newpassword" })
+     * ```
+     *
+     * @param request - [IB2BPasswordSessionResetParameters]
+     *   - `password` — The new password to set for the currently authenticated member.
+     *
+     * @return [B2BPasswordSessionResetResponse] containing the updated member session.
+     *
+     * @throws [StytchError] if no active session exists or the password does not meet strength requirements.
+     * @throws [CancellationException] if the coroutine is cancelled.
+     */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun reset(request: IB2BPasswordSessionResetParameters): B2BPasswordSessionResetResponse
 }

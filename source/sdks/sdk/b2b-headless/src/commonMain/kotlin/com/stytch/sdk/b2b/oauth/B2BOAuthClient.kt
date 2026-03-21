@@ -49,7 +49,46 @@ public interface B2BOAuthClient {
     /** Cross-org OAuth discovery methods for enumerating organizations before authentication. */
     public val discovery: B2BOAuthDiscoveryClient
 
-    /** Authenticates an OAuth token received via deeplink after the browser flow completes. */
+    /**
+     * Authenticates an OAuth token received via deeplink after a browser-based OAuth flow completes,
+     * establishing a member session. Calls the `POST /sdk/v1/b2b/oauth/authenticate` endpoint.
+     * Retrieves the PKCE code verifier stored during the [B2BOAuthProviderClient.start] call, and
+     * automatically includes the intermediate session token if one is present.
+     *
+     * Use this method when handling deeplinks manually; prefer [B2BOAuthProviderClient.start] for
+     * the end-to-end flow.
+     *
+     * **Kotlin:**
+     * ```kotlin
+     * StytchB2B.oauth.authenticate(
+     *     B2BOAuthAuthenticateParameters(
+     *         oauthToken = "token",
+     *         sessionDurationMinutes = 30,
+     *     )
+     * )
+     * ```
+     *
+     * **iOS:**
+     * ```swift
+     * let params = B2BOAuthAuthenticateParameters(oauthToken: "token", sessionDurationMinutes: 30)
+     * let response = try await StytchB2B.oauth.authenticate(params)
+     * ```
+     *
+     * **React Native:**
+     * ```js
+     * StytchB2B.oauth.authenticate({ oauthToken: "token", sessionDurationMinutes: 30 })
+     * ```
+     *
+     * @param request - [IB2BOAuthAuthenticateParameters]
+     *   - `oauthToken` — The OAuth token extracted from the deeplink URL.
+     *   - `sessionDurationMinutes?` — Duration of the session to create, in minutes.
+     *   - `locale?` — Locale for any follow-up communications.
+     *
+     * @return [B2BOAuthAuthenticateResponse] containing the authenticated member session.
+     *
+     * @throws [StytchError] if the token is invalid, expired, or no PKCE verifier is found in storage.
+     * @throws [CancellationException] if the coroutine is cancelled.
+     */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun authenticate(request: IB2BOAuthAuthenticateParameters): B2BOAuthAuthenticateResponse
 }
@@ -63,7 +102,58 @@ public interface B2BOAuthProviderClient {
 
     /**
      * Initiates an OAuth browser flow for the provider, scoped to the specified organization.
-     * Automatically exchanges the resulting token for a member session on success.
+     * Opens a browser session at `https://{domain}/b2b/public/oauth/{provider}/start`, then
+     * automatically exchanges the resulting token by calling `POST /sdk/v1/b2b/oauth/authenticate`,
+     * establishing a member session on success.
+     *
+     * **Kotlin:**
+     * ```kotlin
+     * val response = StytchB2B.oauth.google.start(
+     *     B2BOAuthStartParameters(
+     *         organizationId = "org-test-d5a3b680-e8a3-40c0-b815-ab79986666d0",
+     *         loginRedirectUrl = "myapp://callback",
+     *         signupRedirectUrl = "myapp://callback",
+     *         sessionDurationMinutes = 30,
+     *     )
+     * )
+     * ```
+     *
+     * **iOS:**
+     * ```swift
+     * let params = B2BOAuthStartParameters(
+     *     organizationId: "org-test-d5a3b680-e8a3-40c0-b815-ab79986666d0",
+     *     loginRedirectUrl: "myapp://callback",
+     *     signupRedirectUrl: "myapp://callback",
+     *     sessionDurationMinutes: 30
+     * )
+     * let response = try await StytchB2B.oauth.google.start(params)
+     * ```
+     *
+     * **React Native:**
+     * ```js
+     * StytchB2B.oauth.google.start({
+     *     organizationId: "org-test-d5a3b680-e8a3-40c0-b815-ab79986666d0",
+     *     loginRedirectUrl: "myapp://callback",
+     *     signupRedirectUrl: "myapp://callback",
+     *     sessionDurationMinutes: 30,
+     * })
+     * ```
+     *
+     * @param parameters - [B2BOAuthStartParameters]
+     *   - `organizationId?` — The ID of the organization to authenticate into.
+     *   - `organizationSlug?` — The slug of the organization to authenticate into.
+     *   - `loginRedirectUrl?` — URL to redirect to after a successful login.
+     *   - `signupRedirectUrl?` — URL to redirect to after a successful sign-up.
+     *   - `customScopes?` — Additional OAuth scopes to request from the provider.
+     *   - `providerParams?` — Provider-specific query parameters to append to the OAuth URL.
+     *   - `sessionDurationMinutes?` — Duration of the session to create, in minutes.
+     *   - `activity?` *(Android only)* — The Android `Activity` used to launch the browser.
+     *   - `oauthPresentationContextProvider?` *(iOS only)* — Presentation context for the `ASWebAuthenticationSession`.
+     *
+     * @return [AuthenticatedResponse] containing the authenticated member session.
+     *
+     * @throws [StytchError] if the OAuth flow fails or the token cannot be exchanged.
+     * @throws [CancellationException] if the coroutine is cancelled.
      */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun start(parameters: B2BOAuthStartParameters): AuthenticatedResponse
@@ -74,8 +164,43 @@ public interface B2BOAuthProviderClient {
 @JsExport
 public interface B2BOAuthProviderDiscoveryClient {
     /**
-     * Initiates a discovery OAuth browser flow for the provider.
-     * Returns an intermediate session token and a list of discovered organizations.
+     * Initiates a discovery OAuth browser flow for the provider, allowing the user to enumerate
+     * organizations before authenticating. Opens a browser session at
+     * `https://{domain}/b2b/public/oauth/{provider}/discovery/start`, then automatically calls
+     * `POST /sdk/v1/b2b/oauth/discovery/authenticate`, returning discovered organizations and an
+     * intermediate session token.
+     *
+     * **Kotlin:**
+     * ```kotlin
+     * val response = StytchB2B.oauth.google.discovery.start(
+     *     B2BOAuthDiscoveryStartParameters(
+     *         discoveryRedirectUrl = "myapp://discovery",
+     *     )
+     * )
+     * ```
+     *
+     * **iOS:**
+     * ```swift
+     * let params = B2BOAuthDiscoveryStartParameters(discoveryRedirectUrl: "myapp://discovery")
+     * let response = try await StytchB2B.oauth.google.discovery.start(params)
+     * ```
+     *
+     * **React Native:**
+     * ```js
+     * StytchB2B.oauth.google.discovery.start({ discoveryRedirectUrl: "myapp://discovery" })
+     * ```
+     *
+     * @param parameters - [B2BOAuthDiscoveryStartParameters]
+     *   - `discoveryRedirectUrl?` — URL to redirect to after the discovery flow completes.
+     *   - `customScopes?` — Additional OAuth scopes to request from the provider.
+     *   - `providerParams?` — Provider-specific query parameters to append to the OAuth URL.
+     *   - `activity?` *(Android only)* — The Android `Activity` used to launch the browser.
+     *   - `oauthPresentationContextProvider?` *(iOS only)* — Presentation context for the `ASWebAuthenticationSession`.
+     *
+     * @return [B2BOAuthDiscoveryAuthenticateResponse] containing discovered organizations and an intermediate session token.
+     *
+     * @throws [StytchError] if the OAuth flow fails or the token cannot be exchanged.
+     * @throws [CancellationException] if the coroutine is cancelled.
      */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun start(parameters: B2BOAuthDiscoveryStartParameters): B2BOAuthDiscoveryAuthenticateResponse
@@ -85,7 +210,44 @@ public interface B2BOAuthProviderDiscoveryClient {
 @StytchApi
 @JsExport
 public interface B2BOAuthDiscoveryClient {
-    /** Authenticates a discovery OAuth token received via deeplink, returning discovered organizations. */
+    /**
+     * Authenticates a discovery OAuth token received via deeplink after a browser-based discovery
+     * OAuth flow completes. Calls the `POST /sdk/v1/b2b/oauth/discovery/authenticate` endpoint.
+     * Retrieves the PKCE code verifier stored during the [B2BOAuthProviderDiscoveryClient.start] call.
+     * Returns discovered organizations and an intermediate session token; call
+     * [B2BDiscoveryIntermediateSessionsClient.exchange] to establish a full member session.
+     *
+     * Use this method when handling deeplinks manually; prefer [B2BOAuthProviderDiscoveryClient.start]
+     * for the end-to-end flow.
+     *
+     * **Kotlin:**
+     * ```kotlin
+     * StytchB2B.oauth.discovery.authenticate(
+     *     B2BOAuthDiscoveryAuthenticateParameters(
+     *         discoveryOauthToken = "token",
+     *     )
+     * )
+     * ```
+     *
+     * **iOS:**
+     * ```swift
+     * let params = B2BOAuthDiscoveryAuthenticateParameters(discoveryOauthToken: "token")
+     * let response = try await StytchB2B.oauth.discovery.authenticate(params)
+     * ```
+     *
+     * **React Native:**
+     * ```js
+     * StytchB2B.oauth.discovery.authenticate({ discoveryOauthToken: "token" })
+     * ```
+     *
+     * @param request - [IB2BOAuthDiscoveryAuthenticateParameters]
+     *   - `discoveryOauthToken` — The discovery OAuth token extracted from the deeplink URL.
+     *
+     * @return [B2BOAuthDiscoveryAuthenticateResponse] containing discovered organizations and an intermediate session token.
+     *
+     * @throws [StytchError] if the token is invalid, expired, or no PKCE verifier is found in storage.
+     * @throws [CancellationException] if the coroutine is cancelled.
+     */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun authenticate(request: IB2BOAuthDiscoveryAuthenticateParameters): B2BOAuthDiscoveryAuthenticateResponse
 }
