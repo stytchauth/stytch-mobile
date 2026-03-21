@@ -34,19 +34,166 @@ import kotlin.js.JsExport
 @StytchApi
 @JsExport
 public interface OAuthClient {
-    /** Authenticates an OAuth token received from a deeplink after the browser OAuth flow completes. */
+    /**
+     * Authenticates an OAuth token received from a deeplink after the browser-based OAuth flow completes.
+     * Calls the `POST /sdk/v1/oauth/authenticate` endpoint. Retrieves the PKCE code verifier stored
+     * during the corresponding [OAuthType.start] call.
+     *
+     * This method is called automatically by [OAuthType.start] when using the browser flow — you typically
+     * only need to call it directly if you are handling the deeplink redirect yourself.
+     *
+     * **Kotlin:**
+     * ```kotlin
+     * StytchConsumer.oauth.authenticate(
+     *     OAuthAuthenticateParameters(token = "token", sessionDurationMinutes = 30)
+     * )
+     * ```
+     *
+     * **iOS:**
+     * ```swift
+     * let params = OAuthAuthenticateParameters(token: "token", sessionDurationMinutes: 30)
+     * let response = try await StytchConsumer.oauth.authenticate(params)
+     * ```
+     *
+     * **React Native:**
+     * ```js
+     * StytchConsumer.oauth.authenticate({ token: "token", sessionDurationMinutes: 30 })
+     * ```
+     *
+     * @param request - [IOAuthAuthenticateParameters]
+     *   - `token` — The OAuth token extracted from the deeplink URL.
+     *   - `sessionDurationMinutes` — Duration of the session to create, in minutes.
+     *
+     * @return [OAuthAuthenticateResponse] containing the authenticated session and user.
+     *
+     * @throws [StytchError] if the token is invalid or expired, or if no PKCE verifier is found in storage.
+     * @throws [CancellationException] if the coroutine is cancelled.
+     */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun authenticate(request: IOAuthAuthenticateParameters): OAuthAuthenticateResponse
 
-    /** Authenticates a Google ID token (for native Android Google Sign-In). */
+    /**
+     * Authenticates a Google ID token obtained via native Android Google Sign-In.
+     * Calls the `POST /sdk/v1/oauth/google/id_token/authenticate` endpoint.
+     *
+     * This method is called automatically by [OAuthClient.google] `start()` on Android — you typically
+     * only need to call it directly if you are supplying the ID token yourself.
+     *
+     * **Kotlin:**
+     * ```kotlin
+     * StytchConsumer.oauth.authenticateGoogleIdToken(
+     *     OAuthGoogleIDTokenAuthenticateParameters(
+     *         idToken = "google-id-token",
+     *         sessionDurationMinutes = 30,
+     *     )
+     * )
+     * ```
+     *
+     * **iOS:**
+     * ```swift
+     * let params = OAuthGoogleIDTokenAuthenticateParameters(
+     *     idToken: "google-id-token",
+     *     sessionDurationMinutes: 30
+     * )
+     * let response = try await StytchConsumer.oauth.authenticateGoogleIdToken(params)
+     * ```
+     *
+     * **React Native:**
+     * ```js
+     * StytchConsumer.oauth.authenticateGoogleIdToken({ idToken: "google-id-token", sessionDurationMinutes: 30 })
+     * ```
+     *
+     * @param request - [IOAuthGoogleIDTokenAuthenticateParameters]
+     *   - `idToken` — The Google ID token from native Google Sign-In.
+     *   - `sessionDurationMinutes` — Duration of the session to create, in minutes.
+     *   - `nonce?` — The nonce used when requesting the ID token, for replay protection.
+     *   - `oauthAttachToken?` — An OAuth attach token to link this provider to an existing session.
+     *
+     * @return [OAuthGoogleIDTokenAuthenticateResponse] containing the authenticated session and user.
+     *
+     * @throws [StytchError] if the ID token is invalid or expired.
+     * @throws [CancellationException] if the coroutine is cancelled.
+     */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun authenticateGoogleIdToken(request: IOAuthGoogleIDTokenAuthenticateParameters): OAuthGoogleIDTokenAuthenticateResponse
 
-    /** Authenticates an Apple ID token (for native iOS Sign In with Apple). */
+    /**
+     * Authenticates an Apple ID token obtained via native iOS Sign In with Apple.
+     * Calls the `POST /sdk/v1/oauth/apple/id_token/authenticate` endpoint.
+     *
+     * This method is called automatically by [OAuthClient.apple] `start()` on iOS — you typically
+     * only need to call it directly if you are supplying the ID token yourself.
+     *
+     * **Kotlin:**
+     * ```kotlin
+     * StytchConsumer.oauth.authenticateAppleIdToken(
+     *     OAuthAppleIDTokenAuthenticateParameters(
+     *         idToken = "apple-id-token",
+     *         sessionDurationMinutes = 30,
+     *     )
+     * )
+     * ```
+     *
+     * **iOS:**
+     * ```swift
+     * let params = OAuthAppleIDTokenAuthenticateParameters(
+     *     idToken: "apple-id-token",
+     *     sessionDurationMinutes: 30
+     * )
+     * let response = try await StytchConsumer.oauth.authenticateAppleIdToken(params)
+     * ```
+     *
+     * **React Native:**
+     * ```js
+     * StytchConsumer.oauth.authenticateAppleIdToken({ idToken: "apple-id-token", sessionDurationMinutes: 30 })
+     * ```
+     *
+     * @param request - [IOAuthAppleIDTokenAuthenticateParameters]
+     *   - `idToken` — The Apple ID token from Sign In with Apple.
+     *   - `sessionDurationMinutes` — Duration of the session to create, in minutes.
+     *   - `name?` — The user's name as provided by Apple on first sign-in (only returned once by Apple).
+     *   - `nonce?` — The nonce used when requesting the ID token, for replay protection.
+     *   - `oauthAttachToken?` — An OAuth attach token to link this provider to an existing session.
+     *
+     * @return [OAuthGoogleIDTokenAuthenticateResponse] containing the authenticated session and user.
+     *
+     * @throws [StytchError] if the ID token is invalid or expired.
+     * @throws [CancellationException] if the coroutine is cancelled.
+     */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun authenticateAppleIdToken(request: IOAuthAppleIDTokenAuthenticateParameters): OAuthGoogleIDTokenAuthenticateResponse
 
-    /** Creates an OAuth attach token to link an OAuth provider to an existing authenticated session. */
+    /**
+     * Creates an OAuth attach token that can be used to link an OAuth provider to an existing
+     * authenticated session. Calls the `POST /sdk/v1/oauth/attach` endpoint. Pass the returned
+     * attach token as `oauthAttachToken` in a subsequent [OAuthType.start] call.
+     *
+     * **Kotlin:**
+     * ```kotlin
+     * StytchConsumer.oauth.attach(
+     *     OAuthAttachParameters(provider = "google")
+     * )
+     * ```
+     *
+     * **iOS:**
+     * ```swift
+     * let params = OAuthAttachParameters(provider: "google")
+     * let response = try await StytchConsumer.oauth.attach(params)
+     * ```
+     *
+     * **React Native:**
+     * ```js
+     * StytchConsumer.oauth.attach({ provider: "google" })
+     * ```
+     *
+     * @param request - [IOAuthAttachParameters]
+     *   - `provider` — The OAuth provider identifier (e.g. `"google"`, `"apple"`, `"github"`).
+     *
+     * @return [OAuthAttachResponse] containing the `oauthAttachToken` to pass to [OAuthType.start].
+     *
+     * @throws [StytchError] if the request fails or no active session exists.
+     * @throws [CancellationException] if the coroutine is cancelled.
+     */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun attach(request: IOAuthAttachParameters): OAuthAttachResponse
 
@@ -113,8 +260,58 @@ public interface OAuthClient {
 @JsExport
 public interface OAuthType {
     /**
-     * Initiates the browser-based OAuth flow for this provider and authenticates the result.
-     * On Android this opens a Custom Tab; on iOS it uses ASWebAuthenticationSession.
+     * Initiates the browser-based OAuth flow for this provider and authenticates the result,
+     * establishing a session. On Android, opens a Custom Tab; on iOS, uses `ASWebAuthenticationSession`.
+     * Internally calls [OAuthClient.authenticate], [OAuthClient.authenticateGoogleIdToken], or
+     * [OAuthClient.authenticateAppleIdToken] depending on the provider and platform response.
+     *
+     * **Kotlin (Android):**
+     * ```kotlin
+     * StytchConsumer.oauth.google.start(
+     *     OAuthStartParameters(
+     *         activity = activity,
+     *         loginRedirectUrl = "myapp://oauth",
+     *         signupRedirectUrl = "myapp://oauth",
+     *         sessionDurationMinutes = 30,
+     *     )
+     * )
+     * ```
+     *
+     * **iOS:**
+     * ```swift
+     * let params = OAuthStartParameters(
+     *     loginRedirectUrl: "myapp://oauth",
+     *     signupRedirectUrl: "myapp://oauth",
+     *     sessionDurationMinutes: 30,
+     *     oauthPresentationContextProvider: self
+     * )
+     * let response = try await StytchConsumer.oauth.google.start(params)
+     * ```
+     *
+     * **React Native:**
+     * ```js
+     * StytchConsumer.oauth.google.start({
+     *     loginRedirectUrl: "myapp://oauth",
+     *     signupRedirectUrl: "myapp://oauth",
+     *     sessionDurationMinutes: 30,
+     * })
+     * ```
+     *
+     * @param startParameters - [OAuthStartParameters]
+     *   - `loginRedirectUrl?` — Deep link URL to redirect existing users to after authorization.
+     *   - `signupRedirectUrl?` — Deep link URL to redirect new users to after authorization.
+     *   - `customScopes?` — Additional OAuth scopes to request from the provider.
+     *   - `providerParams?` — Extra provider-specific query parameters to include in the authorization URL.
+     *   - `oauthAttachToken?` — Attach token to link this provider to an existing session.
+     *   - `sessionDurationMinutes?` — Duration of the session to create, in minutes.
+     *   - *(Android only)* `activity` — The `Activity` used to launch the Custom Tab.
+     *   - *(iOS only)* `applePresentationContextProvider` — Presentation context for Sign In with Apple sheets.
+     *   - *(iOS only)* `oauthPresentationContextProvider` — Presentation context for the web authentication session.
+     *
+     * @return [AuthenticatedResponse] containing the authenticated session and user.
+     *
+     * @throws [StytchError] if the OAuth flow fails or the resulting token cannot be authenticated.
+     * @throws [CancellationException] if the coroutine is cancelled.
      */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun start(startParameters: OAuthStartParameters): AuthenticatedResponse
