@@ -49,9 +49,11 @@ jobs:
           name: shared-xcframework
           path: source/shared/sdk/shared/build/XCFrameworks/release/StytchSharedSDK.xcframework
 
-      - name: Publish shared to mavenLocal
-        working-directory: source/shared
-        run: ./gradlew :sdk:shared:publishToMavenLocal
+      - name: Restore shared mavenLocal artifacts
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: shared-maven-local
+          path: ~/.m2/repository/com/stytch/sdk/
 
       - name: Publish SDKs to mavenLocal
         working-directory: source/sdks
@@ -118,9 +120,11 @@ jobs:
           name: shared-xcframework
           path: source/shared/sdk/shared/build/XCFrameworks/release/StytchSharedSDK.xcframework
 
-      - name: Publish shared to mavenLocal
-        working-directory: source/shared
-        run: ./gradlew :sdk:shared:publishToMavenLocal
+      - name: Restore shared mavenLocal artifacts
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: shared-maven-local
+          path: ~/.m2/repository/com/stytch/sdk/
 
       - uses: ./.github/actions/import-apple-certificate
         with:
@@ -262,9 +266,11 @@ jobs:
           name: shared-xcframework
           path: source/shared/sdk/shared/build/XCFrameworks/release/StytchSharedSDK.xcframework
 
-      - name: Publish shared to mavenLocal
-        working-directory: source/shared
-        run: ./gradlew :sdk:shared:publishToMavenLocal
+      - name: Restore shared mavenLocal artifacts
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: shared-maven-local
+          path: ~/.m2/repository/com/stytch/sdk/
 
       - name: Build consumer JS output
         working-directory: source/sdks
