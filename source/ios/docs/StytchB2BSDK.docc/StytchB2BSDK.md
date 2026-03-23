@@ -6,7 +6,7 @@ Stytch B2B SDK — headless authentication for iOS B2B applications.
 
 The Stytch B2B SDK provides organization-aware authentication for iOS applications, including magic links, OTP, OAuth, SSO, passwords, TOTP, SCIM, RBAC, and cross-organization discovery flows.
 
-Initialize the SDK once at app launch with your Stytch public token, then use the top-level ``StytchB2B`` object to access authentication methods and session state.
+Create a client instance once at app launch using ``createStytchB2B(configuration:)`` with your Stytch public token, then use the returned ``StytchB2B`` to access authentication methods and session state.
 
 ## Topics
 
