@@ -153,6 +153,8 @@ jobs:
 
       - name: Convert to static DocC sites
         run: |
+          mkdir -p docs-output/ios/consumer
+          mkdir -p docs-output/ios/b2b
           xcrun docc convert source/ios/docs/StytchConsumerSDK.docc \
             --additional-symbol-graph-dir symbolgraphs/consumer-injected \
             --transform-for-static-hosting \
