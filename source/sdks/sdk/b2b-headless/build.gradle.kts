@@ -235,3 +235,17 @@ tasks.named("compileKotlinMetadata") {
     dependsOn("openApiGenerate")
     dependsOn("kspCommonMainKotlinMetadata")
 }
+tasks.matching { it.name.startsWith("dokka") }.configureEach {
+    dependsOn("openApiGenerate")
+    dependsOn("kspCommonMainKotlinMetadata")
+}
+
+dokka {
+    dokkaSourceSets.configureEach {
+        enableJdkDocumentationLink.set(false)
+        perPackageOption {
+            matchingRegex.set("com\\.stytch\\.sdk\\.b2b\\.networking\\..*")
+            suppress.set(true)
+        }
+    }
+}

@@ -11,12 +11,18 @@ plugins {
     alias(libs.plugins.ktlint) apply false
     alias(libs.plugins.kover) apply false
     alias(libs.plugins.mavenPublish) apply false
-    alias(libs.plugins.dokka) apply false
+    alias(libs.plugins.dokka)
     alias(libs.plugins.detekt) apply false
 }
 
 group = "com.stytch.sdk"
 version = file("../../version.txt").readText().trim()
+
+// Aggregate consumer + B2B docs into a single multi-module Dokka site
+dependencies {
+    dokka(project(":sdk:consumer-headless"))
+    dokka(project(":sdk:b2b-headless"))
+}
 
 subprojects {
     plugins.withId("com.vanniktech.maven.publish") {
