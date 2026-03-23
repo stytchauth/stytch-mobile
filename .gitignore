@@ -53,3 +53,4 @@ source/react-native/consumer/jest.config.js
 source/react-native/consumer/jest.setup.js
 source/react-native/consumer/tsconfig.json
 .claude
+.docc-build/

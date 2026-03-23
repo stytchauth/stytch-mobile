@@ -1,5 +1,7 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
+val stytchVersion = file("../../../version.txt").readText().trim()
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -20,7 +22,7 @@ android {
         minSdk = 24
         targetSdk = 36
         versionCode = 1
-        versionName = "1.0"
+        versionName = stytchVersion
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -42,8 +44,8 @@ android {
 }
 
 dependencies {
-    implementation("com.stytch.sdk:consumer-headless:0.0.1")
-    implementation("com.stytch.sdk:b2b-headless:0.0.1")
+    implementation("com.stytch.sdk:consumer-headless:$stytchVersion")
+    implementation("com.stytch.sdk:b2b-headless:$stytchVersion")
     implementation(libs.appcompat)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

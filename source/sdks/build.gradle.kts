@@ -11,16 +11,30 @@ plugins {
     alias(libs.plugins.ktlint) apply false
     alias(libs.plugins.kover) apply false
     alias(libs.plugins.mavenPublish) apply false
+    alias(libs.plugins.dokka)
     alias(libs.plugins.detekt) apply false
 }
 
 group = "com.stytch.sdk"
 version = file("../../version.txt").readText().trim()
 
+// Aggregate consumer + B2B docs into a single multi-module Dokka site
+dependencies {
+    dokka(project(":sdk:consumer-headless"))
+    dokka(project(":sdk:b2b-headless"))
+}
+
 subprojects {
     plugins.withId("com.vanniktech.maven.publish") {
+        apply(plugin = "org.jetbrains.dokka")
         configure<com.vanniktech.maven.publish.MavenPublishBaseExtension> {
             publishToMavenCentral()
+            configure(
+                com.vanniktech.maven.publish.KotlinMultiplatform(
+                    com.vanniktech.maven.publish.JavadocJar
+                        .Dokka("dokkaGeneratePublicationHtml"),
+                ),
+            )
             if (!System.getenv("ORG_GRADLE_PROJECT_signingInMemoryKey").isNullOrEmpty()) {
                 signAllPublications()
             }

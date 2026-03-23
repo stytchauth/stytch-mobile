@@ -40,7 +40,12 @@ kotlin {
     compilerOptions {
         optIn.add("kotlin.js.ExperimentalJsExport")
         optIn.add("kotlin.time.ExperimentalTime")
-        freeCompilerArgs.addAll("-Xenable-suspend-function-exporting", "-Xexpect-actual-classes", "-Xbinary=bundleId=$group.b2b")
+        freeCompilerArgs.addAll(
+            "-Xenable-suspend-function-exporting",
+            "-Xexpect-actual-classes",
+            "-Xbinary=bundleId=$group.b2b",
+            "-Xexport-kdoc",
+        )
     }
 
     androidLibrary {
@@ -229,4 +234,19 @@ tasks.withType<ProcessLibraryArtProfileTask>().configureEach {
 tasks.named("compileKotlinMetadata") {
     dependsOn("openApiGenerate")
     dependsOn("kspCommonMainKotlinMetadata")
+}
+tasks.matching { it.name.startsWith("dokka") }.configureEach {
+    dependsOn("openApiGenerate")
+    dependsOn("kspCommonMainKotlinMetadata")
+}
+
+dokka {
+    moduleName.set("Stytch B2B SDK")
+    dokkaSourceSets.configureEach {
+        enableJdkDocumentationLink.set(false)
+        perPackageOption {
+            matchingRegex.set("com\\.stytch\\.sdk\\.b2b\\.networking\\..*")
+            suppress.set(true)
+        }
+    }
 }

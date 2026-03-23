@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stytch Mobile SDK Documentation</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: #f9f9f9;
+      color: #1a1a1a;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    header h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    header p {
+      margin-top: 0.75rem;
+      font-size: 1.05rem;
+      color: #555;
+    }
+
+    .platforms {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.5rem;
+      width: 100%;
+      max-width: 720px;
+    }
+
+    .platform {
+      background: #fff;
+      border: 1px solid #e5e5e5;
+      border-radius: 12px;
+      padding: 1.75rem;
+    }
+
+    .platform h2 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: #1a1a1a;
+    }
+
+    .platform ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .platform a {
+      display: block;
+      padding: 0.6rem 1rem;
+      background: #f3f3f3;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: #1a1a1a;
+      transition: background 0.15s;
+    }
+
+    .platform a:hover {
+      background: #e8e8e8;
+    }
+
+    footer {
+      margin-top: 3rem;
+      font-size: 0.85rem;
+      color: #999;
+    }
+
+    footer a {
+      color: #999;
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Stytch Mobile SDK</h1>
+    <p>API reference documentation for Android and iOS.</p>
+  </header>
+
+  <div class="platforms">
+    <div class="platform">
+      <h2>Android</h2>
+      <ul>
+        <li><a href="android/">Consumer &amp; B2B SDK Reference</a></li>
+      </ul>
+    </div>
+
+    <div class="platform">
+      <h2>iOS</h2>
+      <ul>
+        <li><a href="ios/consumer/documentation/stytchconsumersdk/">Consumer SDK Reference</a></li>
+        <li><a href="ios/b2b/documentation/stytchb2bsdk/">B2B SDK Reference</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <footer>
+    <a href="https://stytch.com/docs">stytch.com/docs</a>
+  </footer>
+</body>
+</html>
