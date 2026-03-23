@@ -167,11 +167,14 @@ jobs:
             --hosting-base-path stytch-mobile/ios/b2b \
             --output-dir docs-output/ios/b2b
 
+      - name: Tar iOS docs (avoid colon-in-filename rejection by upload-artifact)
+        run: tar -czf ios-docs.tar.gz -C docs-output/ios .
+
       - name: Upload iOS docs artifact
         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         with:
           name: ios-docs
-          path: docs-output/ios/
+          path: ios-docs.tar.gz
 
 
   deploy-pages:
@@ -192,7 +195,10 @@ jobs:
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: ios-docs
-          path: pages/ios/
+          path: .
+
+      - name: Untar iOS docs
+        run: mkdir -p pages/ios && tar -xzf ios-docs.tar.gz -C pages/ios
 
       - name: Copy landing page
         run: cp docs/index.html pages/index.html
