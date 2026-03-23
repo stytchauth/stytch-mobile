@@ -11,6 +11,7 @@ plugins {
     alias(libs.plugins.ktlint) apply false
     alias(libs.plugins.kover) apply false
     alias(libs.plugins.mavenPublish) apply false
+    alias(libs.plugins.dokka) apply false
     alias(libs.plugins.detekt) apply false
 }
 
@@ -19,8 +20,15 @@ version = file("../../version.txt").readText().trim()
 
 subprojects {
     plugins.withId("com.vanniktech.maven.publish") {
+        apply(plugin = "org.jetbrains.dokka")
         configure<com.vanniktech.maven.publish.MavenPublishBaseExtension> {
             publishToMavenCentral()
+            configure(
+                com.vanniktech.maven.publish.KotlinMultiplatform(
+                    com.vanniktech.maven.publish.JavadocJar
+                        .Dokka("dokkaGeneratePublicationHtml"),
+                ),
+            )
             if (!System.getenv("ORG_GRADLE_PROJECT_signingInMemoryKey").isNullOrEmpty()) {
                 signAllPublications()
             }
