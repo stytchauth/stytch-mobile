@@ -90,14 +90,18 @@ jobs:
         working-directory: source/shared
         run: ./gradlew :sdk:shared:publishToMavenLocal
 
-      - name: Build Consumer and B2B xcframeworks
+      - name: Build Consumer and B2B ios-arm64 frameworks
         working-directory: source/sdks
-        run: ./gradlew assembleStytchConsumerSDKXCFramework assembleStytchB2BSDKXCFramework
+        run: ./gradlew :sdk:consumer-headless:linkReleaseFrameworkIosArm64 :sdk:b2b-headless:linkReleaseFrameworkIosArm64
 
-      - name: Copy xcframeworks to source/ios
+      - name: Copy frameworks to source/ios
         run: |
-          cp -r source/sdks/sdk/consumer-headless/build/XCFrameworks/release/StytchConsumerSDK.xcframework source/ios/
-          cp -r source/sdks/sdk/b2b-headless/build/XCFrameworks/release/StytchB2BSDK.xcframework source/ios/
+          mkdir -p source/ios/StytchConsumerSDK.xcframework/ios-arm64
+          cp -r source/sdks/sdk/consumer-headless/build/bin/iosArm64/releaseFramework/StytchConsumerSDK.framework \
+            source/ios/StytchConsumerSDK.xcframework/ios-arm64/
+          mkdir -p source/ios/StytchB2BSDK.xcframework/ios-arm64
+          cp -r source/sdks/sdk/b2b-headless/build/bin/iosArm64/releaseFramework/StytchB2BSDK.framework \
+            source/ios/StytchB2BSDK.xcframework/ios-arm64/
           cp -r source/shared/sdk/shared/build/XCFrameworks/release/StytchSharedSDK.xcframework source/ios/
           cp -r source/shared/sdk/shared/src/iosMain/interop/StytchSwiftUtils.xcframework source/ios/
 
