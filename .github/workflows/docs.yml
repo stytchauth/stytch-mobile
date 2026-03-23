@@ -135,6 +135,15 @@ jobs:
             -minimum-access-level public \
             -output-dir symbolgraphs/b2b
 
+      - name: Filter internal symbols from symbol graphs
+        run: |
+          python3 scripts/filter-symbols.py \
+            symbolgraphs/consumer/StytchConsumerSDK.symbols.json \
+            symbolgraphs/consumer/StytchConsumerSDK.symbols.json
+          python3 scripts/filter-symbols.py \
+            symbolgraphs/b2b/StytchB2BSDK.symbols.json \
+            symbolgraphs/b2b/StytchB2BSDK.symbols.json
+
       - name: Inject KDocs into symbol graphs
         run: |
           python3 scripts/inject-docs.py \
