@@ -79,8 +79,7 @@ public interface SessionClient {
     public suspend fun revoke(): SessionsRevokeResponse
 
     /**
-     * Attests the current session using a platform-issued device integrity token (e.g. Play Integrity
-     * on Android or App Attest on iOS). Calls the `POST /sdk/v1/sessions/attest` endpoint.
+     * Attests the current session using a Stytch Trusted Auth Token. Calls the `POST /sdk/v1/sessions/attest` endpoint.
      *
      * **Kotlin:**
      * ```kotlin
@@ -105,7 +104,7 @@ public interface SessionClient {
      *
      * @param request - [ISessionsAttestParameters]
      *   - `profileId` — The device profile ID from the integrity provider.
-     *   - `token` — The device integrity token issued by the platform (Play Integrity / App Attest).
+     *   - `token` — The Stytch Trusted Auth Token
      *   - `sessionDurationMinutes?` — If provided, extends the session by this many minutes.
      *
      * @return [SessionsAttestResponse] containing the updated session.
