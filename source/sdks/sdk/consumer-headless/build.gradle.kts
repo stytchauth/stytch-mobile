@@ -241,6 +241,7 @@ tasks.matching { it.name.startsWith("dokka") }.configureEach {
 }
 
 dokka {
+    moduleName.set("Stytch Consumer SDK")
     dokkaSourceSets.configureEach {
         enableJdkDocumentationLink.set(false)
         perPackageOption {

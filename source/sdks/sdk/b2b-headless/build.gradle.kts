@@ -241,6 +241,7 @@ tasks.matching { it.name.startsWith("dokka") }.configureEach {
 }
 
 dokka {
+    moduleName.set("Stytch B2B SDK")
     dokkaSourceSets.configureEach {
         enableJdkDocumentationLink.set(false)
         perPackageOption {
