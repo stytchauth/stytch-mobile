@@ -171,8 +171,7 @@ public interface B2BSessionsClient {
     public suspend fun exchangeAccessToken(request: IB2BSessionsAccessTokenExchangeParameters): B2BSessionsAccessTokenExchangeResponse
 
     /**
-     * Attests the current member session using a platform-issued device integrity token (e.g. Play
-     * Integrity on Android or App Attest on iOS). Calls the `POST /sdk/v1/b2b/sessions/attest`
+     * Attests the current member session using a Stytch Trusted Auth Token. Calls the `POST /sdk/v1/b2b/sessions/attest`
      * endpoint.
      *
      * **Kotlin:**
@@ -198,7 +197,7 @@ public interface B2BSessionsClient {
      *
      * @param request - [IB2BSessionsAttestParameters]
      *   - `profileId` — The device profile ID from the integrity provider.
-     *   - `token` — The device integrity token issued by the platform (Play Integrity / App Attest).
+     *   - `token` — The Stytch Trusted Auth Token.
      *   - `organizationId?` — The ID of the organization to attest for; defaults to the current session's org.
      *   - `sessionDurationMinutes?` — If provided, extends the session by this many minutes.
      *

@@ -14,8 +14,8 @@ import kotlin.js.JsExport
 @JsExport
 public interface DFPClient {
     /**
-     * Fetches a DFP telemetry ID from the local device fingerprinting provider. No network request
-     * is made; the ID is passed to your backend for use in Stytch lookup calls.
+     * Fetches a DFP telemetry ID from the local device fingerprinting provider. The ID is passed to your
+     * backend for use in Stytch lookup calls.
      *
      * **Kotlin:**
      * ```kotlin
