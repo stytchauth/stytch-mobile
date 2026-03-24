@@ -94,7 +94,8 @@ export const StytchB2BProvider = ({
             try {
               await stytch.session.authenticate({ sessionDurationMinutes: null });
             } catch {
-              // log it
+              // errors are expected/intentionally ignored. Session revocation (or heartbeat cancellation)
+              // are the responsibility of the SDK and handled internally
             }
           }
           observationJob.stop();
