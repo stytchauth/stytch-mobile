@@ -45,9 +45,11 @@ jobs:
           name: shared-xcframework
           path: source/shared/sdk/shared/build/XCFrameworks/release/StytchSharedSDK.xcframework
 
-      - name: Publish shared to mavenLocal
-        working-directory: source/shared
-        run: ./gradlew :sdk:shared:publishToMavenLocal
+      - name: Restore shared mavenLocal artifacts
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: shared-maven-local
+          path: ~/.m2/repository/com/stytch/sdk/
 
       - name: Generate Dokka docs
         working-directory: source/sdks
@@ -86,18 +88,24 @@ jobs:
           name: shared-xcframework
           path: source/shared/sdk/shared/build/XCFrameworks/release/StytchSharedSDK.xcframework
 
-      - name: Publish shared to mavenLocal
-        working-directory: source/shared
-        run: ./gradlew :sdk:shared:publishToMavenLocal
+      - name: Restore shared mavenLocal artifacts
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: shared-maven-local
+          path: ~/.m2/repository/com/stytch/sdk/
 
-      - name: Build Consumer and B2B xcframeworks
+      - name: Build Consumer and B2B ios-arm64 frameworks
         working-directory: source/sdks
-        run: ./gradlew assembleStytchConsumerSDKXCFramework assembleStytchB2BSDKXCFramework
+        run: ./gradlew :sdk:consumer-headless:linkReleaseFrameworkIosArm64 :sdk:b2b-headless:linkReleaseFrameworkIosArm64
 
-      - name: Copy xcframeworks to source/ios
+      - name: Copy frameworks to source/ios
         run: |
-          cp -r source/sdks/sdk/consumer-headless/build/XCFrameworks/release/StytchConsumerSDK.xcframework source/ios/
-          cp -r source/sdks/sdk/b2b-headless/build/XCFrameworks/release/StytchB2BSDK.xcframework source/ios/
+          mkdir -p source/ios/StytchConsumerSDK.xcframework/ios-arm64
+          cp -r source/sdks/sdk/consumer-headless/build/bin/iosArm64/releaseFramework/StytchConsumerSDK.framework \
+            source/ios/StytchConsumerSDK.xcframework/ios-arm64/
+          mkdir -p source/ios/StytchB2BSDK.xcframework/ios-arm64
+          cp -r source/sdks/sdk/b2b-headless/build/bin/iosArm64/releaseFramework/StytchB2BSDK.framework \
+            source/ios/StytchB2BSDK.xcframework/ios-arm64/
           cp -r source/shared/sdk/shared/build/XCFrameworks/release/StytchSharedSDK.xcframework source/ios/
           cp -r source/shared/sdk/shared/src/iosMain/interop/StytchSwiftUtils.xcframework source/ios/
 
@@ -127,6 +135,15 @@ jobs:
             -minimum-access-level public \
             -output-dir symbolgraphs/b2b
 
+      - name: Filter internal symbols from symbol graphs
+        run: |
+          python3 scripts/filter-symbols.py \
+            symbolgraphs/consumer/StytchConsumerSDK.symbols.json \
+            symbolgraphs/consumer/StytchConsumerSDK.symbols.json
+          python3 scripts/filter-symbols.py \
+            symbolgraphs/b2b/StytchB2BSDK.symbols.json \
+            symbolgraphs/b2b/StytchB2BSDK.symbols.json
+
       - name: Inject KDocs into symbol graphs
         run: |
           python3 scripts/inject-docs.py \
@@ -145,23 +162,28 @@ jobs:
 
       - name: Convert to static DocC sites
         run: |
+          mkdir -p docs-output/ios/consumer
+          mkdir -p docs-output/ios/b2b
           xcrun docc convert source/ios/docs/StytchConsumerSDK.docc \
             --additional-symbol-graph-dir symbolgraphs/consumer-injected \
             --transform-for-static-hosting \
-            --hosting-base-path stytch-mobile/ios/consumer \
+            --hosting-base-path ios/consumer \
             --output-dir docs-output/ios/consumer
 
           xcrun docc convert source/ios/docs/StytchB2BSDK.docc \
             --additional-symbol-graph-dir symbolgraphs/b2b-injected \
             --transform-for-static-hosting \
-            --hosting-base-path stytch-mobile/ios/b2b \
+            --hosting-base-path ios/b2b \
             --output-dir docs-output/ios/b2b
+
+      - name: Tar iOS docs (avoid colon-in-filename rejection by upload-artifact)
+        run: tar -czf ios-docs.tar.gz -C docs-output/ios .
 
       - name: Upload iOS docs artifact
         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         with:
           name: ios-docs
-          path: docs-output/ios/
+          path: ios-docs.tar.gz
 
 
   deploy-pages:
@@ -182,7 +204,10 @@ jobs:
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: ios-docs
-          path: pages/ios/
+          path: .
+
+      - name: Untar iOS docs
+        run: mkdir -p pages/ios && tar -xzf ios-docs.tar.gz -C pages/ios
 
       - name: Copy landing page
         run: cp docs/index.html pages/index.html

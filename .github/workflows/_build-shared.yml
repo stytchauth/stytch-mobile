@@ -83,6 +83,16 @@ jobs:
         working-directory: source/shared
         run: ./gradlew :sdk:shared:assembleStytchSharedSDKXCFramework
 
+      - name: Publish shared to mavenLocal
+        working-directory: source/shared
+        run: ./gradlew :sdk:shared:publishToMavenLocal
+
+      - name: Upload shared mavenLocal artifacts
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+        with:
+          name: shared-maven-local
+          path: ~/.m2/repository/com/stytch/sdk/
+
       - name: Upload SwiftUtils interop artifacts
         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         with:
