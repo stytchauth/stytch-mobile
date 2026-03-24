@@ -56,10 +56,10 @@ function makeStytchMock() {
     },
   };
 
-  /** Push a state change through the main observer (index 0). */
+  /** Push a state change through all registered observers. */
   const emitState = async (state: AnyState) => {
     await act(async () => {
-      await observerCallbacks[0]?.(state);
+      await Promise.all(observerCallbacks.map((cb) => cb(state)));
     });
   };
 
@@ -166,7 +166,7 @@ describe('StytchB2BProvider', () => {
   });
 
   it('calls session.authenticate when app becomes active and session is Authenticated', async () => {
-    const { mockClient } = makeStytchMock();
+    const { mockClient, observerCallbacks } = makeStytchMock();
 
     render(<StytchB2BProvider stytch={mockClient}><Text /></StytchB2BProvider>);
 
@@ -174,15 +174,16 @@ describe('StytchB2BProvider', () => {
       capturedAppStateHandler!('active');
     });
 
+    const [, foregroundObserver] = observerCallbacks;
     await act(async () => {
-      await mockClient.authenticationStateObserver.mock.calls[1]?.[0](makeAuthenticatedState());
+      await foregroundObserver?.(makeAuthenticatedState());
     });
 
     expect(mockClient.session.authenticate).toHaveBeenCalledWith({ sessionDurationMinutes: null });
   });
 
   it('does not crash when session.authenticate rejects', async () => {
-    const { mockClient } = makeStytchMock();
+    const { mockClient, observerCallbacks } = makeStytchMock();
     mockClient.session.authenticate.mockRejectedValueOnce(new Error('network error'));
 
     render(<StytchB2BProvider stytch={mockClient}><Text /></StytchB2BProvider>);
@@ -192,16 +193,16 @@ describe('StytchB2BProvider', () => {
     });
 
     // Trigger the one-shot observer — the rejection should be swallowed
-    const calls = mockClient.authenticationStateObserver.mock.calls;
+    const [, foregroundObserver] = observerCallbacks;
     await expect(
       act(async () => {
-        await calls[1]?.[0](makeAuthenticatedState());
+        await foregroundObserver?.(makeAuthenticatedState());
       }),
     ).resolves.not.toThrow();
   });
 
   it('does not call session.authenticate when app becomes active but state is not Authenticated', async () => {
-    const { mockClient } = makeStytchMock();
+    const { mockClient, observerCallbacks } = makeStytchMock();
 
     render(<StytchB2BProvider stytch={mockClient}><Text /></StytchB2BProvider>);
 
@@ -209,9 +210,9 @@ describe('StytchB2BProvider', () => {
       capturedAppStateHandler!('active');
     });
 
-    const calls = mockClient.authenticationStateObserver.mock.calls;
+    const [, foregroundObserver] = observerCallbacks;
     await act(async () => {
-      await calls[1]?.[0](new B2BAuthenticationState.Loading());
+      await foregroundObserver?.(new B2BAuthenticationState.Loading());
     });
 
     expect(mockClient.session.authenticate).not.toHaveBeenCalled();
