@@ -49,9 +49,9 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         run: |
           VERSION="${{ steps.version.outputs.version }}"
-          # Full changelog (all tags + new version) written to CHANGELOG.md
-          git cliff --tag "$VERSION" --output CHANGELOG.md
-          # Just the new release section, for the PR body
+          # Generate only the new release section and prepend to CHANGELOG.md (preserves manual edits)
+          git cliff --tag "$VERSION" --unreleased --prepend CHANGELOG.md
+          # Same content, minus the header, saved separately for the PR body
           git cliff --tag "$VERSION" --unreleased --strip header > /tmp/changelog-entry.md
 
       - name: Upload changelog preview (dry run)

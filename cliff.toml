@@ -2,7 +2,7 @@
 # See https://git-cliff.org/docs/configuration
 
 [changelog]
-header = """# Changelog
+header = """# Stytch Mobile SDK Changelog
 
 All notable changes to this project will be documented in this file.
 
@@ -17,8 +17,8 @@ body = """{% if version %}\
 
 {% for commit in commits %}\
 - {{ commit.message | upper_first }}\
-{% if commit.github.pr_number %} \
-([#{{ commit.github.pr_number }}]({{ commit.github.pr_url }}))\
+{% if commit.remote.pr_number %} \
+([#{{ commit.remote.pr_number }}]({{ commit.remote.pr_url }}))\
 {% endif %} \
 ([`{{ commit.id | truncate(length=7, end="") }}`](https://github.com/stytchauth/stytch-mobile/commit/{{ commit.id }}))
 {% endfor %}
