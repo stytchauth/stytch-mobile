@@ -9,6 +9,10 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  build-shared:
+    uses: ./.github/workflows/_build-shared.yml
+    secrets: inherit
+
   check-shared:
     name: Lint & Test (Shared)
     runs-on: ubuntu-latest
@@ -42,6 +46,7 @@ jobs:
   check-sdks:
     name: Lint & Test (Consumer & B2B)
     runs-on: macos-latest
+    needs: build-shared
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
@@ -50,9 +55,11 @@ jobs:
           distribution: zulu
           java-version: 17
 
-      - name: Publish shared to mavenLocal
-        working-directory: source/shared
-        run: ./gradlew publishToMavenLocal
+      - name: Restore shared mavenLocal artifacts
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: shared-maven-local
+          path: ~/.m2/repository/com/stytch/sdk/
 
       - name: Lint, Test & Coverage
         working-directory: source/sdks
@@ -181,8 +188,14 @@ jobs:
   check-rn:
     name: Test (React Native)
     runs-on: ubuntu-latest
+    needs: build-shared
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5.2.0
+        with:
+          distribution: zulu
+          java-version: 17
 
       - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
         with:
@@ -191,6 +204,26 @@ jobs:
           cache-dependency-path: |
             source/react-native/consumer/yarn.lock
             source/react-native/b2b/yarn.lock
+
+      - name: Restore shared mavenLocal artifacts
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: shared-maven-local
+          path: ~/.m2/repository/com/stytch/sdk/
+
+      - name: Build consumer JS output
+        working-directory: source/sdks
+        run: |
+          ./gradlew :sdk:consumer-headless:jsBrowserProductionLibraryDistribution
+          mkdir -p $GITHUB_WORKSPACE/source/react-native/consumer/lib
+          cp -r sdk/consumer-headless/build/dist/js/productionLibrary/consumer-headless* $GITHUB_WORKSPACE/source/react-native/consumer/lib
+
+      - name: Build B2B JS output
+        working-directory: source/sdks
+        run: |
+          ./gradlew :sdk:b2b-headless:jsBrowserProductionLibraryDistribution
+          mkdir -p $GITHUB_WORKSPACE/source/react-native/b2b/lib
+          cp -r sdk/b2b-headless/build/dist/js/productionLibrary/b2b-headless* $GITHUB_WORKSPACE/source/react-native/b2b/lib
 
       - name: Install consumer deps
         working-directory: source/react-native/consumer
