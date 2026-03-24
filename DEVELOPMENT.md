@@ -154,7 +154,9 @@ React component
   → calls into StytchSharedSDK xcframework (iOS) or mavenLocal artifact (Android)
 ```
 
-Complex types are JSON-encoded across the bridge. The native bridge code is shared between the React Native B2B and Consumer clients, and lives in a `shared/` folder. Ensure that you run `yarn build` in the relevant package to copy the shared code into it before attempting to build the React Native example apps.
+Complex types are JSON-encoded across the bridge. The native bridge code is shared between the React Native B2B and Consumer clients, and lives in a `shared/` folder.
+
+> **Important:** The native bridge files (`android/`, `ios/`, `src/NativeStytchBridge.ts`) are **not checked into the consumer or b2b packages** — they are generated from `source/react-native/shared/` at build time. Running `yarn build` (which internally runs `yarn setup`) copies them into place before compiling. Always run `yarn build` (or `./build consumer rn` / `./build b2b rn` from the repo root) before attempting to open or build the React Native example apps. After a fresh checkout or after modifying the shared bridge, re-run `yarn build` in the affected package.
 
 **RN peer dependency:** `react-native >= 0.80.x`
 
