@@ -4,5 +4,5 @@
     "noEmit": true,
     "rootDir": "."
   },
-  "include": ["src/**/*", "lib/*.d.mts"]
+  "include": ["src/NativeStytchBridge.ts", "lib/*.d.mts"]
 }
