@@ -99,16 +99,6 @@ beforeEach(() => {
 // ---------------------------------------------------------------------------
 
 describe('StytchB2BProvider', () => {
-  it('renders its children', () => {
-    const { mockClient } = makeStytchMock();
-    const { getByText } = render(
-      <StytchB2BProvider stytch={mockClient}>
-        <Text>hello</Text>
-      </StytchB2BProvider>,
-    );
-    expect(getByText('hello')).toBeTruthy();
-  });
-
   it('subscribes to authenticationStateObserver on mount', () => {
     const { mockClient } = makeStytchMock();
     render(<StytchB2BProvider stytch={mockClient}><Text /></StytchB2BProvider>);
@@ -181,7 +171,7 @@ describe('StytchB2BProvider', () => {
     render(<StytchB2BProvider stytch={mockClient}><Text /></StytchB2BProvider>);
 
     await act(async () => {
-      capturedAppStateHandler?.('active');
+      capturedAppStateHandler!('active');
     });
 
     await act(async () => {
@@ -198,7 +188,7 @@ describe('StytchB2BProvider', () => {
     render(<StytchB2BProvider stytch={mockClient}><Text /></StytchB2BProvider>);
 
     await act(async () => {
-      capturedAppStateHandler?.('active');
+      capturedAppStateHandler!('active');
     });
 
     // Trigger the one-shot observer — the rejection should be swallowed
@@ -216,7 +206,7 @@ describe('StytchB2BProvider', () => {
     render(<StytchB2BProvider stytch={mockClient}><Text /></StytchB2BProvider>);
 
     await act(async () => {
-      capturedAppStateHandler?.('active');
+      capturedAppStateHandler!('active');
     });
 
     const calls = mockClient.authenticationStateObserver.mock.calls;

@@ -82,25 +82,25 @@ export const StytchB2BProvider = ({
 
   useEffect(() => {
     const handleAppStateChange = async (appState: AppStateStatus) => {
-      if (appState === 'active') {
-        tryAuthenticate();
+      if (appState !== 'active') {
+        return;
       }
-    };
-    const appStateSubscription = AppState.addEventListener('change', handleAppStateChange);
-    const tryAuthenticate = async () => {
+
       const observationJob = stytch.authenticationStateObserver(
         async (state: B2BAuthenticationState) => {
           if (state instanceof B2BAuthenticationState.Authenticated) {
             try {
               await stytch.session.authenticate({ sessionDurationMinutes: null });
             } catch {
-              // log it
+              // ignore error
             }
           }
           observationJob.stop();
         },
       );
     };
+
+    const appStateSubscription = AppState.addEventListener('change', handleAppStateChange);
     return () => {
       appStateSubscription.remove();
     };
@@ -111,8 +111,8 @@ export const StytchB2BProvider = ({
       let newMember: ApiOrganizationV1Member | undefined = undefined;
       let newMemberSession: ApiB2bSessionV1MemberSession | undefined = undefined;
       if (state instanceof B2BAuthenticationState.Authenticated) {
-        newMember = (state as B2BAuthenticationState.Authenticated).member;
-        newMemberSession = (state as B2BAuthenticationState.Authenticated).memberSession;
+        newMember = state.member;
+        newMemberSession = state.memberSession;
       }
       setClientState((oldState) => {
         const newState = { member: newMember, memberSession: newMemberSession };
