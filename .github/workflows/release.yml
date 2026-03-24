@@ -6,7 +6,7 @@ on:
       dry_run:
         description: 'Dry run — generate changelog preview and upload as artifact, skip creating a PR'
         type: boolean
-        default: false
+        default: true
 
 permissions:
   contents: write
