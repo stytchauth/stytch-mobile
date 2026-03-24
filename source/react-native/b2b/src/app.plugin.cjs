@@ -3,7 +3,7 @@
 const { withXcodeProject } = require('@expo/config-plugins');
 // TODO: Figure out how to make this agnostic/not me
 // TODO: Update publish workflow to replace this with the live repo URL
-const spmUrl = `/Users/jhaven/Documents/stytch-mobile/source/ios/Package.swift`;
+const spmUrl = `/Users/jhaven/Documents/stytch-mobile/source/ios/Package.swift`
 const addSPMDependenciesToMainTarget = (config) =>
   withXcodeProject(config, (config) => {
     const repositoryUrl = spmUrl;

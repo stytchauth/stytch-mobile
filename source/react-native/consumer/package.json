@@ -32,7 +32,7 @@
   },
   "scripts": {
     "setup": "cp -r ../shared/. .",
-    "test": "yarn setup && jest",
+    "test": "yarn setup && tsc --project tsconfig.typecheck.json && jest",
     "build": "yarn setup && rm -rf dist && tsc && babel src -d dist --copy-files --extensions '.ts,.tsx'",
     "lint": "yarn setup && eslint src/ && prettier . --check",
     "format": "yarn setup && eslint src/ --fix && prettier . --write"
