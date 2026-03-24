@@ -3,6 +3,7 @@
 import com.android.build.api.dsl.androidLibrary
 import com.android.build.gradle.tasks.ProcessLibraryArtProfileTask
 import com.google.devtools.ksp.gradle.KspAATask
+import com.stytch.sdk.utils.InjectJsDocTask
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
@@ -142,6 +143,26 @@ ksp {
             .get()
             .asFile.absolutePath,
     )
+    arg(
+        "stytchJsDocOutputDir",
+        layout.buildDirectory
+            .dir("generated/jsdoc")
+            .get()
+            .asFile.absolutePath,
+    )
+}
+
+val injectJsDoc by tasks.registering(InjectJsDocTask::class) {
+    jsDocMapFile.set(layout.buildDirectory.file("generated/jsdoc/jsdoc-map.txt"))
+    dtsFile.set(
+        layout.buildDirectory.file("dist/js/productionLibrary/${project.name}.d.mts"),
+    )
+    dependsOn("kspCommonMainKotlinMetadata")
+    mustRunAfter("jsBrowserProductionLibraryDistribution")
+}
+
+tasks.named("jsBrowserProductionLibraryDistribution").configure {
+    finalizedBy(injectJsDoc)
 }
 
 ktorfit {
