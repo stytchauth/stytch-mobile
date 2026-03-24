@@ -145,7 +145,10 @@ ksp {
     )
     arg(
         "stytchJsDocOutputDir",
-        layout.buildDirectory.dir("generated/jsdoc").get().asFile.absolutePath,
+        layout.buildDirectory
+            .dir("generated/jsdoc")
+            .get()
+            .asFile.absolutePath,
     )
 }
 
