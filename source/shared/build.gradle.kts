@@ -11,6 +11,7 @@ plugins {
     alias(libs.plugins.kover) apply false
     alias(libs.plugins.mavenPublish) apply false
     alias(libs.plugins.detekt) apply false
+    alias(libs.plugins.cyclonedx) apply false
 }
 
 group = "com.stytch.sdk"
@@ -18,6 +19,7 @@ version = file("../../version.txt").readText().trim()
 
 subprojects {
     plugins.withId("com.vanniktech.maven.publish") {
+        apply(plugin = "org.cyclonedx.bom")
         configure<com.vanniktech.maven.publish.MavenPublishBaseExtension> {
             publishToMavenCentral()
             if (!System.getenv("ORG_GRADLE_PROJECT_signingInMemoryKey").isNullOrEmpty()) {
