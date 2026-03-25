@@ -61,7 +61,6 @@ function makeStytchMock() {
 
   return {
     mockClient: mockClient as MockStytchClient & StytchConsumer,
-    observerCallbacks,
     observerStops,
     emitState,
   };
@@ -181,7 +180,7 @@ describe('StytchProvider', () => {
   });
 
   it('calls session.authenticate when app becomes active and session is Authenticated', async () => {
-    const { mockClient, observerCallbacks } = makeStytchMock();
+    const { mockClient, emitState } = makeStytchMock();
 
     render(
       <StytchProvider stytch={mockClient}>
@@ -189,22 +188,17 @@ describe('StytchProvider', () => {
       </StytchProvider>,
     );
 
-    // Bring app to foreground — triggers tryAuthenticate which subscribes a
-    // one-shot observer. Emit Authenticated into that observer.
     await act(async () => {
       capturedAppStateHandler?.('active');
     });
 
-    const [, foregroundObserver] = observerCallbacks;
-    await act(async () => {
-      await foregroundObserver?.(makeAuthenticatedState());
-    });
+    await emitState(makeAuthenticatedState());
 
     expect(mockClient.session.authenticate).toHaveBeenCalledWith({ sessionDurationMinutes: null });
   });
 
   it('does not crash when session.authenticate rejects', async () => {
-    const { mockClient, observerCallbacks } = makeStytchMock();
+    const { mockClient, emitState } = makeStytchMock();
     mockClient.session.authenticate.mockRejectedValueOnce(new Error('network error'));
 
     render(
@@ -218,16 +212,11 @@ describe('StytchProvider', () => {
     });
 
     // Trigger the one-shot observer — the rejection should be swallowed
-    const [, foregroundObserver] = observerCallbacks;
-    await expect(
-      act(async () => {
-        await foregroundObserver?.(makeAuthenticatedState());
-      }),
-    ).resolves.not.toThrow();
+    await expect(emitState(makeAuthenticatedState())).resolves.not.toThrow();
   });
 
   it('does not call session.authenticate when app becomes active but state is not Authenticated', async () => {
-    const { mockClient, observerCallbacks } = makeStytchMock();
+    const { mockClient, emitState } = makeStytchMock();
 
     render(
       <StytchProvider stytch={mockClient}>
@@ -239,10 +228,7 @@ describe('StytchProvider', () => {
       capturedAppStateHandler?.('active');
     });
 
-    const [, foregroundObserver] = observerCallbacks;
-    await act(async () => {
-      await foregroundObserver?.(new ConsumerAuthenticationState.Loading());
-    });
+    await emitState(new ConsumerAuthenticationState.Loading());
 
     expect(mockClient.session.authenticate).not.toHaveBeenCalled();
   });

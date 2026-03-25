@@ -65,7 +65,6 @@ function makeStytchMock() {
 
   return {
     mockClient: mockClient as MockStytchB2BClient & StytchB2B,
-    observerCallbacks,
     observerStops,
     emitState,
   };
@@ -166,7 +165,7 @@ describe('StytchB2BProvider', () => {
   });
 
   it('calls session.authenticate when app becomes active and session is Authenticated', async () => {
-    const { mockClient, observerCallbacks } = makeStytchMock();
+    const { mockClient, emitState } = makeStytchMock();
 
     render(<StytchB2BProvider stytch={mockClient}><Text /></StytchB2BProvider>);
 
@@ -174,16 +173,13 @@ describe('StytchB2BProvider', () => {
       capturedAppStateHandler!('active');
     });
 
-    const [, foregroundObserver] = observerCallbacks;
-    await act(async () => {
-      await foregroundObserver?.(makeAuthenticatedState());
-    });
+    await emitState(makeAuthenticatedState());
 
     expect(mockClient.session.authenticate).toHaveBeenCalledWith({ sessionDurationMinutes: null });
   });
 
   it('does not crash when session.authenticate rejects', async () => {
-    const { mockClient, observerCallbacks } = makeStytchMock();
+    const { mockClient, emitState } = makeStytchMock();
     mockClient.session.authenticate.mockRejectedValueOnce(new Error('network error'));
 
     render(<StytchB2BProvider stytch={mockClient}><Text /></StytchB2BProvider>);
@@ -193,16 +189,11 @@ describe('StytchB2BProvider', () => {
     });
 
     // Trigger the one-shot observer — the rejection should be swallowed
-    const [, foregroundObserver] = observerCallbacks;
-    await expect(
-      act(async () => {
-        await foregroundObserver?.(makeAuthenticatedState());
-      }),
-    ).resolves.not.toThrow();
+    await expect(emitState(makeAuthenticatedState())).resolves.not.toThrow();
   });
 
   it('does not call session.authenticate when app becomes active but state is not Authenticated', async () => {
-    const { mockClient, observerCallbacks } = makeStytchMock();
+    const { mockClient, emitState } = makeStytchMock();
 
     render(<StytchB2BProvider stytch={mockClient}><Text /></StytchB2BProvider>);
 
@@ -210,10 +201,7 @@ describe('StytchB2BProvider', () => {
       capturedAppStateHandler!('active');
     });
 
-    const [, foregroundObserver] = observerCallbacks;
-    await act(async () => {
-      await foregroundObserver?.(new B2BAuthenticationState.Loading());
-    });
+    await emitState(new B2BAuthenticationState.Loading());
 
     expect(mockClient.session.authenticate).not.toHaveBeenCalled();
   });
