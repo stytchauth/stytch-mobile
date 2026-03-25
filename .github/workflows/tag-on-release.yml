@@ -1,0 +1,75 @@
+name: Tag on Release
+
+# Pushes the version tag when a release/* PR is merged to main.
+# The tag push triggers publish.yml, which in turn triggers docs.yml.
+#
+# Required secret: RELEASE_PAT
+#   A personal access token with 'contents: write' scope.
+#   The built-in GITHUB_TOKEN cannot trigger downstream workflow runs,
+#   so a PAT is required to make the tag push kick off publish.yml.
+
+on:
+  pull_request:
+    types: [closed]
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  push-tag:
+    name: Push Release Tag
+    # Only run when a release/* branch is merged (not just closed)
+    if: >
+      github.event.pull_request.merged == true &&
+      startsWith(github.event.pull_request.head.ref, 'release/')
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Validate RELEASE_PAT is configured
+        run: |
+          if [ -z "${{ secrets.RELEASE_PAT }}" ]; then
+            echo "Error: RELEASE_PAT secret is not set."
+            echo "Add a PAT with 'contents: write' scope to repository secrets."
+            echo "The built-in GITHUB_TOKEN cannot trigger downstream workflow runs."
+            exit 1
+          fi
+
+      # Check out with the PAT so that git push uses it and triggers publish.yml
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          token: ${{ secrets.RELEASE_PAT }}
+          fetch-depth: 0
+
+      - name: Extract version from branch name
+        id: version
+        run: |
+          BRANCH="${{ github.event.pull_request.head.ref }}"
+          VERSION="${BRANCH#release/}"
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+
+      - name: Validate version matches version.txt
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          FILE_VERSION=$(cat version.txt | tr -d '[:space:]')
+          if [ "$VERSION" != "$FILE_VERSION" ]; then
+            echo "Error: branch version '${VERSION}' does not match version.txt '${FILE_VERSION}'."
+            exit 1
+          fi
+
+      - name: Validate no existing tag
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          git fetch --tags
+          if git rev-parse --verify "refs/tags/${VERSION}" >/dev/null 2>&1; then
+            echo "Error: tag '${VERSION}' already exists."
+            exit 1
+          fi
+
+      - name: Push tag
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag "$VERSION"
+          git push origin "$VERSION"
