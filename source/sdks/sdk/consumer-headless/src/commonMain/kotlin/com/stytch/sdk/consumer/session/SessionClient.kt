@@ -18,15 +18,100 @@ import kotlin.js.JsExport
 @StytchApi
 @JsExport
 public interface SessionClient {
-    /** Validates the current session token and optionally extends the session expiry. */
+    /**
+     * Validates the current session token against the Stytch backend and optionally extends the session.
+     * Calls the `POST /sdk/v1/sessions/authenticate` endpoint.
+     *
+     * **Kotlin:**
+     * ```kotlin
+     * StytchConsumer.sessions.authenticate(
+     *     SessionsAuthenticateParameters(sessionDurationMinutes = 30)
+     * )
+     * ```
+     *
+     * **iOS:**
+     * ```swift
+     * let params = SessionsAuthenticateParameters(sessionDurationMinutes: 30)
+     * let response = try await StytchConsumer.sessions.authenticate(params)
+     * ```
+     *
+     * **React Native:**
+     * ```js
+     * StytchConsumer.sessions.authenticate({ sessionDurationMinutes: 30 })
+     * ```
+     *
+     * @param request - [ISessionsAuthenticateParameters]
+     *   - `sessionDurationMinutes?` — If provided, extends the session by this many minutes from the current time.
+     *
+     * @return [SessionsAuthenticateResponse] containing the validated session and user.
+     *
+     * @throws [StytchError] if the session token is invalid or expired.
+     * @throws [CancellationException] if the coroutine is cancelled.
+     */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun authenticate(request: ISessionsAuthenticateParameters): SessionsAuthenticateResponse
 
-    /** Revokes the current session, signing the user out. */
+    /**
+     * Revokes the current session, signing the user out on the backend and clearing local session state.
+     * Calls the `POST /sdk/v1/sessions/revoke` endpoint.
+     *
+     * **Kotlin:**
+     * ```kotlin
+     * StytchConsumer.sessions.revoke()
+     * ```
+     *
+     * **iOS:**
+     * ```swift
+     * let response = try await StytchConsumer.sessions.revoke()
+     * ```
+     *
+     * **React Native:**
+     * ```js
+     * StytchConsumer.sessions.revoke()
+     * ```
+     *
+     * @return [SessionsRevokeResponse] confirming the session was revoked.
+     *
+     * @throws [StytchError] if the request fails.
+     * @throws [CancellationException] if the coroutine is cancelled.
+     */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun revoke(): SessionsRevokeResponse
 
-    /** Attests the current session using a device integrity token. */
+    /**
+     * Attests the current session using a Stytch Trusted Auth Token. Calls the `POST /sdk/v1/sessions/attest` endpoint.
+     *
+     * **Kotlin:**
+     * ```kotlin
+     * StytchConsumer.sessions.attest(
+     *     SessionsAttestParameters(
+     *         profileId = "profile-id",
+     *         token = "integrity-token",
+     *     )
+     * )
+     * ```
+     *
+     * **iOS:**
+     * ```swift
+     * let params = SessionsAttestParameters(profileId: "profile-id", token: "integrity-token")
+     * let response = try await StytchConsumer.sessions.attest(params)
+     * ```
+     *
+     * **React Native:**
+     * ```js
+     * StytchConsumer.sessions.attest({ profileId: "profile-id", token: "integrity-token" })
+     * ```
+     *
+     * @param request - [ISessionsAttestParameters]
+     *   - `profileId` — The device profile ID from the integrity provider.
+     *   - `token` — The Stytch Trusted Auth Token
+     *   - `sessionDurationMinutes?` — If provided, extends the session by this many minutes.
+     *
+     * @return [SessionsAttestResponse] containing the updated session.
+     *
+     * @throws [StytchError] if the attestation token is invalid.
+     * @throws [CancellationException] if the coroutine is cancelled.
+     */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun attest(request: ISessionsAttestParameters): SessionsAttestResponse
 }

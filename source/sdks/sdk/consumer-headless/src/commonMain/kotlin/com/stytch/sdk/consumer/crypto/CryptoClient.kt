@@ -18,10 +18,55 @@ import kotlin.js.JsExport
 @JsExport
 public interface CryptoClient {
     /**
-     * Authenticates a crypto wallet by signing a server-issued challenge.
+     * Authenticates a crypto wallet by signing a server-issued challenge with the wallet's private key.
+     * Performs a two-step flow: calls `POST /sdk/v1/crypto_wallets/authenticate/start/primary` (no session)
+     * or `POST /sdk/v1/crypto_wallets/authenticate/start/secondary` (with session) to get a challenge
+     * string, invokes [signChallenge] to sign it, then calls `POST /sdk/v1/crypto_wallets/authenticate`
+     * to complete authentication.
      *
-     * @param signChallenge A suspend function that signs the challenge string with the wallet's private key
-     * and returns the hex-encoded signature.
+     * **Kotlin:**
+     * ```kotlin
+     * StytchConsumer.crypto.authenticate(
+     *     request = CryptoWalletsAuthenticateParameters(
+     *         cryptoWalletAddress = "0xABC123...",
+     *         cryptoWalletType = "ethereum",
+     *         sessionDurationMinutes = 30,
+     *     ),
+     *     signChallenge = { challenge -> myWallet.signMessage(challenge) },
+     * )
+     * ```
+     *
+     * **iOS:**
+     * ```swift
+     * let params = CryptoWalletsAuthenticateParameters(
+     *     cryptoWalletAddress: "0xABC123...",
+     *     cryptoWalletType: "ethereum",
+     *     sessionDurationMinutes: 30
+     * )
+     * let response = try await StytchConsumer.crypto.authenticate(params) { challenge in
+     *     return myWallet.signMessage(challenge)
+     * }
+     * ```
+     *
+     * **React Native:**
+     * ```js
+     * StytchConsumer.crypto.authenticate(
+     *     { cryptoWalletAddress: "0xABC123...", cryptoWalletType: "ethereum", sessionDurationMinutes: 30 },
+     *     (challenge) => myWallet.signMessage(challenge),
+     * )
+     * ```
+     *
+     * @param request - [ICryptoWalletsAuthenticateParameters]
+     *   - `cryptoWalletAddress` — The public wallet address (e.g. an Ethereum address).
+     *   - `cryptoWalletType` — The wallet type identifier (e.g. `"ethereum"`, `"solana"`).
+     *   - `sessionDurationMinutes` — Duration of the session to create, in minutes.
+     * @param signChallenge - A suspend function that receives the server-issued challenge string and
+     *   returns the hex-encoded signature produced by the wallet's private key.
+     *
+     * @return [CryptoWalletsAuthenticateResponse] containing the authenticated session and user.
+     *
+     * @throws [StytchError] if the wallet address is not registered or the signature is invalid.
+     * @throws [CancellationException] if the coroutine is cancelled.
      */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun authenticate(

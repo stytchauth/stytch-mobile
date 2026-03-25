@@ -28,15 +28,131 @@ public interface PasskeysClient {
     /** Whether passkeys are supported on the current platform. */
     public val isSupported: Boolean
 
-    /** Registers a new passkey for the current user. Throws [com.stytch.sdk.passkeys.PasskeysUnsupportedError] if not supported. */
+    /**
+     * Registers a new passkey for the current user. Performs a two-step flow: calls
+     * `POST /sdk/v1/webauthn/register/start` to get creation options, invokes the platform
+     * credential API to create the passkey, then calls `POST /sdk/v1/webauthn/register` to complete
+     * registration. Requires an active session.
+     *
+     * **Kotlin (Android):**
+     * ```kotlin
+     * StytchConsumer.passkeys.register(
+     *     PasskeysParameters(
+     *         activity = activity,
+     *         domain = "example.com",
+     *         sessionDurationMinutes = 30,
+     *     )
+     * )
+     * ```
+     *
+     * **iOS:**
+     * ```swift
+     * let params = PasskeysParameters(domain: "example.com", sessionDurationMinutes: 30)
+     * let response = try await StytchConsumer.passkeys.register(params)
+     * ```
+     *
+     * **React Native:**
+     * ```js
+     * StytchConsumer.passkeys.register({ domain: "example.com", sessionDurationMinutes: 30 })
+     * ```
+     *
+     * @param parameters - [PasskeysParameters]
+     *   - `domain` — The relying party domain (e.g. `"example.com"`).
+     *   - `sessionDurationMinutes?` — Duration of the session to create after registration, in minutes.
+     *   - `preferImmediatelyAvailableCredentials` — Whether to prefer credentials that are immediately available on this device.
+     *   - *(Android only)* `activity` — The `Activity` used to present the credential creation dialog.
+     *
+     * @return [WebAuthnRegisterResponse] containing the updated session and user.
+     *
+     * @throws [com.stytch.sdk.passkeys.PasskeysUnsupportedError] if passkeys are not supported on the current platform.
+     * @throws [StytchError] if registration fails.
+     * @throws [CancellationException] if the coroutine is cancelled.
+     */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun register(parameters: PasskeysParameters): WebAuthnRegisterResponse
 
-    /** Authenticates the user with an existing registered passkey. Throws [com.stytch.sdk.passkeys.PasskeysUnsupportedError] if not supported. */
+    /**
+     * Authenticates the user with an existing registered passkey. Performs a two-step flow: calls
+     * `POST /sdk/v1/webauthn/authenticate/start/primary` (no session) or
+     * `POST /sdk/v1/webauthn/authenticate/start/secondary` (with session) to get assertion options,
+     * invokes the platform credential API, then calls `POST /sdk/v1/webauthn/authenticate` to complete.
+     *
+     * **Kotlin (Android):**
+     * ```kotlin
+     * StytchConsumer.passkeys.authenticate(
+     *     PasskeysParameters(
+     *         activity = activity,
+     *         domain = "example.com",
+     *         sessionDurationMinutes = 30,
+     *     )
+     * )
+     * ```
+     *
+     * **iOS:**
+     * ```swift
+     * let params = PasskeysParameters(domain: "example.com", sessionDurationMinutes: 30)
+     * let response = try await StytchConsumer.passkeys.authenticate(params)
+     * ```
+     *
+     * **React Native:**
+     * ```js
+     * StytchConsumer.passkeys.authenticate({ domain: "example.com", sessionDurationMinutes: 30 })
+     * ```
+     *
+     * @param parameters - [PasskeysParameters]
+     *   - `domain` — The relying party domain (e.g. `"example.com"`).
+     *   - `sessionDurationMinutes?` — Duration of the session to create, in minutes.
+     *   - `preferImmediatelyAvailableCredentials` — Whether to prefer credentials that are immediately available on this device.
+     *   - *(Android only)* `activity` — The `Activity` used to present the credential selection dialog.
+     *
+     * @return [WebAuthnAuthenticateResponse] containing the authenticated session and user.
+     *
+     * @throws [com.stytch.sdk.passkeys.PasskeysUnsupportedError] if passkeys are not supported on the current platform.
+     * @throws [StytchError] if authentication fails.
+     * @throws [CancellationException] if the coroutine is cancelled.
+     */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun authenticate(parameters: PasskeysParameters): WebAuthnAuthenticateResponse
 
-    /** Updates metadata (e.g. a friendly name) for a passkey registration. Throws [com.stytch.sdk.passkeys.PasskeysUnsupportedError] if not supported. */
+    /**
+     * Updates metadata for an existing passkey registration (e.g. sets a user-friendly display name).
+     * Calls the `PUT /sdk/v1/webauthn/update/{webauthn_registration_id}` endpoint.
+     *
+     * **Kotlin:**
+     * ```kotlin
+     * StytchConsumer.passkeys.update(
+     *     id = "webauthn-registration-test-d5a3b680-e8a3-40c0-b815-ab79986666d0",
+     *     request = WebAuthnUpdateParameters(name = "My iPhone"),
+     * )
+     * ```
+     *
+     * **iOS:**
+     * ```swift
+     * let params = WebAuthnUpdateParameters(name: "My iPhone")
+     * let response = try await StytchConsumer.passkeys.update(
+     *     id: "webauthn-registration-test-d5a3b680-e8a3-40c0-b815-ab79986666d0",
+     *     request: params
+     * )
+     * ```
+     *
+     * **React Native:**
+     * ```js
+     * StytchConsumer.passkeys.update(
+     *     "webauthn-registration-test-d5a3b680-e8a3-40c0-b815-ab79986666d0",
+     *     { name: "My iPhone" }
+     * )
+     * ```
+     *
+     * @param id The unique ID of the WebAuthn registration to update.
+     * @param request - [IWebAuthnUpdateParameters]
+     *   - `name` — A human-readable display name for the passkey (e.g. `"My iPhone"`).
+     *
+     * @return [WebAuthnUpdateResponse] containing the updated registration.
+     *
+     * @throws [com.stytch.sdk.passkeys.PasskeysUnsupportedError] if passkeys are not supported on the current platform.
+     * @throws [StytchError] if the registration ID does not exist or the request fails.
+     * @throws [CancellationException] if the coroutine is cancelled.
+     */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun update(
         id: String,

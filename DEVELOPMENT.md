@@ -285,3 +285,137 @@ Platform abstractions consumed by both consumer and B2B SDKs:
 **Code generation:** The OpenAPI spec at `source/sdks/sdk/resources/openapi.yml` drives Ktorfit HTTP interface + model generation. The `@NetworkModel` KSP annotation generates public DTO classes. Do not edit the spec or generated files by hand.
 
 **Callback extensions generation:** The `@StytchApi` annotation (defined in `source/shared`) marks client interfaces whose suspend functions should get callback overloads. A KSP processor (`StytchCallbackProcessor`) runs during the `consumer-headless` and `b2b-headless` builds and writes the generated `*Callbacks.kt` files to `build/generated/callbacks/commonMain/kotlin/`. The `*-extensions` modules then compile those files as their sole source. Do not edit the generated files by hand — modify the processor in `source/sdks/buildSrc/` instead.
+
+---
+
+## CI / Release Workflows
+
+### Workflow Overview
+
+| Workflow | File | Trigger |
+|----------|------|---------|
+| Quality Control | `qc.yml` | Every PR; `workflow_dispatch` |
+| Cut Release | `release.yml` | `workflow_dispatch` |
+| Tag on Release | `tag-on-release.yml` | `release/*` PR merged to `main` |
+| Publish | `publish.yml` | Tag push (`1.2.3`); `workflow_dispatch` |
+| Docs | `docs.yml` | After Publish succeeds; `workflow_dispatch` |
+| Build Shared (reusable) | `_build-shared.yml` | Called by Publish and Docs |
+
+---
+
+### Quality Control (`qc.yml`)
+
+Runs on every pull request and can be triggered manually. Cancels in-progress runs for the same ref.
+
+| Job | Runner | What it does |
+|-----|--------|--------------|
+| `check-shared` | ubuntu | `ktlintCheck detekt koverXmlReportJvm` on `source/shared`; posts coverage comment on PRs |
+| `check-sdks` | macos | Publishes shared to mavenLocal, then `ktlintCheck detekt checkLegacyAbi koverXmlReportJvm` on `source/sdks`; posts coverage comment |
+| `check-ios-simulator` | macos | Builds a simulator-only SwiftUtils framework, runs `iosSimulatorArm64Test` on `source/shared` |
+| `check-android-instrumented` | ubuntu | Runs `connectedAndroidTest` on `source/shared` in an Android emulator (API 29) |
+| `check-swift-utils` | macos | `xcodebuild test` on `StytchSwiftUtils.xcodeproj`; uploads `.xcresult` coverage bundle |
+| `check-rn` | ubuntu | `yarn test` for both `react-native/consumer` and `react-native/b2b` |
+
+The `check-sdks` job also runs `checkLegacyAbi` — a binary-compatibility check that fails if a public API change is made without updating the `.api` golden files. Update those files with `./gradlew updateLegacyAbi` when an intentional API change is made.
+
+---
+
+### Release Process
+
+Releasing follows a three-step automated process. The version to release is always read from `version.txt` at the repo root (no `v` prefix, e.g. `1.2.3`).
+
+#### Step 1 — Cut the release (`release.yml`, `workflow_dispatch`)
+
+1. Reads `version.txt` and validates that no tag with that version exists yet.
+2. Installs [git-cliff](https://git-cliff.org) and generates a changelog entry for all unreleased commits since the last tag, prepending it to `CHANGELOG.md`. Configuration lives in `cliff.toml` at the repo root.
+3. **Dry run** (default): uploads `CHANGELOG.md` and the entry snippet as an artifact for preview — nothing is pushed or opened.
+4. **Real run**: creates a `release/{version}` branch, commits the changelog update, pushes the branch, and opens a PR titled `chore: release {version}`. The PR body includes the generated changelog entry.
+
+Before running for real, bump `version.txt` and commit it to `main`. Review the changelog in dry-run mode first if you want to check the output.
+
+#### Step 2 — Merge the PR (`tag-on-release.yml`)
+
+Fires when any `release/*` PR is **merged** (not just closed) into `main`.
+
+1. Validates that `RELEASE_PAT` is configured (see [Required Secrets](#required-secrets)).
+2. Checks that the branch version (`release/1.2.3` → `1.2.3`) still matches `version.txt` and that no tag exists yet.
+3. Pushes the version tag using `RELEASE_PAT`. Using the PAT (rather than the default `GITHUB_TOKEN`) is required so that the tag push triggers `publish.yml` — GitHub does not allow `GITHUB_TOKEN`-triggered events to start downstream workflows.
+
+#### Step 3 — Publish (`publish.yml`)
+
+Triggered automatically by a tag push matching `[0-9]*.[0-9]*.[0-9]*`, or manually via `workflow_dispatch` (dry run defaults to `true` for safety).
+
+```
+build-shared  (reusable: _build-shared.yml)
+    │
+    ├── publish-kmp       — Maven Central (shared + consumer + b2b + extensions)
+    ├── publish-ios       — stytchauth/stytch-ios SPM repo + xcframework zips
+    └── publish-rn        — npm (@stytch/react-native-consumer, @stytch/react-native-b2b)
+          │
+          └── create-github-release  — GH release with install coordinates + changelog entry
+```
+
+**`build-shared` (reusable workflow `_build-shared.yml`):** Builds `StytchSwiftUtils.xcframework`, verifies the C interop headers are unchanged (fails fast if they need updating), builds `StytchSharedSDK.xcframework`, and uploads both as workflow artifacts for the downstream jobs.
+
+**`publish-kmp`:** Downloads the SwiftUtils interop and shared xcframework artifacts (needed to compile iOS targets), publishes shared to mavenLocal, then publishes all five Maven artifacts to Maven Central (`shared`, `consumer-headless`, `b2b-headless`, `consumer-headless-extensions`, `b2b-headless-extensions`).
+
+**`publish-ios`:** Downloads artifacts, builds consumer and B2B xcframeworks, zips all four frameworks, computes SHA-256 checksums, substitutes URLs and checksums into `source/ios/Package.swift.template` to produce `source/ios/Package.swift`. On a real run, clones `stytchauth/stytch-ios`, commits `Package.swift` + `Sources`, pushes + tags, and creates a GitHub release there with the four xcframework zips attached.
+
+**`publish-rn`:** Downloads artifacts, publishes shared to mavenLocal, builds KMP JS output for consumer and B2B, stamps the version into `package.json` files, runs `yarn build`, packs both packages. On a real run, publishes both to npm. Always uploads `.tgz` packs as artifacts.
+
+**`create-github-release`:** Runs after all three publish jobs succeed. Extracts the current version's section from `CHANGELOG.md`, prepends an "Install" block with Maven/npm/SPM coordinates, and creates a GitHub release on this repo.
+
+---
+
+### Docs (`docs.yml`)
+
+Triggered automatically after `publish.yml` completes successfully, or manually via `workflow_dispatch`.
+
+```
+build-shared  (reusable: _build-shared.yml)
+    │
+    ├── generate-android-docs  — Dokka HTML (source/sdks → build/dokka/html/)
+    └── generate-ios-docs      — DocC static sites (consumer + B2B)
+          │
+          └── deploy-pages  — assembles pages/ directory and deploys to GitHub Pages
+```
+
+**Android docs:** Runs `dokkaGenerateHtml` in `source/sdks`, producing a multi-module Dokka site covering consumer, B2B, and the extensions modules.
+
+**iOS docs:** Builds consumer and B2B xcframeworks, extracts symbol graphs with `swift-symbolgraph-extract`, injects KDoc comments from the Kotlin-generated ObjC headers into the symbol graphs via `scripts/inject-docs.py`, then renders static DocC sites with `xcrun docc convert`.
+
+**Deploy:** Downloads both doc artifacts, copies the landing page from `docs/index.html`, and deploys to GitHub Pages at the repo's Pages URL.
+
+---
+
+### Changelog (`cliff.toml`)
+
+`CHANGELOG.md` is maintained by [git-cliff](https://git-cliff.org), configured in `cliff.toml`. Only conventional commit types that are user-facing appear in the changelog:
+
+| Prefix | Section |
+|--------|---------|
+| `feat:` | Features |
+| `fix:` | Bug Fixes |
+| `docs:` | Documentation |
+| `perf:` | Performance |
+| `refactor:` | Refactoring |
+| Everything else (`chore:`, `ci:`, `build:`, `test:`, merge commits, non-conventional) | Skipped |
+
+The catch-all skip rule forces good commit naming — if a commit should appear in the changelog, it must use one of the prefixes above.
+
+---
+
+### Required Secrets
+
+| Secret | Used by | Purpose |
+|--------|---------|---------|
+| `APPLE_CERTIFICATE_BASE64` | `_build-shared.yml`, `publish-ios`, `check-swift-utils` | Code-signing certificate (base64 DER) |
+| `APPLE_CERTIFICATE_PASSWORD` | same | Certificate passphrase |
+| `KEYCHAIN_PASSWORD` | same | Temporary keychain password |
+| `MAVEN_CENTRAL_USERNAME` | `publish-kmp` | Sonatype Central Portal username |
+| `MAVEN_CENTRAL_PASSWORD` | `publish-kmp` | Sonatype Central Portal password |
+| `SIGNING_KEY` | `publish-kmp` | GPG key for Maven artifact signing (in-memory, ASCII armored) |
+| `SIGNING_KEY_ID` | `publish-kmp` | GPG key ID |
+| `SIGNING_KEY_PASSWORD` | `publish-kmp` | GPG key passphrase |
+| `SPM_REPO_TOKEN` | `publish-ios` | PAT with write access to `stytchauth/stytch-ios` |
+| `RELEASE_PAT` | `tag-on-release.yml` | PAT with `contents: write`; required to trigger downstream workflows from a tag push |
