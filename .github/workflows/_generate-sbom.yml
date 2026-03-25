@@ -1,0 +1,84 @@
+name: Generate SBOM (reusable)
+
+on:
+  workflow_dispatch:
+  workflow_call:
+
+jobs:
+  generate-sbom:
+    name: Generate SBOM
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5.2.0
+        with:
+          distribution: zulu
+          java-version: 17
+          cache: gradle
+
+      - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
+        with:
+          node-version: '24'
+
+      - name: Install yarn
+        run: npm install -g yarn
+
+      - name: Generate shared SDK SBOM
+        working-directory: source/shared
+        run: ./gradlew :sdk:shared:cyclonedxBom
+
+      - name: Publish shared metadata to mavenLocal
+        working-directory: source/shared
+        run: >
+          ./gradlew
+          :sdk:shared:publishKotlinMultiplatformPublicationToMavenLocal
+          :sdk:shared:publishJvmPublicationToMavenLocal
+
+      - name: Generate consumer and B2B SDK SBOMs
+        working-directory: source/sdks
+        run: >
+          ./gradlew
+          :sdk:consumer-headless:cyclonedxBom
+          :sdk:b2b-headless:cyclonedxBom
+
+      - name: Resolve SPM dependencies
+        working-directory: source/ios
+        run: swift package resolve
+
+      - name: Generate iOS SPM SBOM
+        working-directory: source/ios
+        run: swift package show-dependencies --format json > sbom-ios-spm.json
+
+      - name: Install consumer RN dependencies
+        working-directory: source/react-native/consumer
+        run: yarn install --frozen-lockfile
+
+      - name: Generate consumer RN SBOM
+        working-directory: source/react-native/consumer
+        run: npx --yes @cyclonedx/cyclonedx-npm --output-format JSON --output-file sbom-rn-consumer.json
+
+      - name: Install B2B RN dependencies
+        working-directory: source/react-native/b2b
+        run: yarn install --frozen-lockfile
+
+      - name: Generate B2B RN SBOM
+        working-directory: source/react-native/b2b
+        run: npx --yes @cyclonedx/cyclonedx-npm --output-format JSON --output-file sbom-rn-b2b.json
+
+      - name: Collect consumer-facing SBOM artifacts
+        run: |
+          mkdir -p sbom-artifacts
+          cp source/shared/sdk/shared/build/reports/bom.json          sbom-artifacts/sbom-shared.json
+          cp source/sdks/sdk/consumer-headless/build/reports/bom.json  sbom-artifacts/sbom-consumer.json
+          cp source/sdks/sdk/b2b-headless/build/reports/bom.json       sbom-artifacts/sbom-b2b.json
+          cp source/ios/sbom-ios-spm.json                               sbom-artifacts/sbom-ios-spm.json
+          cp source/react-native/consumer/sbom-rn-consumer.json         sbom-artifacts/sbom-rn-consumer.json
+          cp source/react-native/b2b/sbom-rn-b2b.json                  sbom-artifacts/sbom-rn-b2b.json
+
+      - name: Upload SBOM artifacts
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+        with:
+          name: sbom
+          path: sbom-artifacts/

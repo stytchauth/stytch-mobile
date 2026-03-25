@@ -13,6 +13,7 @@ plugins {
     alias(libs.plugins.mavenPublish) apply false
     alias(libs.plugins.dokka)
     alias(libs.plugins.detekt) apply false
+    alias(libs.plugins.cyclonedx) apply false
 }
 
 group = "com.stytch.sdk"
@@ -27,6 +28,7 @@ dependencies {
 subprojects {
     plugins.withId("com.vanniktech.maven.publish") {
         apply(plugin = "org.jetbrains.dokka")
+        apply(plugin = "org.cyclonedx.bom")
         configure<com.vanniktech.maven.publish.MavenPublishBaseExtension> {
             publishToMavenCentral()
             configure(
