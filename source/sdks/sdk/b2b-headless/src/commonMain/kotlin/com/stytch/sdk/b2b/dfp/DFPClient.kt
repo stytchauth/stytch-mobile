@@ -14,8 +14,28 @@ import kotlin.js.JsExport
 @JsExport
 public interface DFPClient {
     /**
-     * Fetches a DFP telemetry ID for use in backend lookup calls.
-     * Throws [DFPNotConfiguredError] if DFP is not configured.
+     * Fetches a DFP telemetry ID from the local device fingerprinting provider. The ID is passed to your
+     * backend for use in Stytch lookup calls.
+     *
+     * **Kotlin:**
+     * ```kotlin
+     * val telemetryId = StytchB2B.dfp.getTelemetryId()
+     * ```
+     *
+     * **iOS:**
+     * ```swift
+     * let telemetryId = try await StytchB2B.dfp.getTelemetryId()
+     * ```
+     *
+     * **React Native:**
+     * ```js
+     * const telemetryId = await StytchB2B.dfp.getTelemetryId()
+     * ```
+     *
+     * @return The DFP telemetry ID string.
+     *
+     * @throws [DFPNotConfiguredError] if DFP was not configured during SDK initialization.
+     * @throws [CancellationException] if the coroutine is cancelled.
      */
     @Throws(StytchError::class, CancellationException::class)
     public suspend fun getTelemetryId(): String
