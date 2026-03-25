@@ -74,46 +74,45 @@ export const StytchProvider = ({ stytch, children }: StytchProviderProps): React
 
   useEffect(() => {
     const handleAppStateChange = async (appState: AppStateStatus) => {
-      if (appState === 'active') {
-        tryAuthenticate();
+      if (appState !== 'active') {
+        return;
       }
-    };
-    const appStateSubscription = AppState.addEventListener('change', handleAppStateChange);
-    const tryAuthenticate = async () => {
+
       const observationJob = stytch.authenticationStateObserver(
         async (state: ConsumerAuthenticationState) => {
           if (state instanceof ConsumerAuthenticationState.Authenticated) {
             try {
               await stytch.session.authenticate({ sessionDurationMinutes: null });
             } catch {
-              // log it
+              // errors are expected/intentionally ignored. Session revocation (or heartbeat cancellation)
+              // are the responsibility of the SDK and handled internally
             }
           }
           observationJob.stop();
         },
       );
     };
+
+    const appStateSubscription = AppState.addEventListener('change', handleAppStateChange);
     return () => {
       appStateSubscription.remove();
     };
   }, [stytch]);
 
   useEffect(() => {
-    const observationJob = stytch.authenticationStateObserver(
-      (state: ConsumerAuthenticationState) => {
-        let newUser: ApiUserV1User | undefined = undefined;
-        let newSession: ApiSessionV1Session | undefined = undefined;
-        if (state instanceof ConsumerAuthenticationState.Authenticated) {
-          newUser = (state as ConsumerAuthenticationState.Authenticated).user;
-          newSession = (state as ConsumerAuthenticationState.Authenticated).session;
-        }
-        setClientState((oldState) => {
-          const newState = { user: newUser, session: newSession };
-          return mergeWithStableProps(oldState, newState);
-        });
-        setAuthenticationState(state);
-      },
-    );
+    const observationJob = stytch.authenticationStateObserver((state: ConsumerAuthenticationState) => {
+      let newUser: ApiUserV1User | undefined = undefined;
+      let newSession: ApiSessionV1Session | undefined = undefined;
+      if (state instanceof ConsumerAuthenticationState.Authenticated) {
+        newUser = state.user;
+        newSession = state.session;
+      }
+      setClientState((oldState) => {
+        const newState = { user: newUser, session: newSession };
+        return mergeWithStableProps(oldState, newState);
+      });
+      setAuthenticationState(state);
+    });
     return () => {
       observationJob.stop();
     };

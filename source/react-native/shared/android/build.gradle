@@ -66,7 +66,7 @@ repositories {
 
 dependencies {
   implementation "com.facebook.react:react-android"
-  implementation "com.stytch.sdk:shared:0.0.1"
+  implementation "com.stytch.sdk:shared:${new groovy.json.JsonSlurper().parse(file('../package.json')).version}"
   implementation "io.ktor:ktor-client-core:3.3.3"
   implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0"
 }

@@ -286,12 +286,11 @@ jobs:
           mkdir -p $GITHUB_WORKSPACE/source/react-native/b2b/lib
           cp -r sdk/b2b-headless/build/dist/js/productionLibrary/b2b-headless* $GITHUB_WORKSPACE/source/react-native/b2b/lib
 
-      - name: Stamp version into package.json and build.gradle files
+      - name: Stamp version into package.json files
         run: |
           VERSION=$(cat version.txt)
           npm version "$VERSION" --no-git-tag-version --prefix source/react-native/consumer
           npm version "$VERSION" --no-git-tag-version --prefix source/react-native/b2b
-          sed -i '' "s|com.stytch.sdk:shared:[^\"]*|com.stytch.sdk:shared:${VERSION}|g" source/react-native/shared/android/build.gradle
 
       - name: Install dependencies and build consumer RN package
         working-directory: source/react-native/consumer
