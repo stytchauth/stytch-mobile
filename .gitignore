@@ -22,7 +22,7 @@ derived/
 .docc-build/
 kotlin-js-store/
 
-source/react-native/b2b
+source/react-native/b2b/*
 source/react-native/b2b/src/__mocks__
 source/react-native/b2b/src/NativeStytchBridge.ts
 source/react-native/b2b/src/app.plugin.cjs
@@ -30,7 +30,7 @@ source/react-native/b2b/src/app.plugin.cjs
 !source/react-native/b2b/package.json
 !source/react-native/b2b/yarn.lock
 
-source/react-native/consumer
+source/react-native/consumer/*
 source/react-native/consumer/src/__mocks__
 source/react-native/consumer/src/NativeStytchBridge.ts
 source/react-native/consumer/src/app.plugin.cjs
