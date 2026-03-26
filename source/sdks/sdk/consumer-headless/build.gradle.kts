@@ -3,6 +3,7 @@
 import com.android.build.api.dsl.androidLibrary
 import com.android.build.gradle.tasks.ProcessLibraryArtProfileTask
 import com.google.devtools.ksp.gradle.KspAATask
+import com.stytch.sdk.utils.GenerateMintlifyDocsTask
 import com.stytch.sdk.utils.InjectJsDocTask
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
@@ -150,6 +151,19 @@ ksp {
             .get()
             .asFile.absolutePath,
     )
+    arg(
+        "stytchMintlifyOutputDir",
+        layout.buildDirectory
+            .dir("generated/mintlify")
+            .get()
+            .asFile.absolutePath,
+    )
+}
+
+val generateMintlifyDocs by tasks.registering(GenerateMintlifyDocsTask::class) {
+    methodMapFile.set(layout.buildDirectory.file("generated/mintlify/method-map.json"))
+    outputDir.set(layout.buildDirectory.dir("mintlify"))
+    dependsOn("kspCommonMainKotlinMetadata")
 }
 
 val injectJsDoc by tasks.registering(InjectJsDocTask::class) {
