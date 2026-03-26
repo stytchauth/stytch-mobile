@@ -8,6 +8,8 @@ import com.google.devtools.ksp.processing.SymbolProcessorProvider
 import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
+import com.google.devtools.ksp.symbol.KSType
+import com.google.devtools.ksp.symbol.KSTypeReference
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import java.io.File
@@ -44,7 +46,7 @@ class StytchMintlifyProcessor(
                 return emptyList()
             }
 
-        val clients = buildClientList(entryPoint, ancestorInterfaces = emptySet())
+        val clients = buildClientList(entryPoint, ancestorInterfaces = emptySet(), resolver)
         val mapFile = MethodMapFile(vertical = vertical, clients = clients)
 
         val outFile = File(outputDir, "method-map.json").also { it.parentFile.mkdirs() }
@@ -57,6 +59,7 @@ class StytchMintlifyProcessor(
     private fun buildClientList(
         parent: KSClassDeclaration,
         ancestorInterfaces: Set<String>,
+        resolver: Resolver,
     ): List<ClientEntry> =
         parent
             .getAllProperties()
@@ -66,13 +69,14 @@ class StytchMintlifyProcessor(
                     prop.type.resolve().declaration as? KSClassDeclaration
                         ?: return@mapNotNull null
                 if (!typeDec.simpleName.asString().endsWith("Client")) return@mapNotNull null
-                buildClientEntry(prop.simpleName.asString(), typeDec, ancestorInterfaces)
+                buildClientEntry(prop.simpleName.asString(), typeDec, ancestorInterfaces, resolver)
             }.toList()
 
     private fun buildClientEntry(
         propName: String,
         cls: KSClassDeclaration,
         ancestorInterfaces: Set<String>,
+        resolver: Resolver,
     ): ClientEntry {
         val interfaceName = cls.simpleName.asString()
         return ClientEntry(
@@ -83,42 +87,109 @@ class StytchMintlifyProcessor(
                 cls
                     .getAllFunctions()
                     .filter { fn -> fn.simpleName.asString() !in SKIP_FUNCTIONS }
-                    .map { buildMethodEntry(it) }
+                    .map { buildMethodEntry(it, resolver) }
                     .toList(),
             subClients =
                 if (interfaceName in ancestorInterfaces) {
                     emptyList()
                 } else {
-                    buildClientList(cls, ancestorInterfaces + interfaceName)
+                    buildClientList(cls, ancestorInterfaces + interfaceName, resolver)
                 },
         )
     }
 
-    private fun buildMethodEntry(fn: KSFunctionDeclaration): MethodEntry {
+    private fun buildMethodEntry(fn: KSFunctionDeclaration, resolver: Resolver): MethodEntry {
         val parsed = parseKDoc(fn.docString?.cleanDoc() ?: "")
+        val paramType = fn.parameters.firstOrNull()?.type?.resolveParamType(resolver)
+        val returnType = fn.returnType?.resolve()
         return MethodEntry(
             name = fn.simpleName.asString(),
             description = parsed.description,
             kotlinExample = parsed.kotlinExample,
             iosExample = parsed.iosExample,
             rnExample = parsed.rnExample,
-            paramDoc = parsed.paramDoc,
             returnDoc = parsed.returnDoc,
-            paramType =
-                fn.parameters
-                    .firstOrNull()
-                    ?.type
-                    ?.resolve()
-                    ?.declaration
-                    ?.simpleName
-                    ?.asString(),
-            returnType =
-                fn.returnType
-                    ?.resolve()
-                    ?.declaration
-                    ?.simpleName
-                    ?.asString(),
+            paramType = paramType?.declaration?.simpleName?.asString(),
+            paramFields =
+                paramType
+                    ?.let { extractResponseFields(it, depth = 0) }
+                    ?.filter { it.name !in SKIP_REQUEST_PARAMS }
+                    ?: emptyList(),
+            returnType = returnType?.declaration?.simpleName?.asString(),
+            returnFields = returnType?.let { extractResponseFields(it, depth = 0) } ?: emptyList(),
         )
+    }
+
+    /**
+     * Resolves the parameter type for a method, always using the OpenAPI-generated `*Request` model
+     * for `I*Parameters` types
+     * Maps `IFooParameters` → `FooRequest` and looks it up directly.
+     */
+    private fun KSTypeReference.resolveParamType(resolver: Resolver): KSType? {
+        val direct = resolve()
+        val declName = direct.declaration.simpleName.asString()
+        // Get the actual type name, unwrapping error type syntax if needed
+        val typeName =
+            if (declName.startsWith("<ERROR")) {
+                declName.removePrefix("<ERROR TYPE: ").removeSuffix(">").trim().takeIf { it.isNotBlank() } ?: return null
+            } else {
+                declName
+            }
+        // I*Parameters → always use the corresponding OpenAPI *Request model for docs
+        if (!typeName.startsWith("I") || !typeName.endsWith("Parameters")) return direct
+        val requestName = typeName.removePrefix("I").removeSuffix("Parameters") + "Request"
+        val found =
+            resolver
+                .getAllFiles()
+                .flatMap { it.declarations }
+                .filterIsInstance<KSClassDeclaration>()
+                .find { it.simpleName.asString() == requestName }
+        if (found == null) logger.warn("StytchMintlifyProcessor: could not find $requestName for $typeName")
+        return found?.asType(emptyList())
+    }
+
+    /** Recursively extracts fields from a response type up to [depth] levels of nesting. */
+    private fun extractResponseFields(type: KSType, depth: Int): List<ResponseFieldEntry> {
+        if (depth > 2) return emptyList()
+        val decl = type.declaration as? KSClassDeclaration ?: return emptyList()
+        if (!decl.packageName.asString().startsWith("com.stytch")) return emptyList()
+
+        return decl
+            .getAllProperties()
+            .filter { it.extensionReceiver == null }
+            .map { prop ->
+                val propType = prop.type.resolve()
+                val expandType = listElementType(propType) ?: propType
+                ResponseFieldEntry(
+                    name = prop.simpleName.asString(),
+                    type = typeDisplayName(propType),
+                    required = !propType.isMarkedNullable,
+                    doc = prop.docString?.cleanDoc() ?: "",
+                    children = if (depth < 2) extractResponseFields(expandType, depth + 1) else emptyList(),
+                )
+            }.toList()
+    }
+
+    private fun typeDisplayName(type: KSType): String {
+        val name = type.declaration.simpleName.asString()
+        val args = type.arguments
+        val base =
+            if (args.isEmpty()) {
+                name
+            } else {
+                "$name<${args.joinToString(", ") { arg -> arg.type?.resolve()?.let { typeDisplayName(it) } ?: "*" }}>"
+            }
+        return if (type.isMarkedNullable) "$base?" else base
+    }
+
+    /** Returns the element type if [type] is a List/Set/Collection/Array, otherwise null. */
+    private fun listElementType(type: KSType): KSType? {
+        val name = type.declaration.simpleName.asString()
+        return if (name in setOf("List", "Set", "Collection", "Array")) {
+            type.arguments.firstOrNull()?.type?.resolve()
+        } else {
+            null
+        }
     }
 
     private data class ParsedDoc(
@@ -126,12 +197,11 @@ class StytchMintlifyProcessor(
         val kotlinExample: String?,
         val iosExample: String?,
         val rnExample: String?,
-        val paramDoc: String?,
         val returnDoc: String?,
     )
 
     private fun parseKDoc(raw: String): ParsedDoc {
-        if (raw.isBlank()) return ParsedDoc("", null, null, null, null, null)
+        if (raw.isBlank()) return ParsedDoc("", null, null, null, null)
 
         fun extractCodeBlock(lang: String): String? =
             Regex("```${lang}\\s*\\n(.*?)```", RegexOption.DOT_MATCHES_ALL)
@@ -164,7 +234,6 @@ class StytchMintlifyProcessor(
             kotlinExample = extractCodeBlock("kotlin"),
             iosExample = extractCodeBlock("swift"),
             rnExample = extractCodeBlock("js"),
-            paramDoc = extractTag("param"),
             returnDoc = extractTag("return"),
         )
     }
@@ -177,6 +246,8 @@ class StytchMintlifyProcessor(
                 "StytchB2B" to "b2b",
             )
         private val SKIP_PROPS = setOf("authenticationStateFlow")
+        // Fields managed internally by the SDK (DFP/CAPTCHA tokens, PKCE codes, etc.) — not user-facing
+        private val SKIP_REQUEST_PARAMS = INTERNALLY_MANAGED_PARAMETERS.toSet()
         private val SKIP_FUNCTIONS =
             setOf(
                 "equals",
@@ -187,7 +258,6 @@ class StytchMintlifyProcessor(
             )
         private val JSON = Json { prettyPrint = true }
 
-        // clean up any *s in the docs
         private fun String.cleanDoc(): String =
             trim()
                 .removePrefix("/**")
@@ -195,7 +265,13 @@ class StytchMintlifyProcessor(
                 .lines()
                 .joinToString("\n") { line ->
                     val t = line.trim()
-                    if (t.startsWith("* ") || t == "*") t.removePrefix("*").trim() else t
+                    when {
+                        // Safety net for raw KDoc (shouldn't occur since KSP pre-strips these)
+                        t.startsWith("* ") -> t.removePrefix("* ")
+                        t == "*" -> ""
+                        // KSP's docString leaves exactly 1 leading space per line; strip just that
+                        else -> line.removePrefix(" ")
+                    }
                 }.trim()
     }
 }
@@ -231,8 +307,18 @@ data class MethodEntry(
     val kotlinExample: String? = null,
     val iosExample: String? = null,
     val rnExample: String? = null,
-    val paramDoc: String? = null,
     val returnDoc: String? = null,
     val paramType: String? = null,
+    val paramFields: List<ResponseFieldEntry> = emptyList(),
     val returnType: String? = null,
+    val returnFields: List<ResponseFieldEntry> = emptyList(),
+)
+
+@Serializable
+data class ResponseFieldEntry(
+    val name: String,
+    val type: String,
+    val required: Boolean,
+    val doc: String,
+    val children: List<ResponseFieldEntry> = emptyList(),
 )
