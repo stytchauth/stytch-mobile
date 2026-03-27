@@ -31,10 +31,7 @@ jobs:
 
       - name: Publish shared metadata to mavenLocal
         working-directory: source/shared
-        run: >
-          ./gradlew
-          :sdk:shared:publishKotlinMultiplatformPublicationToMavenLocal
-          :sdk:shared:publishJvmPublicationToMavenLocal
+        run: ./gradlew :sdk:shared:publishToMavenLocal
 
       - name: Generate consumer and B2B SDK SBOMs
         working-directory: source/sdks
