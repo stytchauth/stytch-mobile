@@ -1,7 +1,6 @@
 name: Generate SBOM (reusable)
 
 on:
-  workflow_dispatch:
   workflow_call:
 
 jobs:
@@ -40,14 +39,6 @@ jobs:
           :sdk:consumer-headless:cyclonedxBom
           :sdk:b2b-headless:cyclonedxBom
 
-      - name: Resolve SPM dependencies
-        working-directory: source/ios
-        run: swift package resolve
-
-      - name: Generate iOS SPM SBOM
-        working-directory: source/ios
-        run: swift package show-dependencies --format json > sbom-ios-spm.json
-
       - name: Install consumer RN dependencies
         working-directory: source/react-native/consumer
         run: yarn install --frozen-lockfile
@@ -70,7 +61,6 @@ jobs:
           cp source/shared/sdk/shared/build/reports/bom.json          sbom-artifacts/sbom-shared.json
           cp source/sdks/sdk/consumer-headless/build/reports/bom.json  sbom-artifacts/sbom-consumer.json
           cp source/sdks/sdk/b2b-headless/build/reports/bom.json       sbom-artifacts/sbom-b2b.json
-          cp source/ios/sbom-ios-spm.json                               sbom-artifacts/sbom-ios-spm.json
           cp source/react-native/consumer/sbom-rn-consumer.json         sbom-artifacts/sbom-rn-consumer.json
           cp source/react-native/b2b/sbom-rn-b2b.json                  sbom-artifacts/sbom-rn-b2b.json
 

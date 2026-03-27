@@ -139,6 +139,23 @@ jobs:
         working-directory: source/sdks
         run: ./gradlew assembleStytchConsumerSDKXCFramework assembleStytchB2BSDKXCFramework
 
+      - name: Copy xcframeworks to source/ios for SPM resolution
+        run: |
+          cp -r source/sdks/sdk/consumer-headless/build/XCFrameworks/release/StytchConsumerSDK.xcframework source/ios/
+          cp -r source/sdks/sdk/b2b-headless/build/XCFrameworks/release/StytchB2BSDK.xcframework source/ios/
+          cp -r source/shared/sdk/shared/build/XCFrameworks/release/StytchSharedSDK.xcframework source/ios/
+          cp -r source/shared/sdk/shared/src/iosMain/interop/StytchSwiftUtils.xcframework source/ios/
+
+      - name: Generate iOS SPM SBOM
+        working-directory: source/ios
+        run: swift package show-dependencies --format json > sbom-ios-spm.json
+
+      - name: Upload iOS SPM SBOM
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+        with:
+          name: sbom-ios-spm
+          path: source/ios/sbom-ios-spm.json
+
       - name: Zip xcframeworks
         run: |
           ARTIFACTS_DIR=$GITHUB_WORKSPACE/xcframework-artifacts
@@ -383,6 +400,12 @@ jobs:
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: sbom
+          path: /tmp/sbom/
+
+      - name: Download iOS SPM SBOM
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: sbom-ios-spm
           path: /tmp/sbom/
 
       - name: Create GitHub release
