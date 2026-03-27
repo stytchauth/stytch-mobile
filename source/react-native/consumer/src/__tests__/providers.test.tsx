@@ -2,7 +2,7 @@ import { describe, it, expect, jest, beforeEach } from '@jest/globals';
 import React from 'react';
 import { act, render, renderHook } from '@testing-library/react-native';
 import { Text } from 'react-native';
-import { AppState } from 'react-native';
+import { AppState, AppStateStatus } from 'react-native';
 import { StytchProvider } from '../providers';
 import { useStytch, useStytchUser, useStytchSession, useStytchAuthenticationState } from '../hooks';
 import {
@@ -23,8 +23,8 @@ type AnyState =
 type ObserverCallback = (state: AnyState) => void | Promise<void>;
 
 interface MockStytchClient {
-  authenticationStateObserver: jest.Mock;
-  session: { authenticate: jest.Mock };
+  authenticationStateObserver: jest.Mock<any>;
+  session: { authenticate: jest.Mock<any> };
 }
 
 /**
@@ -48,7 +48,7 @@ function makeStytchMock() {
       return { stop };
     }),
     session: {
-      authenticate: jest.fn().mockResolvedValue({}),
+      authenticate: jest.fn<() => Promise<void>>().mockResolvedValue(undefined),
     },
   };
 
@@ -66,24 +66,27 @@ function makeStytchMock() {
   };
 }
 
+const mockUser = {} as unknown as ApiUserV1User;
+const mockSession = {} as unknown as ApiSessionV1Session;
+
 function makeAuthenticatedState(
-  user: ApiUserV1User = new ApiUserV1User(),
-  session: ApiSessionV1Session = new ApiSessionV1Session(),
+  user: ApiUserV1User = mockUser,
+  session: ApiSessionV1Session = mockSession,
 ) {
-  return Object.assign(new ConsumerAuthenticationState.Authenticated(), { user, session });
+  return Object.assign(new ConsumerAuthenticationState.Authenticated(mockUser, mockSession, '', ''), { user, session });
 }
 
 // ---------------------------------------------------------------------------
 // AppState spy — lets tests trigger app-active events
 // ---------------------------------------------------------------------------
 
-let capturedAppStateHandler: ((status: string) => void) | null = null;
+let capturedAppStateHandler: ((status: AppStateStatus) => void) | null = null;
 const appStateRemove = jest.fn();
 
 beforeEach(() => {
   capturedAppStateHandler = null;
   appStateRemove.mockClear();
-  jest.spyOn(AppState, 'addEventListener').mockImplementation((event: string, handler: (status: string) => void) => {
+  jest.spyOn(AppState, 'addEventListener').mockImplementation((event, handler) => {
     if (event === 'change') capturedAppStateHandler = handler;
     return { remove: appStateRemove } as ReturnType<typeof AppState.addEventListener>;
   });
@@ -138,8 +141,6 @@ describe('StytchProvider', () => {
 
   it('populates user and session context when Authenticated state fires', async () => {
     const { mockClient, emitState } = makeStytchMock();
-    const mockUser = new ApiUserV1User();
-    const mockSession = new ApiSessionV1Session();
 
     const { result } = renderHook(() => ({ user: useStytchUser(), session: useStytchSession() }), {
       wrapper: ({ children }) => <StytchProvider stytch={mockClient}>{children}</StytchProvider>,
@@ -199,7 +200,7 @@ describe('StytchProvider', () => {
 
   it('does not crash when session.authenticate rejects', async () => {
     const { mockClient, emitState } = makeStytchMock();
-    mockClient.session.authenticate.mockRejectedValueOnce(new Error('network error'));
+    mockClient.session.authenticate.mockRejectedValueOnce(null as never);
 
     render(
       <StytchProvider stytch={mockClient}>
@@ -263,7 +264,6 @@ describe('withStytchUser', () => {
 
   it('reflects the user once Authenticated state fires', async () => {
     const { mockClient, emitState } = makeStytchMock();
-    const mockUser = new ApiUserV1User();
     const { result } = renderHook(() => useStytchUser(), {
       wrapper: ({ children }) => <StytchProvider stytch={mockClient}>{children}</StytchProvider>,
     });

@@ -2,7 +2,7 @@ import { describe, it, expect, jest, beforeEach } from '@jest/globals';
 import React from 'react';
 import { act, render, renderHook } from '@testing-library/react-native';
 import { Text } from 'react-native';
-import { AppState } from 'react-native';
+import { AppState, AppStateStatus } from 'react-native';
 import { StytchB2BProvider } from '../providers';
 import {
   useStytchB2B,
@@ -28,8 +28,8 @@ type AnyState =
 type ObserverCallback = (state: AnyState) => void | Promise<void>;
 
 interface MockStytchB2BClient {
-  authenticationStateObserver: jest.Mock;
-  session: { authenticate: jest.Mock };
+  authenticationStateObserver: jest.Mock<any>;
+  session: { authenticate: jest.Mock<any> };
 }
 
 /**
@@ -52,7 +52,7 @@ function makeStytchMock() {
       return { stop };
     }),
     session: {
-      authenticate: jest.fn().mockResolvedValue({}),
+      authenticate: jest.fn<() => Promise<void>>().mockResolvedValue(undefined),
     },
   };
 
@@ -70,24 +70,30 @@ function makeStytchMock() {
   };
 }
 
+const mockMember = {} as unknown as ApiOrganizationV1Member;
+const mockMemberSession = {} as unknown as ApiB2bSessionV1MemberSession;
+
 function makeAuthenticatedState(
-  member: ApiOrganizationV1Member = new ApiOrganizationV1Member(),
-  memberSession: ApiB2bSessionV1MemberSession = new ApiB2bSessionV1MemberSession(),
+  member: ApiOrganizationV1Member = mockMember,
+  memberSession: ApiB2bSessionV1MemberSession = mockMemberSession,
 ) {
-  return Object.assign(new B2BAuthenticationState.Authenticated(), { member, memberSession });
+  return Object.assign(
+    new B2BAuthenticationState.Authenticated(member, memberSession, null as any, '', ''),
+    { member, memberSession },
+  );
 }
 
 // ---------------------------------------------------------------------------
 // AppState spy — lets tests trigger app-active events
 // ---------------------------------------------------------------------------
 
-let capturedAppStateHandler: ((status: string) => void) | null = null;
+let capturedAppStateHandler: ((status: AppStateStatus) => void) | null = null;
 const appStateRemove = jest.fn();
 
 beforeEach(() => {
   capturedAppStateHandler = null;
   appStateRemove.mockClear();
-  jest.spyOn(AppState, 'addEventListener').mockImplementation((event: string, handler: (status: string) => void) => {
+  jest.spyOn(AppState, 'addEventListener').mockImplementation((event, handler) => {
     if (event === 'change') capturedAppStateHandler = handler;
     return { remove: appStateRemove } as ReturnType<typeof AppState.addEventListener>;
   });
@@ -120,18 +126,16 @@ describe('StytchB2BProvider', () => {
 
   it('populates member and memberSession context when Authenticated state fires', async () => {
     const { mockClient, emitState } = makeStytchMock();
-    const mockMember = new ApiOrganizationV1Member();
-    const mockSession = new ApiB2bSessionV1MemberSession();
 
     const { result } = renderHook(
       () => ({ member: useStytchMember(), memberSession: useStytchMemberSession() }),
       { wrapper: ({ children }) => <StytchB2BProvider stytch={mockClient}>{children}</StytchB2BProvider> },
     );
 
-    await emitState(makeAuthenticatedState(mockMember, mockSession));
+    await emitState(makeAuthenticatedState(mockMember, mockMemberSession));
 
     expect(result.current.member).toBe(mockMember);
-    expect(result.current.memberSession).toBe(mockSession);
+    expect(result.current.memberSession).toBe(mockMemberSession);
   });
 
   it('clears member and memberSession context when Unauthenticated state fires', async () => {
@@ -236,7 +240,6 @@ describe('withStytchMember', () => {
 
   it('reflects the member once Authenticated state fires', async () => {
     const { mockClient, emitState } = makeStytchMock();
-    const mockMember = new ApiOrganizationV1Member();
     const { result } = renderHook(() => useStytchMember(), {
       wrapper: ({ children }) => <StytchB2BProvider stytch={mockClient}>{children}</StytchB2BProvider>,
     });
