@@ -25,8 +25,12 @@ type AnyState =
 type ObserverCallback = (state: AnyState) => void | Promise<void>;
 
 interface MockStytchClient {
-  authenticationStateObserver: jest.Mock<any>;
-  session: { authenticate: jest.Mock<(params: SessionsAuthenticateParameters) => Promise<SessionsAuthenticateResponse>> };
+  authenticationStateObserver: jest.Mock<(params: ObserverCallback) => AnyState>;
+  session: {
+    authenticate: jest.Mock<
+      (params: SessionsAuthenticateParameters) => Promise<SessionsAuthenticateResponse>
+    >;
+  };
 }
 
 /**

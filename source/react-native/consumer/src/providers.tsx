@@ -100,19 +100,21 @@ export const StytchProvider = ({ stytch, children }: StytchProviderProps): React
   }, [stytch]);
 
   useEffect(() => {
-    const observationJob = stytch.authenticationStateObserver((state: ConsumerAuthenticationState) => {
-      let newUser: ApiUserV1User | undefined = undefined;
-      let newSession: ApiSessionV1Session | undefined = undefined;
-      if (state instanceof ConsumerAuthenticationState.Authenticated) {
-        newUser = state.user;
-        newSession = state.session;
-      }
-      setClientState((oldState) => {
-        const newState = { user: newUser, session: newSession };
-        return mergeWithStableProps(oldState, newState);
-      });
-      setAuthenticationState(state);
-    });
+    const observationJob = stytch.authenticationStateObserver(
+      (state: ConsumerAuthenticationState) => {
+        let newUser: ApiUserV1User | undefined = undefined;
+        let newSession: ApiSessionV1Session | undefined = undefined;
+        if (state instanceof ConsumerAuthenticationState.Authenticated) {
+          newUser = state.user;
+          newSession = state.session;
+        }
+        setClientState((oldState) => {
+          const newState = { user: newUser, session: newSession };
+          return mergeWithStableProps(oldState, newState);
+        });
+        setAuthenticationState(state);
+      },
+    );
     return () => {
       observationJob.stop();
     };

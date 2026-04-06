@@ -13,3 +13,4 @@ export const B2BAuthenticationState = {
 };
 export class B2BSessionsAuthenticateParameters {}
 export class B2BSessionsAuthenticateResponse {}
+export class ApiOrganizationV1Organization {}
