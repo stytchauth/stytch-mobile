@@ -4,120 +4,264 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Stytch Mobile SDK Documentation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Chivo+Mono:wght@500&family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+    :root {
+      --bg: #fbfaf9;
+      --bg-paper: #ffffff;
+      --text-primary: #1d1d1d;
+      --text-secondary: #525151;
+      --divider: #cecece;
+    }
+
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background: #f9f9f9;
-      color: #1a1a1a;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text-primary);
       min-height: 100vh;
+      position: relative;
+    }
+
+    .logo {
+      position: absolute;
+      top: 48px;
+      left: 48px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      line-height: 1;
+    }
+
+    .main {
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      padding: 2rem;
+      gap: 48px;
+      padding: 168px 24px 80px;
+      max-width: 1062px;
+      margin: 0 auto;
     }
 
-    header {
-      text-align: center;
-      margin-bottom: 3rem;
-    }
-
-    header h1 {
-      font-size: 2rem;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-    }
-
-    header p {
-      margin-top: 0.75rem;
-      font-size: 1.05rem;
-      color: #555;
-    }
-
-    .platforms {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 1.5rem;
-      width: 100%;
-      max-width: 720px;
-    }
-
-    .platform {
-      background: #fff;
-      border: 1px solid #e5e5e5;
-      border-radius: 12px;
-      padding: 1.75rem;
-    }
-
-    .platform h2 {
-      font-size: 1.1rem;
+    h1 {
+      font-size: 24px;
       font-weight: 600;
-      margin-bottom: 1rem;
-      color: #1a1a1a;
+      line-height: 1.5;
+      color: var(--text-primary);
+      text-align: center;
     }
 
-    .platform ul {
-      list-style: none;
+    .cards {
+      display: flex;
+      gap: 24px;
+      width: 100%;
+    }
+
+    .card {
+      flex: 1;
+      background: var(--bg-paper);
+      border: 1px solid var(--divider);
+      border-radius: 16px;
+      padding: 24px;
       display: flex;
       flex-direction: column;
-      gap: 0.5rem;
+      justify-content: space-between;
+      align-items: flex-end;
+      min-height: 200px;
     }
 
-    .platform a {
-      display: block;
-      padding: 0.6rem 1rem;
-      background: #f3f3f3;
-      border-radius: 8px;
+    .card-top {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      align-items: flex-start;
+      width: 100%;
+    }
+
+    .card-icon {
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .card h2 {
+      font-size: 16px;
+      font-weight: 600;
+      line-height: 1.5;
+      color: var(--text-primary);
+    }
+
+    .card p {
+      font-size: 14px;
+      font-weight: 400;
+      line-height: 1.4;
+      color: var(--text-secondary);
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 28px;
+      padding: 4px;
+      border-radius: 4px;
       text-decoration: none;
-      font-size: 0.95rem;
+      font-family: 'Chivo Mono', monospace;
       font-weight: 500;
-      color: #1a1a1a;
-      transition: background 0.15s;
+      font-size: 14px;
+      line-height: normal;
+      white-space: nowrap;
+      transition: background 0.15s, color 0.15s;
     }
 
-    .platform a:hover {
-      background: #e8e8e8;
+    .btn-label {
+      padding: 0 4px;
     }
 
-    footer {
-      margin-top: 3rem;
-      font-size: 0.85rem;
-      color: #999;
+    .btn-icon {
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
     }
 
-    footer a {
-      color: #999;
-      text-decoration: underline;
+    .btn-icon-sm {
+      width: 16px;
+      height: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .btn-outlined {
+      border: 1px solid var(--text-primary);
+      color: var(--text-primary);
+      background: transparent;
+    }
+
+    .btn-outlined:hover {
+      background: rgba(0, 0, 0, 0.05);
+    }
+
+    .btn-text {
+      border: none;
+      color: var(--text-primary);
+      background: transparent;
+    }
+
+    .btn-text:hover {
+      background: #a3a3a3;
+      color: #ffffff;
+    }
+
+    .btn-text:hover svg path {
+      stroke: #ffffff;
+    }
+
+    .btn-text:hover .btn-icon-sm {
+        filter: invert(100%) sepia(13%) saturate(5%) hue-rotate(154deg) brightness(112%) contrast(96%);
+    }
+
+    @media (max-width: 600px) {
+      .logo {
+        top: 24px;
+        left: 24px;
+      }
+
+      .main {
+        padding: 100px 16px 48px;
+        gap: 32px;
+      }
+
+      .cards {
+        flex-direction: column;
+      }
+
+      .card {
+        min-height: unset;
+      }
+
+      .btn-group {
+        margin-top: 16px;
+      }
     }
   </style>
 </head>
 <body>
-  <header>
-    <h1>Stytch Mobile SDK</h1>
-    <p>API reference documentation for Android and iOS.</p>
-  </header>
 
-  <div class="platforms">
-    <div class="platform">
-      <h2>Android</h2>
-      <ul>
-        <li><a href="android/">Consumer &amp; B2B SDK Reference</a></li>
-      </ul>
-    </div>
-
-    <div class="platform">
-      <h2>iOS</h2>
-      <ul>
-        <li><a href="ios/consumer/documentation/stytchconsumersdk/">Consumer SDK Reference</a></li>
-        <li><a href="ios/b2b/documentation/stytchb2bsdk/">B2B SDK Reference</a></li>
-      </ul>
-    </div>
+  <div class="logo">
+    <img src="./logo.svg" width="101" height="50">
   </div>
 
-  <footer>
-    <a href="https://stytch.com/docs">stytch.com/docs</a>
-  </footer>
+  <div class="main">
+    <h1>Stytch Mobile SDK documentation</h1>
+
+    <div class="cards">
+
+      <!-- Android -->
+      <div class="card">
+        <div class="card-top">
+          <div class="card-icon">
+            <!-- Android robot head (flat) -->
+            <img src="android.svg" />
+          </div>
+          <h2>Android</h2>
+          <p>API reference documentation for Android Consumer and B2B SDKs</p>
+        </div>
+        <div class="btn-group">
+          <a href="android/" class="btn btn-outlined">
+            <span class="btn-label">Docs</span>
+            <img src="./arrow.svg" class="btn-icon" />
+          </a>
+        </div>
+      </div>
+
+      <!-- iOS -->
+      <div class="card">
+        <div class="card-top">
+          <div class="card-icon">
+            <!-- Apple logo -->
+            <img src="./apple.svg"/>
+          </div>
+          <h2>iOS</h2>
+          <p>API reference documentation for iOS Consumer and B2B SDKs</p>
+        </div>
+        <div class="btn-group">
+          <a href="ios/consumer/documentation/stytchconsumersdk/" class="btn btn-outlined">
+            <span class="btn-label">Consumer Docs</span>
+            <img src="./arrow.svg" class="btn-icon" />
+          </a>
+          <a href="ios/b2b/documentation/stytchb2bsdk/" class="btn btn-outlined">
+            <span class="btn-label">B2B Docs</span>
+            <img src="./arrow.svg" class="btn-icon" />
+          </a>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Footer link -->
+    <a href="https://stytch.com/docs" class="btn btn-text">
+      <span class="btn-label">stytch.com/docs</span>
+      <img src="./arrow.svg" class="btn-icon-sm" />
+    </a>
+
+  </div>
+
 </body>
 </html>
