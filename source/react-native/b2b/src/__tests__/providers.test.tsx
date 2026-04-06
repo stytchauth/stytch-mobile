@@ -77,10 +77,7 @@ function makeAuthenticatedState(
   member: ApiOrganizationV1Member = mockMember,
   memberSession: ApiB2bSessionV1MemberSession = mockMemberSession,
 ) {
-  return Object.assign(
-    new B2BAuthenticationState.Authenticated(member, memberSession, null as any, '', ''),
-    { member, memberSession },
-  );
+  return new B2BAuthenticationState.Authenticated(member, memberSession, null as any, '', '');
 }
 
 // ---------------------------------------------------------------------------
