@@ -18,7 +18,7 @@ dokka = "2.1.0"
 mockk = "1.13.12"
 kover = "0.9.7"
 detekt = "1.23.8"
-cyclonedx = "3.2.2"
+cyclonedx = "2.4.1"
 
 [libraries]
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization-json"}

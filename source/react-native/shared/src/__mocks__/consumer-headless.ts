@@ -6,6 +6,10 @@ export class ApiSessionV1Session {}
 export class StytchConsumer {}
 export const ConsumerAuthenticationState = {
   Loading: class Loading {},
-  Authenticated: class Authenticated {},
+  Authenticated: class Authenticated {
+    constructor(public user: ApiUserV1User, public session: ApiSessionV1Session) {}
+  },
   Unauthenticated: class Unauthenticated {},
 };
+export class SessionsAuthenticateParameters {}
+export class SessionsAuthenticateResponse {}
