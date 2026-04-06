@@ -73,7 +73,7 @@ function makeAuthenticatedState(
   user: ApiUserV1User = mockUser,
   session: ApiSessionV1Session = mockSession,
 ) {
-  return Object.assign(new ConsumerAuthenticationState.Authenticated(mockUser, mockSession, '', ''), { user, session });
+  return new ConsumerAuthenticationState.Authenticated(user, session, '', '');
 }
 
 // ---------------------------------------------------------------------------
