@@ -6,6 +6,10 @@ export class ApiB2bSessionV1MemberSession {}
 export class StytchB2B {}
 export const B2BAuthenticationState = {
   Loading: class Loading {},
-  Authenticated: class Authenticated {},
+  Authenticated: class Authenticated {
+    constructor(public member: ApiOrganizationV1Member, public memberSession: ApiB2bSessionV1MemberSession) {}
+  },
   Unauthenticated: class Unauthenticated {},
 };
+export class B2BSessionsAuthenticateParameters {}
+export class B2BSessionsAuthenticateResponse {}

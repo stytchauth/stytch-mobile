@@ -10,6 +10,8 @@ import {
   ApiUserV1User,
   ConsumerAuthenticationState,
   StytchConsumer,
+  SessionsAuthenticateParameters,
+  SessionsAuthenticateResponse,
 } from '../../lib/consumer-headless.mjs';
 
 // ---------------------------------------------------------------------------
@@ -24,7 +26,7 @@ type ObserverCallback = (state: AnyState) => void | Promise<void>;
 
 interface MockStytchClient {
   authenticationStateObserver: jest.Mock<any>;
-  session: { authenticate: jest.Mock<any> };
+  session: { authenticate: jest.Mock<(params: SessionsAuthenticateParameters) => Promise<SessionsAuthenticateResponse>> };
 }
 
 /**
@@ -48,7 +50,7 @@ function makeStytchMock() {
       return { stop };
     }),
     session: {
-      authenticate: jest.fn<() => Promise<void>>().mockResolvedValue(undefined),
+      authenticate: jest.fn<() => Promise<SessionsAuthenticateResponse>>(),
     },
   };
 
@@ -200,7 +202,7 @@ describe('StytchProvider', () => {
 
   it('does not crash when session.authenticate rejects', async () => {
     const { mockClient, emitState } = makeStytchMock();
-    mockClient.session.authenticate.mockRejectedValueOnce(null as never);
+    mockClient.session.authenticate.mockRejectedValueOnce(new Error('network error'));
 
     render(
       <StytchProvider stytch={mockClient}>

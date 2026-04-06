@@ -15,6 +15,8 @@ import {
   ApiOrganizationV1Member,
   B2BAuthenticationState,
   StytchB2B,
+  B2BSessionsAuthenticateParameters,
+  B2BSessionsAuthenticateResponse
 } from '../../lib/b2b-headless.mjs';
 
 // ---------------------------------------------------------------------------
@@ -29,7 +31,7 @@ type ObserverCallback = (state: AnyState) => void | Promise<void>;
 
 interface MockStytchB2BClient {
   authenticationStateObserver: jest.Mock<any>;
-  session: { authenticate: jest.Mock<any> };
+  session: { authenticate: jest.Mock<(params: B2BSessionsAuthenticateParameters) => Promise<B2BSessionsAuthenticateResponse>> };
 }
 
 /**
@@ -52,7 +54,7 @@ function makeStytchMock() {
       return { stop };
     }),
     session: {
-      authenticate: jest.fn<() => Promise<void>>().mockResolvedValue(undefined),
+      authenticate: jest.fn<() => Promise<B2BSessionsAuthenticateResponse>>().mockResolvedValue({} as B2BSessionsAuthenticateResponse),
     },
   };
 
