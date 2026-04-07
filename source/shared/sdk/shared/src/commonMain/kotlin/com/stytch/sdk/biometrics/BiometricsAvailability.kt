@@ -12,6 +12,8 @@ public sealed class BiometricsAvailability {
 
     @Serializable public data object RegistrationRevoked : BiometricsAvailability()
 
+    @Serializable public data object UserAuthenticationRequired : BiometricsAvailability()
+
     @Serializable public data class Unavailable(
         public val reason: String?,
         public val code: Int? = null,

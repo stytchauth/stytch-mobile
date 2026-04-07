@@ -4,6 +4,7 @@ import android.os.Build
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyPermanentlyInvalidatedException
 import android.security.keystore.KeyProperties
+import android.security.keystore.UserNotAuthenticatedException
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_STRONG
 import androidx.biometric.BiometricManager.Authenticators.DEVICE_CREDENTIAL
@@ -17,6 +18,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 import java.security.InvalidAlgorithmParameterException
+import java.security.InvalidKeyException
 import java.security.KeyStore
 import java.util.concurrent.Executors
 import javax.crypto.Cipher
@@ -37,7 +39,10 @@ public actual class BiometricsProvider(
         var errorEncounteredWhenGeneratingKey = false
         try {
             ensureSecretKeyIsAvailable(allowedAuthenticators)
-        } catch (_: KeyPermanentlyInvalidatedException) {
+        } catch (_: UserNotAuthenticatedException) {
+            // This is a type of `InvalidKeyException`, but doesn't require the registration to be revoked, just for the user to re-auth
+            return BiometricsAvailability.UserAuthenticationRequired
+        } catch (_: InvalidKeyException) {
             removeRegistration()
             return BiometricsAvailability.RegistrationRevoked
         } catch (_: IllegalStateException) {
