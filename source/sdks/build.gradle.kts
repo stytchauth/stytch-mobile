@@ -86,3 +86,8 @@ subprojects {
         }
     }
 }
+
+// set the root project name
+dokka {
+    moduleName.set("Stytch Mobile SDK")
+}
