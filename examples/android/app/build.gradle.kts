@@ -45,7 +45,6 @@ android {
 
 dependencies {
     implementation("com.stytch.sdk:consumer-headless:$stytchVersion")
-    implementation("com.stytch.sdk:b2b-headless:$stytchVersion")
     implementation(libs.appcompat)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

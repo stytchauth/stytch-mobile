@@ -44,7 +44,6 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.FragmentActivity
 import com.stytch.mobile.demo.ui.theme.StytchMobileAndroidDemoTheme
-import com.stytch.sdk.b2b.data.B2BAuthenticationState
 import com.stytch.sdk.biometrics.BiometricsAvailability
 import com.stytch.sdk.consumer.data.ConsumerAuthenticationState
 import com.stytch.sdk.oauth.OAuthProviderType
@@ -61,38 +60,42 @@ class MainActivity : FragmentActivity() {
             StytchMobileAndroidDemoTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     Column(
-                        modifier = Modifier
-                            .padding(
-                                top = innerPadding.calculateTopPadding(),
-                                bottom = innerPadding.calculateBottomPadding(),
-                                start = innerPadding.calculateStartPadding(LayoutDirection.Ltr) + 16.dp,
-                                end = innerPadding.calculateEndPadding(LayoutDirection.Ltr) + 16.dp,
-                            )
-                            .fillMaxSize(),
+                        modifier =
+                            Modifier
+                                .padding(
+                                    top = innerPadding.calculateTopPadding(),
+                                    bottom = innerPadding.calculateBottomPadding(),
+                                    start = innerPadding.calculateStartPadding(LayoutDirection.Ltr) + 16.dp,
+                                    end = innerPadding.calculateEndPadding(LayoutDirection.Ltr) + 16.dp,
+                                ).fillMaxSize(),
                     ) {
                         when (state.screen) {
-                            is AppScreen.Selector -> SelectorScreen(
-                                onSelect = viewModel::selectDemoType,
-                            )
-                            is AppScreen.TokenEntry -> TokenEntryScreen(
-                                demoType = (state.screen as AppScreen.TokenEntry).demoType,
-                                onSubmit = viewModel::submitToken,
-                            )
-                            is AppScreen.Consumer -> ConsumerScreen(
-                                state = state,
-                                onSendSms = viewModel::sendSms,
-                                onAuthSms = viewModel::authSms,
-                                onStartOAuth = viewModel::startOAuth,
-                                onBiometricsAction = viewModel::biometricsAction,
-                                onRefreshBiometrics = viewModel::refreshBiometrics,
-                                onSwitchDemos = viewModel::switchDemos,
-                            )
-                            is AppScreen.B2B -> B2BScreen(
-                                b2bAuthenticationState = state.b2bAuthenticationState,
-                                lastResponse = state.lastResponse,
-                                onStartB2BOAuth = viewModel::startB2BOAuth,
-                                onSwitchDemos = viewModel::switchDemos,
-                            )
+                            is AppScreen.Selector -> {
+                                SelectorScreen(
+                                    onSelect = viewModel::selectDemoType,
+                                )
+                            }
+
+                            is AppScreen.TokenEntry -> {
+                                TokenEntryScreen(
+                                    demoType = (state.screen as AppScreen.TokenEntry).demoType,
+                                    onSubmit = viewModel::submitToken,
+                                )
+                            }
+
+                            is AppScreen.Consumer -> {
+                                ConsumerScreen(
+                                    state = state,
+                                    onSendSms = viewModel::sendSms,
+                                    onAuthSms = viewModel::authSms,
+                                    onStartOAuth = viewModel::startOAuth,
+                                    onBiometricsAction = viewModel::biometricsAction,
+                                    onRefreshBiometrics = viewModel::refreshBiometrics,
+                                    onSwitchDemos = viewModel::switchDemos,
+                                )
+                            }
+
+                            else -> {}
                         }
                     }
                 }
@@ -217,11 +220,12 @@ fun ConsumerScreen(
         onRefreshBiometrics(activity)
     }
 
-    val statusText = when (state.authenticationState) {
-        is ConsumerAuthenticationState.Loading -> "Loading..."
-        is ConsumerAuthenticationState.Authenticated -> "Welcome Back"
-        is ConsumerAuthenticationState.Unauthenticated -> "Please Login"
-    }
+    val statusText =
+        when (state.authenticationState) {
+            is ConsumerAuthenticationState.Loading -> "Loading..."
+            is ConsumerAuthenticationState.Authenticated -> "Welcome Back"
+            is ConsumerAuthenticationState.Unauthenticated -> "Please Login"
+        }
 
     Column(modifier = Modifier.fillMaxSize()) {
         Spacer(modifier = Modifier.height(16.dp))
@@ -239,9 +243,10 @@ fun ConsumerScreen(
         Spacer(modifier = Modifier.height(16.dp))
 
         Column(
-            modifier = Modifier
-                .weight(1f)
-                .verticalScroll(rememberScrollState()),
+            modifier =
+                Modifier
+                    .weight(1f)
+                    .verticalScroll(rememberScrollState()),
         ) {
             // OAuth
             Button(
@@ -278,9 +283,10 @@ fun ConsumerScreen(
             Button(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = onSwitchDemos,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.error,
-                ),
+                colors =
+                    ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.error,
+                    ),
             ) {
                 Text("SWITCH DEMOS")
             }
@@ -295,10 +301,11 @@ fun ConsumerScreen(
                 fontWeight = FontWeight.Bold,
             )
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(160.dp)
-                    .verticalScroll(rememberScrollState()),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .height(160.dp)
+                        .verticalScroll(rememberScrollState()),
             ) {
                 Text(
                     text = response,
@@ -354,12 +361,13 @@ fun BiometricsButton(
     availability: BiometricsAvailability?,
     onClick: () -> Unit,
 ) {
-    val (label, enabled) = when (availability) {
-        BiometricsAvailability.Available -> "Register Biometrics" to true
-        BiometricsAvailability.AlreadyRegistered -> "Authenticate Biometrics" to true
-        null -> "Checking Biometrics..." to false
-        else -> "Biometrics Unavailable" to false
-    }
+    val (label, enabled) =
+        when (availability) {
+            BiometricsAvailability.Available -> "Register Biometrics" to true
+            BiometricsAvailability.AlreadyRegistered -> "Authenticate Biometrics" to true
+            null -> "Checking Biometrics..." to false
+            else -> "Biometrics Unavailable" to false
+        }
     Button(
         modifier = Modifier.fillMaxWidth(),
         onClick = onClick,
@@ -368,7 +376,7 @@ fun BiometricsButton(
         Text(label)
     }
 }
-
+/*
 @Composable
 fun B2BScreen(
     b2bAuthenticationState: B2BAuthenticationState,
@@ -378,11 +386,12 @@ fun B2BScreen(
 ) {
     val activity = LocalActivity.current as ComponentActivity
 
-    val statusText = when (b2bAuthenticationState) {
-        is B2BAuthenticationState.Loading -> "Loading..."
-        is B2BAuthenticationState.Authenticated -> "Welcome Back"
-        is B2BAuthenticationState.Unauthenticated -> "Please Login"
-    }
+    val statusText =
+        when (b2bAuthenticationState) {
+            is B2BAuthenticationState.Loading -> "Loading..."
+            is B2BAuthenticationState.Authenticated -> "Welcome Back"
+            is B2BAuthenticationState.Unauthenticated -> "Please Login"
+        }
 
     Column(modifier = Modifier.fillMaxSize()) {
         Spacer(modifier = Modifier.height(16.dp))
@@ -400,9 +409,10 @@ fun B2BScreen(
         Spacer(modifier = Modifier.height(16.dp))
 
         Column(
-            modifier = Modifier
-                .weight(1f)
-                .verticalScroll(rememberScrollState()),
+            modifier =
+                Modifier
+                    .weight(1f)
+                    .verticalScroll(rememberScrollState()),
         ) {
             Button(
                 modifier = Modifier.fillMaxWidth(),
@@ -414,9 +424,10 @@ fun B2BScreen(
             Button(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = onSwitchDemos,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.error,
-                ),
+                colors =
+                    ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.error,
+                    ),
             ) {
                 Text("SWITCH DEMOS")
             }
@@ -430,10 +441,11 @@ fun B2BScreen(
                 fontWeight = FontWeight.Bold,
             )
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(160.dp)
-                    .verticalScroll(rememberScrollState()),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .height(160.dp)
+                        .verticalScroll(rememberScrollState()),
             ) {
                 Text(
                     text = response,
@@ -445,3 +457,4 @@ fun B2BScreen(
         }
     }
 }
+*/
