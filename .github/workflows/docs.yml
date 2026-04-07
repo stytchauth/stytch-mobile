@@ -288,7 +288,7 @@ jobs:
         run: mkdir -p pages/ios && tar -xzf ios-docs.tar.gz -C pages/ios
 
       - name: Copy landing page
-        run: cp docs/index.html pages/index.html
+        run: cp docs/* pages/
 
       - name: Configure Pages
         uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5.0.0
