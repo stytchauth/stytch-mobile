@@ -7,9 +7,6 @@ import androidx.core.content.edit
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.stytch.sdk.b2b.StytchB2B
-import com.stytch.sdk.b2b.createStytchB2B
-import com.stytch.sdk.b2b.data.B2BAuthenticationState
 import com.stytch.sdk.biometrics.BiometricsAvailability
 import com.stytch.sdk.biometrics.BiometricsParameters
 import com.stytch.sdk.consumer.StytchConsumer
@@ -20,8 +17,6 @@ import com.stytch.sdk.consumer.networking.models.OTPsSMSLoginOrCreateParameters
 import com.stytch.sdk.data.GoogleCredentialConfiguration
 import com.stytch.sdk.data.StytchClientConfiguration
 import com.stytch.sdk.data.StytchError
-import com.stytch.sdk.oauth.B2BOAuthDiscoveryStartParameters
-import com.stytch.sdk.oauth.B2BOAuthStartParameters
 import com.stytch.sdk.oauth.OAuthProviderType
 import com.stytch.sdk.oauth.OAuthStartParameters
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -51,7 +46,7 @@ enum class SmsStep { PHONE, CODE }
 data class DemoAppState(
     val screen: AppScreen = AppScreen.Selector,
     val authenticationState: ConsumerAuthenticationState = ConsumerAuthenticationState.Loading(),
-    val b2bAuthenticationState: B2BAuthenticationState = B2BAuthenticationState.Loading(),
+    // val b2bAuthenticationState: B2BAuthenticationState = B2BAuthenticationState.Loading(),
     val smsStep: SmsStep = SmsStep.PHONE,
     val methodId: String? = null,
     val biometricsAvailability: BiometricsAvailability? = null,
@@ -63,7 +58,8 @@ class MainViewModel(
 ) : AndroidViewModel(application) {
     private val prefs = application.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
     private var stytchConsumer: StytchConsumer? = null
-    private var stytchB2B: StytchB2B? = null
+
+    // private var stytchB2B: StytchB2B? = null
     private var b2bOrgId: String? = null
 
     private val _state = MutableStateFlow(DemoAppState())
@@ -78,7 +74,7 @@ class MainViewModel(
                     initConsumerClient(token)
                     _state.value = _state.value.copy(screen = AppScreen.Consumer)
                 } else {
-                    initB2BClient(token)
+                    // initB2BClient(token)
                     _state.value = _state.value.copy(screen = AppScreen.B2B)
                 }
             } else {
@@ -88,6 +84,7 @@ class MainViewModel(
         // default state already has screen = Selector
     }
 
+    /*
     private fun initB2BClient(publicToken: String) {
         b2bOrgId = prefs.getString(KEY_ORG_ID, null)
         val config =
@@ -102,6 +99,7 @@ class MainViewModel(
             }
         }
     }
+     */
 
     private fun initConsumerClient(publicToken: String) {
         val googleClientId = prefs.getString(KEY_GOOGLE_CLIENT_ID, null)
@@ -144,7 +142,7 @@ class MainViewModel(
             initConsumerClient(publicToken)
             _state.value = _state.value.copy(screen = AppScreen.Consumer)
         } else {
-            initB2BClient(publicToken)
+            // initB2BClient(publicToken)
             _state.value = _state.value.copy(screen = AppScreen.B2B)
         }
     }
@@ -154,9 +152,9 @@ class MainViewModel(
             try {
                 if (_state.value.authenticationState is ConsumerAuthenticationState.Authenticated) {
                     stytchConsumer?.session?.revoke()
-                } else if (_state.value.b2bAuthenticationState is B2BAuthenticationState.Authenticated) {
+                } /* else if (_state.value.b2bAuthenticationState is B2BAuthenticationState.Authenticated) {
                     stytchB2B?.session?.revoke()
-                }
+                }*/
             } catch (_: Exception) {
             }
             prefs.edit {
@@ -166,7 +164,7 @@ class MainViewModel(
                     .remove(KEY_DEMO_TYPE)
             }
             stytchConsumer = null
-            stytchB2B = null
+            // stytchB2B = null
             b2bOrgId = null
             _state.value = DemoAppState(screen = AppScreen.Selector)
         }
@@ -252,6 +250,7 @@ class MainViewModel(
         }
     }
 
+    /*
     fun startB2BOAuth(activity: ComponentActivity) {
         val b2b = stytchB2B ?: return
         viewModelScope.launch {
@@ -280,6 +279,7 @@ class MainViewModel(
             }
         }
     }
+     */
 
     fun startOAuth(
         activity: ComponentActivity,

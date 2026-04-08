@@ -12,7 +12,6 @@ import org.bouncycastle.crypto.signers.Ed25519Signer
 import java.security.KeyStore
 import java.security.MessageDigest
 import java.security.SecureRandom
-import java.security.spec.RSAKeyGenParameterSpec
 import javax.crypto.Cipher
 import javax.crypto.KeyGenerator
 import javax.crypto.SecretKey
@@ -58,16 +57,14 @@ public actual class StytchEncryptionClient {
             return keyStore.getKey(STYTCH_MASTER_KEY_ALIAS, null) as SecretKey
         }
         val keyGenerator = KeyGenerator.getInstance(ALGORITHM, ANDROID_KEYSTORE)
-        val algorithmParameterSpec = RSAKeyGenParameterSpec(KEY_SIZE, RSAKeyGenParameterSpec.F4)
         val builder =
             KeyGenParameterSpec
                 .Builder(
                     STYTCH_MASTER_KEY_ALIAS,
                     KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT,
-                ).setAlgorithmParameterSpec(algorithmParameterSpec)
-                .setBlockModes(BLOCK_MODE)
+                ).setBlockModes(BLOCK_MODE)
                 .setEncryptionPaddings(PADDING)
-                .setKeySize(algorithmParameterSpec.keysize)
+                .setKeySize(KEY_SIZE)
         keyGenerator.init(builder.build())
         return keyGenerator.generateKey()
     }
