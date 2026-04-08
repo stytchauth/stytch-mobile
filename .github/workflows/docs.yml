@@ -262,7 +262,7 @@ jobs:
             Auto-generated from KDoc comments in [stytchauth/stytch-mobile](https://github.com/stytchauth/stytch-mobile).
 
             Updates method reference pages for Android, iOS, and React Native across both Consumer and B2B SDKs.
-          team-reviewers: stytchauth/mobile-sdk
+          team-reviewers: stytchauth/frontend
 
   deploy-pages:
     name: Deploy to GitHub Pages
