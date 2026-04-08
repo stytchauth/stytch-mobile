@@ -9,6 +9,7 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "lint": "expo lint",
+    "prebuild": "STYTCH_REPO_ROOT=$(cd ../.. && pwd) expo prebuild",
     "postinstall": "patch-package"
   },
   "dependencies": {

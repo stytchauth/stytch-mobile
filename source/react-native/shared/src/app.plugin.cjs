@@ -1,18 +1,12 @@
 // Credit: https://www.reactnativecrossroads.com/posts/expo-plugin-add-spm-dependency/
 const { withXcodeProject } = require('@expo/config-plugins');
 const path = require('path');
-const fs = require('fs');
 
-// Walk up the directory tree looking for source/ios/Package.swift (local dev), fall back to github (live/prod)
+// If STYTCH_REPO_ROOT is set (local dev), use it as the path to the checked-out repo.
+// Otherwise fall back to the live GitHub URL (npm installs, CI, etc.).
 function resolveSpmUrl() {
-  let dir = __dirname;
-  while (true) {
-    if (fs.existsSync(path.join(dir, 'source', 'ios', 'Package.swift'))) {
-      return path.join(dir, 'source', 'ios');
-    }
-    const parent = path.dirname(dir);
-    if (parent === dir) break;
-    dir = parent;
+  if (process.env.STYTCH_REPO_ROOT) {
+    return path.join(process.env.STYTCH_REPO_ROOT, 'source', 'ios');
   }
   return 'https://github.com/stytchauth/stytch-ios';
 }

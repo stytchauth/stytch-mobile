@@ -2,15 +2,10 @@ require "json"
 
 package = JSON.parse(File.read(File.join(__dir__, "package.json")))
 
-# Walk up the directory tree looking for source/ios/Package.swift (local dev), fall back to github (live/prod)
+# If STYTCH_REPO_ROOT is set (local dev), use it as the path to the checked-out repo.
+# Otherwise fall back to the live GitHub URL (CocoaPods installs, CI, etc.).
 def find_spm_url
-  dir = File.expand_path(__dir__)
-  loop do
-    return File.join(dir, 'source', 'ios') if File.exist?(File.join(dir, 'source', 'ios', 'Package.swift'))
-    parent = File.dirname(dir)
-    break if parent == dir
-    dir = parent
-  end
+  return File.join(ENV['STYTCH_REPO_ROOT'], 'source', 'ios') if ENV['STYTCH_REPO_ROOT']
   'https://github.com/stytchauth/stytch-ios'
 end
 
