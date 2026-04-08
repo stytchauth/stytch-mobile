@@ -271,7 +271,8 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.MINTLIFY_DOCS_TOKEN }}
         run: |
-          if gh pr view kmp-docs-update --repo stytchauth/mintlify-docs > /dev/null 2>&1; then
+          PR_COUNT=$(gh pr list --repo stytchauth/mintlify-docs --head kmp-docs-update --json number --jq 'length')
+          if [ "$PR_COUNT" -gt 0 ]; then
             echo "PR already exists, no action needed"
           else
             gh pr create \
