@@ -255,7 +255,7 @@ jobs:
         with:
           token: ${{ secrets.MINTLIFY_DOCS_TOKEN }}
           path: mintlify-docs
-          branch: mobile-sdk-docs-update
+          branch: kmp-docs-update
           commit-message: "chore: update mobile SDK docs"
           title: "chore: update mobile SDK docs"
           body: |
