@@ -2,9 +2,19 @@ require "json"
 
 package = JSON.parse(File.read(File.join(__dir__, "package.json")))
 
-# TODO: Figure out how to make this agnostic/not me
-# TODO: Update publish workflow to replace this with the live repo URL
-spmUrl = File.dirname('/Users/jhaven/Documents/stytch-mobile/source/ios/Package.swift')
+# Walk up the directory tree looking for source/ios/Package.swift (local dev), fall back to github (live/prod)
+def find_spm_url
+  dir = File.expand_path(__dir__)
+  loop do
+    return File.join(dir, 'source', 'ios') if File.exist?(File.join(dir, 'source', 'ios', 'Package.swift'))
+    parent = File.dirname(dir)
+    break if parent == dir
+    dir = parent
+  end
+  'https://github.com/stytchauth/stytch-ios'
+end
+
+spmUrl = find_spm_url
 
 Pod::Spec.new do |s|
   s.name         = "StytchReactNative"
