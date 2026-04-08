@@ -224,6 +224,12 @@ jobs:
           token: ${{ secrets.MINTLIFY_DOCS_TOKEN }}
           path: mintlify-docs
 
+      - name: Switch to kmp-docs-update branch
+        working-directory: mintlify-docs
+        run: |
+          git fetch origin kmp-docs-update || true
+          git checkout kmp-docs-update 2>/dev/null || git checkout -b kmp-docs-update
+
       - name: Copy MDX files and update docs.json
         run: |
           python3 scripts/update-mobile-docs.py \
@@ -249,20 +255,35 @@ jobs:
         working-directory: mintlify-docs
         run: npm ci && npm run lint
 
-      - name: Open PR in mintlify-docs
+      - name: Commit and push changes
         if: steps.check-changes.outputs.has_changes == 'true'
-        uses: peter-evans/create-pull-request@c0f553fe549906ede9cf27b5156039d195d2ece0 # v8.1.0
-        with:
-          token: ${{ secrets.MINTLIFY_DOCS_TOKEN }}
-          path: mintlify-docs
-          branch: kmp-docs-update
-          commit-message: "chore: update mobile SDK docs"
-          title: "chore: update mobile SDK docs"
-          body: |
-            Auto-generated from KDoc comments in [stytchauth/stytch-mobile](https://github.com/stytchauth/stytch-mobile).
+        working-directory: mintlify-docs
+        run: |
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+          git add -A
+          git commit -m "chore: update mobile SDK docs"
+          git push origin kmp-docs-update
 
-            Updates method reference pages for Android, iOS, and React Native across both Consumer and B2B SDKs.
-          team-reviewers: stytchauth/frontend
+      - name: Open or update PR in mintlify-docs
+        if: steps.check-changes.outputs.has_changes == 'true'
+        working-directory: mintlify-docs
+        env:
+          GH_TOKEN: ${{ secrets.MINTLIFY_DOCS_TOKEN }}
+        run: |
+          if gh pr view kmp-docs-update --repo stytchauth/mintlify-docs > /dev/null 2>&1; then
+            echo "PR already exists, no action needed"
+          else
+            gh pr create \
+              --repo stytchauth/mintlify-docs \
+              --head kmp-docs-update \
+              --base main \
+              --title "chore: update mobile SDK docs" \
+              --reviewer stytchauth/frontend \
+              --body "Auto-generated from KDoc comments in [stytchauth/stytch-mobile](https://github.com/stytchauth/stytch-mobile).
+
+          Updates method reference pages for Android, iOS, and React Native across both Consumer and B2B SDKs."
+          fi
 
   deploy-pages:
     name: Deploy to GitHub Pages
