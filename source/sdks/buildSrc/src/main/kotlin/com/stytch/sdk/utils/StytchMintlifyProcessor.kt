@@ -224,10 +224,12 @@ class StytchMintlifyProcessor(
                 .trim()
                 .replace(Regex("```(?:kotlin|swift|js).*?```", RegexOption.DOT_MATCHES_ALL), "")
                 .replace(Regex("\\*{1,2}(?:Kotlin(?: \\(Android\\))?|iOS|React Native):\\*{0,2}"), "")
-                .lines()
-                .joinToString(" ") { it.trim() }
-                .replace(Regex("\\s{2,}"), " ")
-                .trim()
+                .split(Regex("\n\\s*\n"))
+                .firstOrNull { it.isNotBlank() }
+                ?.lines()
+                ?.joinToString(" ") { it.trim() }
+                ?.replace(Regex("\\s{2,}"), " ")
+                ?.trim() ?: ""
 
         return ParsedDoc(
             description = description,

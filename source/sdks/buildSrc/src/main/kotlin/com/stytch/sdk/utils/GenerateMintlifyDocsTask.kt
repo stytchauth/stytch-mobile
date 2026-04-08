@@ -169,10 +169,7 @@ abstract class GenerateMintlifyDocsTask : DefaultTask() {
 
     private fun buildSnippet(method: MethodEntry): String =
         buildString {
-            if (method.description.isNotBlank()) {
-                appendLine(method.description)
-                appendLine()
-            }
+            // description is in the platform page front matter — don't repeat it here
             if (method.paramFields.isNotEmpty()) {
                 appendLine("## Parameters")
                 appendLine()
@@ -225,8 +222,6 @@ abstract class GenerateMintlifyDocsTask : DefaultTask() {
         val title = method.name.toTitle()
         val desc =
             method.description
-                .split('.')
-                .first()
                 .replace("\"", "'")
                 .trim()
         val snippetImportPath = "/snippets/api-reference/$sdk/mobile-sdks/methods/$relPath.mdx"
