@@ -8,6 +8,7 @@ import {
   useStytchB2B,
   useStytchMember,
   useStytchMemberSession,
+  useStytchOrganization,
   useStytchB2BAuthenticationState,
 } from '../hooks';
 import {
@@ -85,8 +86,15 @@ const mockOrganization = {} as unknown as ApiOrganizationV1Organization;
 function makeAuthenticatedState(
   member: ApiOrganizationV1Member = mockMember,
   memberSession: ApiB2bSessionV1MemberSession = mockMemberSession,
+  organization: ApiOrganizationV1Organization = mockOrganization,
 ) {
-  return new B2BAuthenticationState.Authenticated(member, memberSession, mockOrganization, '', '');
+  return new B2BAuthenticationState.Authenticated(
+    member,
+    memberSession,
+    organization,
+    'mockSessionToken',
+    'mockSessionJwt',
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -142,11 +150,15 @@ describe('StytchB2BProvider', () => {
     expect(appStateRemove).toHaveBeenCalled();
   });
 
-  it('populates member and memberSession context when Authenticated state fires', async () => {
+  it('populates member, memberSession, and organization context when Authenticated state fires', async () => {
     const { mockClient, emitState } = makeStytchMock();
 
     const { result } = renderHook(
-      () => ({ member: useStytchMember(), memberSession: useStytchMemberSession() }),
+      () => ({
+        member: useStytchMember(),
+        memberSession: useStytchMemberSession(),
+        organization: useStytchOrganization(),
+      }),
       {
         wrapper: ({ children }) => (
           <StytchB2BProvider stytch={mockClient}>{children}</StytchB2BProvider>
@@ -154,17 +166,22 @@ describe('StytchB2BProvider', () => {
       },
     );
 
-    await emitState(makeAuthenticatedState(mockMember, mockMemberSession));
+    await emitState(makeAuthenticatedState(mockMember, mockMemberSession, mockOrganization));
 
     expect(result.current.member).toBe(mockMember);
     expect(result.current.memberSession).toBe(mockMemberSession);
+    expect(result.current.organization).toBe(mockOrganization);
   });
 
-  it('clears member and memberSession context when Unauthenticated state fires', async () => {
+  it('clears member, memberSession, and organization context when Unauthenticated state fires', async () => {
     const { mockClient, emitState } = makeStytchMock();
 
     const { result } = renderHook(
-      () => ({ member: useStytchMember(), memberSession: useStytchMemberSession() }),
+      () => ({
+        member: useStytchMember(),
+        memberSession: useStytchMemberSession(),
+        organization: useStytchOrganization(),
+      }),
       {
         wrapper: ({ children }) => (
           <StytchB2BProvider stytch={mockClient}>{children}</StytchB2BProvider>
@@ -178,6 +195,7 @@ describe('StytchB2BProvider', () => {
     await emitState(new B2BAuthenticationState.Unauthenticated());
     expect(result.current.member).toBeUndefined();
     expect(result.current.memberSession).toBeUndefined();
+    expect(result.current.organization).toBeUndefined();
   });
 
   it('updates the authenticationState context on every state change', async () => {
@@ -302,5 +320,28 @@ describe('withStytchMemberSession', () => {
       ),
     });
     expect(result.current).toBeUndefined();
+  });
+});
+
+describe('withStytchOrganization', () => {
+  it('returns undefined when no organization is in context', () => {
+    const { mockClient } = makeStytchMock();
+    const { result } = renderHook(() => useStytchOrganization(), {
+      wrapper: ({ children }) => (
+        <StytchB2BProvider stytch={mockClient}>{children}</StytchB2BProvider>
+      ),
+    });
+    expect(result.current).toBeUndefined();
+  });
+
+  it('reflects the organization once Authenticated state fires', async () => {
+    const { mockClient, emitState } = makeStytchMock();
+    const { result } = renderHook(() => useStytchOrganization(), {
+      wrapper: ({ children }) => (
+        <StytchB2BProvider stytch={mockClient}>{children}</StytchB2BProvider>
+      ),
+    });
+    await emitState(makeAuthenticatedState());
+    expect(result.current).toBe(mockOrganization);
   });
 });

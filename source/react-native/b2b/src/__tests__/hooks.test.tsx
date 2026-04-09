@@ -5,12 +5,14 @@ import {
   useStytchB2B,
   useStytchMember,
   useStytchMemberSession,
+  useStytchOrganization,
   useStytchB2BAuthenticationState,
 } from '../hooks';
 import {
   StytchB2BContext,
   StytchMemberContext,
   StytchMemberSessionContext,
+  StytchOrganizationContext,
   StytchB2BAuthenticationStateContext,
 } from '../contexts';
 
@@ -18,6 +20,9 @@ type StytchB2B = NonNullable<React.ContextType<typeof StytchB2BContext>>;
 type ApiOrganizationV1Member = NonNullable<React.ContextType<typeof StytchMemberContext>>;
 type ApiB2bSessionV1MemberSession = NonNullable<
   React.ContextType<typeof StytchMemberSessionContext>
+>;
+type ApiOrganizationV1Organization = NonNullable<
+  React.ContextType<typeof StytchOrganizationContext>
 >;
 type B2BAuthenticationState = React.ContextType<typeof StytchB2BAuthenticationStateContext>;
 
@@ -55,6 +60,24 @@ describe('useStytchMember', () => {
     );
     const { result } = renderHook(() => useStytchMember(), { wrapper });
     expect(result.current).toBe(mockMember);
+  });
+});
+
+describe('useStytchOrganization', () => {
+  it('returns undefined when no organization is provided', () => {
+    const { result } = renderHook(() => useStytchOrganization());
+    expect(result.current).toBeUndefined();
+  });
+
+  it('returns the organization when provided', () => {
+    const mockOrganization = { organizationId: 'org-123' } as ApiOrganizationV1Organization;
+    const wrapper = ({ children }: { children: React.ReactNode }) => (
+      <StytchOrganizationContext.Provider value={mockOrganization}>
+        {children}
+      </StytchOrganizationContext.Provider>
+    );
+    const { result } = renderHook(() => useStytchOrganization(), { wrapper });
+    expect(result.current).toBe(mockOrganization);
   });
 });
 
