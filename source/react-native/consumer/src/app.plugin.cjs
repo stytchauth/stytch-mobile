@@ -1,11 +1,9 @@
 // Credit: https://www.reactnativecrossroads.com/posts/expo-plugin-add-spm-dependency/
-/* eslint-disable @typescript-eslint/no-require-imports */
 const { withXcodeProject } = require('@expo/config-plugins');
 const path = require('path');
-/* eslint-enable @typescript-eslint/no-require-imports */
 
 // If STYTCH_REPO_ROOT is set (local dev), use it as the path to the checked-out repo.
-// Otherwise fall back to the live GitHub URL (npm installs, CI, etc.).
+// Otherwise fall back to the live GitHub URL
 function resolveSpmUrl() {
   if (process.env.STYTCH_REPO_ROOT) {
     return path.join(process.env.STYTCH_REPO_ROOT, 'source', 'ios');
@@ -16,23 +14,26 @@ function resolveSpmUrl() {
 const spmUrl = resolveSpmUrl();
 const addSPMDependenciesToMainTarget = (config) =>
   withXcodeProject(config, (config) => {
-    const repositoryUrl = spmUrl;
     const repoName = 'stytch-mobile';
     const productName = 'StytchConsumerSDK';
     const xcodeProject = config.modResults;
-    const spmReferences = xcodeProject.hash.project.objects['XCRemoteSwiftPackageReference'];
+    // Newer Xcode requires XCLocalSwiftPackageReference for local paths;
+    // XCRemoteSwiftPackageReference only accepts valid git remote URLs.
+    const isLocal = !!process.env.STYTCH_REPO_ROOT;
+    const refType = isLocal ? 'XCLocalSwiftPackageReference' : 'XCRemoteSwiftPackageReference';
+    const refKey = isLocal ? 'relativePath' : 'repositoryURL';
 
-    if (!spmReferences) {
-      xcodeProject.hash.project.objects['XCRemoteSwiftPackageReference'] = {};
+    if (!xcodeProject.hash.project.objects[refType]) {
+      xcodeProject.hash.project.objects[refType] = {};
     }
 
     const packageReferenceUUID = xcodeProject.generateUuid();
 
-    xcodeProject.hash.project.objects['XCRemoteSwiftPackageReference'][
-      `${packageReferenceUUID} /* XCRemoteSwiftPackageReference "${repoName}" */`
+    xcodeProject.hash.project.objects[refType][
+      `${packageReferenceUUID} /* ${refType} "${repoName}" */`
     ] = {
-      isa: 'XCRemoteSwiftPackageReference',
-      repositoryURL: repositoryUrl,
+      isa: refType,
+      [refKey]: spmUrl,
     };
 
     // update XCSwiftPackageProductDependency
@@ -48,8 +49,7 @@ const addSPMDependenciesToMainTarget = (config) =>
       `${packageUUID} /* ${productName} */`
     ] = {
       isa: 'XCSwiftPackageProductDependency',
-      // from step before
-      package: `${packageReferenceUUID} /* XCRemoteSwiftPackageReference "${repoName}" */`,
+      package: `${packageReferenceUUID} /* ${refType} "${repoName}" */`,
       productName: productName,
     };
 
@@ -62,7 +62,7 @@ const addSPMDependenciesToMainTarget = (config) =>
 
     xcodeProject.hash.project.objects['PBXProject'][projectId]['packageReferences'] = [
       ...xcodeProject.hash.project.objects['PBXProject'][projectId]['packageReferences'],
-      `${packageReferenceUUID} /* XCRemoteSwiftPackageReference "${repoName}" */`,
+      `${packageReferenceUUID} /* ${refType} "${repoName}" */`,
     ];
 
     // update PBXBuildFile

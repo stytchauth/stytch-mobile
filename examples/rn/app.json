@@ -7,7 +7,6 @@
     "icon": "./assets/images/icon.png",
     "scheme": "rn",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.stytch.mobile.demo",
@@ -22,7 +21,6 @@
         "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
-      "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
       "package": "com.stytch.mobile.demo"
     },
@@ -49,9 +47,15 @@
         "expo-build-properties",
         {
           "android": {
-            "extraMavenRepos": [{ "url": "~/.m2/repository" }],
+            "extraMavenRepos": [
+              {
+                "url": "~/.m2/repository"
+              }
+            ],
             "packagingOptions": {
-              "exclude": ["META-INF/versions/9/OSGI-INF/MANIFEST.MF"]
+              "exclude": [
+                "META-INF/versions/9/OSGI-INF/MANIFEST.MF"
+              ]
             }
           },
           "ios": {
@@ -59,8 +63,17 @@
           }
         }
       ],
-      ["expo-apple-authentication"],
-      ["./node_modules/@stytch/react-native-consumer/src/app.plugin.cjs", {}]
+      [
+        "expo-apple-authentication"
+      ],
+      [
+        "./node_modules/@stytch/react-native-consumer/src/app.plugin.cjs",
+        {}
+      ],
+      "expo-secure-store",
+      "expo-font",
+      "expo-image",
+      "expo-web-browser"
     ],
     "experiments": {
       "typedRoutes": true,
