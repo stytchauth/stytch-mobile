@@ -2,11 +2,13 @@ import { useContext } from 'react';
 import {
   StytchMemberContext,
   StytchMemberSessionContext,
+  StytchOrganizationContext,
   StytchB2BContext,
   StytchB2BAuthenticationStateContext,
 } from './contexts';
 import {
   ApiOrganizationV1Member,
+  ApiOrganizationV1Organization,
   ApiB2bSessionV1MemberSession,
   StytchB2B,
   B2BAuthenticationState,
@@ -18,6 +20,9 @@ export const useStytchMember = (): ApiOrganizationV1Member | undefined => {
 export const useStytchMemberSession = (): ApiB2bSessionV1MemberSession | undefined => {
   return useContext(StytchMemberSessionContext);
 };
+export const useStytchOrganization = (): ApiOrganizationV1Organization | undefined => {
+  return useContext(StytchOrganizationContext);
+}
 export const useStytchB2B = (): StytchB2B => {
   const client = useContext(StytchB2BContext);
   if (client === null) {
