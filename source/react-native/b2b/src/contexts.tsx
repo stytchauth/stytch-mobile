@@ -12,7 +12,7 @@ export const StytchMemberSessionContext = createContext<ApiB2bSessionV1MemberSes
   undefined,
 );
 export const StytchOrganizationContext = createContext<ApiOrganizationV1Organization | undefined>(
-  undefined
+  undefined,
 );
 export const StytchB2BContext = createContext<StytchB2B | null>(null);
 export const StytchB2BAuthenticationStateContext = createContext<B2BAuthenticationState>(

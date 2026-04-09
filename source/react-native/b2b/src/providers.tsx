@@ -53,7 +53,9 @@ export const withStytchMemberSession = <T extends object>(
   return WithStytchMemberSession;
 };
 export const withStytchOrganization = <T extends object>(
-  Component: React.ComponentType<T & { stytchOrganization: ApiOrganizationV1Organization | undefined }>,
+  Component: React.ComponentType<
+    T & { stytchOrganization: ApiOrganizationV1Organization | undefined }
+  >,
 ): React.ComponentType<T> => {
   const WithStytchOrganization: React.ComponentType<T> = (props) => {
     const organization = useStytchOrganization();
@@ -133,7 +135,11 @@ export const StytchB2BProvider = ({
         newOrganization = state.organization;
       }
       setClientState((oldState) => {
-        const newState = { member: newMember, memberSession: newMemberSession, organization: newOrganization };
+        const newState = {
+          member: newMember,
+          memberSession: newMemberSession,
+          organization: newOrganization,
+        };
         return mergeWithStableProps(oldState, newState);
       });
       setAuthenticationState(state);

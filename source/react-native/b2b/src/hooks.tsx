@@ -22,7 +22,7 @@ export const useStytchMemberSession = (): ApiB2bSessionV1MemberSession | undefin
 };
 export const useStytchOrganization = (): ApiOrganizationV1Organization | undefined => {
   return useContext(StytchOrganizationContext);
-}
+};
 export const useStytchB2B = (): StytchB2B => {
   const client = useContext(StytchB2BContext);
   if (client === null) {
