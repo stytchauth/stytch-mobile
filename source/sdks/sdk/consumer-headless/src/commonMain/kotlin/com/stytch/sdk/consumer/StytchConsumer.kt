@@ -128,7 +128,7 @@ public interface StytchConsumer : StytchClient {
 }
 
 /**
- * Creates and returns a [StytchConsumer] instance configured with the provided [configuration].
+ * Creates and returns a [StytchConsumer] instance configured with the provided [StytchClientConfiguration].
  * Repeated calls with the same process return the same singleton instance.
  */
 @JsExport

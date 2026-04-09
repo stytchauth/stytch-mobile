@@ -85,7 +85,7 @@ public fun getStytchHttpClient(
                         Napier.v(message, null, "StytchNetworkingClient")
                     }
                 }
-            level = LogLevel.ALL
+            level = LogLevel.INFO
         }.also { Napier.base(DebugAntilog()) }
 
         install(DFPPAInterceptor) {

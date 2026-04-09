@@ -146,10 +146,8 @@ public interface StytchB2B : StytchClient {
 }
 
 /**
- * Creates a new [StytchB2B] instance with the given [configuration].
- *
- * The returned instance is a singleton — subsequent calls with different configurations
- * return the same instance created on the first call.
+ * Creates a new [StytchB2B] instance with the given [StytchClientConfiguration].
+ * Repeated calls with the same process return the same singleton instance.
  */
 @JsExport
 @JsName("createStytchB2B")

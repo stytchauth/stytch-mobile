@@ -1,3 +1,4 @@
 com.stytch.sdk.utils.StytchDtoProcessorProvider
 com.stytch.sdk.utils.StytchCallbackProcessorProvider
 com.stytch.sdk.utils.StytchJsDocExtractorProvider
+com.stytch.sdk.utils.StytchMintlifyProcessorProvider
