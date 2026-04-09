@@ -1,5 +1,7 @@
 // Credit: https://www.reactnativecrossroads.com/posts/expo-plugin-add-spm-dependency/
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const { withXcodeProject } = require('@expo/config-plugins');
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const path = require('path');
 
 // If STYTCH_REPO_ROOT is set (local dev), use it as the path to the checked-out repo.
