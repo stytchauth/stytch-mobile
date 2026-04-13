@@ -144,6 +144,8 @@ Task {
 
 ### OAuth (Browser-Based)
 
+OAuth requires deeplink handling — see [Step 5](#5-handle-deeplinks).
+
 `start()` opens an `ASWebAuthenticationSession`, completes the OAuth flow, and returns the authenticated session — all in one call:
 
 ```swift
