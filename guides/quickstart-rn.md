@@ -240,6 +240,9 @@ Sessions are automatically persisted and validated on startup.
 // Manually validate (and optionally extend) the current session
 await stytch.session.authenticate({ sessionDurationMinutes: 30 });
 
+// Hydrate a client with a session token received out-of-band
+await stytch.hydrate("existing-session-token")
+
 // Sign out
 await stytch.session.revoke();
 ```

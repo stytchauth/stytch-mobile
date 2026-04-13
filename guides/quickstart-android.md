@@ -305,6 +305,9 @@ stytch.session.authenticate(
     SessionsAuthenticateParameters(sessionDurationMinutes = 30)
 )
 
+// Hydrate a client with a session token received out-of-band
+stytch.hydrate("existing-session-token")
+
 // Sign out
 stytch.session.revoke()
 ```

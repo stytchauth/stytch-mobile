@@ -255,6 +255,9 @@ Sessions are automatically persisted across app launches and validated on startu
 let params: SessionsAuthenticateParameters = .init(sessionDurationMinutes: 30)
 try await stytch.session.authenticate(request: params)
 
+// Hydrate a client with a session token received out-of-band
+try await stytch.hydrate("existing-session-token")
+
 // Sign out
 try await stytch.session.revoke()
 ```
