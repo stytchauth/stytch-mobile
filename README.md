@@ -120,7 +120,7 @@ targets: [
 
 &nbsp;
 
-The React Native packages require React Native's [New Architecture (TurboModules)](https://reactnative.dev/docs/new-architecture-intro) and React Native **0.80.x** or later.
+The React Native packages require React Native's [New Architecture (TurboModules)](https://reactnative.dev/architecture/landing-page) and React Native **0.80.x** or later.
 
 **Consumer**
 ```sh
