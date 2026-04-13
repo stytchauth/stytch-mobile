@@ -12,7 +12,7 @@ Headless authentication SDK for React Native, built on a shared [Kotlin Multipla
 ## Requirements
 
 - React Native **0.80.x** or later
-- React Native's [New Architecture (TurboModules)](https://reactnative.dev/docs/new-architecture-intro) must be enabled
+- React Native's [New Architecture (TurboModules)](https://reactnative.dev/architecture/landing-page) must be enabled
 
 ---
 

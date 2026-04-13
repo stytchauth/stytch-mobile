@@ -4,7 +4,7 @@ This guide walks you through adding Stytch authentication to a React Native app 
 
 **Requirements:**
 - React Native **0.80.x** or later
-- React Native's [New Architecture (TurboModules)](https://reactnative.dev/docs/new-architecture-intro) enabled
+- React Native's [New Architecture (TurboModules)](https://reactnative.dev/architecture/landing-page) enabled
 
 ---
 

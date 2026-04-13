@@ -28,7 +28,7 @@ This guide covers what changed when moving from `@stytch/react-native` (the orig
 
 ## New Architecture Requirement
 
-The new SDK uses React Native's [New Architecture (TurboModules)](https://reactnative.dev/docs/new-architecture-intro), which is the default in RN 0.71+ and mandatory from RN 0.80+. If your project is not yet on the New Architecture, you'll need to enable it before upgrading.
+The new SDK uses React Native's [New Architecture (TurboModules)](https://reactnative.dev/architecture/landing-page), which is the default in RN 0.71+ and mandatory from RN 0.80+. If your project is not yet on the New Architecture, you'll need to enable it before upgrading.
 
 ---
 
