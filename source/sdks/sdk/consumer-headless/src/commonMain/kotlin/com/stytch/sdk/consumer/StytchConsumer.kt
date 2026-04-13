@@ -2,6 +2,7 @@ package com.stytch.sdk.consumer
 
 import com.stytch.sdk.StytchApi
 import com.stytch.sdk.StytchClient
+import com.stytch.sdk.consumer.StytchConsumerAuthenticationStateManager.Companion.SESSION_TOKEN_IDENTIFIER
 import com.stytch.sdk.consumer.biometrics.BiometricsClient
 import com.stytch.sdk.consumer.biometrics.BiometricsClientImpl
 import com.stytch.sdk.consumer.crypto.CryptoClient
@@ -125,6 +126,11 @@ public interface StytchConsumer : StytchClient {
      * recognized Stytch deeplink.
      */
     public fun parseDeeplink(url: String): DeeplinkToken?
+
+    /**
+     * Hydrates a session from a given session token
+     */
+    public suspend fun hydrate(sessionToken: String)
 }
 
 /**
@@ -268,6 +274,13 @@ internal class DefaultStytchConsumer(
         val tokenType = ConsumerTokenType.fromString(uri.parameters["stytch_token_type"])
         val token = uri.parameters["token"] ?: return null
         return DeeplinkToken(tokenType, token)
+    }
+
+    override suspend fun hydrate(sessionToken: String) {
+        withContext(dispatchers.ioDispatcher) {
+            persistenceClient.save(SESSION_TOKEN_IDENTIFIER, sessionToken)
+            networkingClient.startSessionUpdateJob(0L)
+        }
     }
 
     internal var bootstrapResponse: BootstrapResponse? = null
