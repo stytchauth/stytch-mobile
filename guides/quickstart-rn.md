@@ -182,6 +182,8 @@ const stytch = createStytchConsumer(
 
 Then call `stytch.oauth.google.start(...)` as usual — the SDK automatically uses Credential Manager when this configuration is present, falling back to browser based as needed.
 
+#### Note: Google Credential Manager is only supported in the consumer SDK. Google Credential Manager is not supported in the B2B SDK.
+
 ### Passwords
 
 ```tsx

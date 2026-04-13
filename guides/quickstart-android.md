@@ -204,6 +204,8 @@ createStytchConsumer(
 
 Then call `stytch.oauth.google.start(...)` as shown above — the SDK will automatically use Credential Manager when this configuration is present.
 
+#### Note: Google Credential Manager is only supported in the consumer SDK. Google Credential Manager is not supported in the B2B SDK.
+
 ### Passwords
 
 ```kotlin

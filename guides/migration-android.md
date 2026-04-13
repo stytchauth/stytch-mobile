@@ -314,6 +314,8 @@ stytch.oauth.google.start(
 
 If no `GoogleCredentialConfiguration` is provided, or if Google Credential Manager fails on the users device, `oauth.google.start()` falls back to a browser-based OAuth flow.
 
+#### Note: Google Credential Manager is only supported in the consumer SDK. Google Credential Manager is not supported in the B2B SDK.
+
 ---
 
 ## B2B SDK

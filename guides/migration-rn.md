@@ -281,6 +281,8 @@ await stytch.oauth.google.start({ sessionDurationMinutes: 60 });
 
 If no `GoogleCredentialConfiguration` is provided,  or if Google Credential manager fails on the user's device, `oauth.google.start()` falls back to browser-based OAuth.
 
+#### Note: Google Credential Manager is only supported in the consumer SDK. Google Credential Manager is not supported in the B2B SDK.
+
 ---
 
 ## Biometrics
