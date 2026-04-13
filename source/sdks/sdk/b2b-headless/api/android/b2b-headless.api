@@ -17,6 +17,7 @@ public abstract interface class com/stytch/sdk/b2b/StytchB2B : com/stytch/sdk/St
 	public abstract fun getSession ()Lcom/stytch/sdk/b2b/session/B2BSessionsClient;
 	public abstract fun getSso ()Lcom/stytch/sdk/b2b/sso/B2BSSOClient;
 	public abstract fun getTotp ()Lcom/stytch/sdk/b2b/totp/B2BTOTPClient;
+	public abstract fun hydrate (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun parseDeeplink (Ljava/lang/String;)Lcom/stytch/sdk/b2b/data/DeeplinkToken;
 }
 

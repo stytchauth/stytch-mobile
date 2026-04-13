@@ -24,6 +24,7 @@ public abstract interface class com/stytch/sdk/consumer/StytchConsumer : com/sty
 	public abstract fun getSession ()Lcom/stytch/sdk/consumer/session/SessionClient;
 	public abstract fun getTotp ()Lcom/stytch/sdk/consumer/totp/TOTPClient;
 	public abstract fun getUser ()Lcom/stytch/sdk/consumer/user/UserClient;
+	public abstract fun hydrate (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun parseDeeplink (Ljava/lang/String;)Lcom/stytch/sdk/consumer/data/DeeplinkToken;
 }
 
