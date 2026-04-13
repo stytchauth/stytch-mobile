@@ -159,6 +159,8 @@ viewModelScope.launch {
 
 ### OAuth (Browser-Based)
 
+OAuth requires deeplink handling — see [Step 5](#5-handle-deeplinks).
+
 ```kotlin
 import com.stytch.sdk.oauth.OAuthStartParameters
 
