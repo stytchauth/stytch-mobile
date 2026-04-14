@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import {
   StytchB2B,
   ApiOrganizationV1Member,
+  ApiOrganizationV1Organization,
   ApiB2bSessionV1MemberSession,
   B2BAuthenticationState,
 } from '../lib/b2b-headless.mjs';
@@ -10,12 +11,14 @@ import {
   useStytchB2B,
   useStytchMember,
   useStytchMemberSession,
+  useStytchOrganization,
   useStytchB2BAuthenticationState,
 } from './hooks';
 import {
   StytchB2BContext,
   StytchMemberContext,
   StytchMemberSessionContext,
+  StytchOrganizationContext,
   StytchB2BAuthenticationStateContext,
 } from './contexts';
 import { mergeWithStableProps } from './utils';
@@ -49,6 +52,18 @@ export const withStytchMemberSession = <T extends object>(
   WithStytchMemberSession.displayName = `withStytchMemberSession(${Component.displayName || Component.name || 'Component'})`;
   return WithStytchMemberSession;
 };
+export const withStytchOrganization = <T extends object>(
+  Component: React.ComponentType<
+    T & { stytchOrganization: ApiOrganizationV1Organization | undefined }
+  >,
+): React.ComponentType<T> => {
+  const WithStytchOrganization: React.ComponentType<T> = (props) => {
+    const organization = useStytchOrganization();
+    return <Component {...props} stytchOrganization={organization} />;
+  };
+  WithStytchOrganization.displayName = `withStytchOrganization(${Component.displayName || Component.name || 'Component'})`;
+  return WithStytchOrganization;
+};
 export const withStytchB2BAuthenticationState = <T extends object>(
   Component: React.ComponentType<T & B2BAuthenticationState>,
 ): React.ComponentType<T> => {
@@ -69,12 +84,14 @@ export const StytchB2BProvider = ({
   stytch,
   children,
 }: StytchB2BProviderProps): React.JSX.Element => {
-  const [{ member, memberSession }, setClientState] = useState<{
+  const [{ member, memberSession, organization }, setClientState] = useState<{
     member: ApiOrganizationV1Member | undefined;
     memberSession: ApiB2bSessionV1MemberSession | undefined;
+    organization: ApiOrganizationV1Organization | undefined;
   }>({
     member: undefined,
     memberSession: undefined,
+    organization: undefined,
   });
   const [authenticationState, setAuthenticationState] = useState<B2BAuthenticationState>(
     new B2BAuthenticationState.Loading(),
@@ -111,12 +128,18 @@ export const StytchB2BProvider = ({
     const observationJob = stytch.authenticationStateObserver((state: B2BAuthenticationState) => {
       let newMember: ApiOrganizationV1Member | undefined = undefined;
       let newMemberSession: ApiB2bSessionV1MemberSession | undefined = undefined;
+      let newOrganization: ApiOrganizationV1Organization | undefined = undefined;
       if (state instanceof B2BAuthenticationState.Authenticated) {
         newMember = state.member;
         newMemberSession = state.memberSession;
+        newOrganization = state.organization;
       }
       setClientState((oldState) => {
-        const newState = { member: newMember, memberSession: newMemberSession };
+        const newState = {
+          member: newMember,
+          memberSession: newMemberSession,
+          organization: newOrganization,
+        };
         return mergeWithStableProps(oldState, newState);
       });
       setAuthenticationState(state);
@@ -128,13 +151,15 @@ export const StytchB2BProvider = ({
 
   return (
     <StytchB2BContext.Provider value={stytch}>
-      <StytchMemberContext.Provider value={member}>
-        <StytchMemberSessionContext.Provider value={memberSession}>
-          <StytchB2BAuthenticationStateContext.Provider value={authenticationState}>
-            {children}
-          </StytchB2BAuthenticationStateContext.Provider>
-        </StytchMemberSessionContext.Provider>
-      </StytchMemberContext.Provider>
+      <StytchOrganizationContext.Provider value={organization}>
+        <StytchMemberContext.Provider value={member}>
+          <StytchMemberSessionContext.Provider value={memberSession}>
+            <StytchB2BAuthenticationStateContext.Provider value={authenticationState}>
+              {children}
+            </StytchB2BAuthenticationStateContext.Provider>
+          </StytchMemberSessionContext.Provider>
+        </StytchMemberContext.Provider>
+      </StytchOrganizationContext.Provider>
     </StytchB2BContext.Provider>
   );
 };
