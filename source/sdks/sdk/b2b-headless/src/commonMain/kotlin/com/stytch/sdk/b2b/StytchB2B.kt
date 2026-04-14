@@ -2,6 +2,7 @@ package com.stytch.sdk.b2b
 
 import com.stytch.sdk.StytchApi
 import com.stytch.sdk.StytchClient
+import com.stytch.sdk.b2b.StytchB2BAuthenticationStateManager.Companion.SESSION_TOKEN_IDENTIFIER
 import com.stytch.sdk.b2b.data.B2BAuthenticationState
 import com.stytch.sdk.b2b.data.B2BTokenType
 import com.stytch.sdk.b2b.data.DeeplinkAuthenticationStatus
@@ -143,6 +144,11 @@ public interface StytchB2B : StytchClient {
 
     /** Parses a URL and returns a [DeeplinkToken] if it contains a Stytch token, or null otherwise. */
     public fun parseDeeplink(url: String): DeeplinkToken?
+
+    /**
+     * Hydrates a session from a given session token
+     */
+    public suspend fun hydrate(sessionToken: String)
 }
 
 /**
@@ -326,6 +332,13 @@ internal class DefaultStytchB2B(
         val tokenType = B2BTokenType.fromString(uri.parameters["stytch_token_type"])
         val token = uri.parameters["token"] ?: return null
         return DeeplinkToken(tokenType, token)
+    }
+
+    override suspend fun hydrate(sessionToken: String) {
+        withContext(dispatchers.ioDispatcher) {
+            persistenceClient.save(SESSION_TOKEN_IDENTIFIER, sessionToken)
+            networkingClient.startSessionUpdateJob(0L)
+        }
     }
 
     internal var bootstrapResponse: BootstrapResponse? = null

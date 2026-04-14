@@ -1647,6 +1647,7 @@ abstract interface com.stytch.sdk.b2b/StytchB2B : com.stytch.sdk/StytchClient { 
     abstract fun parseDeeplink(kotlin/String): com.stytch.sdk.b2b.data/DeeplinkToken? // com.stytch.sdk.b2b/StytchB2B.parseDeeplink|parseDeeplink(kotlin.String){}[0]
     abstract suspend fun authenticate(kotlin/String, kotlin/Int?): com.stytch.sdk.b2b.data/DeeplinkAuthenticationStatus // com.stytch.sdk.b2b/StytchB2B.authenticate|authenticate(kotlin.String;kotlin.Int?){}[0]
     abstract suspend fun getPKCECodePair(): com.stytch.sdk.data/PKCECodePair? // com.stytch.sdk.b2b/StytchB2B.getPKCECodePair|getPKCECodePair(){}[0]
+    abstract suspend fun hydrate(kotlin/String) // com.stytch.sdk.b2b/StytchB2B.hydrate|hydrate(kotlin.String){}[0]
 }
 
 final class com.stytch.sdk.b2b.data/DeeplinkToken { // com.stytch.sdk.b2b.data/DeeplinkToken|null[0]

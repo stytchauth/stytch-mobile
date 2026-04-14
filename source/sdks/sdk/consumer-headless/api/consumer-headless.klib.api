@@ -1550,6 +1550,7 @@ abstract interface com.stytch.sdk.consumer/StytchConsumer : com.stytch.sdk/Stytc
     abstract fun parseDeeplink(kotlin/String): com.stytch.sdk.consumer.data/DeeplinkToken? // com.stytch.sdk.consumer/StytchConsumer.parseDeeplink|parseDeeplink(kotlin.String){}[0]
     abstract suspend fun authenticate(kotlin/String, kotlin/Int?): com.stytch.sdk.consumer.data/DeeplinkAuthenticationStatus // com.stytch.sdk.consumer/StytchConsumer.authenticate|authenticate(kotlin.String;kotlin.Int?){}[0]
     abstract suspend fun getPKCECodePair(): com.stytch.sdk.data/PKCECodePair? // com.stytch.sdk.consumer/StytchConsumer.getPKCECodePair|getPKCECodePair(){}[0]
+    abstract suspend fun hydrate(kotlin/String) // com.stytch.sdk.consumer/StytchConsumer.hydrate|hydrate(kotlin.String){}[0]
 }
 
 final class com.stytch.sdk.consumer.biometrics/BiometricsAlreadyEnrolled : com.stytch.sdk.data/StytchError { // com.stytch.sdk.consumer.biometrics/BiometricsAlreadyEnrolled|null[0]
