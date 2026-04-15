@@ -21,6 +21,7 @@ import {
   useStytch,
   useStytchAuthenticationState,
 } from '@stytch/react-native-consumer';
+/*
 import {
   B2BAuthenticationState,
   B2BOAuthDiscoveryStartParameters,
@@ -31,7 +32,7 @@ import {
   useStytchB2B,
   useStytchB2BAuthenticationState,
 } from '@stytch/react-native-b2b';
-
+*/
 const KEY_DEMO_TYPE = 'DEMO_APP_TYPE';
 const KEY_PUBLIC_TOKEN = 'STYTCH_PUBLIC_TOKEN';
 const KEY_GOOGLE_CLIENT_ID = 'GOOGLE_CLIENT_ID';
@@ -43,7 +44,7 @@ export default function App() {
   const [screen, setScreen] = useState<Screen>('loading');
   const [selectedDemoType, setSelectedDemoType] = useState<string | null>(null);
   const [stytchClient, setStytchClient] = useState<ReturnType<typeof createStytchConsumer> | null>(null);
-  const [b2bClient, setB2bClient] = useState<ReturnType<typeof createStytchB2B> | null>(null);
+  //const [b2bClient, setB2bClient] = useState<ReturnType<typeof createStytchB2B> | null>(null);
   const [b2bOrgId, setB2bOrgId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -67,10 +68,12 @@ export default function App() {
       setStytchClient(buildClient(token, googleClientId));
       setScreen('consumer');
     } else {
+      /*
       const orgId = await SecureStore.getItemAsync(KEY_ORG_ID);
       setB2bClient(buildB2BClient(token));
       setB2bOrgId(orgId);
       setScreen('b2b');
+      */
     }
   };
 
@@ -93,7 +96,7 @@ export default function App() {
       if (orgId) {
         await SecureStore.setItemAsync(KEY_ORG_ID, orgId);
       }
-      setB2bClient(buildB2BClient(publicToken));
+      //setB2bClient(buildB2BClient(publicToken));
       setB2bOrgId(orgId);
       setScreen('b2b');
     }
@@ -105,7 +108,7 @@ export default function App() {
     await SecureStore.deleteItemAsync(KEY_ORG_ID);
     await SecureStore.deleteItemAsync(KEY_DEMO_TYPE);
     setStytchClient(null);
-    setB2bClient(null);
+    //setB2bClient(null);
     setB2bOrgId(null);
     setSelectedDemoType(null);
     setScreen('selector');
@@ -134,7 +137,7 @@ export default function App() {
       </StytchProvider>
     );
   }
-
+  /*
   if (screen === 'b2b' && b2bClient) {
     return (
       <StytchB2BProvider stytch={b2bClient}>
@@ -142,6 +145,7 @@ export default function App() {
       </StytchB2BProvider>
     );
   }
+  */
 
   return null;
 }
@@ -156,10 +160,11 @@ function buildClient(publicToken: string, googleClientId: string | null | undefi
     ),
   );
 }
-
+/*
 function buildB2BClient(publicToken: string) {
   return createStytchB2B(new B2BStytchClientConfiguration(publicToken));
 }
+*/
 
 // MARK: - Selector
 
@@ -433,7 +438,7 @@ function ConsumerScreen({ onSwitchDemos }: { onSwitchDemos: () => void }) {
 }
 
 // MARK: - B2B
-
+/*
 function B2BScreen({ orgId, onSwitchDemos }: { orgId: string | null; onSwitchDemos: () => void }) {
   const stytch = useStytchB2B();
   const authState = useStytchB2BAuthenticationState();
@@ -504,7 +509,7 @@ function B2BScreen({ orgId, onSwitchDemos }: { orgId: string | null; onSwitchDem
     </SafeAreaView>
   );
 }
-
+*/
 // MARK: - Styles
 
 const styles = StyleSheet.create({
