@@ -47,8 +47,11 @@ internal class B2BNetworkingClient(
     }
 
     override suspend fun updateSessionAndReturnExpiration(): Instant {
-        val response = api.b2BSessionsAuthenticate(B2BSessionsAuthenticateRequest(configuration.defaultSessionDuration))
-        return response.data.memberSession.expiresAt
+        val response =
+            request {
+                api.b2BSessionsAuthenticate(B2BSessionsAuthenticateRequest(configuration.defaultSessionDuration))
+            }
+        return response.memberSession.expiresAt
     }
 
     override val middleware: StytchNetworkResponseMiddleware =

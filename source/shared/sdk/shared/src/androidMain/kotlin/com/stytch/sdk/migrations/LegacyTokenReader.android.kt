@@ -3,6 +3,7 @@ package com.stytch.sdk.migrations
 import android.content.Context
 import com.google.crypto.tink.Aead
 import com.google.crypto.tink.KeyTemplates
+import com.google.crypto.tink.aead.AeadConfig
 import com.google.crypto.tink.integration.android.AndroidKeysetManager
 import com.stytch.sdk.data.KMPPlatformType
 import com.stytch.sdk.data.ReactNativeSessionState
@@ -116,6 +117,7 @@ public actual class LegacyTokenReader : ILegacyTokenReader {
                 return@withContext null
             }
             return@withContext try {
+                AeadConfig.register()
                 AndroidKeysetManager
                     .Builder()
                     .withSharedPref(context, keysetName, "stytch_secured_pref")

@@ -47,8 +47,11 @@ internal class ConsumerNetworkingClient(
     }
 
     override suspend fun updateSessionAndReturnExpiration(): Instant {
-        val response = api.sessionsAuthenticate(SessionsAuthenticateRequest(configuration.defaultSessionDuration))
-        return response.data.session.expiresAt ?: Instant.DISTANT_PAST
+        val response =
+            request {
+                api.sessionsAuthenticate(SessionsAuthenticateRequest(configuration.defaultSessionDuration))
+            }
+        return response.session.expiresAt ?: Instant.DISTANT_PAST
     }
 
     override val middleware: StytchNetworkResponseMiddleware =
