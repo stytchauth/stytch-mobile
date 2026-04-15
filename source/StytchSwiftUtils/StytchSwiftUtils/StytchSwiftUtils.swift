@@ -162,16 +162,16 @@ public class StytchEncryptionManagerSwift: NSObject {
             kSecUseDataProtectionKeychain: true,
             kSecReturnData: true,
             kSecReturnAttributes: true,
-            kSecMatchLimit: kSecMatchLimitAll,
+            kSecMatchLimit: kSecMatchLimitOne,
             kSecAttrSynchronizable: kSecAttrSynchronizableAny,
             kSecUseAuthenticationUI: kSecUseAuthenticationUISkip
         ] as [CFString : Any] as CFDictionary
         var result: AnyObject?
         let status = SecItemCopyMatching(query, &result)
-        guard status == errSecSuccess, let data = result as? Data else {
+        guard status == errSecSuccess, let dict = result as? NSDictionary, let key = dict[kSecValueData] as? Data else {
             return nil
         }
-        return data
+        return key
     }
 
     @objc public func getLegacyReactNativeEncryptionKey() -> Data? {
@@ -180,14 +180,15 @@ public class StytchEncryptionManagerSwift: NSObject {
             kSecAttrAccount: "EncryptedUserDefaults",
             kSecClass: kSecClassGenericPassword,
             kSecAttrAccessible: kSecAttrAccessibleAfterFirstUnlock,
-            kSecReturnData: true
+            kSecReturnData: true,
+            kSecMatchLimit: kSecMatchLimitOne,
         ] as [CFString : Any] as CFDictionary
         var result: AnyObject?
         let status = SecItemCopyMatching(query, &result)
-        guard status == errSecSuccess, let data = result as? Data else {
+        guard status == errSecSuccess, let dict = result as? NSDictionary, let key = dict[kSecValueData] as? Data else {
             return nil
         }
-        return data
+        return key
     }
 
     @objc public func decryptDataFromLegacyInstall(encryptedData: Data, keyData: Data) -> String? {
