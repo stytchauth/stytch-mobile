@@ -1,6 +1,6 @@
 {
   "name": "@stytch/react-native-consumer",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "type": "module",
   "description": "Stytch's official React Native Library",
   "summary": "Stytch's official React Native Library",

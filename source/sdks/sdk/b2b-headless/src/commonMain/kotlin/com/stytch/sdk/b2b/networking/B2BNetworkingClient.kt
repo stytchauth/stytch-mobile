@@ -7,6 +7,7 @@ import com.stytch.sdk.data.StytchClientConfigurationInternal
 import com.stytch.sdk.data.StytchDispatchers
 import com.stytch.sdk.networking.StytchNetworkResponseMiddleware
 import com.stytch.sdk.networking.StytchNetworkingClient
+import io.ktor.client.plugins.ResponseException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
@@ -46,10 +47,14 @@ internal class B2BNetworkingClient(
         startSessionUpdateJob(min(timeUntilSessionExpires, HEARTBEAT_INTERVAL_MS))
     }
 
-    override suspend fun updateSessionAndReturnExpiration(): Instant {
-        val response = api.b2BSessionsAuthenticate(B2BSessionsAuthenticateRequest(configuration.defaultSessionDuration))
-        return response.data.memberSession.expiresAt
-    }
+    override suspend fun updateSessionAndReturnExpiration(): Instant =
+        try {
+            val response = api.b2BSessionsAuthenticate(B2BSessionsAuthenticateRequest(configuration.defaultSessionDuration))
+            middleware.onSuccess(response)
+            return response.data.memberSession.expiresAt
+        } catch (e: ResponseException) {
+            throw middleware.onError(e)
+        }
 
     override val middleware: StytchNetworkResponseMiddleware =
         B2BNetworkingClientMiddleware(

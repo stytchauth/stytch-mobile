@@ -10,5 +10,4 @@ import kotlinx.serialization.Serializable
 internal data class ReactNativeSessionState(
     @SerialName("session_token")
     val sessionToken: String,
-    val session: String?,
 )

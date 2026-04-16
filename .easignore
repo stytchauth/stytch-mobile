@@ -1,0 +1,9 @@
+!source/react-native/**/dist
+!source/react-native/**/lib
+!source/react-native/**/android/
+!source/react-native/**/ios/
+!source/react-native/**/src/NativeStytchBridge.ts
+!source/react-native/**/src/src/app.plugin.cjs
+!source/react-native/**/StytchReactNative.podspec
+!source/react-native/**/package.json
+!source/react-native/**/yarn.lock
