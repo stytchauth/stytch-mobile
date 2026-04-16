@@ -93,7 +93,7 @@ public actual class LegacyTokenReader : ILegacyTokenReader {
                 val sessionState: ReactNativeSessionState = jsonSerializer.decodeFromString(sessionStateString)
                 PersistedLegacySessionData(
                     token = sessionState.sessionToken,
-                    sessionDataString = sessionState.session,
+                    sessionDataString = null,
                 )
             } catch (_: Exception) {
                 null

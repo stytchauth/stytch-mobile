@@ -176,12 +176,15 @@ public class StytchEncryptionManagerSwift: NSObject {
 
     @objc public func getLegacyReactNativeEncryptionKey() -> Data? {
         let query = [
-            kSecAttrService: "AES_SERVICE",
+            kSecAttrService: "Stytch",
             kSecAttrAccount: "EncryptedUserDefaults",
             kSecClass: kSecClassGenericPassword,
-            kSecAttrAccessible: kSecAttrAccessibleAfterFirstUnlock,
+            kSecUseDataProtectionKeychain: true,
             kSecReturnData: true,
+            kSecReturnAttributes: true,
             kSecMatchLimit: kSecMatchLimitOne,
+            kSecAttrSynchronizable: kSecAttrSynchronizableAny,
+            kSecUseAuthenticationUI: kSecUseAuthenticationUISkip
         ] as [CFString : Any] as CFDictionary
         var result: AnyObject?
         let status = SecItemCopyMatching(query, &result)
