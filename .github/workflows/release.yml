@@ -39,7 +39,7 @@ jobs:
         run: |
           CLIFF_VERSION="2.12.0"
           curl -sSfL \
-            "https://github.com/orhun/git-cliff/releases/download/v${CLIFF_VERSION}/git-cliff-x86_64-unknown-linux-musl.tar.gz" \
+            "https://github.com/orhun/git-cliff/releases/download/v${CLIFF_VERSION}/git-cliff-${CLIFF_VERSION}-x86_64-unknown-linux-musl.tar.gz" \
             -o /tmp/git-cliff.tar.gz
           tar -xzf /tmp/git-cliff.tar.gz -C /tmp
           sudo mv $(find /tmp -name 'git-cliff' -type f -maxdepth 3) /usr/local/bin/git-cliff
