@@ -75,7 +75,7 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git checkout -b "$BRANCH"
           git add CHANGELOG.md
-          git commit -m "chore: update changelog for ${VERSION}"
+          git commit -m "feat: Release version ${VERSION}"
           git push origin "$BRANCH"
 
           # Build the PR body: header + generated changelog entry
