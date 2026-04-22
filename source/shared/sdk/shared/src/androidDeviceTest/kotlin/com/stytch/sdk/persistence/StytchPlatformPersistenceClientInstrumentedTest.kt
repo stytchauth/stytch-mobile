@@ -16,7 +16,7 @@ internal class StytchPlatformPersistenceClientInstrumentedTest {
     @Before
     fun setUp() {
         val context = InstrumentationRegistry.getInstrumentation().targetContext
-        client = StytchPlatformPersistenceClient(context)
+        client = StytchPlatformPersistenceClient(context, STYTCH_PERSISTENCE_FILE_NAME)
         client.reset()
     }
 
