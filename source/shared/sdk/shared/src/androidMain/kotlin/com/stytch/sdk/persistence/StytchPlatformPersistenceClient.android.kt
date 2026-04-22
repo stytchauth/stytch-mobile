@@ -5,8 +5,9 @@ import android.content.SharedPreferences
 
 public actual class StytchPlatformPersistenceClient(
     public val context: Context,
+    persistenceFileName: String,
 ) {
-    private val sharedPreferences: SharedPreferences = context.getSharedPreferences(STYTCH_PERSISTENCE_FILE_NAME, Context.MODE_PRIVATE)
+    private val sharedPreferences: SharedPreferences = context.getSharedPreferences(persistenceFileName, Context.MODE_PRIVATE)
 
     public actual fun saveData(
         key: String,

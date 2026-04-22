@@ -9,6 +9,7 @@ import com.stytch.sdk.dfp.DFPProviderImpl
 import com.stytch.sdk.encryption.StytchEncryptionClient
 import com.stytch.sdk.oauth.OAuthProvider
 import com.stytch.sdk.passkeys.PasskeyProvider
+import com.stytch.sdk.persistence.STYTCH_PERSISTENCE_FILE_NAME
 import com.stytch.sdk.persistence.StytchPlatformPersistenceClient
 
 public actual class StytchClientConfiguration(
@@ -17,13 +18,14 @@ public actual class StytchClientConfiguration(
     internal val endpointOptions: EndpointOptions = EndpointOptions(),
     internal val defaultSessionDuration: Int? = null,
     internal val googleCredentialConfiguration: GoogleCredentialConfiguration? = null,
+    internal val persistenceFileName: String = STYTCH_PERSISTENCE_FILE_NAME,
 ) {
     public actual fun toInternal(): StytchClientConfigurationInternal {
         // DFP initialization is a two-step process SOLELY because it has to be on React Native :upsidedownface:
         val dfpProvider = DFPProviderImpl(context)
         dfpProvider.configureDfp(publicToken = publicToken, dfppaDomain = endpointOptions.dfppaDomain)
         val encryptionClient = StytchEncryptionClient()
-        val platformPersistenceClient = StytchPlatformPersistenceClient(context)
+        val platformPersistenceClient = StytchPlatformPersistenceClient(context, persistenceFileName)
         return StytchClientConfigurationInternal(
             publicToken = publicToken,
             endpointOptions = endpointOptions,

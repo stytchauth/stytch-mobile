@@ -6,6 +6,7 @@ import com.stytch.sdk.dfp.DFPProviderImpl
 import com.stytch.sdk.encryption.StytchEncryptionClient
 import com.stytch.sdk.oauth.OAuthProvider
 import com.stytch.sdk.passkeys.PasskeyProvider
+import com.stytch.sdk.persistence.STYTCH_PERSISTENCE_FILE_NAME
 import com.stytch.sdk.persistence.StytchPlatformPersistenceClient
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.useContents
@@ -18,14 +19,27 @@ public actual class StytchClientConfiguration(
     internal val publicToken: String,
     internal val endpointOptions: EndpointOptions = EndpointOptions(),
     internal val defaultSessionDuration: Int? = null,
+    internal val persistenceFileName: String = STYTCH_PERSISTENCE_FILE_NAME,
 ) {
-    // Manual secondary constructor for iOS DX improvement
-    public constructor(publicToken: String) : this(publicToken, EndpointOptions())
+    // Manual secondary constructors for iOS DX improvement (not doing EVERY combination, just helpers for "Token Only" and "Token + One")
+    public constructor(publicToken: String) : this(publicToken, EndpointOptions(), null, STYTCH_PERSISTENCE_FILE_NAME)
+    public constructor(
+        publicToken: String,
+        endpointOptions: EndpointOptions,
+    ) : this(publicToken, endpointOptions, null, STYTCH_PERSISTENCE_FILE_NAME)
+    public constructor(
+        publicToken: String,
+        defaultSessionDuration: Int,
+    ) : this(publicToken, EndpointOptions(), defaultSessionDuration, STYTCH_PERSISTENCE_FILE_NAME)
+    public constructor(
+        publicToken: String,
+        nsUserDefaultsSuiteName: String,
+    ) : this(publicToken, EndpointOptions(), null, nsUserDefaultsSuiteName)
 
     @OptIn(ExperimentalForeignApi::class)
     public actual fun toInternal(): StytchClientConfigurationInternal {
         val encryptionClient = StytchEncryptionClient()
-        val platformPersistenceClient = StytchPlatformPersistenceClient()
+        val platformPersistenceClient = StytchPlatformPersistenceClient(persistenceFileName)
         return StytchClientConfigurationInternal(
             publicToken = publicToken,
             endpointOptions = endpointOptions,
