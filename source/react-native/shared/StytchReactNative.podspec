@@ -3,7 +3,7 @@ require "json"
 package = JSON.parse(File.read(File.join(__dir__, "package.json")))
 
 # If STYTCH_REPO_ROOT is set (local dev), use it as the path to the checked-out repo, otherwise fall back to github
-spmUrl = ENV['STYTCH_REPO_ROOT'] ? File.join(ENV['STYTCH_REPO_ROOT'], 'source', 'ios') : 'https://github.com/stytchauth/stytch-ios'
+spmUrl = ENV['STYTCH_REPO_ROOT'] ? File.join(ENV['STYTCH_REPO_ROOT'], 'source', 'ios') : 'https://github.com/stytchauth/stytch-ios-sdk'
 
 Pod::Spec.new do |s|
   s.name         = "StytchReactNative"

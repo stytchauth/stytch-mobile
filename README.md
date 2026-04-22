@@ -84,12 +84,12 @@ Prefer callback-style APIs over coroutines? See [Callback Extensions](#callback-
 
 &nbsp;
 
-The iOS SDK is distributed as a Swift Package from [`stytchauth/stytch-ios`](https://github.com/stytchauth/stytch-ios).
+The iOS SDK is distributed as a Swift Package from [`stytchauth/stytch-ios-sdk`](https://github.com/stytchauth/stytch-ios-sdk).
 
 **In Xcode:**
 
 1. Go to **File → Add Package Dependencies...**
-2. Enter the repository URL: `https://github.com/stytchauth/stytch-ios`
+2. Enter the repository URL: `https://github.com/stytchauth/stytch-ios-sdk`
 3. Select version **1.0.0** or later
 4. Add the product you need to your target:
    - `StytchConsumerSDK` — Consumer apps
@@ -99,7 +99,7 @@ The iOS SDK is distributed as a Swift Package from [`stytchauth/stytch-ios`](htt
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/stytchauth/stytch-ios", from: "1.0.0"),
+    .package(url: "https://github.com/stytchauth/stytch-io-sdk", from: "1.0.0"),
 ],
 targets: [
     .target(
