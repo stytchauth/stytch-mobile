@@ -28,6 +28,7 @@ import com.stytch.sdk.passkeys.PasskeyProvider
 import com.stytch.sdk.passkeys.PasskeysParameters
 import com.stytch.sdk.persistence.StytchPersistenceClient
 import com.stytch.sdk.persistence.StytchPlatformPersistenceClient
+import com.stytch.sdk.persistence.STYTCH_PERSISTENCE_FILE_NAME
 import com.stytch.sdk.pkce.PKCEClient
 import io.ktor.util.decodeBase64Bytes
 import io.ktor.util.encodeBase64
@@ -40,7 +41,6 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.coroutines.*
 
-
 /**
  * This bridge module is just an RN-accessible, well, bridge, to the existing code in the "real" Stytch SDK,
  * which is a dependency of this React Native SDK.
@@ -50,7 +50,7 @@ import kotlinx.coroutines.*
 class StytchBridgeModule(reactContext: ReactApplicationContext) :
   NativeStytchBridgeSpec(reactContext) {
   private val encryptionClient: StytchEncryptionClient = StytchEncryptionClient()
-  private val platformPersistenceClient: StytchPlatformPersistenceClient = StytchPlatformPersistenceClient(reactContext)
+  private val platformPersistenceClient: StytchPlatformPersistenceClient = StytchPlatformPersistenceClient(reactContext, STYTCH_PERSISTENCE_FILE_NAME)
   private val dfpProvider = DFPProviderImpl(reactContext)
   private val captchaProvider = CAPTCHAProviderImpl(reactContext.applicationContext as Application)
   private val deviceInfo = reactContext.getDeviceInfo()

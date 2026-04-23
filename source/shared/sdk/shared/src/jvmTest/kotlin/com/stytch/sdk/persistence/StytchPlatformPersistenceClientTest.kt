@@ -9,7 +9,7 @@ import kotlin.test.assertNull
 // Uses a dedicated class reference so the test gets its own isolated prefs node,
 // separate from any production data or other test suites.
 internal class StytchPlatformPersistenceClientTest {
-    private val client = StytchPlatformPersistenceClient(StytchPlatformPersistenceClientTest::class.java)
+    private val client = StytchPlatformPersistenceClient(StytchPlatformPersistenceClientTest::class.java, STYTCH_PERSISTENCE_FILE_NAME)
 
     @BeforeTest
     fun setUp() {

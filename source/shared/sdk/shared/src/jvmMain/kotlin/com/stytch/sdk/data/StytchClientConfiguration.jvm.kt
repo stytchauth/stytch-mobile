@@ -4,6 +4,7 @@ import com.stytch.sdk.biometrics.BiometricsProvider
 import com.stytch.sdk.encryption.StytchEncryptionClient
 import com.stytch.sdk.oauth.OAuthProvider
 import com.stytch.sdk.passkeys.PasskeyProvider
+import com.stytch.sdk.persistence.STYTCH_PERSISTENCE_FILE_NAME
 import com.stytch.sdk.persistence.StytchPlatformPersistenceClient
 import java.awt.Toolkit
 
@@ -14,11 +15,12 @@ public actual class StytchClientConfiguration(
     internal val keystorePassword: String,
     internal val endpointOptions: EndpointOptions = EndpointOptions(),
     public val defaultSessionDuration: Int? = null,
+    internal val persistenceFileName: String = STYTCH_PERSISTENCE_FILE_NAME,
 ) {
     public actual fun toInternal(): StytchClientConfigurationInternal {
         // create necessary clients
         val encryptionClient = StytchEncryptionClient(keystorePassword)
-        val platformPersistenceClient = StytchPlatformPersistenceClient(applicationClass)
+        val platformPersistenceClient = StytchPlatformPersistenceClient(applicationClass, persistenceFileName)
         // if it failed the first time (key corruption issues), nuke any previous preferences, because they are gone
         if (encryptionClient.keystoreFailedOnInitialization) {
             platformPersistenceClient.reset()

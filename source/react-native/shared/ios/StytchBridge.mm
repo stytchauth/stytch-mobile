@@ -2,7 +2,7 @@
 #import <StytchConsumerSDK/StytchConsumerSDK.h>
 #import <StytchConsumerSDK/StytchConsumerSDK-Swift.h>
 SCSDKStytchEncryptionClient *encryptionClient = [[SCSDKStytchEncryptionClient alloc] init];
-SCSDKStytchPlatformPersistenceClient *platformPersistenceClient = [[SCSDKStytchPlatformPersistenceClient alloc] init];
+SCSDKStytchPlatformPersistenceClient *platformPersistenceClient = [[SCSDKStytchPlatformPersistenceClient alloc] initWithPersistenceFileName:[SCSDKStytchPlatformPersistenceClientKt STYTCH_PERSISTENCE_FILE_NAME]];
 SCSDKCAPTCHAProviderImpl *captchaClient = [[SCSDKCAPTCHAProviderImpl alloc] init];
 SCSDKDFPProviderImpl *dfpClient;
 SCSDKBiometricsProvider *biometricsProvider = [[SCSDKBiometricsProvider alloc] initWithEncryptionClient:encryptionClient persistenceClient:platformPersistenceClient];

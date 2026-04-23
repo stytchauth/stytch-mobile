@@ -8,8 +8,10 @@ import platform.Foundation.NSURLIsExcludedFromBackupKey
 import platform.Foundation.NSUserDefaults
 import platform.Foundation.NSUserDomainMask
 
-public actual class StytchPlatformPersistenceClient {
-    private val userDefaults: NSUserDefaults = NSUserDefaults(STYTCH_PERSISTENCE_FILE_NAME)
+public actual class StytchPlatformPersistenceClient(
+    private val persistenceFileName: String,
+) {
+    private val userDefaults: NSUserDefaults = NSUserDefaults(persistenceFileName)
 
     init {
         excludeFromBackup()
@@ -32,13 +34,13 @@ public actual class StytchPlatformPersistenceClient {
         userDefaults.dictionaryRepresentation().keys.forEach { key ->
             userDefaults.removeObjectForKey(key as String)
         }
-        NSUserDefaults.standardUserDefaults.removePersistentDomainForName(STYTCH_PERSISTENCE_FILE_NAME)
+        NSUserDefaults.standardUserDefaults.removePersistentDomainForName(persistenceFileName)
     }
 
     @OptIn(ExperimentalForeignApi::class)
     private fun excludeFromBackup() {
         val library = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, true).firstOrNull() as? String ?: return
-        val prefsPath = "$library/Preferences/$STYTCH_PERSISTENCE_FILE_NAME.plist"
+        val prefsPath = "$library/Preferences/$persistenceFileName.plist"
         val url = NSURL.fileURLWithPath(prefsPath)
         url.setResourceValue(value = true, forKey = NSURLIsExcludedFromBackupKey, error = null)
     }

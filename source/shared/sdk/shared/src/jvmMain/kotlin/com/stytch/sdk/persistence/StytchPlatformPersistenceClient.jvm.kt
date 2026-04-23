@@ -4,8 +4,9 @@ import java.util.prefs.Preferences
 
 public actual class StytchPlatformPersistenceClient(
     applicationClass: Class<*>,
+    persistenceFileName: String,
 ) {
-    private val preferences = Preferences.userNodeForPackage(applicationClass).node(STYTCH_PERSISTENCE_FILE_NAME)
+    private val preferences = Preferences.userNodeForPackage(applicationClass).node(persistenceFileName)
 
     public actual fun reset() {
         preferences.clear()

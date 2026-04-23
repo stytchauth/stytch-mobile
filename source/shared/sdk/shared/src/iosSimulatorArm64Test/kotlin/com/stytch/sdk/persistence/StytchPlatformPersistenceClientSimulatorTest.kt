@@ -7,7 +7,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
 internal class StytchPlatformPersistenceClientSimulatorTest {
-    private val client = StytchPlatformPersistenceClient()
+    private val client = StytchPlatformPersistenceClient(STYTCH_PERSISTENCE_FILE_NAME)
 
     @BeforeTest
     fun setUp() {
