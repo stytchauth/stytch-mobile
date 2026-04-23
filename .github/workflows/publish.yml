@@ -26,6 +26,7 @@ jobs:
 
   publish-kmp:
     name: Publish Multiplatform Artifacts
+    if: false
     runs-on: macos-latest
     needs: build-shared
     env:
@@ -68,7 +69,7 @@ jobs:
           :sdk:b2b-headless-extensions:publishToMavenLocal
 
       - name: Publish shared to Maven Central
-        if: env.DRY_RUN != 'true'
+        if: false
         working-directory: source/shared
         env:
           ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
@@ -157,6 +158,7 @@ jobs:
           path: source/ios/sbom-ios-spm.json
 
       - name: Zip xcframeworks
+        if: false
         run: |
           ARTIFACTS_DIR=$GITHUB_WORKSPACE/xcframework-artifacts
           mkdir -p "$ARTIFACTS_DIR"
@@ -174,6 +176,7 @@ jobs:
           zip -r "$ARTIFACTS_DIR/StytchSwiftUtils.xcframework.zip" StytchSwiftUtils.xcframework
 
       - name: Compute checksums and update Package.swift
+        if: false
         run: |
           VERSION=$(cat version.txt)
           ARTIFACTS_DIR=$GITHUB_WORKSPACE/xcframework-artifacts
@@ -203,12 +206,14 @@ jobs:
           cat source/ios/Package.swift
 
       - name: Upload xcframework zips
+        if: false
         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         with:
           name: xcframework-zips
           path: xcframework-artifacts/
 
       - name: Upload Package.swift and Sources
+        if: false
         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         with:
           name: ios-spm-package
@@ -218,7 +223,7 @@ jobs:
             source/ios/Sources
 
       - name: Publish to SPM repo and create GitHub release
-        if: env.DRY_RUN != 'true'
+        if: false
         env:
           GH_TOKEN: ${{ secrets.SPM_REPO_TOKEN }}
         run: |
@@ -254,6 +259,7 @@ jobs:
     name: Publish React Native
     runs-on: macos-latest
     needs: build-shared
+    if: false
     env:
       DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run == true }}
 
@@ -350,7 +356,7 @@ jobs:
   create-github-release:
     name: Create GitHub Release
     runs-on: ubuntu-latest
-    needs: [publish-kmp, publish-ios, publish-rn, generate-sbom]
+    needs: [publish-ios, generate-sbom]
     env:
       DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run == true }}
 
