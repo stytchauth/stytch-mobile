@@ -34,7 +34,7 @@ subprojects {
         configure<com.vanniktech.maven.publish.MavenPublishBaseExtension> {
             publishToMavenCentral(
                 automaticRelease = true,
-                validateDeployment = DeploymentValidation.PUBLISHED,
+                validateDeployment = DeploymentValidation.VALIDATED,
             )
             configure(
                 com.vanniktech.maven.publish.KotlinMultiplatform(

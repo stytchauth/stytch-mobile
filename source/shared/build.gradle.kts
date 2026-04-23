@@ -25,7 +25,7 @@ subprojects {
         configure<com.vanniktech.maven.publish.MavenPublishBaseExtension> {
             publishToMavenCentral(
                 automaticRelease = true,
-                validateDeployment = DeploymentValidation.PUBLISHED,
+                validateDeployment = DeploymentValidation.VALIDATED,
             )
             if (!System.getenv("ORG_GRADLE_PROJECT_signingInMemoryKey").isNullOrEmpty()) {
                 signAllPublications()
