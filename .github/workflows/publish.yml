@@ -309,8 +309,8 @@ jobs:
       - name: Stamp version into package.json files
         run: |
           VERSION=$(cat version.txt)
-          npm version "$VERSION" --no-git-tag-version --prefix source/react-native/consumer
-          npm version "$VERSION" --no-git-tag-version --prefix source/react-native/b2b
+          npm version "$VERSION" --no-git-tag-version --prefix source/react-native/consumer || true
+          npm version "$VERSION" --no-git-tag-version --prefix source/react-native/b2b || true
 
       - name: Install dependencies and build consumer RN package
         working-directory: source/react-native/consumer
