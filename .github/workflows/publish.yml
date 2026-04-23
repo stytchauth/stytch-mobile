@@ -177,7 +177,7 @@ jobs:
         run: |
           VERSION=$(cat version.txt)
           ARTIFACTS_DIR=$GITHUB_WORKSPACE/xcframework-artifacts
-          BASE_URL="https://github.com/stytchauth/stytch-ios/releases/download/${VERSION}"
+          BASE_URL="https://github.com/stytchauth/stytch-ios-sdk/releases/download/${VERSION}"
 
           CONSUMER_URL="${BASE_URL}/StytchConsumerSDK.xcframework.zip"
           B2B_URL="${BASE_URL}/StytchB2BSDK.xcframework.zip"
@@ -223,7 +223,7 @@ jobs:
           GH_TOKEN: ${{ secrets.SPM_REPO_TOKEN }}
         run: |
           VERSION=$(cat version.txt)
-          SPM_REPO="stytchauth/stytch-ios"
+          SPM_REPO="stytchauth/stytch-ios-sdk"
           ARTIFACTS_DIR=$GITHUB_WORKSPACE/xcframework-artifacts
 
           git clone "https://x-access-token:${GH_TOKEN}@github.com/${SPM_REPO}.git" spm-repo
@@ -389,7 +389,7 @@ jobs:
           \`\`\`
 
           **iOS (Swift Package Manager)**
-          Add \`https://github.com/stytchauth/stytch-ios\` at version \`${VERSION}\`.
+          Add \`https://github.com/stytchauth/stytch-ios-sdk\` at version \`${VERSION}\`.
 
           ---
 

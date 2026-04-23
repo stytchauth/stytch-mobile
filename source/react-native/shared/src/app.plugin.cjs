@@ -10,7 +10,7 @@ function resolveSpmUrl() {
   if (process.env.STYTCH_REPO_ROOT) {
     return path.join(process.env.STYTCH_REPO_ROOT, 'source', 'ios');
   }
-  return 'https://github.com/stytchauth/stytch-ios';
+  return 'https://github.com/stytchauth/stytch-ios-sdk';
 }
 
 const spmUrl = resolveSpmUrl();

@@ -349,7 +349,7 @@ Triggered automatically by a tag push matching `[0-9]*.[0-9]*.[0-9]*`, or manual
 build-shared  (reusable: _build-shared.yml)
     │
     ├── publish-kmp       — Maven Central (shared + consumer + b2b + extensions)
-    ├── publish-ios       — stytchauth/stytch-ios SPM repo + xcframework zips
+    ├── publish-ios       — stytchauth/stytch-ios-sdk SPM repo + xcframework zips
     └── publish-rn        — npm (@stytch/react-native-consumer, @stytch/react-native-b2b)
           │
           └── create-github-release  — GH release with install coordinates + changelog entry
@@ -359,7 +359,7 @@ build-shared  (reusable: _build-shared.yml)
 
 **`publish-kmp`:** Downloads the SwiftUtils interop and shared xcframework artifacts (needed to compile iOS targets), publishes shared to mavenLocal, then publishes all five Maven artifacts to Maven Central (`shared`, `consumer-headless`, `b2b-headless`, `consumer-headless-extensions`, `b2b-headless-extensions`).
 
-**`publish-ios`:** Downloads artifacts, builds consumer and B2B xcframeworks, zips all four frameworks, computes SHA-256 checksums, substitutes URLs and checksums into `source/ios/Package.swift.template` to produce `source/ios/Package.swift`. On a real run, clones `stytchauth/stytch-ios`, commits `Package.swift` + `Sources`, pushes + tags, and creates a GitHub release there with the four xcframework zips attached.
+**`publish-ios`:** Downloads artifacts, builds consumer and B2B xcframeworks, zips all four frameworks, computes SHA-256 checksums, substitutes URLs and checksums into `source/ios/Package.swift.template` to produce `source/ios/Package.swift`. On a real run, clones `stytchauth/stytch-ios-sdk`, commits `Package.swift` + `Sources`, pushes + tags, and creates a GitHub release there with the four xcframework zips attached.
 
 **`publish-rn`:** Downloads artifacts, publishes shared to mavenLocal, builds KMP JS output for consumer and B2B, stamps the version into `package.json` files, runs `yarn build`, packs both packages. On a real run, publishes both to npm. Always uploads `.tgz` packs as artifacts.
 
@@ -417,5 +417,5 @@ The catch-all skip rule forces good commit naming — if a commit should appear 
 | `SIGNING_KEY` | `publish-kmp` | GPG key for Maven artifact signing (in-memory, ASCII armored) |
 | `SIGNING_KEY_ID` | `publish-kmp` | GPG key ID |
 | `SIGNING_KEY_PASSWORD` | `publish-kmp` | GPG key passphrase |
-| `SPM_REPO_TOKEN` | `publish-ios` | PAT with write access to `stytchauth/stytch-ios` |
+| `SPM_REPO_TOKEN` | `publish-ios` | PAT with write access to `stytchauth/stytch-ios-sdk` |
 | `RELEASE_PAT` | `tag-on-release.yml` | PAT with `contents: write`; required to trigger downstream workflows from a tag push |

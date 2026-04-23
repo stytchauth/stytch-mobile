@@ -32,7 +32,7 @@ If you're building a consumer-facing app, you want the **Consumer SDK**. If you'
 **In Xcode:**
 
 1. Go to **File → Add Package Dependencies...**
-2. Enter the repository URL: `https://github.com/stytchauth/stytch-ios`
+2. Enter the repository URL: `https://github.com/stytchauth/stytch-ios-sdk`
 3. Select version **1.0.0** or later
 4. Add the product you need to your target:
    - `StytchConsumerSDK` — Consumer apps
@@ -42,15 +42,15 @@ If you're building a consumer-facing app, you want the **Consumer SDK**. If you'
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/stytchauth/stytch-ios", from: "1.0.0"),
+    .package(url: "https://github.com/stytchauth/stytch-ios-sdk", from: "1.0.0"),
 ],
 targets: [
     .target(
         name: "YourTarget",
         dependencies: [
             // Pick one:
-            .product(name: "StytchConsumerSDK", package: "stytch-ios"),
-            // .product(name: "StytchB2BSDK", package: "stytch-ios"),
+            .product(name: "StytchConsumerSDK", package: "stytch-ios-sdk"),
+            // .product(name: "StytchB2BSDK", package: "stytch-ios-sdk"),
         ]
     ),
 ]
