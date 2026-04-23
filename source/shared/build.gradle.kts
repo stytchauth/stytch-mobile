@@ -1,3 +1,5 @@
+import com.vanniktech.maven.publish.DeploymentValidation
+
 plugins {
     alias(libs.plugins.android.kotlin.multiplatform.library) apply false
     alias(libs.plugins.kotlinMultiplatform) apply false
@@ -21,7 +23,10 @@ subprojects {
     plugins.withId("com.vanniktech.maven.publish") {
         apply(plugin = "org.cyclonedx.bom")
         configure<com.vanniktech.maven.publish.MavenPublishBaseExtension> {
-            publishToMavenCentral()
+            publishToMavenCentral(
+                automaticRelease = true,
+                validateDeployment = DeploymentValidation.PUBLISHED,
+            )
             if (!System.getenv("ORG_GRADLE_PROJECT_signingInMemoryKey").isNullOrEmpty()) {
                 signAllPublications()
             }

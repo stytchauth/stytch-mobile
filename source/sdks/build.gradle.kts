@@ -1,3 +1,5 @@
+import com.vanniktech.maven.publish.DeploymentValidation
+
 plugins {
     alias(libs.plugins.android.kotlin.multiplatform.library) apply false
     alias(libs.plugins.kotlinMultiplatform) apply false
@@ -30,7 +32,10 @@ subprojects {
         apply(plugin = "org.jetbrains.dokka")
         apply(plugin = "org.cyclonedx.bom")
         configure<com.vanniktech.maven.publish.MavenPublishBaseExtension> {
-            publishToMavenCentral()
+            publishToMavenCentral(
+                automaticRelease = true,
+                validateDeployment = DeploymentValidation.PUBLISHED,
+            )
             configure(
                 com.vanniktech.maven.publish.KotlinMultiplatform(
                     com.vanniktech.maven.publish.JavadocJar
