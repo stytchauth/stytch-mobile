@@ -136,6 +136,32 @@ npm install @stytch/react-native-b2b
 yarn add @stytch/react-native-b2b
 ```
 
+**Native code setup**
+
+If you are using bare React Native, ensure you run `pod install` from your iOS directory. If you are using Expo, you must add the two following configurations to your app config:
+```json
+{
+    "expo": {
+    "plugins": [
+        ["./node_modules/@stytch/react-native-consumer/src/app.plugin.cjs", {}],
+        [
+        "expo-build-properties",
+        {
+            "android": {
+            "packagingOptions": {
+                "exclude": ["META-INF/versions/9/OSGI-INF/MANIFEST.MF"],
+            },
+            "ios": {
+                "useFrameworks": "static",
+            }
+            },
+        },
+        ]
+    ]
+    }
+}
+```
+
 </details>
 
 ---

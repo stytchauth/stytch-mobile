@@ -25,7 +25,6 @@ jobs:
 
 
   publish-kmp:
-    if: false
     name: Publish Multiplatform Artifacts
     runs-on: macos-latest
     needs: build-shared
@@ -219,6 +218,7 @@ jobs:
             source/ios/Sources
 
       - name: Publish to SPM repo and create GitHub release
+        if: env.DRY_RUN != 'true'
         env:
           GH_TOKEN: ${{ secrets.SPM_REPO_TOKEN }}
         run: |
@@ -350,7 +350,7 @@ jobs:
   create-github-release:
     name: Create GitHub Release
     runs-on: ubuntu-latest
-    needs: [publish-ios, publish-rn, generate-sbom]
+    needs: [publish-kmp, publish-ios, publish-rn, generate-sbom]
     env:
       DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run == true }}
 
