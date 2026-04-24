@@ -366,6 +366,12 @@ Callback extensions are available on Android and JVM only. iOS uses native `asyn
 
 ---
 
+## Documentation
+
+Full API documentation is included (KDoc/JavaDoc, DocC, JSDoc) for in-editor reference, as well as hosted [here](https://stytchauth.github.io/stytch-mobile/).
+
+For deeper documentation, consult our [docs site](https://stytch.com/docs).
+
 ## Support
 
 If you have questions, found a bug or want help troubleshooting, join us in [Slack](https://stytch.com/docs/resources/support/overview) or email [support@stytch.com](mailto:support@stytch.com).
