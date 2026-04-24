@@ -253,7 +253,7 @@ jobs:
   publish-rn:
     name: Publish React Native
     runs-on: macos-latest
-    needs: build-shared
+    needs: [publish-kmp, publish-ios]
     env:
       DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run == true }}
 
