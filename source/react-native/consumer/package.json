@@ -26,6 +26,10 @@
   ],
   "license": "MIT",
   "homepage": "https://stytch.com/docs/sdks/react-native-sdk",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/stytchauth/stytch-mobile"
+  },
   "author": {
     "name": "Stytch",
     "url": "https://github.com/stytchauth"
