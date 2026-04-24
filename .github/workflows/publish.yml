@@ -295,22 +295,22 @@ jobs:
       - name: Build consumer JS output
         working-directory: source/sdks
         run: |
-          ./gradlew :sdk:consumer-headless:assemble :sdk:consumer-headless:jsBrowserProductionLibraryDistribution
+          ./gradlew :sdk:consumer-headless:jsBrowserProductionLibraryDistribution
           mkdir -p $GITHUB_WORKSPACE/source/react-native/consumer/lib
           cp -r sdk/consumer-headless/build/dist/js/productionLibrary/consumer-headless* $GITHUB_WORKSPACE/source/react-native/consumer/lib
 
       - name: Build B2B JS output
         working-directory: source/sdks
         run: |
-          ./gradlew :sdk:b2b-headless:assemble :sdk:b2b-headless:jsBrowserProductionLibraryDistribution
+          ./gradlew :sdk:b2b-headless:jsBrowserProductionLibraryDistribution
           mkdir -p $GITHUB_WORKSPACE/source/react-native/b2b/lib
           cp -r sdk/b2b-headless/build/dist/js/productionLibrary/b2b-headless* $GITHUB_WORKSPACE/source/react-native/b2b/lib
 
       - name: Stamp version into package.json files
         run: |
           VERSION=$(cat version.txt)
-          npm version "$VERSION" --no-git-tag-version --prefix source/react-native/consumer
-          npm version "$VERSION" --no-git-tag-version --prefix source/react-native/b2b
+          npm version "$VERSION" --no-git-tag-version --prefix source/react-native/consumer || true
+          npm version "$VERSION" --no-git-tag-version --prefix source/react-native/b2b || true
 
       - name: Install dependencies and build consumer RN package
         working-directory: source/react-native/consumer

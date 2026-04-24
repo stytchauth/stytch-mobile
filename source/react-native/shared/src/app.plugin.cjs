@@ -3,6 +3,8 @@
 const { withXcodeProject } = require('@expo/config-plugins');
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const path = require('path');
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const { version } = require('../package.json');
 
 // If STYTCH_REPO_ROOT is set (local dev), use it as the path to the checked-out repo.
 // Otherwise fall back to the live GitHub URL
@@ -24,7 +26,10 @@ const addSPMDependenciesToMainTarget = (config) =>
     const isLocal = !!process.env.STYTCH_REPO_ROOT;
     const refType = isLocal ? 'XCLocalSwiftPackageReference' : 'XCRemoteSwiftPackageReference';
     const refKey = isLocal ? 'relativePath' : 'repositoryURL';
-
+    const spmRequirement = isLocal ? {} : {
+          kind: 'upToNextMajorVersion',
+          minimumVersion: version,
+    };
     if (!xcodeProject.hash.project.objects[refType]) {
       xcodeProject.hash.project.objects[refType] = {};
     }
@@ -36,6 +41,7 @@ const addSPMDependenciesToMainTarget = (config) =>
     ] = {
       isa: refType,
       [refKey]: spmUrl,
+      requirement: spmRequirement,
     };
 
     // update XCSwiftPackageProductDependency

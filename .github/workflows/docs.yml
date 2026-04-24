@@ -167,13 +167,13 @@ jobs:
           xcrun docc convert source/ios/docs/StytchConsumerSDK.docc \
             --additional-symbol-graph-dir symbolgraphs/consumer-injected \
             --transform-for-static-hosting \
-            --hosting-base-path ios/consumer \
+            --hosting-base-path stytch-mobile/ios/consumer \
             --output-dir docs-output/ios/consumer
 
           xcrun docc convert source/ios/docs/StytchB2BSDK.docc \
             --additional-symbol-graph-dir symbolgraphs/b2b-injected \
             --transform-for-static-hosting \
-            --hosting-base-path ios/b2b \
+            --hosting-base-path stytch-mobile/ios/b2b \
             --output-dir docs-output/ios/b2b
 
       - name: Tar iOS docs (avoid colon-in-filename rejection by upload-artifact)
