@@ -28,6 +28,7 @@ jobs:
     name: Publish Multiplatform Artifacts
     runs-on: macos-latest
     needs: build-shared
+    if: false
     env:
       DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run == true }}
 
@@ -253,7 +254,7 @@ jobs:
   publish-rn:
     name: Publish React Native
     runs-on: macos-latest
-    needs: [publish-kmp, publish-ios]
+    needs: [publish-ios]
     env:
       DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run == true }}
 
@@ -350,7 +351,7 @@ jobs:
   create-github-release:
     name: Create GitHub Release
     runs-on: ubuntu-latest
-    needs: [publish-kmp, publish-ios, publish-rn, generate-sbom]
+    needs: [publish-ios, publish-rn, generate-sbom]
     env:
       DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run == true }}
 
