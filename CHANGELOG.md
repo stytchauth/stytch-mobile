@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 
 ## [1.0.2] - 2026-04-27
+### Bug Fixes
+
+- Bump iOS DFP version
+
 ## [1.0.1] - 2026-04-24
 ### Bug Fixes
 
