@@ -13,7 +13,7 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/GoogleCloudPlatform/recaptcha-enterprise-mobile-sdk", from: "18.8.1"),
-        .package(url: "https://github.com/stytchauth/stytch-ios-dfp.git", .exact("1.0.6")),
+        .package(url: "https://github.com/stytchauth/stytch-ios-dfp.git", .exact("1.0.7")),
     ],
     targets: [
         .binaryTarget(
