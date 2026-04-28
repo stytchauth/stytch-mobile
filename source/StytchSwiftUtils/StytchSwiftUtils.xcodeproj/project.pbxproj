@@ -681,7 +681,7 @@
 			repositoryURL = "https://github.com/stytchauth/stytch-ios-dfp.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.7;
+				minimumVersion = 1.0.8;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
