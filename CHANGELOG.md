@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.4] - 2026-04-28
+### Bug Fixes
+
+- Bump iOS DFP ([`6a377ff`](https://github.com/stytchauth/stytch-mobile/commit/6a377ff4a3e3b63c82fbfae44cc18e0da12bccfa))
+
 ## [1.0.3] - 2026-04-27
 ### Bug Fixes
 
