@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.5] - 2026-04-28
+### Bug Fixes
+
+- Bundle iOS XCFrameworks for React Native ([`d88f819`](https://github.com/stytchauth/stytch-mobile/commit/d88f819028119d7fb4d35a6313828c29b994d4d5))
+
 ## [1.0.4] - 2026-04-28
 ### Bug Fixes
 
