@@ -18,6 +18,14 @@ Pod::Spec.new do |s|
   s.private_header_files = "ios/**/*.h"
   s.public_header_files = "ios/**/*.h"
 
+  s.vendored_frameworks = [
+    'ios/Frameworks/StytchConsumerSDK.xcframework',
+    'ios/Frameworks/StytchSharedSDK.xcframework',
+    'ios/Frameworks/StytchSwiftUtils.xcframework',
+    'ios/Frameworks/StytchDFP.xcframework',
+    'ios/Frameworks/RecaptchaEnterprise.xcframework'
+  ]
+
   s.pod_target_xcconfig = {
     'DEFINES_MODULE' => 'YES',
     'SWIFT_COMPILATION_MODE' => 'wholemodule'
