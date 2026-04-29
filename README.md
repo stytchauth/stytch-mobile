@@ -143,6 +143,7 @@ If you are using bare React Native, ensure you run `pod install` from your iOS d
 {
     "expo": {
     "plugins": [
+        ["./node_modules/@stytch/react-native-consumer/src/app.plugin.cjs", {}],
         [
         "expo-build-properties",
         {

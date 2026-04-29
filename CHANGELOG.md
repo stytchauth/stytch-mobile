@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.6] - 2026-04-29
+### Bug Fixes
+
+- Undo the bundling, try a sneak-spm install instead ([`b9d83d2`](https://github.com/stytchauth/stytch-mobile/commit/b9d83d297362c7c1f6bafed0749d73ae4453f8e0))
+
 ## [1.0.5] - 2026-04-28
 ### Bug Fixes
 
