@@ -64,6 +64,10 @@ module.exports = {
         },
       ],
       ["expo-apple-authentication"],
+      [
+        "./node_modules/@stytch/react-native-consumer/src/app.plugin.cjs",
+        {},
+      ],
       "expo-secure-store",
       "expo-font",
       "expo-image",
