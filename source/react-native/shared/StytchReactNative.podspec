@@ -11,12 +11,20 @@ Pod::Spec.new do |s|
   s.license      = package["license"]
   s.authors      = package["author"]
 
-  s.platforms    = { :ios => "13.0" }
+  s.platforms    = { :ios => "15.0" }
   s.source       = { :git => "https://github.com/stytchauth/stytch-mobile.git", :tag => "#{s.version}" }
 
-  s.source_files = "ios/**/*.{h,m,mm,swift,cpp}"
-  s.private_header_files = "ios/**/*.h"
-  s.public_header_files = "ios/**/*.h"
+  s.source_files = "ios/*.{h,m,mm,swift,cpp}"
+  s.private_header_files = "ios/*.h"
+  s.public_header_files = "ios/*.h"
+
+  s.vendored_frameworks = [
+    'ios/Frameworks/StytchConsumerSDK.xcframework',
+    'ios/Frameworks/StytchSharedSDK.xcframework',
+    'ios/Frameworks/StytchSwiftUtils.xcframework',
+    'ios/Frameworks/StytchDFP.xcframework',
+    'ios/Frameworks/RecaptchaEnterprise.xcframework'
+  ]
 
   s.pod_target_xcconfig = {
     'DEFINES_MODULE' => 'YES',

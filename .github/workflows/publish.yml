@@ -292,6 +292,38 @@ jobs:
           name: shared-maven-local
           path: ~/.m2/repository/com/stytch/sdk/
 
+      - name: Download xcframework zips
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: xcframework-zips
+          path: /tmp/xcframework-zips
+
+      - name: Download StytchDFP xcframework
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          DFP_VERSION=$(gh release view --repo stytchauth/stytch-ios-dfp --json tagName -q '.tagName')
+          gh release download "$DFP_VERSION" \
+            --repo stytchauth/stytch-ios-dfp \
+            --pattern "*.zip" \
+            --dir /tmp/xcframework-zips
+
+      - name: Download RecaptchaEnterprise xcframework
+        run: |
+          curl -fsSL \
+            "https://dl.google.com/recaptchaenterprise/v18.8.1/RecaptchaEnterprise_iOS_xcframework/recaptcha-xcframework.xcframework.zip" \
+            -o /tmp/xcframework-zips/RecaptchaEnterprise.xcframework.zip
+
+      - name: Unzip xcframeworks into shared ios/Frameworks
+        run: |
+          FRAMEWORKS_DIR=$GITHUB_WORKSPACE/source/react-native/shared/ios/Frameworks
+          mkdir -p "$FRAMEWORKS_DIR"
+          unzip -q /tmp/xcframework-zips/StytchConsumerSDK.xcframework.zip -d "$FRAMEWORKS_DIR"
+          unzip -q /tmp/xcframework-zips/StytchSharedSDK.xcframework.zip -d "$FRAMEWORKS_DIR"
+          unzip -q /tmp/xcframework-zips/StytchSwiftUtils.xcframework.zip -d "$FRAMEWORKS_DIR"
+          unzip -q "$(ls /tmp/xcframework-zips/StytchDFP-*.xcframework.zip)" -d "$FRAMEWORKS_DIR"
+          unzip -q /tmp/xcframework-zips/RecaptchaEnterprise.xcframework.zip -d "$FRAMEWORKS_DIR"
+
       - name: Build consumer JS output
         working-directory: source/sdks
         run: |

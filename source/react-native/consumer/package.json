@@ -21,8 +21,7 @@
     "ios",
     "src/NativeStytchBridge.ts",
     "*.podspec",
-    "package.json",
-    "src/app.plugin.cjs"
+    "package.json"
   ],
   "license": "MIT",
   "homepage": "https://stytch.com/docs/sdks/react-native-sdk",

@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.7] - 2026-04-29
+### Bug Fixes
+
+- Back to embedded frameworks, butlimited search paths to avoid parsing frameworks ([`dbfa5ae`](https://github.com/stytchauth/stytch-mobile/commit/dbfa5aec9ca4b34c7bafefbe56285fac1c91f1c9))
+
 ## [1.0.6] - 2026-04-29
 ### Bug Fixes
 
