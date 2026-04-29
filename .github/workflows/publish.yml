@@ -318,7 +318,6 @@ jobs:
         run: |
           FRAMEWORKS_DIR=$GITHUB_WORKSPACE/source/react-native/shared/ios/Frameworks
           mkdir -p "$FRAMEWORKS_DIR"
-          unzip -q /tmp/xcframework-zips/StytchConsumerSDK.xcframework.zip -d "$FRAMEWORKS_DIR"
           unzip -q /tmp/xcframework-zips/StytchSharedSDK.xcframework.zip -d "$FRAMEWORKS_DIR"
           unzip -q /tmp/xcframework-zips/StytchSwiftUtils.xcframework.zip -d "$FRAMEWORKS_DIR"
           unzip -q "$(ls /tmp/xcframework-zips/StytchDFP-*.xcframework.zip)" -d "$FRAMEWORKS_DIR"

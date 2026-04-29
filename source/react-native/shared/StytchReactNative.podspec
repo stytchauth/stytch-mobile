@@ -19,7 +19,6 @@ Pod::Spec.new do |s|
   s.public_header_files = "ios/*.h"
 
   s.vendored_frameworks = [
-    'ios/Frameworks/StytchConsumerSDK.xcframework',
     'ios/Frameworks/StytchSharedSDK.xcframework',
     'ios/Frameworks/StytchSwiftUtils.xcframework',
     'ios/Frameworks/StytchDFP.xcframework',

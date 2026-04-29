@@ -32,10 +32,6 @@ public final class com/stytch/sdk/consumer/StytchConsumerKt {
 	public static final fun createStytchConsumer (Lcom/stytch/sdk/data/StytchClientConfiguration;)Lcom/stytch/sdk/consumer/StytchConsumer;
 }
 
-public final class com/stytch/sdk/consumer/StytchDispatcherFactory_jvmKt {
-	public static final fun createStytchDispatchers ()Lcom/stytch/sdk/data/StytchDispatchers;
-}
-
 public final class com/stytch/sdk/consumer/biometrics/BiometricsAlreadyEnrolled : com/stytch/sdk/data/StytchError {
 	public fun <init> ()V
 }

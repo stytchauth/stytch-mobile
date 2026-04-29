@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.8] - 2026-04-29
+### Refactoring
+
+- Move dispatchers helper into shared so it can be used without going through the end-SDK; bump the version ([`c17efb4`](https://github.com/stytchauth/stytch-mobile/commit/c17efb406e9f47dfbc2cd3ed6d909cd7bdd0518a))
+
 ## [1.0.7] - 2026-04-29
 ### Bug Fixes
 

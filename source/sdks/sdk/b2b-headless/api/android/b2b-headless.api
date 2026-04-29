@@ -25,10 +25,6 @@ public final class com/stytch/sdk/b2b/StytchB2BKt {
 	public static final fun createStytchB2B (Lcom/stytch/sdk/data/StytchClientConfiguration;)Lcom/stytch/sdk/b2b/StytchB2B;
 }
 
-public final class com/stytch/sdk/b2b/StytchDispatcherFactory_androidKt {
-	public static final fun createStytchDispatchers ()Lcom/stytch/sdk/data/StytchDispatchers;
-}
-
 public abstract class com/stytch/sdk/b2b/data/B2BAuthenticationState : com/stytch/sdk/data/AuthenticationState {
 }
 
