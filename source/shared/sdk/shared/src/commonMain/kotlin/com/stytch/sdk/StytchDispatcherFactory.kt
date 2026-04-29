@@ -1,4 +1,4 @@
-package com.stytch.sdk.b2b
+package com.stytch.sdk
 
 import com.stytch.sdk.data.StytchDispatchers
 

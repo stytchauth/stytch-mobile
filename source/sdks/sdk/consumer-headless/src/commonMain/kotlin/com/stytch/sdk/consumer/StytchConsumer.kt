@@ -34,6 +34,7 @@ import com.stytch.sdk.consumer.totp.TOTPClient
 import com.stytch.sdk.consumer.totp.TOTPClientImpl
 import com.stytch.sdk.consumer.user.UserClient
 import com.stytch.sdk.consumer.user.UserClientImpl
+import com.stytch.sdk.createStytchDispatchers
 import com.stytch.sdk.data.BootstrapResponse
 import com.stytch.sdk.data.JsCleanup
 import com.stytch.sdk.data.PKCECodePair

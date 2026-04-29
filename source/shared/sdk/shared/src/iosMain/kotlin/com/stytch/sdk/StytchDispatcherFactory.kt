@@ -1,11 +1,11 @@
-package com.stytch.sdk.b2b
+package com.stytch.sdk
 
 import com.stytch.sdk.data.StytchDispatchers
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 
-/** @suppress */
 public actual fun createStytchDispatchers(): StytchDispatchers =
     StytchDispatchers(
-        ioDispatcher = Dispatchers.Default,
+        ioDispatcher = Dispatchers.IO,
         mainDispatcher = Dispatchers.Main,
     )
