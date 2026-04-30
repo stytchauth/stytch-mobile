@@ -35,7 +35,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: source/shared/sdk/shared/src/iosMain/interop/StytchSwiftUtils.xcframework
-          key: swiftutils-${{ hashFiles('source/StytchSwiftUtils/**') }}
+          key: swiftutils-${{ hashFiles('source/StytchSwiftUtils/**/*') }}
 
       - name: Build StytchSwiftUtils
         if: steps.cache-swiftutils.outputs.cache-hit != 'true'
