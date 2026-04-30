@@ -144,17 +144,17 @@ If you are using bare React Native, ensure you run `pod install` from your iOS d
     "expo": {
         "plugins": [
             [
-            "expo-build-properties",
-            {
-                "android": {
-                    "packagingOptions": {
-                        "exclude": ["META-INF/versions/9/OSGI-INF/MANIFEST.MF"],
+                "expo-build-properties",
+                {
+                    "android": {
+                        "packagingOptions": {
+                            "exclude": ["META-INF/versions/9/OSGI-INF/MANIFEST.MF"],
+                        },
                     },
+                    "ios": {
+                        "useFrameworks": "static",
+                    }
                 },
-                "ios": {
-                    "useFrameworks": "static",
-                }
-            },
             ]
         ]
     }
