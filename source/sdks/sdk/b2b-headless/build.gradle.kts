@@ -66,6 +66,10 @@ kotlin {
         withHostTest {
             enableCoverage = true
         }
+        optimization {
+            consumerKeepRules.files.add(rootProject.file("consumer-rules.pro"))
+            consumerKeepRules.publish = true
+        }
     }
 
     val xcFramework = XCFramework("StytchB2BSDK")
