@@ -1,5 +1,6 @@
 import com.android.build.api.dsl.androidLibrary
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
 
 plugins {
@@ -73,7 +74,7 @@ kotlin {
                 packageName("com.stytch.sdk")
             }
         }
-        target.binaries.framework {
+        target.binaries.framework(listOf(NativeBuildType.RELEASE)) {
             baseName = "StytchSharedSDK"
             xcFramework.add(this)
             if (target.name == "iosArm64") {

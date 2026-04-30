@@ -8,6 +8,7 @@ import com.stytch.sdk.utils.InjectJsDocTask
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
+import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompileCommon
 
@@ -74,7 +75,7 @@ kotlin {
         iosArm64(),
         iosSimulatorArm64(),
     ).forEach {
-        it.binaries.framework {
+        it.binaries.framework(listOf(NativeBuildType.RELEASE)) {
             baseName = "StytchB2BSDK"
             xcFramework.add(this)
             val sharedIosProjectDirectory = "${rootProject.layout.projectDirectory.dir("../shared/sdk/shared")}"
