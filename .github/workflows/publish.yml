@@ -26,7 +26,7 @@ jobs:
 
   publish-shared-maven:
     name: Publish Shared to Maven Central
-    runs-on: macos-latest
+    runs-on: macos-15-xlarge
     needs: build-shared
     env:
       DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run == true }}
@@ -60,7 +60,7 @@ jobs:
 
   publish-sdks-maven:
     name: Publish SDKs to Maven Central
-    runs-on: macos-latest
+    runs-on: macos-15-xlarge
     needs: build-shared
     env:
       DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run == true }}
@@ -120,7 +120,7 @@ jobs:
 
   build-consumer-xcframework:
     name: Build Consumer XCFramework
-    runs-on: macos-latest
+    runs-on: macos-15-xlarge
     needs: build-shared
 
     steps:
@@ -174,7 +174,7 @@ jobs:
 
   build-b2b-xcframework:
     name: Build B2B XCFramework
-    runs-on: macos-latest
+    runs-on: macos-15-xlarge
     needs: build-shared
 
     steps:
@@ -228,7 +228,7 @@ jobs:
 
   package-and-release-ios:
     name: Package and Release iOS
-    runs-on: macos-latest
+    runs-on: macos-15-xlarge
     needs: [build-consumer-xcframework, build-b2b-xcframework]
     env:
       DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run == true }}
@@ -368,7 +368,7 @@ jobs:
 
   publish-rn:
     name: Publish React Native
-    runs-on: macos-latest
+    runs-on: macos-15-xlarge
     needs: [publish-shared-maven]
     env:
       DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run == true }}

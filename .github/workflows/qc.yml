@@ -45,7 +45,7 @@ jobs:
 
   check-sdks:
     name: Lint & Test (Consumer & B2B)
-    runs-on: macos-latest
+    runs-on: macos-15-xlarge
     needs: build-shared
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
@@ -90,7 +90,7 @@ jobs:
 
   check-ios-simulator:
     name: Test (iOS Simulator)
-    runs-on: macos-latest
+    runs-on: macos-15-xlarge
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
@@ -158,7 +158,7 @@ jobs:
 
   check-swift-utils:
     name: Test (StytchSwiftUtils)
-    runs-on: macos-latest
+    runs-on: macos-15-xlarge
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
