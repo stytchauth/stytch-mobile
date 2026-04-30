@@ -30,20 +30,18 @@ jobs:
           certificate_password: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
           keychain_password: ${{ secrets.KEYCHAIN_PASSWORD }}
 
+      - name: Cache StytchSwiftUtils xcframework
+        id: cache-swiftutils
+        uses: actions/cache@v4
+        with:
+          path: source/shared/sdk/shared/src/iosMain/interop/StytchSwiftUtils.xcframework
+          key: swiftutils-${{ hashFiles('source/StytchSwiftUtils/**') }}
+
       - name: Build StytchSwiftUtils
+        if: steps.cache-swiftutils.outputs.cache-hit != 'true'
         working-directory: source/StytchSwiftUtils
         run: |
           rm -rf derived archives StytchSwiftUtils.xcframework
-
-          xcodebuild -project StytchSwiftUtils.xcodeproj -scheme StytchSwiftUtils \
-            -configuration Release -destination 'generic/platform=iOS' \
-            -derivedDataPath ./derived IPHONEOS_DEPLOYMENT_TARGET=15.0 \
-            SKIP_INSTALL=NO BUILD_LIBRARIES_FOR_DISTRIBUTION=YES ONLY_ACTIVE_ARCH=NO build
-
-          xcodebuild -project StytchSwiftUtils.xcodeproj -scheme StytchSwiftUtils \
-            -configuration Release -destination 'generic/platform=iOS Simulator' \
-            -derivedDataPath ./derived IPHONEOS_DEPLOYMENT_TARGET=15.0 \
-            SKIP_INSTALL=NO BUILD_LIBRARIES_FOR_DISTRIBUTION=YES ONLY_ACTIVE_ARCH=NO build
 
           xcodebuild -project StytchSwiftUtils.xcodeproj -scheme StytchSwiftUtils \
             -configuration Release -archivePath "./archives/iOS" \
