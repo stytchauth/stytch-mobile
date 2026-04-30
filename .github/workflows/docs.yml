@@ -21,7 +21,7 @@ jobs:
 
   generate-android-docs:
     name: Generate Android Docs
-    runs-on: macos-15-xlarge
+    runs-on: macos-latest
     needs: build-shared
 
     steps:
@@ -64,7 +64,7 @@ jobs:
 
   generate-ios-docs:
     name: Generate iOS Docs
-    runs-on: macos-15-xlarge
+    runs-on: macos-latest
     needs: build-shared
 
     steps:
