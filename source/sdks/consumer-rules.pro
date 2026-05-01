@@ -1,0 +1,2 @@
+-keep class com.stytch.** { *; }
+-keepclassmembers class com.stytch.* { *; }

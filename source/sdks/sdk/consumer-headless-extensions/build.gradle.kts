@@ -39,6 +39,10 @@ kotlin {
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_11)
         }
+        optimization {
+            consumerKeepRules.files.add(rootProject.file("consumer-rules.pro"))
+            consumerKeepRules.publish = true
+        }
     }
 
     jvm()
