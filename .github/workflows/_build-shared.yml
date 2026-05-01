@@ -30,7 +30,19 @@ jobs:
           certificate_password: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
           keychain_password: ${{ secrets.KEYCHAIN_PASSWORD }}
 
+      - name: Get StytchSwiftUtils cache key
+        id: swiftutils-hash
+        run: echo "hash=$(git log -1 --format=%H -- source/StytchSwiftUtils)" >> $GITHUB_OUTPUT
+
+      - name: Cache StytchSwiftUtils xcframework
+        id: cache-swiftutils
+        uses: actions/cache@v4
+        with:
+          path: source/shared/sdk/shared/src/iosMain/interop/StytchSwiftUtils.xcframework
+          key: swiftutils-${{ steps.swiftutils-hash.outputs.hash }}
+
       - name: Build StytchSwiftUtils
+        if: steps.cache-swiftutils.outputs.cache-hit != 'true'
         working-directory: source/StytchSwiftUtils
         run: |
           rm -rf derived archives StytchSwiftUtils.xcframework
