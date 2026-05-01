@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.9] - 2026-05-01
+### Bug Fixes
+
+- Fix zip artifact locations ([`2ceed96`](https://github.com/stytchauth/stytch-mobile/commit/2ceed964b06c57232b0a21f3ee2303566fda541c))
+
+### Refactoring
+
+- Reorganize publish steps to attempt to speed things up ([`9da0c71`](https://github.com/stytchauth/stytch-mobile/commit/9da0c71633f203cce55f27f0e43e830af349c03d))
+
 ## [1.0.8] - 2026-04-29
 ### Refactoring
 
