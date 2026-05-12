@@ -16,7 +16,6 @@ plugins {
     alias(libs.plugins.dokka)
     alias(libs.plugins.detekt) apply false
     alias(libs.plugins.cyclonedx) apply false
-    alias(libs.plugins.atomicfu) apply false
 }
 
 group = "com.stytch.sdk"

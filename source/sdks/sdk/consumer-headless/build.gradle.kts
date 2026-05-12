@@ -22,7 +22,6 @@ plugins {
     alias(libs.plugins.kover)
     alias(libs.plugins.mavenPublish)
     alias(libs.plugins.openapi)
-    alias(libs.plugins.atomicfu)
 }
 
 group = rootProject.group
@@ -122,6 +121,7 @@ kotlin {
                 implementation(libs.ktorfit.lib.light)
                 implementation(libs.kotlinx.serialization.json)
                 implementation(libs.skie.configuration.annotations)
+                implementation(libs.atomicfu)
             }
         }
         jvmTest.dependencies {
