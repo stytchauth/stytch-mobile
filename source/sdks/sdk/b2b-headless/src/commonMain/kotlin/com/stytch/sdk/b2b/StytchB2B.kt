@@ -345,7 +345,7 @@ internal class DefaultStytchB2B(
         }
     }
 
-    internal var bootstrapResponse: BootstrapResponse? = null
+    @Volatile internal var bootstrapResponse: BootstrapResponse? = null
 
     private val initExceptionHandler =
         CoroutineExceptionHandler { _, throwable ->
