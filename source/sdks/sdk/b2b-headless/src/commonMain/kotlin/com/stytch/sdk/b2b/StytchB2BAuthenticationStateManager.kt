@@ -23,6 +23,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
+import kotlin.concurrent.Volatile
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Instant
@@ -37,6 +38,8 @@ internal class StytchB2BAuthenticationStateManager(
     internal var sessionTokenFlow: MutableStateFlow<String?> = MutableStateFlow(null)
     internal var sessionJwtFlow: MutableStateFlow<String?> = MutableStateFlow(null)
     internal var intermediateSessionTokenFlow: MutableStateFlow<String?> = MutableStateFlow(null)
+
+    @Volatile
     internal var istExpiration: Instant? = null
 
     private val loadingStateFlow: MutableStateFlow<Boolean> = MutableStateFlow(false)
