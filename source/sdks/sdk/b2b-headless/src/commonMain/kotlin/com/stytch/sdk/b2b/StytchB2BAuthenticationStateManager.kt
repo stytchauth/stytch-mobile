@@ -11,6 +11,7 @@ import com.stytch.sdk.data.StytchDispatchers
 import com.stytch.sdk.persistence.StytchPersistenceClient
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
@@ -38,6 +39,7 @@ internal class StytchB2BAuthenticationStateManager(
     internal var istExpiration: Instant? = null
 
     private val loadingStateFlow: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    private val stateScope = CoroutineScope(dispatchers.mainDispatcher + SupervisorJob())
 
     @OptIn(ExperimentalCoroutinesApi::class)
     override val authenticationStateFlow: StateFlow<B2BAuthenticationState> =
@@ -60,7 +62,7 @@ internal class StytchB2BAuthenticationStateManager(
                         }
                     }
                 }
-            }.stateIn(CoroutineScope(dispatchers.mainDispatcher), SharingStarted.WhileSubscribed(5000L), B2BAuthenticationState.Loading())
+            }.stateIn(stateScope, SharingStarted.WhileSubscribed(5000L), B2BAuthenticationState.Loading())
 
     override val currentSessionToken: String?
         get() = sessionTokenFlow.value

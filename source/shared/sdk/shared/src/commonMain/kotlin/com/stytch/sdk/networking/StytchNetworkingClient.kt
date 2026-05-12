@@ -13,6 +13,7 @@ import io.ktor.client.call.body
 import io.ktor.client.plugins.ResponseException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.max
@@ -42,6 +43,8 @@ public abstract class StytchNetworkingClient(
             getDfpConfiguration = { dfpConfiguration },
         )
 
+    private val heartbeatScope = CoroutineScope(dispatchers.ioDispatcher + SupervisorJob())
+
     public fun startSessionUpdateJob(delay: Long) {
         // This is a little more complicated than the existing android/iOS logic
         // previously, we only triggered the auto update every ~= 3 minutes, which could result
@@ -50,7 +53,7 @@ public abstract class StytchNetworkingClient(
         // but potentially sooner, if the session expires BEFORE three minutes from now. Does that make sense?
         sessionUpdateJob?.cancel()
         sessionUpdateJob =
-            CoroutineScope(dispatchers.ioDispatcher).launch {
+            heartbeatScope.launch {
                 try {
                     delay(delay)
                     val nextSessionExpiration =

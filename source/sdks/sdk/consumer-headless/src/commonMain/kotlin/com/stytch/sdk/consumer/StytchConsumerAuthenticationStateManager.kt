@@ -6,6 +6,7 @@ import com.stytch.sdk.consumer.networking.AuthenticatedResponse
 import com.stytch.sdk.data.StytchDispatchers
 import com.stytch.sdk.persistence.StytchPersistenceClient
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
@@ -27,6 +28,7 @@ internal class StytchConsumerAuthenticationStateManager(
     internal var sessionJwtFlow: MutableStateFlow<String?> = MutableStateFlow(null)
 
     private val loadingStateFlow: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    private val stateScope = CoroutineScope(dispatchers.mainDispatcher + SupervisorJob())
 
     override val authenticationStateFlow: StateFlow<ConsumerAuthenticationState> =
         combine(loadingStateFlow, sessionFlow, userFlow, sessionTokenFlow, sessionJwtFlow) { isLoaded, session, user, token, jwt ->
@@ -35,7 +37,7 @@ internal class StytchConsumerAuthenticationStateManager(
                 return@combine ConsumerAuthenticationState.Authenticated(user, session, token, jwt)
             }
             ConsumerAuthenticationState.Unauthenticated()
-        }.stateIn(CoroutineScope(dispatchers.mainDispatcher), SharingStarted.WhileSubscribed(5000L), ConsumerAuthenticationState.Loading())
+        }.stateIn(stateScope, SharingStarted.WhileSubscribed(5000L), ConsumerAuthenticationState.Loading())
 
     override val currentSessionToken: String?
         get() = sessionTokenFlow.value

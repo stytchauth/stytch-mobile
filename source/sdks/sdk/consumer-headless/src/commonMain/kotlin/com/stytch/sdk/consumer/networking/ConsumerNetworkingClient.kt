@@ -10,6 +10,7 @@ import com.stytch.sdk.networking.StytchNetworkResponseMiddleware
 import com.stytch.sdk.networking.StytchNetworkingClient
 import io.ktor.client.plugins.ResponseException
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import kotlin.math.min
@@ -32,9 +33,10 @@ internal class ConsumerNetworkingClient(
     apiOverride: SdkExternalApi? = null,
 ) : StytchNetworkingClient(configuration, dispatchers, sessionManager) {
     internal val api: SdkExternalApi = apiOverride ?: ktorfit.create()
+    private val networkingClientScope = CoroutineScope(dispatchers.ioDispatcher + SupervisorJob())
 
     init {
-        CoroutineScope(dispatchers.ioDispatcher).launch {
+        networkingClientScope.launch {
             // Collect the first non-null session token emission, and trigger the heartbeat immediately
             sessionManager.sessionTokenFlow.firstOrNull { it != null }?.let {
                 startSessionUpdateJob(0L)
