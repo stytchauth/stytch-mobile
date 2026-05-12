@@ -16,6 +16,8 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.time.Clock
@@ -31,6 +33,7 @@ public abstract class StytchNetworkingClient(
     public abstract suspend fun updateSessionAndReturnExpiration(): Instant
 
     private var sessionUpdateJob: Job? = null
+    private val heartbeatMutex = Mutex()
 
     public val ktorfit: Ktorfit
 
@@ -51,31 +54,37 @@ public abstract class StytchNetworkingClient(
         // in sessions persisting locally for up to 3 minutes after expiration. Not a security issue, because
         // the API enforced sessions, but weird UX. Now, we force the check AT LEAST every three minutes,
         // but potentially sooner, if the session expires BEFORE three minutes from now. Does that make sense?
-        sessionUpdateJob?.cancel()
-        sessionUpdateJob =
-            heartbeatScope.launch {
-                try {
-                    delay(delay)
-                    val nextSessionExpiration =
-                        stytchNetworkRequestWithRetryAndBackoff(
-                            block = ::updateSessionAndReturnExpiration,
-                        )
-                    val timeUntilSessionExpires = (nextSessionExpiration - Clock.System.now()).inWholeMilliseconds
-                    // prevent negative delays
-                    val delay = max(0L, min(timeUntilSessionExpires, HEARTBEAT_INTERVAL_MS))
-                    startSessionUpdateJob(delay)
-                } catch (e: Exception) {
-                    if (e is ResponseException) {
-                        if (e.response.body<StytchAPIError>().isUnrecoverableError()) {
-                            sessionManager.revoke()
+        heartbeatScope.launch {
+            heartbeatMutex.withLock {
+                sessionUpdateJob?.cancel()
+                sessionUpdateJob =
+                    heartbeatScope.launch {
+                        try {
+                            delay(delay)
+                            val nextSessionExpiration =
+                                stytchNetworkRequestWithRetryAndBackoff(
+                                    block = ::updateSessionAndReturnExpiration,
+                                )
+                            val timeUntilSessionExpires = (nextSessionExpiration - Clock.System.now()).inWholeMilliseconds
+                            // prevent negative delays
+                            val delay = max(0L, min(timeUntilSessionExpires, HEARTBEAT_INTERVAL_MS))
+                            startSessionUpdateJob(delay)
+                        } catch (e: Exception) {
+                            if (e is ResponseException) {
+                                if (e.response.body<StytchAPIError>().isUnrecoverableError()) {
+                                    sessionManager.revoke()
+                                }
+                            }
+                            // if it's not a network/API error, and we exhausted our retries, cancel the updating job. The next time a
+                            // (successful) network response completes, it will re-create the heartbeat
+                            heartbeatMutex.withLock {
+                                sessionUpdateJob?.cancel()
+                                sessionUpdateJob = null
+                            }
                         }
                     }
-                    // if it's not a network/API error, and we exhausted our retries, cancel the updating job. The next time a
-                    // (successful) network response completes, it will re-create the heartbeat
-                    sessionUpdateJob?.cancel()
-                    sessionUpdateJob = null
-                }
             }
+        }
     }
 
     public suspend fun <T> request(block: suspend () -> StytchDataResponse<T>): T =
