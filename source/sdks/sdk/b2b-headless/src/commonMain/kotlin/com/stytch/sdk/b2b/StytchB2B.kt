@@ -58,6 +58,7 @@ import io.ktor.utils.io.CancellationException
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.InternalCoroutinesApi
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.StateFlow
@@ -353,7 +354,7 @@ internal class DefaultStytchB2B(
         }
 
     init {
-        CoroutineScope(dispatchers.ioDispatcher + initExceptionHandler).launch {
+        CoroutineScope(dispatchers.ioDispatcher + SupervisorJob() + initExceptionHandler).launch {
             // Bootstrap (unauthenticated) and migrations are independent — run concurrently.
             val bootstrapJob =
                 async {
