@@ -40,7 +40,7 @@ internal class StytchB2BAuthenticationStateManager(
     internal var istExpiration: Instant? = null
 
     private val loadingStateFlow: MutableStateFlow<Boolean> = MutableStateFlow(false)
-    internal val exceptionFlow: MutableSharedFlow<Throwable?> = MutableSharedFlow(0)
+    internal val exceptionFlow: MutableStateFlow<Throwable?> = MutableStateFlow(null)
     private val stateScope = CoroutineScope(dispatchers.mainDispatcher + SupervisorJob())
 
     @OptIn(ExperimentalCoroutinesApi::class)
