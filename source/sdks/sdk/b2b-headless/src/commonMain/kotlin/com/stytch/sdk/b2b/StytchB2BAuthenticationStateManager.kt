@@ -49,7 +49,7 @@ internal class StytchB2BAuthenticationStateManager(
             .combine(loadingStateFlow) { throwable, isLoaded ->
                 if (throwable != null) {
                     flowOf(B2BAuthenticationState.Error(throwable))
-                } else if (isLoaded) {
+                } else if (!isLoaded) {
                     flowOf(B2BAuthenticationState.Loading())
                 } else {
                     combine(
