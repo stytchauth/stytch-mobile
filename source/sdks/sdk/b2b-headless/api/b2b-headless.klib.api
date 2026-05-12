@@ -18882,6 +18882,13 @@ sealed class com.stytch.sdk.b2b.data/B2BAuthenticationState : com.stytch.sdk.dat
             final fun <get-sessionToken>(): kotlin/String // com.stytch.sdk.b2b.data/B2BAuthenticationState.Authenticated.sessionToken.<get-sessionToken>|<get-sessionToken>(){}[0]
     }
 
+    final class Error : com.stytch.sdk.b2b.data/B2BAuthenticationState { // com.stytch.sdk.b2b.data/B2BAuthenticationState.Error|null[0]
+        constructor <init>(kotlin/Throwable) // com.stytch.sdk.b2b.data/B2BAuthenticationState.Error.<init>|<init>(kotlin.Throwable){}[0]
+
+        final val exception // com.stytch.sdk.b2b.data/B2BAuthenticationState.Error.exception|{}exception[0]
+            final fun <get-exception>(): kotlin/Throwable // com.stytch.sdk.b2b.data/B2BAuthenticationState.Error.exception.<get-exception>|<get-exception>(){}[0]
+    }
+
     final class Loading : com.stytch.sdk.b2b.data/B2BAuthenticationState { // com.stytch.sdk.b2b.data/B2BAuthenticationState.Loading|null[0]
         constructor <init>() // com.stytch.sdk.b2b.data/B2BAuthenticationState.Loading.<init>|<init>(){}[0]
     }

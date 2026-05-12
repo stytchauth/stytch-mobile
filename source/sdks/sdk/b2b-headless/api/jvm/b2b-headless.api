@@ -37,6 +37,11 @@ public final class com/stytch/sdk/b2b/data/B2BAuthenticationState$Authenticated 
 	public final fun getSessionToken ()Ljava/lang/String;
 }
 
+public final class com/stytch/sdk/b2b/data/B2BAuthenticationState$Error : com/stytch/sdk/b2b/data/B2BAuthenticationState {
+	public fun <init> (Ljava/lang/Throwable;)V
+	public final fun getException ()Ljava/lang/Throwable;
+}
+
 public final class com/stytch/sdk/b2b/data/B2BAuthenticationState$Loading : com/stytch/sdk/b2b/data/B2BAuthenticationState {
 	public fun <init> ()V
 }
