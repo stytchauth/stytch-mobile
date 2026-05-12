@@ -394,52 +394,56 @@ internal class OAuthClientImpl(
             val host =
                 "https://${cnameDomain() ?: if (publicTokenInfo.isTestToken) endpointOptions.testDomain else endpointOptions.liveDomain}/v1/"
             val baseUrl = "${host}public/oauth/${provider.hostName}/start"
-            val response =
-                oauthProvider.getOAuthToken(
-                    pkceClient = pkceClient,
-                    dispatchers = dispatchers,
-                    type = provider,
-                    parameters = parameters,
-                    baseUrl = baseUrl,
-                    publicTokenInfo = publicTokenInfo,
-                )
-            return@withContext when (response) {
-                is OAuthResult.ClassicToken -> {
-                    authenticate(
-                        OAuthAuthenticateParameters(
-                            token = response.token,
-                            sessionDurationMinutes = parameters.sessionDurationMinutes ?: defaultSessionDuration,
-                        ),
+            try {
+                val response =
+                    oauthProvider.getOAuthToken(
+                        pkceClient = pkceClient,
+                        dispatchers = dispatchers,
+                        type = provider,
+                        parameters = parameters,
+                        baseUrl = baseUrl,
+                        publicTokenInfo = publicTokenInfo,
                     )
-                }
-
-                is OAuthResult.IDToken -> {
-                    // IDTokens only come back for Google (on Android) or Apple (on iOS)
-                    if (provider == OAuthProviderType.GOOGLE) {
-                        authenticateGoogleIdToken(
-                            OAuthGoogleIDTokenAuthenticateParameters(
-                                idToken = response.token,
-                                nonce = response.nonce,
+                return@withContext when (response) {
+                    is OAuthResult.ClassicToken -> {
+                        authenticate(
+                            OAuthAuthenticateParameters(
+                                token = response.token,
                                 sessionDurationMinutes = parameters.sessionDurationMinutes ?: defaultSessionDuration,
-                                oauthAttachToken = parameters.oauthAttachToken,
-                            ),
-                        )
-                    } else {
-                        authenticateAppleIdToken(
-                            OAuthAppleIDTokenAuthenticateParameters(
-                                idToken = response.token,
-                                nonce = response.nonce,
-                                name = response.name?.toApiUserV1Name(),
-                                sessionDurationMinutes = parameters.sessionDurationMinutes ?: defaultSessionDuration,
-                                oauthAttachToken = parameters.oauthAttachToken,
                             ),
                         )
                     }
-                }
 
-                is OAuthResult.Error -> {
-                    throw OAuthException(RuntimeException(response.message))
+                    is OAuthResult.IDToken -> {
+                        // IDTokens only come back for Google (on Android) or Apple (on iOS)
+                        if (provider == OAuthProviderType.GOOGLE) {
+                            authenticateGoogleIdToken(
+                                OAuthGoogleIDTokenAuthenticateParameters(
+                                    idToken = response.token,
+                                    nonce = response.nonce,
+                                    sessionDurationMinutes = parameters.sessionDurationMinutes ?: defaultSessionDuration,
+                                    oauthAttachToken = parameters.oauthAttachToken,
+                                ),
+                            )
+                        } else {
+                            authenticateAppleIdToken(
+                                OAuthAppleIDTokenAuthenticateParameters(
+                                    idToken = response.token,
+                                    nonce = response.nonce,
+                                    name = response.name?.toApiUserV1Name(),
+                                    sessionDurationMinutes = parameters.sessionDurationMinutes ?: defaultSessionDuration,
+                                    oauthAttachToken = parameters.oauthAttachToken,
+                                ),
+                            )
+                        }
+                    }
+
+                    is OAuthResult.Error -> {
+                        throw OAuthException(RuntimeException(response.message))
+                    }
                 }
+            } finally {
+                pkceClient.revoke()
             }
         }
 }

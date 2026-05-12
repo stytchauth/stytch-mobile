@@ -338,28 +338,31 @@ internal class B2BOAuthClientImpl(
         withContext(dispatchers.ioDispatcher) {
             val domain = cnameDomain() ?: if (publicTokenInfo.isTestToken) endpointOptions.testDomain else endpointOptions.liveDomain
             val baseUrl = "https://$domain/b2b/public/oauth/$providerName/discovery/start"
-            val codePair = pkceClient.create()
-            val url = buildDiscoveryOAuthUrl(baseUrl, codePair.challenge, parameters)
-            val result = oauthProvider.startBrowserFlow(url, parameters.toOAuthStartParameters(), dispatchers)
-            when (result) {
-                is OAuthResult.ClassicToken -> {
-                    networkingClient
-                        .request {
-                            networkingClient.api.b2BOAuthDiscoveryAuthenticate(
-                                B2BOAuthDiscoveryAuthenticateParameters(
-                                    discoveryOauthToken = result.token,
-                                ).toNetworkModel(pkceCodeVerifier = codePair.verifier),
-                            )
-                        }.also { pkceClient.revoke() }
-                }
+            try {
+                val codePair = pkceClient.create()
+                val url = buildDiscoveryOAuthUrl(baseUrl, codePair.challenge, parameters)
+                when (val result = oauthProvider.startBrowserFlow(url, parameters.toOAuthStartParameters(), dispatchers)) {
+                    is OAuthResult.ClassicToken -> {
+                        networkingClient
+                            .request {
+                                networkingClient.api.b2BOAuthDiscoveryAuthenticate(
+                                    B2BOAuthDiscoveryAuthenticateParameters(
+                                        discoveryOauthToken = result.token,
+                                    ).toNetworkModel(pkceCodeVerifier = codePair.verifier),
+                                )
+                            }.also { pkceClient.revoke() }
+                    }
 
-                is OAuthResult.Error -> {
-                    throw OAuthException(RuntimeException(result.message))
-                }
+                    is OAuthResult.Error -> {
+                        throw OAuthException(RuntimeException(result.message))
+                    }
 
-                else -> {
-                    throw OAuthException(RuntimeException("Unexpected OAuth result type"))
+                    else -> {
+                        throw OAuthException(RuntimeException("Unexpected OAuth result type"))
+                    }
                 }
+            } finally {
+                pkceClient.revoke()
             }
         }
 
