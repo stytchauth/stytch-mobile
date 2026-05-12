@@ -4,6 +4,7 @@ import com.stytch.sdk.data.StytchDataResponse
 import com.stytch.sdk.data.StytchError
 import com.stytch.sdk.data.StytchNetworkError
 import io.ktor.client.plugins.ResponseException
+import io.ktor.utils.io.CancellationException
 import kotlinx.coroutines.delay
 
 public suspend fun <T> stytchNetworkRequest(
@@ -15,12 +16,9 @@ public suspend fun <T> stytchNetworkRequest(
         middleware.onSuccess(response.data)
         response.data
     } catch (e: Exception) {
-        if (e is ResponseException) {
-            throw middleware.onError(e)
-        }
-        if (e is StytchError) {
-            throw e
-        }
+        if (e is CancellationException) throw e
+        if (e is StytchError) throw e
+        if (e is ResponseException) throw middleware.onError(e)
         throw StytchNetworkError("Unknown error occurred", e)
     }
 
@@ -34,6 +32,7 @@ public suspend fun <T> stytchNetworkRequestWithRetryAndBackoff(
     try {
         block()
     } catch (e: Exception) {
+        if (e is CancellationException) throw e
         if (maxRetries <= 0) throw e
         delay(initialDelay)
         stytchNetworkRequestWithRetryAndBackoff(
