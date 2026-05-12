@@ -97,7 +97,7 @@ public abstract class StytchNetworkingClient(
 
     private var dfpConfiguration: DFPConfiguration = DFPConfiguration()
 
-    public suspend fun refreshBootStrapData(cachedBootstrapResponse: BootstrapResponse?): BootstrapResponse =
+    public suspend fun refreshBootStrapData(): Result<BootstrapResponse> =
         try {
             // Add retry with backoff to boostrap requests
             val bootstrapResponse =
@@ -116,20 +116,9 @@ public abstract class StytchNetworkingClient(
                     configuration.captchaProvider?.initialize(siteKey)
                 }
             }
-            bootstrapResponse.data
+            Result.success(bootstrapResponse.data)
         } catch (e: Exception) {
-            // if getting the bootstrap data failed with backoff, return the cached bootstrap data (or the default), but mark it as failed
-            val fallback = cachedBootstrapResponse ?: BootstrapResponse(-1, "request-failed")
-            try {
-                // if it failed with a StytchAPIError, update the fallback with the most recent statusCode and requestId
-                val apiResponse = (e as ResponseException).response.body<StytchAPIError>()
-                fallback.copy(
-                    statusCode = apiResponse.statusCode,
-                    requestId = apiResponse.requestId,
-                )
-            } catch (_: Exception) {
-                fallback
-            }
+            Result.failure(e)
         }
 
     public companion object {

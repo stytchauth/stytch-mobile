@@ -300,7 +300,7 @@ internal class DefaultStytchConsumer(
             val bootstrapJob =
                 async {
                     val cached = persistenceClient.get<BootstrapResponse>(BOOTSTRAP_IDENTIFIER, null)
-                    networkingClient.refreshBootStrapData(cached).also {
+                    networkingClient.refreshBootStrapData().getOrDefault(cached).also {
                         persistenceClient.save(BOOTSTRAP_IDENTIFIER, it)
                     }
                 }

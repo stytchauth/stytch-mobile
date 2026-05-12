@@ -252,7 +252,7 @@ internal class DefaultStytchB2B(
             getRbacPolicy = { bootstrapResponse?.rbacPolicy },
             refreshAndGetRbacPolicy = {
                 bootstrapResponse =
-                    networkingClient.refreshBootStrapData(bootstrapResponse).also {
+                    networkingClient.refreshBootStrapData().getOrDefault(bootstrapResponse).also {
                         // and persist whatever the latest bootstrap response was
                         persistenceClient.save(BOOTSTRAP_IDENTIFIER, it)
                     }
@@ -358,7 +358,7 @@ internal class DefaultStytchB2B(
             val bootstrapJob =
                 async {
                     val cached = persistenceClient.get<BootstrapResponse>(BOOTSTRAP_IDENTIFIER, null)
-                    networkingClient.refreshBootStrapData(cached).also {
+                    networkingClient.refreshBootStrapData().getOrDefault(cached).also {
                         persistenceClient.save(BOOTSTRAP_IDENTIFIER, it)
                     }
                 }
