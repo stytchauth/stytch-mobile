@@ -55,6 +55,7 @@ import com.stytch.sdk.persistence.StytchPersistenceClient
 import com.stytch.sdk.pkce.PKCEClient
 import io.ktor.http.URLBuilder
 import io.ktor.utils.io.CancellationException
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.async
@@ -346,8 +347,13 @@ internal class DefaultStytchB2B(
 
     internal var bootstrapResponse: BootstrapResponse? = null
 
+    private val initExceptionHandler =
+        CoroutineExceptionHandler { _, throwable ->
+            sessionManager.exceptionFlow.tryEmit(throwable)
+        }
+
     init {
-        CoroutineScope(dispatchers.ioDispatcher).launch {
+        CoroutineScope(dispatchers.ioDispatcher + initExceptionHandler).launch {
             // Bootstrap (unauthenticated) and migrations are independent — run concurrently.
             val bootstrapJob =
                 async {

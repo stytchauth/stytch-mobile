@@ -6,14 +6,18 @@ import com.stytch.sdk.consumer.networking.AuthenticatedResponse
 import com.stytch.sdk.data.StytchDispatchers
 import com.stytch.sdk.persistence.StytchPersistenceClient
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
 import com.stytch.sdk.consumer.networking.models.ApiSessionV1Session as Session
 import com.stytch.sdk.consumer.networking.models.ApiUserV1User as User
@@ -28,16 +32,31 @@ internal class StytchConsumerAuthenticationStateManager(
     internal var sessionJwtFlow: MutableStateFlow<String?> = MutableStateFlow(null)
 
     private val loadingStateFlow: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    internal val exceptionFlow: MutableSharedFlow<Throwable?> = MutableSharedFlow(0)
     private val stateScope = CoroutineScope(dispatchers.mainDispatcher + SupervisorJob())
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     override val authenticationStateFlow: StateFlow<ConsumerAuthenticationState> =
-        combine(loadingStateFlow, sessionFlow, userFlow, sessionTokenFlow, sessionJwtFlow) { isLoaded, session, user, token, jwt ->
-            if (!isLoaded) return@combine ConsumerAuthenticationState.Loading()
-            if (session != null && user != null && token != null && jwt != null) {
-                return@combine ConsumerAuthenticationState.Authenticated(user, session, token, jwt)
-            }
-            ConsumerAuthenticationState.Unauthenticated()
-        }.stateIn(stateScope, SharingStarted.WhileSubscribed(5000L), ConsumerAuthenticationState.Loading())
+        exceptionFlow
+            .flatMapLatest { throwable ->
+                if (throwable != null) {
+                    flowOf(ConsumerAuthenticationState.Error(throwable))
+                } else {
+                    combine(
+                        loadingStateFlow,
+                        sessionFlow,
+                        userFlow,
+                        sessionTokenFlow,
+                        sessionJwtFlow,
+                    ) { isLoaded, session, user, token, jwt ->
+                        if (!isLoaded) return@combine ConsumerAuthenticationState.Loading()
+                        if (session != null && user != null && token != null && jwt != null) {
+                            return@combine ConsumerAuthenticationState.Authenticated(user, session, token, jwt)
+                        }
+                        ConsumerAuthenticationState.Unauthenticated()
+                    }
+                }
+            }.stateIn(stateScope, SharingStarted.WhileSubscribed(5000L), ConsumerAuthenticationState.Loading())
 
     override val currentSessionToken: String?
         get() = sessionTokenFlow.value

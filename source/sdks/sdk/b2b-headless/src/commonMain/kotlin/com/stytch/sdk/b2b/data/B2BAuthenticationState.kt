@@ -30,4 +30,8 @@ public sealed class B2BAuthenticationState : AuthenticationState {
         /** The session JWT. */
         public val sessionJwt: String,
     ) : B2BAuthenticationState()
+
+    public class Error(
+        public val exception: Throwable,
+    ) : B2BAuthenticationState()
 }

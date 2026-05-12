@@ -15,6 +15,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -39,13 +40,16 @@ internal class StytchB2BAuthenticationStateManager(
     internal var istExpiration: Instant? = null
 
     private val loadingStateFlow: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    internal val exceptionFlow: MutableSharedFlow<Throwable?> = MutableSharedFlow(0)
     private val stateScope = CoroutineScope(dispatchers.mainDispatcher + SupervisorJob())
 
     @OptIn(ExperimentalCoroutinesApi::class)
     override val authenticationStateFlow: StateFlow<B2BAuthenticationState> =
-        loadingStateFlow
-            .flatMapLatest { isLoaded ->
-                if (!isLoaded) {
+        exceptionFlow
+            .combine(loadingStateFlow) { throwable, isLoaded ->
+                if (throwable != null) {
+                    flowOf(B2BAuthenticationState.Error(throwable))
+                } else if (isLoaded) {
                     flowOf(B2BAuthenticationState.Loading())
                 } else {
                     combine(
@@ -62,7 +66,8 @@ internal class StytchB2BAuthenticationStateManager(
                         }
                     }
                 }
-            }.stateIn(stateScope, SharingStarted.WhileSubscribed(5000L), B2BAuthenticationState.Loading())
+            }.flatMapLatest { it }
+            .stateIn(stateScope, SharingStarted.WhileSubscribed(5000L), B2BAuthenticationState.Loading())
 
     override val currentSessionToken: String?
         get() = sessionTokenFlow.value

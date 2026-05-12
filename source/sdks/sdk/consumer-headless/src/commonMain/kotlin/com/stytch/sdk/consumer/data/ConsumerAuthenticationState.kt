@@ -27,4 +27,8 @@ public sealed class ConsumerAuthenticationState : AuthenticationState {
         /** The session JWT. */
         public val sessionJwt: String,
     ) : ConsumerAuthenticationState()
+
+    public class Error(
+        public val exception: Throwable,
+    ) : ConsumerAuthenticationState()
 }
