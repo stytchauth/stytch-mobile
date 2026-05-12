@@ -58,6 +58,7 @@ import io.ktor.utils.io.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.async
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.internal.SynchronizedObject
 import kotlinx.coroutines.internal.synchronized
@@ -261,13 +262,11 @@ internal class DefaultStytchB2B(
     override val authenticationStateFlow: StateFlow<B2BAuthenticationState> = sessionManager.authenticationStateFlow
 
     override fun authenticationStateObserver(callback: (authenticationState: B2BAuthenticationState) -> Unit): JsCleanup {
-        val job =
-            CoroutineScope(dispatchers.mainDispatcher).launch {
-                authenticationStateFlow.collect { callback(it) }
-            }
+        val scope = CoroutineScope(dispatchers.mainDispatcher)
+        scope.launch { authenticationStateFlow.collect { callback(it) } }
         return object : JsCleanup {
             override fun stop() {
-                job.cancel()
+                scope.cancel()
             }
         }
     }
