@@ -4,7 +4,6 @@ import com.stytch.sdk.data.DFPConfiguration
 import com.stytch.sdk.data.StytchClientConfigurationInternal
 import com.stytch.sdk.dfp.DFPPAInterceptor
 import com.stytch.sdk.shared.BuildConfig
-import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.DefaultRequest

@@ -9,8 +9,6 @@ import com.stytch.sdk.data.StytchClientConfigurationInternal
 import com.stytch.sdk.data.StytchDataResponse
 import com.stytch.sdk.data.StytchDispatchers
 import de.jensklingenberg.ktorfit.Ktorfit
-import io.ktor.client.call.body
-import io.ktor.client.plugins.ResponseException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
