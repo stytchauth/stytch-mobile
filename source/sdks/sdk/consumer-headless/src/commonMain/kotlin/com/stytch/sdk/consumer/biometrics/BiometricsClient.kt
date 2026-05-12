@@ -2,6 +2,7 @@ package com.stytch.sdk.consumer.biometrics
 
 import com.stytch.sdk.StytchApi
 import com.stytch.sdk.StytchAuthenticationStateManager
+import com.stytch.sdk.biometrics.BiometricsAlreadyEnrolledError
 import com.stytch.sdk.biometrics.BiometricsAvailability
 import com.stytch.sdk.biometrics.BiometricsParameters
 import com.stytch.sdk.biometrics.BiometricsUnsupportedError
@@ -191,7 +192,7 @@ internal class BiometricsClientImpl(
             throw BiometricsUnsupportedError()
         }
         if (availability == BiometricsAvailability.AlreadyRegistered) {
-            throw BiometricsAlreadyEnrolled()
+            throw BiometricsAlreadyEnrolledError()
         }
         if (sessionManager.currentSessionToken.isNullOrEmpty()) {
             throw NoSessionExists()

@@ -1,6 +1,7 @@
 package com.stytch.sdk.consumer.biometrics
 
 import com.stytch.sdk.StytchAuthenticationStateManager
+import com.stytch.sdk.biometrics.BiometricsAlreadyEnrolledError
 import com.stytch.sdk.biometrics.BiometricsAvailability
 import com.stytch.sdk.biometrics.BiometricsParameters
 import com.stytch.sdk.biometrics.BiometricsUnsupportedError
@@ -65,7 +66,7 @@ internal class BiometricsClientImplTest : ConsumerClientTest() {
         runTest(testDispatcher) {
             coEvery { biometricsProvider.getAvailability(params) } returns BiometricsAvailability.AlreadyRegistered
 
-            assertFailsWith<BiometricsAlreadyEnrolled> { client.register(params) }
+            assertFailsWith<BiometricsAlreadyEnrolledError> { client.register(params) }
         }
 
     @Test
