@@ -56,8 +56,11 @@ import com.stytch.sdk.pkce.PKCEClient
 import io.ktor.http.URLBuilder
 import io.ktor.utils.io.CancellationException
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.internal.SynchronizedObject
+import kotlinx.coroutines.internal.synchronized
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlin.concurrent.Volatile
@@ -366,7 +369,10 @@ internal class DefaultStytchB2B(
         private var instance: StytchB2B? = null
         private const val BOOTSTRAP_IDENTIFIER = "stytch_b2b_bootstrap_data"
 
+        @OptIn(InternalCoroutinesApi::class)
         fun getInstance(configuration: StytchClientConfiguration): StytchB2B =
-            instance ?: DefaultStytchB2B(configuration.toInternal()).also { instance = it }
+            instance ?: synchronized(DefaultStytchB2B::class as SynchronizedObject) {
+                instance ?: DefaultStytchB2B(configuration.toInternal()).also { instance = it }
+            }
     }
 }

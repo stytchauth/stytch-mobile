@@ -49,8 +49,11 @@ import com.stytch.sdk.pkce.PKCEClient
 import io.ktor.http.URLBuilder
 import io.ktor.utils.io.CancellationException
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.internal.SynchronizedObject
+import kotlinx.coroutines.internal.synchronized
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlin.concurrent.Volatile
@@ -308,7 +311,10 @@ internal class DefaultStytchConsumer(
         private var instance: StytchConsumer? = null
         private const val BOOTSTRAP_IDENTIFIER = "stytch_consumer_bootstrap_data"
 
+        @OptIn(InternalCoroutinesApi::class)
         fun getInstance(configuration: StytchClientConfiguration): StytchConsumer =
-            instance ?: DefaultStytchConsumer(configuration.toInternal()).also { instance = it }
+            instance ?: synchronized(DefaultStytchConsumer::class as SynchronizedObject) {
+                instance ?: DefaultStytchConsumer(configuration.toInternal()).also { instance = it }
+            }
     }
 }
