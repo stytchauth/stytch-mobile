@@ -226,7 +226,8 @@ public actual class BiometricsProvider(
         allowedAuthenticators: Int,
     ): Cipher {
         val cipher = getCipher()
-        cipher.init(Cipher.ENCRYPT_MODE, getSecretKey(allowedAuthenticators))
+        val secretKey = getSecretKey(allowedAuthenticators) ?: throw InvalidKeyException("SecretKey unavailable")
+        cipher.init(Cipher.ENCRYPT_MODE, secretKey)
         return showBiometricPrompt(context, promptData, cipher, allowedAuthenticators)
     }
 
@@ -237,7 +238,8 @@ public actual class BiometricsProvider(
         allowedAuthenticators: Int,
     ): Cipher {
         val cipher = getCipher()
-        cipher.init(Cipher.DECRYPT_MODE, getSecretKey(allowedAuthenticators), IvParameterSpec(iv))
+        val secretKey = getSecretKey(allowedAuthenticators) ?: throw InvalidKeyException("SecretKey unavailable")
+        cipher.init(Cipher.DECRYPT_MODE, secretKey, IvParameterSpec(iv))
         return showBiometricPrompt(context, promptData, cipher, allowedAuthenticators)
     }
 
