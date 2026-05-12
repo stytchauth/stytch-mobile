@@ -70,8 +70,8 @@ public abstract class StytchNetworkingClient(
                             val delay = max(0L, min(timeUntilSessionExpires, HEARTBEAT_INTERVAL_MS))
                             startSessionUpdateJob(delay)
                         } catch (e: Exception) {
-                            if (e is ResponseException) {
-                                if (e.response.body<StytchAPIError>().isUnrecoverableError()) {
+                            if (e is StytchAPIError) {
+                                if (e.isUnrecoverableError()) {
                                     sessionManager.revoke()
                                 }
                             }
