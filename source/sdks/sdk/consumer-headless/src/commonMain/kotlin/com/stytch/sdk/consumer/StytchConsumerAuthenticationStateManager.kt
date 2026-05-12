@@ -56,7 +56,7 @@ internal class StytchConsumerAuthenticationStateManager(
                         ConsumerAuthenticationState.Unauthenticated()
                     }
                 }
-            }.stateIn(stateScope, SharingStarted.WhileSubscribed(5000L), ConsumerAuthenticationState.Loading())
+            }.stateIn(stateScope, SharingStarted.Eagerly, ConsumerAuthenticationState.Loading())
 
     override val currentSessionToken: String?
         get() = sessionTokenFlow.value

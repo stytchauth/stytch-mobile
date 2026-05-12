@@ -67,7 +67,7 @@ internal class StytchB2BAuthenticationStateManager(
                     }
                 }
             }.flatMapLatest { it }
-            .stateIn(stateScope, SharingStarted.WhileSubscribed(5000L), B2BAuthenticationState.Loading())
+            .stateIn(stateScope, SharingStarted.Eagerly, B2BAuthenticationState.Loading())
 
     override val currentSessionToken: String?
         get() = sessionTokenFlow.value
