@@ -332,7 +332,9 @@ internal class OAuthClientImpl(
         withContext(dispatchers.ioDispatcher) {
             networkingClient.request {
                 val codePair = pkceClient.retrieve() ?: throw MissingPKCEException()
-                networkingClient.api.oAuthAuthenticate(request.toNetworkModel(codeVerifier = codePair.verifier))
+                val response = networkingClient.api.oAuthAuthenticate(request.toNetworkModel(codeVerifier = codePair.verifier))
+                pkceClient.revoke()
+                response
             }
         }
 

@@ -299,32 +299,35 @@ internal class B2BOAuthClientImpl(
         withContext(dispatchers.ioDispatcher) {
             val domain = cnameDomain() ?: if (publicTokenInfo.isTestToken) endpointOptions.testDomain else endpointOptions.liveDomain
             val baseUrl = "https://$domain/b2b/public/oauth/$providerName/start"
-            val codePair = pkceClient.create()
-            val url = buildOAuthUrl(baseUrl, codePair.challenge, parameters)
-            val result = oauthProvider.startBrowserFlow(url, parameters.toOAuthStartParameters(), dispatchers)
-            when (result) {
-                is OAuthResult.ClassicToken -> {
-                    networkingClient
-                        .request {
-                            networkingClient.api.b2BOAuthAuthenticate(
-                                B2BOAuthAuthenticateParameters(
-                                    oauthToken = result.token,
-                                    sessionDurationMinutes = parameters.sessionDurationMinutes ?: defaultSessionDuration,
-                                ).toNetworkModel(
-                                    pkceCodeVerifier = codePair.verifier,
-                                    intermediateSessionToken = sessionManager.intermediateSessionToken,
-                                ),
-                            )
-                        }.also { pkceClient.revoke() } as AuthenticatedResponse
-                }
+            try {
+                val codePair = pkceClient.create()
+                val url = buildOAuthUrl(baseUrl, codePair.challenge, parameters)
+                when (val result = oauthProvider.startBrowserFlow(url, parameters.toOAuthStartParameters(), dispatchers)) {
+                    is OAuthResult.ClassicToken -> {
+                        networkingClient
+                            .request {
+                                networkingClient.api.b2BOAuthAuthenticate(
+                                    B2BOAuthAuthenticateParameters(
+                                        oauthToken = result.token,
+                                        sessionDurationMinutes = parameters.sessionDurationMinutes ?: defaultSessionDuration,
+                                    ).toNetworkModel(
+                                        pkceCodeVerifier = codePair.verifier,
+                                        intermediateSessionToken = sessionManager.intermediateSessionToken,
+                                    ),
+                                )
+                            }.also { pkceClient.revoke() } as AuthenticatedResponse
+                    }
 
-                is OAuthResult.Error -> {
-                    throw OAuthException(RuntimeException(result.message))
-                }
+                    is OAuthResult.Error -> {
+                        throw OAuthException(RuntimeException(result.message))
+                    }
 
-                else -> {
-                    throw OAuthException(RuntimeException("Unexpected OAuth result type"))
+                    else -> {
+                        throw OAuthException(RuntimeException("Unexpected OAuth result type"))
+                    }
                 }
+            } finally {
+                pkceClient.revoke()
             }
         }
 
