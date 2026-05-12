@@ -31,7 +31,9 @@ public sealed class B2BAuthenticationState : AuthenticationState {
         public val sessionJwt: String,
     ) : B2BAuthenticationState()
 
+    /** An error during startup has occurred */
     public class Error(
+        /** The underlying error that was thrown */
         public val exception: Throwable,
     ) : B2BAuthenticationState()
 }

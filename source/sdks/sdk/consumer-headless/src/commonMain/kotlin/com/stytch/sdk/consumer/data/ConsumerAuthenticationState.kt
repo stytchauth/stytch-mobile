@@ -28,7 +28,9 @@ public sealed class ConsumerAuthenticationState : AuthenticationState {
         public val sessionJwt: String,
     ) : ConsumerAuthenticationState()
 
+    /** An error during startup has occurred */
     public class Error(
+        /** The underlying error that was thrown */
         public val exception: Throwable,
     ) : ConsumerAuthenticationState()
 }
