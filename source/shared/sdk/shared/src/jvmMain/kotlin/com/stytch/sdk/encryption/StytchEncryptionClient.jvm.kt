@@ -75,6 +75,7 @@ public actual class StytchEncryptionClient(
             }
         }
         val keyGenerator = KeyGenerator.getInstance(ALGORITHM)
+        keyGenerator.init(256)
         val secretKey = keyGenerator.generateKey()
         val secretKeyEntry = KeyStore.SecretKeyEntry(secretKey)
         keyStore.setEntry(STYTCH_MASTER_KEY_ALIAS, secretKeyEntry, KeyStore.PasswordProtection(keystorePassword))
