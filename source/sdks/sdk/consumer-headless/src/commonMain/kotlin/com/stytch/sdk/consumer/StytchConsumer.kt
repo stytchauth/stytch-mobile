@@ -311,13 +311,13 @@ internal class DefaultStytchConsumer(
         }
     }
 
-    companion object {
+    companion object : SynchronizedObject() {
         @Volatile
         private var instance: StytchConsumer? = null
         private const val BOOTSTRAP_IDENTIFIER = "stytch_consumer_bootstrap_data"
 
         fun getInstance(configuration: StytchClientConfiguration): StytchConsumer =
-            instance ?: synchronized(DefaultStytchConsumer::class as SynchronizedObject) {
+            instance ?: synchronized(this) {
                 instance ?: DefaultStytchConsumer(configuration.toInternal()).also { instance = it }
             }
     }

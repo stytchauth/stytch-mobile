@@ -369,13 +369,13 @@ internal class DefaultStytchB2B(
         }
     }
 
-    companion object {
+    companion object : SynchronizedObject() {
         @Volatile
         private var instance: StytchB2B? = null
         private const val BOOTSTRAP_IDENTIFIER = "stytch_b2b_bootstrap_data"
 
         fun getInstance(configuration: StytchClientConfiguration): StytchB2B =
-            instance ?: synchronized(DefaultStytchB2B::class as SynchronizedObject) {
+            instance ?: synchronized(this) {
                 instance ?: DefaultStytchB2B(configuration.toInternal()).also { instance = it }
             }
     }
