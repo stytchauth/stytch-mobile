@@ -60,7 +60,7 @@ public external object StytchBridge {
         iosCancelTitle: String?,
     ): Promise<String>
 
-    public fun registerBiometrics(
+    public fun createBiometricKey(
         sessionDurationMinutes: Int,
         androidAllowDeviceCredentials: Boolean?,
         androidTitle: String?,
@@ -72,7 +72,7 @@ public external object StytchBridge {
         iosCancelTitle: String?,
     ): Promise<String>
 
-    public fun authenticateBiometrics(
+    public fun retrieveBiometricKey(
         sessionDurationMinutes: Int,
         androidAllowDeviceCredentials: Boolean?,
         androidTitle: String?,
@@ -84,10 +84,9 @@ public external object StytchBridge {
         iosCancelTitle: String?,
     ): Promise<String>
 
-    public fun persistBiometricRegistration(
-        registrationId: String,
-        privateKeyData: String,
-    ): Promise<Unit>
+    public fun signWithBiometricKey(challenge: String): Promise<String>
+
+    public fun persistBiometricRegistration(registrationId: String): Promise<Unit>
 
     public fun removeBiometricRegistration(): Promise<Unit>
 

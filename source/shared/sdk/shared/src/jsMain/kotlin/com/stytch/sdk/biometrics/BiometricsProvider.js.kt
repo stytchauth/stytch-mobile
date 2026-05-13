@@ -26,51 +26,51 @@ public actual class BiometricsProvider : IBiometricsProvider {
             throw InvalidBiometricAvailabilityError(e.message ?: "Unknown error getting biometrics availability")
         }
 
-    public actual override suspend fun register(parameters: BiometricsParameters): Ed25519KeyPair =
+    public actual override suspend fun createBiometricKey(parameters: BiometricsParameters): String =
         try {
-            val keyPairString =
-                StytchBridge
-                    .registerBiometrics(
-                        sessionDurationMinutes = parameters.sessionDurationMinutes,
-                        androidAllowDeviceCredentials = parameters.androidBiometricOptions.allowDeviceCredentials,
-                        androidTitle = parameters.androidBiometricOptions.title,
-                        androidSubTitle = parameters.androidBiometricOptions.subTitle,
-                        androidNegativeButtonText = parameters.androidBiometricOptions.negativeButtonText,
-                        androidAllowFallbackToCleartext = parameters.androidBiometricOptions.allowFallbackToCleartext,
-                        iosReason = parameters.iosBiometricOptions.reason,
-                        iosFallbackTitle = parameters.iosBiometricOptions.fallbackTitle,
-                        iosCancelTitle = parameters.iosBiometricOptions.cancelTitle,
-                    ).await()
-            Json.decodeFromString(keyPairString)
+            StytchBridge
+                .createBiometricKey(
+                    sessionDurationMinutes = parameters.sessionDurationMinutes,
+                    androidAllowDeviceCredentials = parameters.androidBiometricOptions.allowDeviceCredentials,
+                    androidTitle = parameters.androidBiometricOptions.title,
+                    androidSubTitle = parameters.androidBiometricOptions.subTitle,
+                    androidNegativeButtonText = parameters.androidBiometricOptions.negativeButtonText,
+                    androidAllowFallbackToCleartext = parameters.androidBiometricOptions.allowFallbackToCleartext,
+                    iosReason = parameters.iosBiometricOptions.reason,
+                    iosFallbackTitle = parameters.iosBiometricOptions.fallbackTitle,
+                    iosCancelTitle = parameters.iosBiometricOptions.cancelTitle,
+                ).await()
         } catch (e: Throwable) {
             throw UnhandledCryptographyError(e)
         }
 
-    public actual override suspend fun authenticate(parameters: BiometricsParameters): Ed25519KeyPair =
+    public actual override suspend fun retrieveBiometricKey(parameters: BiometricsParameters): String =
         try {
-            val keyPairString =
-                StytchBridge
-                    .authenticateBiometrics(
-                        sessionDurationMinutes = parameters.sessionDurationMinutes,
-                        androidAllowDeviceCredentials = parameters.androidBiometricOptions.allowDeviceCredentials,
-                        androidTitle = parameters.androidBiometricOptions.title,
-                        androidSubTitle = parameters.androidBiometricOptions.subTitle,
-                        androidNegativeButtonText = parameters.androidBiometricOptions.negativeButtonText,
-                        androidAllowFallbackToCleartext = parameters.androidBiometricOptions.allowFallbackToCleartext,
-                        iosReason = parameters.iosBiometricOptions.reason,
-                        iosFallbackTitle = parameters.iosBiometricOptions.fallbackTitle,
-                        iosCancelTitle = parameters.iosBiometricOptions.cancelTitle,
-                    ).await()
-            Json.decodeFromString(keyPairString)
+            StytchBridge
+                .retrieveBiometricKey(
+                    sessionDurationMinutes = parameters.sessionDurationMinutes,
+                    androidAllowDeviceCredentials = parameters.androidBiometricOptions.allowDeviceCredentials,
+                    androidTitle = parameters.androidBiometricOptions.title,
+                    androidSubTitle = parameters.androidBiometricOptions.subTitle,
+                    androidNegativeButtonText = parameters.androidBiometricOptions.negativeButtonText,
+                    androidAllowFallbackToCleartext = parameters.androidBiometricOptions.allowFallbackToCleartext,
+                    iosReason = parameters.iosBiometricOptions.reason,
+                    iosFallbackTitle = parameters.iosBiometricOptions.fallbackTitle,
+                    iosCancelTitle = parameters.iosBiometricOptions.cancelTitle,
+                ).await()
         } catch (e: Throwable) {
             throw UnhandledCryptographyError(e)
         }
 
-    public actual override suspend fun persistRegistration(
-        registrationId: String,
-        privateKeyData: String,
-    ) {
-        StytchBridge.persistBiometricRegistration(registrationId, privateKeyData).await()
+    actual override suspend fun signWithBiometricKey(challenge: String): String =
+        try {
+            StytchBridge.signWithBiometricKey(challenge).await()
+        } catch (e: Throwable) {
+            throw UnhandledCryptographyError(e)
+        }
+
+    public actual override suspend fun persistRegistration(registrationId: String) {
+        StytchBridge.persistBiometricRegistration(registrationId).await()
     }
 
     public actual override suspend fun removeRegistration() {
