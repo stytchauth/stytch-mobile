@@ -11,7 +11,9 @@ import com.stytch.sdk.networking.StytchNetworkingClient
 import io.ktor.client.plugins.ResponseException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
 import kotlin.math.min
 import kotlin.time.Clock
@@ -38,7 +40,7 @@ internal class ConsumerNetworkingClient(
     init {
         networkingClientScope.launch {
             // Collect the first non-null session token emission, and trigger the heartbeat immediately
-            sessionManager.sessionTokenFlow.firstOrNull { it != null }?.let {
+            sessionManager.sessionTokenFlow.filterNotNull().take(1).collect {
                 startSessionUpdateJob(0L)
             }
         }
