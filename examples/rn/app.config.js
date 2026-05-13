@@ -11,7 +11,7 @@ module.exports = {
     userInterfaceStyle: "automatic",
     ios: {
       supportsTablet: true,
-      bundleIdentifier: "com.stytch.sdk.kmpmigration",
+      bundleIdentifier: "com.stytch.mobile.demo",
       infoPlist: {
         ITSAppUsesNonExemptEncryption: false,
       },
@@ -24,7 +24,7 @@ module.exports = {
         monochromeImage: "./assets/images/android-icon-monochrome.png",
       },
       predictiveBackGestureEnabled: false,
-      package: "com.stytch.sdk.kmpmigration",
+      package: "com.stytch.mobile.demo",
     },
     web: {
       output: "static",

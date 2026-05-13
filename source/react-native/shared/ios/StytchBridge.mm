@@ -170,7 +170,7 @@ SSSDKOAuthProvider *oauthProvider = [[SSSDKOAuthProvider alloc] initWithPackageN
 - (void)retrieveBiometricKey:(double)sessionDurationMinutes androidAllowDeviceCredentials:(nonnull NSNumber *)androidAllowDeviceCredentials androidTitle:(nonnull NSString *)androidTitle androidSubTitle:(nonnull NSString *)androidSubTitle androidNegativeButtonText:(nonnull NSString *)androidNegativeButtonText androidAllowFallbackToCleartext:(nonnull NSNumber *)androidAllowFallbackToCleartext iosReason:(nonnull NSString *)iosReason iosFallbackTitle:(nonnull NSString *)iosFallbackTitle iosCancelTitle:(nonnull NSString *)iosCancelTitle resolve:(nonnull RCTPromiseResolveBlock)resolve reject:(nonnull RCTPromiseRejectBlock)reject {
     SSSDKBiometricPromptData *promptData = [[SSSDKBiometricPromptData alloc] initWithReason:iosReason fallbackTitle:iosFallbackTitle cancelTitle:iosCancelTitle];
     SSSDKBiometricsParameters *params = [[SSSDKBiometricsParameters alloc] initWithSessionDurationMinutes:sessionDurationMinutes promptData:promptData];
-    [biometricsProvider authenticateParameters:params completionHandler:^(NSString * _Nullable publicKey, NSError * _Nullable error) {
+    [biometricsProvider retrieveBiometricKeyParameters:params completionHandler:^(NSString * _Nullable publicKey, NSError * _Nullable error) {
         if (error == nil && publicKey != nil) {
             resolve(publicKey);
         } else {
@@ -210,7 +210,7 @@ SSSDKOAuthProvider *oauthProvider = [[SSSDKOAuthProvider alloc] initWithPackageN
 - (void)createBiometricKey:(double)sessionDurationMinutes androidAllowDeviceCredentials:(nonnull NSNumber *)androidAllowDeviceCredentials androidTitle:(nonnull NSString *)androidTitle androidSubTitle:(nonnull NSString *)androidSubTitle androidNegativeButtonText:(nonnull NSString *)androidNegativeButtonText androidAllowFallbackToCleartext:(nonnull NSNumber *)androidAllowFallbackToCleartext iosReason:(nonnull NSString *)iosReason iosFallbackTitle:(nonnull NSString *)iosFallbackTitle iosCancelTitle:(nonnull NSString *)iosCancelTitle resolve:(nonnull RCTPromiseResolveBlock)resolve reject:(nonnull RCTPromiseRejectBlock)reject {
     SSSDKBiometricPromptData *promptData = [[SSSDKBiometricPromptData alloc] initWithReason:iosReason fallbackTitle:iosFallbackTitle cancelTitle:iosCancelTitle];
     SSSDKBiometricsParameters *params = [[SSSDKBiometricsParameters alloc] initWithSessionDurationMinutes:sessionDurationMinutes promptData:promptData];
-    [biometricsProvider registerParameters:params completionHandler:^(NSString * _Nullable publicKey, NSError * _Nullable error) {
+    [biometricsProvider createBiometricKeyParameters:params completionHandler:^(NSString * _Nullable publicKey, NSError * _Nullable error) {
         if (error == nil && publicKey != nil) {
             resolve(publicKey);
         } else {
@@ -220,7 +220,7 @@ SSSDKOAuthProvider *oauthProvider = [[SSSDKOAuthProvider alloc] initWithPackageN
 }
 
 - (void)signWithBiometricKey:(nonnull NSString *)challenge resolve:(nonnull RCTPromiseResolveBlock)resolve reject:(nonnull RCTPromiseRejectBlock)reject {
-    [biometricsProvider signWithBiometricKey:challenge completionHandler:^(NSString * _Nullable signature, NSError * _Nullable error) {
+    [biometricsProvider signWithBiometricKeyChallenge:challenge completionHandler:^(NSString * _Nullable signature, NSError * _Nullable error) {
         if (error == nil && signature != nil) {
             resolve(signature);
         } else {

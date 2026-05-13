@@ -53,11 +53,8 @@ export interface Spec extends TurboModule {
       iosFallbackTitle?: string,
       iosCancelTitle?: string,
   ): Promise<string>;
-  signWithBiometricKey(challenge: String): Promise<String>;
-  persistBiometricRegistration(
-      registrationId: string,
-      privateKeyData: string,
-  ): Promise<void>;
+  signWithBiometricKey(challenge: string): Promise<string>;
+  persistBiometricRegistration(registrationId: string): Promise<void>;
   removeBiometricRegistration(): Promise<void>;
   createPublicKeyCredential(
       domain: string,

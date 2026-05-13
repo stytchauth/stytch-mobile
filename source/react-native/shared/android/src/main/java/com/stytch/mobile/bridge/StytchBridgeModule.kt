@@ -239,7 +239,7 @@ class StytchBridgeModule(reactContext: ReactApplicationContext) :
   ) {
     mainScope.launch {
       runCatching {
-        biometricsProvider.authenticate(
+        biometricsProvider.retrieveBiometricKey(
           BiometricsParameters(
             context = reactApplicationContext.currentActivity!! as FragmentActivity,
             allowDeviceCredentials = androidAllowDeviceCredentials ?: false,
