@@ -167,15 +167,12 @@ SSSDKOAuthProvider *oauthProvider = [[SSSDKOAuthProvider alloc] initWithPackageN
 // End CAPTCHA stuff
 
 // Begin Biometrics stuff
-- (void)authenticateBiometrics:(double)sessionDurationMinutes androidAllowDeviceCredentials:(nonnull NSNumber *)androidAllowDeviceCredentials androidTitle:(nonnull NSString *)androidTitle androidSubTitle:(nonnull NSString *)androidSubTitle androidNegativeButtonText:(nonnull NSString *)androidNegativeButtonText androidAllowFallbackToCleartext:(nonnull NSNumber *)androidAllowFallbackToCleartext iosReason:(nonnull NSString *)iosReason iosFallbackTitle:(nonnull NSString *)iosFallbackTitle iosCancelTitle:(nonnull NSString *)iosCancelTitle resolve:(nonnull RCTPromiseResolveBlock)resolve reject:(nonnull RCTPromiseRejectBlock)reject {
+- (void)retrieveBiometricKey:(double)sessionDurationMinutes androidAllowDeviceCredentials:(nonnull NSNumber *)androidAllowDeviceCredentials androidTitle:(nonnull NSString *)androidTitle androidSubTitle:(nonnull NSString *)androidSubTitle androidNegativeButtonText:(nonnull NSString *)androidNegativeButtonText androidAllowFallbackToCleartext:(nonnull NSNumber *)androidAllowFallbackToCleartext iosReason:(nonnull NSString *)iosReason iosFallbackTitle:(nonnull NSString *)iosFallbackTitle iosCancelTitle:(nonnull NSString *)iosCancelTitle resolve:(nonnull RCTPromiseResolveBlock)resolve reject:(nonnull RCTPromiseRejectBlock)reject {
     SSSDKBiometricPromptData *promptData = [[SSSDKBiometricPromptData alloc] initWithReason:iosReason fallbackTitle:iosFallbackTitle cancelTitle:iosCancelTitle];
     SSSDKBiometricsParameters *params = [[SSSDKBiometricsParameters alloc] initWithSessionDurationMinutes:sessionDurationMinutes promptData:promptData];
-    [biometricsProvider authenticateParameters:params completionHandler:^(SSSDKEd25519KeyPair * _Nullable keyPair, NSError * _Nullable error) {
-        if (error == nil) {
-            NSError *encodeError = nil;
-            NSString *asString = [[SSSDKJsonSerDeHelper alloc] encodeEd25519KeyPairData:keyPair error:&encodeError];
-            if (encodeError != nil) { reject(@"", [encodeError description], encodeError); return; }
-            resolve(asString);
+    [biometricsProvider retrieveBiometricKeyParameters:params completionHandler:^(NSString * _Nullable publicKey, NSError * _Nullable error) {
+        if (error == nil && publicKey != nil) {
+            resolve(publicKey);
         } else {
             reject(@"", [error description], error);
         }
@@ -199,8 +196,8 @@ SSSDKOAuthProvider *oauthProvider = [[SSSDKOAuthProvider alloc] initWithPackageN
 }
 
 
-- (void)persistBiometricRegistration:(nonnull NSString *)registrationId privateKeyData:(nonnull NSString *)privateKeyData resolve:(nonnull RCTPromiseResolveBlock)resolve reject:(nonnull RCTPromiseRejectBlock)reject {
-    [biometricsProvider persistRegistrationRegistrationId:registrationId privateKeyData:privateKeyData completionHandler:^(NSError * _Nullable error) {
+- (void)persistBiometricRegistration:(nonnull NSString *)registrationId resolve:(nonnull RCTPromiseResolveBlock)resolve reject:(nonnull RCTPromiseRejectBlock)reject {
+    [biometricsProvider persistRegistrationRegistrationId:registrationId completionHandler:^(NSError * _Nullable error) {
         if (error == nil) {
             resolve(nil);
         } else {
@@ -210,15 +207,22 @@ SSSDKOAuthProvider *oauthProvider = [[SSSDKOAuthProvider alloc] initWithPackageN
 }
 
 
-- (void)registerBiometrics:(double)sessionDurationMinutes androidAllowDeviceCredentials:(nonnull NSNumber *)androidAllowDeviceCredentials androidTitle:(nonnull NSString *)androidTitle androidSubTitle:(nonnull NSString *)androidSubTitle androidNegativeButtonText:(nonnull NSString *)androidNegativeButtonText androidAllowFallbackToCleartext:(nonnull NSNumber *)androidAllowFallbackToCleartext iosReason:(nonnull NSString *)iosReason iosFallbackTitle:(nonnull NSString *)iosFallbackTitle iosCancelTitle:(nonnull NSString *)iosCancelTitle resolve:(nonnull RCTPromiseResolveBlock)resolve reject:(nonnull RCTPromiseRejectBlock)reject {
+- (void)createBiometricKey:(double)sessionDurationMinutes androidAllowDeviceCredentials:(nonnull NSNumber *)androidAllowDeviceCredentials androidTitle:(nonnull NSString *)androidTitle androidSubTitle:(nonnull NSString *)androidSubTitle androidNegativeButtonText:(nonnull NSString *)androidNegativeButtonText androidAllowFallbackToCleartext:(nonnull NSNumber *)androidAllowFallbackToCleartext iosReason:(nonnull NSString *)iosReason iosFallbackTitle:(nonnull NSString *)iosFallbackTitle iosCancelTitle:(nonnull NSString *)iosCancelTitle resolve:(nonnull RCTPromiseResolveBlock)resolve reject:(nonnull RCTPromiseRejectBlock)reject {
     SSSDKBiometricPromptData *promptData = [[SSSDKBiometricPromptData alloc] initWithReason:iosReason fallbackTitle:iosFallbackTitle cancelTitle:iosCancelTitle];
     SSSDKBiometricsParameters *params = [[SSSDKBiometricsParameters alloc] initWithSessionDurationMinutes:sessionDurationMinutes promptData:promptData];
-    [biometricsProvider registerParameters:params completionHandler:^(SSSDKEd25519KeyPair * _Nullable keyPair, NSError * _Nullable error) {
-        if (error == nil) {
-            NSError *encodeError = nil;
-            NSString *asString = [[SSSDKJsonSerDeHelper alloc] encodeEd25519KeyPairData:keyPair error:&encodeError];
-            if (encodeError != nil) { reject(@"", [encodeError description], encodeError); return; }
-            resolve(asString);
+    [biometricsProvider createBiometricKeyParameters:params completionHandler:^(NSString * _Nullable publicKey, NSError * _Nullable error) {
+        if (error == nil && publicKey != nil) {
+            resolve(publicKey);
+        } else {
+            reject(@"", [error description], error);
+        }
+    }];
+}
+
+- (void)signWithBiometricKey:(nonnull NSString *)challenge resolve:(nonnull RCTPromiseResolveBlock)resolve reject:(nonnull RCTPromiseRejectBlock)reject {
+    [biometricsProvider signWithBiometricKeyChallenge:challenge completionHandler:^(NSString * _Nullable signature, NSError * _Nullable error) {
+        if (error == nil && signature != nil) {
+            resolve(signature);
         } else {
             reject(@"", [error description], error);
         }
