@@ -225,6 +225,7 @@ fun ConsumerScreen(
             is ConsumerAuthenticationState.Loading -> "Loading..."
             is ConsumerAuthenticationState.Authenticated -> "Welcome Back"
             is ConsumerAuthenticationState.Unauthenticated -> "Please Login"
+            is ConsumerAuthenticationState.Error -> "Error"
         }
 
     Column(modifier = Modifier.fillMaxSize()) {

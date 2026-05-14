@@ -12,7 +12,9 @@ import org.bouncycastle.crypto.signers.Ed25519Signer
 import java.security.KeyStore
 import java.security.MessageDigest
 import java.security.SecureRandom
+import javax.crypto.AEADBadTagException
 import javax.crypto.Cipher
+import javax.crypto.IllegalBlockSizeException
 import javax.crypto.KeyGenerator
 import javax.crypto.SecretKey
 import javax.crypto.spec.GCMParameterSpec
@@ -38,7 +40,14 @@ public actual class StytchEncryptionClient {
             Cipher.getInstance(CIPHER_TRANSFORMATION).apply {
                 init(Cipher.DECRYPT_MODE, secretKey, spec)
             }
-        return cipher.doFinal(ciphertext)
+        // Add explicit "this key is permanently unusable" exceptions here. They will be caught and data will be nuked
+        return try {
+            cipher.doFinal(ciphertext)
+        } catch (e: AEADBadTagException) {
+            throw PermanentKeyFailureException(e)
+        } catch (e: IllegalBlockSizeException) {
+            throw PermanentKeyFailureException(e)
+        }
     }
 
     public actual fun deleteKey() {

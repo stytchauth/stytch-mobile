@@ -8,6 +8,10 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+  pull-requests: write
+
 jobs:
   build-shared:
     uses: ./.github/workflows/_build-shared.yml
@@ -83,9 +87,18 @@ jobs:
         with:
           paths: |
             source/sdks/sdk/consumer-headless/build/reports/kover/reportJvm.xml
+          token: ${{ secrets.GITHUB_TOKEN }}
+          title: Coverage — Consumer SDK
+          update-comment: true
+
+      - name: Post coverage comment
+        if: github.event_name == 'pull_request'
+        uses: madrapps/jacoco-report@50d3aff4548aa991e6753342d9ba291084e63848 # v1.7.2
+        with:
+          paths: |
             source/sdks/sdk/b2b-headless/build/reports/kover/reportJvm.xml
           token: ${{ secrets.GITHUB_TOKEN }}
-          title: Coverage — Consumer & B2B SDKs
+          title: Coverage — B2B SDK
           update-comment: true
 
   check-ios-simulator:

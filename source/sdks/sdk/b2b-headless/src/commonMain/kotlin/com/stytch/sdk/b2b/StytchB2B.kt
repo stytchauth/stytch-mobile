@@ -55,8 +55,13 @@ import com.stytch.sdk.persistence.StytchPersistenceClient
 import com.stytch.sdk.pkce.PKCEClient
 import io.ktor.http.URLBuilder
 import io.ktor.utils.io.CancellationException
+import kotlinx.atomicfu.locks.SynchronizedObject
+import kotlinx.atomicfu.locks.synchronized
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -247,7 +252,7 @@ internal class DefaultStytchB2B(
             getRbacPolicy = { bootstrapResponse?.rbacPolicy },
             refreshAndGetRbacPolicy = {
                 bootstrapResponse =
-                    networkingClient.refreshBootStrapData(bootstrapResponse).also {
+                    networkingClient.refreshBootStrapData().getOrDefault(bootstrapResponse).also {
                         // and persist whatever the latest bootstrap response was
                         persistenceClient.save(BOOTSTRAP_IDENTIFIER, it)
                     }
@@ -258,13 +263,11 @@ internal class DefaultStytchB2B(
     override val authenticationStateFlow: StateFlow<B2BAuthenticationState> = sessionManager.authenticationStateFlow
 
     override fun authenticationStateObserver(callback: (authenticationState: B2BAuthenticationState) -> Unit): JsCleanup {
-        val job =
-            CoroutineScope(dispatchers.mainDispatcher).launch {
-                authenticationStateFlow.collect { callback(it) }
-            }
+        val scope = CoroutineScope(dispatchers.mainDispatcher)
+        scope.launch { authenticationStateFlow.collect { callback(it) } }
         return object : JsCleanup {
             override fun stop() {
-                job.cancel()
+                scope.cancel()
             }
         }
     }
@@ -342,15 +345,20 @@ internal class DefaultStytchB2B(
         }
     }
 
-    internal var bootstrapResponse: BootstrapResponse? = null
+    @Volatile internal var bootstrapResponse: BootstrapResponse? = null
+
+    private val initExceptionHandler =
+        CoroutineExceptionHandler { _, throwable ->
+            sessionManager.exceptionFlow.tryEmit(throwable)
+        }
 
     init {
-        CoroutineScope(dispatchers.ioDispatcher).launch {
+        CoroutineScope(dispatchers.ioDispatcher + SupervisorJob() + initExceptionHandler).launch {
             // Bootstrap (unauthenticated) and migrations are independent — run concurrently.
             val bootstrapJob =
                 async {
                     val cached = persistenceClient.get<BootstrapResponse>(BOOTSTRAP_IDENTIFIER, null)
-                    networkingClient.refreshBootStrapData(cached).also {
+                    networkingClient.refreshBootStrapData().getOrDefault(cached).also {
                         persistenceClient.save(BOOTSTRAP_IDENTIFIER, it)
                     }
                 }
@@ -361,12 +369,14 @@ internal class DefaultStytchB2B(
         }
     }
 
-    companion object {
+    companion object : SynchronizedObject() {
         @Volatile
         private var instance: StytchB2B? = null
         private const val BOOTSTRAP_IDENTIFIER = "stytch_b2b_bootstrap_data"
 
         fun getInstance(configuration: StytchClientConfiguration): StytchB2B =
-            instance ?: DefaultStytchB2B(configuration.toInternal()).also { instance = it }
+            instance ?: synchronized(this) {
+                instance ?: DefaultStytchB2B(configuration.toInternal()).also { instance = it }
+            }
     }
 }

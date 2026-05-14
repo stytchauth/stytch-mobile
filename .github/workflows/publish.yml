@@ -484,8 +484,8 @@ jobs:
       - name: Publish to npm
         if: env.DRY_RUN != 'true'
         run: |
-          npm publish source/react-native/consumer --access public
-          npm publish source/react-native/b2b --access public
+          npm publish source/react-native/consumer --provenance --access public
+          npm publish source/react-native/b2b --provenance --access public
 
 
   create-github-release:

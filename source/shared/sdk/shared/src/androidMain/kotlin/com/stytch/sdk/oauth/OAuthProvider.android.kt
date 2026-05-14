@@ -94,10 +94,17 @@ public actual class OAuthProvider(
         activity: Activity,
     ): OAuthResult =
         suspendCancellableCoroutine { continuation ->
+            if (SSOManagerActivity.pendingResult != null) {
+                continuation.resume(OAuthResult.Error("OAuth flow already in progress"))
+                return@suspendCancellableCoroutine
+            }
             SSOManagerActivity.pendingResult = { result -> continuation.resume(result) }
             val intent = SSOManagerActivity.createBaseIntent(activity)
             intent.putExtra(URI_KEY, url)
             activity.startActivity(intent)
+            continuation.invokeOnCancellation {
+                SSOManagerActivity.pendingResult = null
+            }
         }
 
     private suspend fun attemptStandardOAuthAuthentication(

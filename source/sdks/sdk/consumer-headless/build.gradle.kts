@@ -121,6 +121,7 @@ kotlin {
                 implementation(libs.ktorfit.lib.light)
                 implementation(libs.kotlinx.serialization.json)
                 implementation(libs.skie.configuration.annotations)
+                implementation(libs.atomicfu)
             }
         }
         jvmTest.dependencies {

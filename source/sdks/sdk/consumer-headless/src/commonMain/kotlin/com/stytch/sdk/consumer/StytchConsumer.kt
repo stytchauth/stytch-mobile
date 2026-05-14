@@ -48,8 +48,13 @@ import com.stytch.sdk.persistence.StytchPersistenceClient
 import com.stytch.sdk.pkce.PKCEClient
 import io.ktor.http.URLBuilder
 import io.ktor.utils.io.CancellationException
+import kotlinx.atomicfu.locks.SynchronizedObject
+import kotlinx.atomicfu.locks.synchronized
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -215,13 +220,11 @@ internal class DefaultStytchConsumer(
     override val authenticationStateFlow: StateFlow<ConsumerAuthenticationState> = sessionManager.authenticationStateFlow
 
     override fun authenticationStateObserver(callback: (authenticationState: ConsumerAuthenticationState) -> Unit): JsCleanup {
-        val job =
-            CoroutineScope(dispatchers.mainDispatcher).launch {
-                authenticationStateFlow.collect { callback(it) }
-            }
+        val scope = CoroutineScope(dispatchers.mainDispatcher)
+        scope.launch { authenticationStateFlow.collect { callback(it) } }
         return object : JsCleanup {
             override fun stop() {
-                job.cancel()
+                scope.cancel()
             }
         }
     }
@@ -284,15 +287,20 @@ internal class DefaultStytchConsumer(
         }
     }
 
-    internal var bootstrapResponse: BootstrapResponse? = null
+    @Volatile internal var bootstrapResponse: BootstrapResponse? = null
+
+    private val initExceptionHandler =
+        CoroutineExceptionHandler { _, throwable ->
+            sessionManager.exceptionFlow.tryEmit(throwable)
+        }
 
     init {
-        CoroutineScope(dispatchers.ioDispatcher).launch {
+        CoroutineScope(dispatchers.ioDispatcher + SupervisorJob() + initExceptionHandler).launch {
             // Bootstrap (unauthenticated) and migrations are independent — run concurrently.
             val bootstrapJob =
                 async {
                     val cached = persistenceClient.get<BootstrapResponse>(BOOTSTRAP_IDENTIFIER, null)
-                    networkingClient.refreshBootStrapData(cached).also {
+                    networkingClient.refreshBootStrapData().getOrDefault(cached).also {
                         persistenceClient.save(BOOTSTRAP_IDENTIFIER, it)
                     }
                 }
@@ -303,12 +311,14 @@ internal class DefaultStytchConsumer(
         }
     }
 
-    companion object {
+    companion object : SynchronizedObject() {
         @Volatile
         private var instance: StytchConsumer? = null
         private const val BOOTSTRAP_IDENTIFIER = "stytch_consumer_bootstrap_data"
 
         fun getInstance(configuration: StytchClientConfiguration): StytchConsumer =
-            instance ?: DefaultStytchConsumer(configuration.toInternal()).also { instance = it }
+            instance ?: synchronized(this) {
+                instance ?: DefaultStytchConsumer(configuration.toInternal()).also { instance = it }
+            }
     }
 }

@@ -1553,10 +1553,6 @@ abstract interface com.stytch.sdk.consumer/StytchConsumer : com.stytch.sdk/Stytc
     abstract suspend fun hydrate(kotlin/String) // com.stytch.sdk.consumer/StytchConsumer.hydrate|hydrate(kotlin.String){}[0]
 }
 
-final class com.stytch.sdk.consumer.biometrics/BiometricsAlreadyEnrolled : com.stytch.sdk.data/StytchError { // com.stytch.sdk.consumer.biometrics/BiometricsAlreadyEnrolled|null[0]
-    constructor <init>() // com.stytch.sdk.consumer.biometrics/BiometricsAlreadyEnrolled.<init>|<init>(){}[0]
-}
-
 final class com.stytch.sdk.consumer.biometrics/NoBiometricsRegistered : com.stytch.sdk.data/StytchError { // com.stytch.sdk.consumer.biometrics/NoBiometricsRegistered|null[0]
     constructor <init>() // com.stytch.sdk.consumer.biometrics/NoBiometricsRegistered.<init>|<init>(){}[0]
 }
@@ -18812,6 +18808,13 @@ sealed class com.stytch.sdk.consumer.data/ConsumerAuthenticationState : com.styt
             final fun <get-sessionToken>(): kotlin/String // com.stytch.sdk.consumer.data/ConsumerAuthenticationState.Authenticated.sessionToken.<get-sessionToken>|<get-sessionToken>(){}[0]
         final val user // com.stytch.sdk.consumer.data/ConsumerAuthenticationState.Authenticated.user|{}user[0]
             final fun <get-user>(): com.stytch.sdk.consumer.networking.models/ApiUserV1User // com.stytch.sdk.consumer.data/ConsumerAuthenticationState.Authenticated.user.<get-user>|<get-user>(){}[0]
+    }
+
+    final class Error : com.stytch.sdk.consumer.data/ConsumerAuthenticationState { // com.stytch.sdk.consumer.data/ConsumerAuthenticationState.Error|null[0]
+        constructor <init>(kotlin/Throwable) // com.stytch.sdk.consumer.data/ConsumerAuthenticationState.Error.<init>|<init>(kotlin.Throwable){}[0]
+
+        final val exception // com.stytch.sdk.consumer.data/ConsumerAuthenticationState.Error.exception|{}exception[0]
+            final fun <get-exception>(): kotlin/Throwable // com.stytch.sdk.consumer.data/ConsumerAuthenticationState.Error.exception.<get-exception>|<get-exception>(){}[0]
     }
 
     final class Loading : com.stytch.sdk.consumer.data/ConsumerAuthenticationState { // com.stytch.sdk.consumer.data/ConsumerAuthenticationState.Loading|null[0]

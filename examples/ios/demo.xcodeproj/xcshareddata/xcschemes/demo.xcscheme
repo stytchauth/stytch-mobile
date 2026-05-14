@@ -53,7 +53,7 @@
       <EnvironmentVariables>
          <EnvironmentVariable
             key = "STYTCH_PUBLIC_TOKEN"
-            value = "public-token-test-13197340-f43a-409b-b9dd-e4a10307913a"
+            value = "public-token-test-..."
             isEnabled = "YES">
          </EnvironmentVariable>
       </EnvironmentVariables>

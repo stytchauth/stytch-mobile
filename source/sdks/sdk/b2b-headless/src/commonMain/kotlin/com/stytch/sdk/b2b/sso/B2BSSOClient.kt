@@ -617,25 +617,36 @@ internal class B2BSSOClientImpl(
         withContext(dispatchers.ioDispatcher) {
             val domain = cnameDomain() ?: if (publicTokenInfo.isTestToken) endpointOptions.testDomain else endpointOptions.liveDomain
             val baseUrl = "https://$domain/b2b/public/sso/start"
-            val codePair = pkceClient.create()
-            val url = buildSSOUrl(baseUrl, codePair.challenge, parameters)
-            val result = oauthProvider.startBrowserFlow(url, parameters.toOAuthStartParameters(), dispatchers)
-            when (result) {
-                is OAuthResult.ClassicToken ->
-                    networkingClient
-                        .request {
-                            networkingClient.api.b2BSSOAuthEnticate(
-                                B2BSSOAuthEnticateParameters(
-                                    ssoToken = result.token,
-                                    sessionDurationMinutes = parameters.sessionDurationMinutes ?: defaultSessionDuration,
-                                ).toNetworkModel(
-                                    pkceCodeVerifier = codePair.verifier,
-                                    intermediateSessionToken = sessionManager.intermediateSessionToken,
-                                ),
-                            )
-                        }.also { pkceClient.revoke() } as AuthenticatedResponse
-                is OAuthResult.Error -> throw OAuthException(RuntimeException(result.message))
-                else -> throw OAuthException(RuntimeException("Unexpected OAuth result type"))
+            try {
+                val codePair = pkceClient.create()
+                val url = buildSSOUrl(baseUrl, codePair.challenge, parameters)
+                val result = oauthProvider.startBrowserFlow(url, parameters.toOAuthStartParameters(), dispatchers)
+                when (result) {
+                    is OAuthResult.ClassicToken -> {
+                        networkingClient
+                            .request {
+                                networkingClient.api.b2BSSOAuthEnticate(
+                                    B2BSSOAuthEnticateParameters(
+                                        ssoToken = result.token,
+                                        sessionDurationMinutes = parameters.sessionDurationMinutes ?: defaultSessionDuration,
+                                    ).toNetworkModel(
+                                        pkceCodeVerifier = codePair.verifier,
+                                        intermediateSessionToken = sessionManager.intermediateSessionToken,
+                                    ),
+                                )
+                            }.also { pkceClient.revoke() } as AuthenticatedResponse
+                    }
+
+                    is OAuthResult.Error -> {
+                        throw OAuthException(RuntimeException(result.message))
+                    }
+
+                    else -> {
+                        throw OAuthException(RuntimeException("Unexpected OAuth result type"))
+                    }
+                }
+            } finally {
+                pkceClient.revoke()
             }
         }
 
