@@ -154,6 +154,7 @@ public interface StytchB2B : StytchClient {
     /**
      * Hydrates a session from a given session token
      */
+    @Throws(StytchError::class, CancellationException::class)
     public suspend fun hydrate(sessionToken: String)
 }
 
@@ -338,6 +339,7 @@ internal class DefaultStytchB2B(
         return DeeplinkToken(tokenType, token)
     }
 
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun hydrate(sessionToken: String) {
         withContext(dispatchers.ioDispatcher) {
             persistenceClient.save(SESSION_TOKEN_IDENTIFIER, sessionToken)
