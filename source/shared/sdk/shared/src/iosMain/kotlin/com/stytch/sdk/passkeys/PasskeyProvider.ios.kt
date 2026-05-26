@@ -16,7 +16,6 @@ import platform.AuthenticationServices.ASAuthorizationPublicKeyCredentialAsserti
 import platform.AuthenticationServices.ASAuthorizationPublicKeyCredentialRegistrationProtocol
 import platform.AuthenticationServices.ASAuthorizationRequest
 import platform.Foundation.NSError
-import platform.Foundation.base64Encoding
 import platform.darwin.NSObject
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.cancellation.CancellationException
