@@ -7,7 +7,6 @@ import com.stytch.sdk.biometrics.BiometricsAvailability
 import com.stytch.sdk.biometrics.BiometricsParameters
 import com.stytch.sdk.biometrics.BiometricsUnsupportedError
 import com.stytch.sdk.biometrics.IBiometricsProvider
-import com.stytch.sdk.biometrics.MissingBiometricKeyDataError
 import com.stytch.sdk.consumer.networking.ConsumerNetworkingClient
 import com.stytch.sdk.consumer.networking.models.BiometricsAuthenticateParameters
 import com.stytch.sdk.consumer.networking.models.BiometricsAuthenticateResponse
@@ -19,8 +18,6 @@ import com.stytch.sdk.consumer.networking.models.toNetworkModel
 import com.stytch.sdk.data.StytchDispatchers
 import com.stytch.sdk.data.StytchError
 import com.stytch.sdk.encryption.StytchEncryptionClient
-import io.ktor.util.decodeBase64Bytes
-import io.ktor.util.encodeBase64
 import kotlinx.coroutines.withContext
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.js.JsExport

@@ -1,7 +1,6 @@
 package com.stytch.sdk.biometrics
 
 import com.stytch.sdk.StytchBridge
-import com.stytch.sdk.data.Ed25519KeyPair
 import kotlinx.coroutines.await
 import kotlinx.serialization.json.Json
 
