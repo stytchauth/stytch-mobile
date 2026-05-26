@@ -148,6 +148,14 @@ public interface StytchConsumer : StytchClient {
 @JsName("createStytchConsumer")
 public fun createStytchConsumer(configuration: StytchClientConfiguration): StytchConsumer = DefaultStytchConsumer.getInstance(configuration)
 
+/**
+ * Retrieves a previously configured [StytchConsumer] instance, in essence providing a singleton for custom use-cases
+ * Repeated calls with the same process return the same singleton instance.
+ */
+@JsExport
+@JsName("getStytchConsumer")
+public fun getStytchConsumer(): StytchConsumer? = DefaultStytchConsumer.getPreconfiguredInstance()
+
 internal class DefaultStytchConsumer(
     private val configuration: StytchClientConfigurationInternal,
 ) : StytchConsumer {
@@ -317,6 +325,8 @@ internal class DefaultStytchConsumer(
         @Volatile
         private var instance: StytchConsumer? = null
         private const val BOOTSTRAP_IDENTIFIER = "stytch_consumer_bootstrap_data"
+
+        fun getPreconfiguredInstance(): StytchConsumer? = instance
 
         fun getInstance(configuration: StytchClientConfiguration): StytchConsumer =
             instance ?: synchronized(this) {

@@ -166,6 +166,14 @@ public interface StytchB2B : StytchClient {
 @JsName("createStytchB2B")
 public fun createStytchB2B(configuration: StytchClientConfiguration): StytchB2B = DefaultStytchB2B.getInstance(configuration)
 
+/**
+ * Retrieves a previously configured [StytchB2B] instance, in essence providing a singleton for custom use-cases
+ * Repeated calls with the same process return the same singleton instance.
+ */
+@JsExport
+@JsName("getStytchB2B")
+public fun getStytchB2B(): StytchB2B? = DefaultStytchB2B.getPreconfiguredInstance()
+
 internal class DefaultStytchB2B(
     private val configuration: StytchClientConfigurationInternal,
 ) : StytchB2B {
@@ -375,6 +383,8 @@ internal class DefaultStytchB2B(
         @Volatile
         private var instance: StytchB2B? = null
         private const val BOOTSTRAP_IDENTIFIER = "stytch_b2b_bootstrap_data"
+
+        fun getPreconfiguredInstance(): StytchB2B? = instance
 
         fun getInstance(configuration: StytchClientConfiguration): StytchB2B =
             instance ?: synchronized(this) {
