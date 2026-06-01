@@ -1,6 +1,6 @@
 [versions]
 activityKtx = "1.10.0"
-agp = "8.12.3"
+agp = "9.0.1"
 android-compileSdk = "36"
 android-minSdk = "24"
 bcJdk18on="1.84"
