@@ -11,6 +11,8 @@
 
 Headless authentication SDKs for Android, iOS, and React Native, built on a shared [Kotlin Multiplatform](https://www.jetbrains.com/kotlin-multiplatform/) core. Bring your own UI — Stytch handles the auth.
 
+**Note**: This SDK is currently in **Public beta**. If you are instead looking for the stable version, please see [stytch-browser](https://github.com/stytchauth/stytch-browser/tree/main/packages/react-native) for React Native, [stytch-ios](https://github.com/stytchauth/stytch-ios) for iOS, and [stytch-android](https://github.com/stytchauth/stytch-android) for Android respectively.
+
 ---
 
 ## Consumer vs. B2B: What's Right for You?
