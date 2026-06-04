@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 
 ## [1.1.0-RC1] - 2026-06-04
+### Improvements
+
+- Ensure hydrate method is correctly annotated to enable error catching on iOS ([`#108`](https://github.com/stytchauth/stytch-mobile/pull/108))
+- Add getters for configured client instances ([`#108`](https://github.com/stytchauth/stytch-mobile/pull/108))
+- Add rich error descriptions to `StytchError`s ([`#108`](https://github.com/stytchauth/stytch-mobile/pull/108))
+- Other assorted improvements ([`#106`](https://github.com/stytchauth/stytch-mobile/pull/106))
+
+### Bug Fixes
+
+- Fix passkeys authentication on iOS ([`#108`](https://github.com/stytchauth/stytch-mobile/pull/108))
+- Other assorted bug fixes ([`#106`](https://github.com/stytchauth/stytch-mobile/pull/106))
+
+### Refactoring
+
+- Refactor biometrics to prevent passing unnecessary data between the client and provider ([`#107`](https://github.com/stytchauth/stytch-mobile/pull/107))
+
 ## [1.0.9] - 2026-05-01
 ### Bug Fixes
 
