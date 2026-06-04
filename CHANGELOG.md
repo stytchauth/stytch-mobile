@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.0] - 2026-06-04
+### Features
+
+- Release version 1.1.0-RC1 ([`f03552d`](https://github.com/stytchauth/stytch-mobile/commit/f03552d13bdfbfce701e2972d50f97c3800007b4))
+
 ## [1.1.0-RC1] - 2026-06-04
 ### Improvements
 
