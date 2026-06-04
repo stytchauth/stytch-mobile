@@ -61,11 +61,22 @@ public class StytchEncryptionManagerSwift: NSObject {
         var query = baseKeyQuery(name: name)
         query[kSecValueData] = keyData
         query[kSecAttrAccessControl] = accessControl
-        let status = SecItemAdd(query as CFDictionary, nil)
-        if status != errSecSuccess {
+        let addStatus = SecItemAdd(query as CFDictionary, nil)
+        if addStatus == errSecDuplicateItem {
+            let updateStatus = SecItemUpdate(
+                baseKeyQuery(name: name) as CFDictionary,
+                [kSecValueData: keyData, kSecAttrAccessControl: accessControl] as CFDictionary
+            )
+            if updateStatus != errSecSuccess {
+                throw NSError(
+                    domain: "com.stytch.swift.encryption", code: Int(updateStatus),
+                    userInfo: ["Error Updating Key": "Status=\(updateStatus)"]
+                )
+            }
+        } else if addStatus != errSecSuccess {
           throw NSError(
-              domain: "com.stytch.swift.encryption", code: Int(status),
-              userInfo: ["Error Saving Key": "Status=\(status)"]
+              domain: "com.stytch.swift.encryption", code: Int(addStatus),
+              userInfo: ["Error Saving Key": "Status=\(addStatus)"]
           )
         }
     }
@@ -131,15 +142,23 @@ public class StytchEncryptionManagerSwift: NSObject {
     }
 
     private func persistNewKeyDataToKeychain(name: String, newKeyData: Data) throws {
-        let query = baseKeyQuery(name: name).merging(
+        let addQuery = baseKeyQuery(name: name).merging(
             [
                 kSecValueData: newKeyData,
                 kSecAttrAccessible: kSecAttrAccessibleWhenUnlockedThisDeviceOnly,
             ]
         ) { $1 } as CFDictionary
-        let status = SecItemAdd(query, nil)
-        if status != errSecSuccess {
-            throw NSError(domain: "com.stytch.swift.encryption", code: 0, userInfo: ["Error Saving Key": "Status=\(status)"])
+        let addStatus = SecItemAdd(addQuery, nil)
+        if addStatus == errSecDuplicateItem {
+            let updateStatus = SecItemUpdate(
+                baseKeyQuery(name: name) as CFDictionary,
+                [kSecValueData: newKeyData] as CFDictionary
+            )
+            if updateStatus != errSecSuccess {
+                throw NSError(domain: "com.stytch.swift.encryption", code: Int(updateStatus), userInfo: ["Error Updating Key": "Status=\(updateStatus)"])
+            }
+        } else if addStatus != errSecSuccess {
+            throw NSError(domain: "com.stytch.swift.encryption", code: Int(addStatus), userInfo: ["Error Saving Key": "Status=\(addStatus)"])
         }
     }
 

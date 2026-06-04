@@ -3,6 +3,7 @@ package com.stytch.sdk.passkeys
 import com.stytch.sdk.data.StytchDispatchers
 import com.stytch.sdk.data.StytchError
 import com.stytch.sdk.encryption.toNSData
+import com.stytch.sdk.utils.toUtf8String
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.serialization.json.Json
 import platform.AuthenticationServices.ASAuthorization
@@ -15,7 +16,6 @@ import platform.AuthenticationServices.ASAuthorizationPublicKeyCredentialAsserti
 import platform.AuthenticationServices.ASAuthorizationPublicKeyCredentialRegistrationProtocol
 import platform.AuthenticationServices.ASAuthorizationRequest
 import platform.Foundation.NSError
-import platform.Foundation.base64Encoding
 import platform.darwin.NSObject
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.cancellation.CancellationException
@@ -59,7 +59,7 @@ public actual class PasskeyProvider : IPasskeyProvider {
                     listOf(credentialRequest),
                     parameters.preferImmediatelyAvailableCredentials,
                 ) as ASAuthorizationPublicKeyCredentialRegistrationProtocol ?: throw InvalidPasskeyCredentialError()
-            credential.rawClientDataJSON.base64Encoding()
+            credential.rawClientDataJSON.toUtf8String() ?: throw InvalidPasskeyCredentialError()
         } catch (e: Throwable) {
             throw PasskeysException(e)
         }
@@ -82,7 +82,7 @@ public actual class PasskeyProvider : IPasskeyProvider {
                     listOf(credentialRequest),
                     parameters.preferImmediatelyAvailableCredentials,
                 ) as ASAuthorizationPublicKeyCredentialAssertionProtocol ?: throw InvalidPasskeyCredentialError()
-            credential.rawClientDataJSON.base64Encoding()
+            credential.rawClientDataJSON.toUtf8String() ?: throw InvalidPasskeyCredentialError()
         } catch (e: Throwable) {
             throw PasskeysException(e)
         }

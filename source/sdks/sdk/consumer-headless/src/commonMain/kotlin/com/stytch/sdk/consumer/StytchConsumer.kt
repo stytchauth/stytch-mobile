@@ -136,6 +136,7 @@ public interface StytchConsumer : StytchClient {
     /**
      * Hydrates a session from a given session token
      */
+    @Throws(StytchError::class, CancellationException::class)
     public suspend fun hydrate(sessionToken: String)
 }
 
@@ -146,6 +147,14 @@ public interface StytchConsumer : StytchClient {
 @JsExport
 @JsName("createStytchConsumer")
 public fun createStytchConsumer(configuration: StytchClientConfiguration): StytchConsumer = DefaultStytchConsumer.getInstance(configuration)
+
+/**
+ * Retrieves a previously configured [StytchConsumer] instance, in essence providing a singleton for custom use-cases
+ * Repeated calls with the same process return the same singleton instance.
+ */
+@JsExport
+@JsName("getStytchConsumer")
+public fun getStytchConsumer(): StytchConsumer? = DefaultStytchConsumer.getPreconfiguredInstance()
 
 internal class DefaultStytchConsumer(
     private val configuration: StytchClientConfigurationInternal,
@@ -200,7 +209,6 @@ internal class DefaultStytchConsumer(
             dispatchers = dispatchers,
             networkingClient = networkingClient,
             sessionManager = sessionManager,
-            encryptionClient = configuration.encryptionClient,
             biometricsProvider = configuration.biometricsProvider,
         )
 
@@ -280,6 +288,7 @@ internal class DefaultStytchConsumer(
         return DeeplinkToken(tokenType, token)
     }
 
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun hydrate(sessionToken: String) {
         withContext(dispatchers.ioDispatcher) {
             persistenceClient.save(SESSION_TOKEN_IDENTIFIER, sessionToken)
@@ -315,6 +324,8 @@ internal class DefaultStytchConsumer(
         @Volatile
         private var instance: StytchConsumer? = null
         private const val BOOTSTRAP_IDENTIFIER = "stytch_consumer_bootstrap_data"
+
+        fun getPreconfiguredInstance(): StytchConsumer? = instance
 
         fun getInstance(configuration: StytchClientConfiguration): StytchConsumer =
             instance ?: synchronized(this) {

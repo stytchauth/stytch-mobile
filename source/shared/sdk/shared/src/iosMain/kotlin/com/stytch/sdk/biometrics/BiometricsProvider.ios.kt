@@ -4,6 +4,7 @@ import com.stytch.sdk.data.Ed25519KeyPair
 import com.stytch.sdk.encryption.StytchEncryptionClient
 import com.stytch.sdk.persistence.StytchPlatformPersistenceClient
 import io.ktor.util.decodeBase64Bytes
+import io.ktor.util.encodeBase64
 import kotlinx.cinterop.BetaInteropApi
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.ObjCObjectVar
@@ -23,6 +24,8 @@ public actual class BiometricsProvider(
     private val encryptionClient: StytchEncryptionClient,
     private val persistenceClient: StytchPlatformPersistenceClient,
 ) : IBiometricsProvider {
+    private var biometricKey: Ed25519KeyPair? = null
+
     public actual override suspend fun getAvailability(parameters: BiometricsParameters): BiometricsAvailability =
         memScoped {
             val laContext = LAContext()
@@ -41,7 +44,7 @@ public actual class BiometricsProvider(
             BiometricsAvailability.Available
         }
 
-    public actual override suspend fun register(parameters: BiometricsParameters): Ed25519KeyPair =
+    public actual override suspend fun createBiometricKey(parameters: BiometricsParameters): String =
         try {
             val laContext = LAContext()
             val canEvaluate = laContext.canEvaluatePolicy(LAPolicyDeviceOwnerAuthenticationWithBiometrics, null)
@@ -57,20 +60,21 @@ public actual class BiometricsProvider(
                     }
                     val keyPair = encryptionClient.generateEd25519KeyPair()
                     val encryptedPrivateKey = encryptionClient.encrypt(keyPair.privateKey)
-                    continuation.resumeIgnoringCancellation(
+                    biometricKey =
                         Ed25519KeyPair(
                             publicKey = keyPair.publicKey,
                             privateKey = keyPair.privateKey,
                             encryptedPrivateKey = encryptedPrivateKey,
-                        ),
-                    )
+                        )
+                    continuation.resumeIgnoringCancellation(keyPair.publicKey.encodeBase64())
                 }
             }
         } catch (e: Throwable) {
+            biometricKey = null
             throw UnhandledCryptographyError(e)
         }
 
-    public actual override suspend fun authenticate(parameters: BiometricsParameters): Ed25519KeyPair =
+    public actual override suspend fun retrieveBiometricKey(parameters: BiometricsParameters): String =
         try {
             val laContext = LAContext()
             val canEvaluate = laContext.canEvaluatePolicy(LAPolicyDeviceOwnerAuthenticationWithBiometrics, null)
@@ -88,27 +92,35 @@ public actual class BiometricsProvider(
                     val encryptedDecodedPrivateKey = encryptedEncodedPrivateKey.decodeToString().decodeBase64Bytes()
                     val decryptedPrivateKey = encryptionClient.decrypt(encryptedDecodedPrivateKey)
                     val publicKey = encryptionClient.deriveEd25519PublicKeyFromPrivateKeyBytes(decryptedPrivateKey)
-                    continuation.resumeIgnoringCancellation(
+                    biometricKey =
                         Ed25519KeyPair(
                             publicKey = publicKey,
                             privateKey = decryptedPrivateKey,
-                        ),
-                    )
+                        )
+                    continuation.resumeIgnoringCancellation(publicKey.encodeBase64())
                 }
             }
         } catch (e: Throwable) {
+            biometricKey = null
             throw UnhandledCryptographyError(e)
         }
 
-    public actual override suspend fun persistRegistration(
-        registrationId: String,
-        privateKeyData: String,
-    ) {
-        try {
+    actual override suspend fun signWithBiometricKey(challenge: String): String {
+        val keyPair = biometricKey ?: throw MissingBiometricKey()
+        return encryptionClient
+            .signEd25519(
+                key = keyPair.privateKey,
+                data = challenge.decodeBase64Bytes(),
+            ).encodeBase64()
+    }
+
+    public actual override suspend fun persistRegistration(registrationId: String) {
+        biometricKey?.encryptedPrivateKey?.let { encryptedPrivateKey ->
             persistenceClient.saveData(BIOMETRIC_REGISTRATION_ID_KEY, registrationId)
-            encryptionClient.createBiometricKey(BIOMETRIC_REGISTRATION_PRIVATE_KEY_KEY, privateKeyData.encodeToByteArray())
-        } catch (e: Throwable) {
-            throw UnhandledCryptographyError(e)
+            encryptionClient.createBiometricKey(
+                BIOMETRIC_REGISTRATION_PRIVATE_KEY_KEY,
+                encryptedPrivateKey.encodeBase64().encodeToByteArray(),
+            )
         }
     }
 

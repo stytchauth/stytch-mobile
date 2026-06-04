@@ -13,6 +13,7 @@ import com.stytch.sdk.data.Ed25519KeyPair
 import com.stytch.sdk.encryption.StytchEncryptionClient
 import com.stytch.sdk.persistence.StytchPlatformPersistenceClient
 import io.ktor.util.decodeBase64Bytes
+import io.ktor.util.encodeBase64
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
@@ -32,6 +33,8 @@ public actual class BiometricsProvider(
     private val persistenceClient: StytchPlatformPersistenceClient,
 ) : IBiometricsProvider {
     private var keyStoreLoaded = false
+
+    private var biometricKey: Ed25519KeyPair? = null
 
     public actual override suspend fun getAvailability(parameters: BiometricsParameters): BiometricsAvailability {
         val allowedAuthenticators = getAllowedAuthenticators(parameters.allowDeviceCredentials)
@@ -72,7 +75,7 @@ public actual class BiometricsProvider(
         }
     }
 
-    public actual override suspend fun register(parameters: BiometricsParameters): Ed25519KeyPair =
+    public actual override suspend fun createBiometricKey(parameters: BiometricsParameters): String =
         try {
             val allowedAuthenticators = getAllowedAuthenticators(parameters.allowDeviceCredentials)
             val cipher =
@@ -83,16 +86,19 @@ public actual class BiometricsProvider(
                 )
             val keyPair = encryptionClient.generateEd25519KeyPair()
             val encryptedPrivateKeyBytes = cipher.iv + cipher.doFinal(keyPair.privateKey)
-            Ed25519KeyPair(
-                publicKey = keyPair.publicKey,
-                privateKey = keyPair.privateKey,
-                encryptedPrivateKey = encryptedPrivateKeyBytes,
-            )
+            biometricKey =
+                Ed25519KeyPair(
+                    publicKey = keyPair.publicKey,
+                    privateKey = keyPair.privateKey,
+                    encryptedPrivateKey = encryptedPrivateKeyBytes,
+                )
+            keyPair.publicKey.encodeBase64()
         } catch (e: Throwable) {
+            biometricKey = null
             throw UnhandledCryptographyError(e)
         }
 
-    public actual override suspend fun authenticate(parameters: BiometricsParameters): Ed25519KeyPair =
+    public actual override suspend fun retrieveBiometricKey(parameters: BiometricsParameters): String =
         try {
             val allowedAuthenticators = getAllowedAuthenticators(parameters.allowDeviceCredentials)
             val encodedPrivateKeyBytes =
@@ -109,13 +115,25 @@ public actual class BiometricsProvider(
                 )
             val decodedPrivateKeyData = cipher.doFinal(encodedPrivateKeyData)
             val derivedPublicKey = encryptionClient.deriveEd25519PublicKeyFromPrivateKeyBytes(decodedPrivateKeyData)
-            Ed25519KeyPair(
-                publicKey = derivedPublicKey,
-                privateKey = decodedPrivateKeyData,
-            )
+            biometricKey =
+                Ed25519KeyPair(
+                    publicKey = derivedPublicKey,
+                    privateKey = decodedPrivateKeyData,
+                )
+            derivedPublicKey.encodeBase64()
         } catch (e: Throwable) {
+            biometricKey = null
             throw UnhandledCryptographyError(e)
         }
+
+    actual override suspend fun signWithBiometricKey(challenge: String): String {
+        val keyPair = biometricKey ?: throw MissingBiometricKey()
+        return encryptionClient
+            .signEd25519(
+                key = keyPair.privateKey,
+                data = challenge.decodeBase64Bytes(),
+            ).encodeBase64()
+    }
 
     private suspend fun ensureKeystoreIsLoaded() =
         withContext(Dispatchers.IO) {
@@ -255,12 +273,12 @@ public actual class BiometricsProvider(
         cipher.init(Cipher.ENCRYPT_MODE, secretKey)
     }
 
-    public actual override suspend fun persistRegistration(
-        registrationId: String,
-        privateKeyData: String,
-    ) {
-        persistenceClient.saveData(BIOMETRIC_REGISTRATION_ID_KEY, registrationId)
-        persistenceClient.saveData(BIOMETRIC_REGISTRATION_PRIVATE_KEY_KEY, privateKeyData)
+    public actual override suspend fun persistRegistration(registrationId: String) {
+        biometricKey?.encryptedPrivateKey?.let { encryptedPrivateKey ->
+            persistenceClient.saveData(BIOMETRIC_REGISTRATION_ID_KEY, registrationId)
+            persistenceClient.saveData(BIOMETRIC_REGISTRATION_PRIVATE_KEY_KEY, encryptedPrivateKey.encodeBase64())
+            biometricKey = null
+        }
     }
 
     public actual override suspend fun removeRegistration() {
@@ -268,6 +286,7 @@ public actual class BiometricsProvider(
         persistenceClient.removeData(BIOMETRIC_REGISTRATION_ID_KEY)
         persistenceClient.removeData(BIOMETRIC_REGISTRATION_PRIVATE_KEY_KEY)
         keyStore.deleteEntry(BIOMETRIC_KEY_NAME)
+        biometricKey = null
     }
 
     private companion object {

@@ -188,7 +188,7 @@ class StytchBridgeModule(reactContext: ReactApplicationContext) :
     }
   }
 
-  override fun registerBiometrics(
+  override fun createBiometricKey(
     sessionDurationMinutes: Double,
     androidAllowDeviceCredentials: Boolean?,
     androidTitle: String?,
@@ -202,7 +202,7 @@ class StytchBridgeModule(reactContext: ReactApplicationContext) :
   ) {
     mainScope.launch {
       runCatching {
-        biometricsProvider.register(
+        biometricsProvider.createBiometricKey(
           BiometricsParameters(
             context = reactApplicationContext.currentActivity!! as FragmentActivity,
             allowDeviceCredentials = androidAllowDeviceCredentials ?: false,
@@ -216,8 +216,8 @@ class StytchBridgeModule(reactContext: ReactApplicationContext) :
           )
         )
       }
-      .onSuccess { keyPair ->
-        promise.resolve(Json.encodeToString(keyPair))
+      .onSuccess { publicKey ->
+        promise.resolve(publicKey)
       }
       .onFailure { exception ->
         promise.reject(exception)
@@ -225,7 +225,7 @@ class StytchBridgeModule(reactContext: ReactApplicationContext) :
     }
   }
 
-  override fun authenticateBiometrics(
+  override fun retrieveBiometricKey(
     sessionDurationMinutes: Double,
     androidAllowDeviceCredentials: Boolean?,
     androidTitle: String?,
@@ -239,7 +239,7 @@ class StytchBridgeModule(reactContext: ReactApplicationContext) :
   ) {
     mainScope.launch {
       runCatching {
-        biometricsProvider.authenticate(
+        biometricsProvider.retrieveBiometricKey(
           BiometricsParameters(
             context = reactApplicationContext.currentActivity!! as FragmentActivity,
             allowDeviceCredentials = androidAllowDeviceCredentials ?: false,
@@ -253,8 +253,8 @@ class StytchBridgeModule(reactContext: ReactApplicationContext) :
           )
         )
       }
-      .onSuccess { keyPair ->
-        promise.resolve(Json.encodeToString(keyPair))
+      .onSuccess { publicKey ->
+        promise.resolve(publicKey)
       }
       .onFailure { exception ->
         promise.reject(exception)
@@ -262,10 +262,23 @@ class StytchBridgeModule(reactContext: ReactApplicationContext) :
     }
   }
 
-  override fun persistBiometricRegistration(registrationId: String, privateKeyData: String, promise: Promise) {
+  override fun signWithBiometricKey(challenge: String, promise: Promise) {
     ioScope.launch {
       runCatching {
-        biometricsProvider.persistRegistration(registrationId, privateKeyData)
+        biometricsProvider.signWithBiometricKey(challenge)
+      }.onSuccess { signature ->
+        promise.resolve(signature)
+      }
+      .onFailure { exception ->
+        promise.reject(exception)
+      }
+    }
+  }
+
+  override fun persistBiometricRegistration(registrationId: String, promise: Promise) {
+    ioScope.launch {
+      runCatching {
+        biometricsProvider.persistRegistration(registrationId)
       }
       .onSuccess {
         promise.resolve(null)

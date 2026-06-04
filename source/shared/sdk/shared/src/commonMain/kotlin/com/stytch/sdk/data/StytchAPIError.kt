@@ -16,6 +16,14 @@ public class StytchAPIError(
     @SerialName("error_url")
     public val errorUrl: String,
 ) : StytchError() {
+    public override val additionalErrorDetails: List<Pair<String, String>> =
+        listOf(
+            "error_type" to errorType,
+            "request_id" to requestId,
+            "error_message" to errorMessage,
+            "error_url" to errorUrl,
+        )
+
     init {
         fixJsErrorMessage(errorMessage)
     }

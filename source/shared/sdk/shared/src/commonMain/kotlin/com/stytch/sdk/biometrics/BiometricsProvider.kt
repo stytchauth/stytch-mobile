@@ -1,18 +1,15 @@
 package com.stytch.sdk.biometrics
 
-import com.stytch.sdk.data.Ed25519KeyPair
-
 public interface IBiometricsProvider {
     public suspend fun getAvailability(parameters: BiometricsParameters): BiometricsAvailability
 
-    public suspend fun register(parameters: BiometricsParameters): Ed25519KeyPair
+    public suspend fun createBiometricKey(parameters: BiometricsParameters): String
 
-    public suspend fun authenticate(parameters: BiometricsParameters): Ed25519KeyPair
+    public suspend fun retrieveBiometricKey(parameters: BiometricsParameters): String
 
-    public suspend fun persistRegistration(
-        registrationId: String,
-        privateKeyData: String,
-    )
+    public suspend fun signWithBiometricKey(challenge: String): String
+
+    public suspend fun persistRegistration(registrationId: String)
 
     public suspend fun removeRegistration()
 }
@@ -20,14 +17,13 @@ public interface IBiometricsProvider {
 public expect class BiometricsProvider : IBiometricsProvider {
     public override suspend fun getAvailability(parameters: BiometricsParameters): BiometricsAvailability
 
-    public override suspend fun register(parameters: BiometricsParameters): Ed25519KeyPair
+    public override suspend fun createBiometricKey(parameters: BiometricsParameters): String
 
-    public override suspend fun authenticate(parameters: BiometricsParameters): Ed25519KeyPair
+    public override suspend fun retrieveBiometricKey(parameters: BiometricsParameters): String
 
-    public override suspend fun persistRegistration(
-        registrationId: String,
-        privateKeyData: String,
-    )
+    public override suspend fun signWithBiometricKey(challenge: String): String
+
+    public override suspend fun persistRegistration(registrationId: String)
 
     public override suspend fun removeRegistration()
 }

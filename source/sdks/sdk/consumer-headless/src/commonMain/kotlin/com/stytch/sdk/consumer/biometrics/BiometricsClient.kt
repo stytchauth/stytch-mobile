@@ -7,7 +7,6 @@ import com.stytch.sdk.biometrics.BiometricsAvailability
 import com.stytch.sdk.biometrics.BiometricsParameters
 import com.stytch.sdk.biometrics.BiometricsUnsupportedError
 import com.stytch.sdk.biometrics.IBiometricsProvider
-import com.stytch.sdk.biometrics.MissingBiometricKeyDataError
 import com.stytch.sdk.consumer.networking.ConsumerNetworkingClient
 import com.stytch.sdk.consumer.networking.models.BiometricsAuthenticateParameters
 import com.stytch.sdk.consumer.networking.models.BiometricsAuthenticateResponse
@@ -18,9 +17,6 @@ import com.stytch.sdk.consumer.networking.models.BiometricsRegisterStartParamete
 import com.stytch.sdk.consumer.networking.models.toNetworkModel
 import com.stytch.sdk.data.StytchDispatchers
 import com.stytch.sdk.data.StytchError
-import com.stytch.sdk.encryption.StytchEncryptionClient
-import io.ktor.util.decodeBase64Bytes
-import io.ktor.util.encodeBase64
 import kotlinx.coroutines.withContext
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.js.JsExport
@@ -182,7 +178,6 @@ internal class BiometricsClientImpl(
     private val dispatchers: StytchDispatchers,
     private val networkingClient: ConsumerNetworkingClient,
     private val sessionManager: StytchAuthenticationStateManager,
-    private val encryptionClient: StytchEncryptionClient,
     private val biometricsProvider: IBiometricsProvider,
 ) : BiometricsClient {
     @Throws(StytchError::class, CancellationException::class)
@@ -197,19 +192,14 @@ internal class BiometricsClientImpl(
         if (sessionManager.currentSessionToken.isNullOrEmpty()) {
             throw NoSessionExists()
         }
-        val keyPair = biometricsProvider.register(parameters)
+        val publicKey = biometricsProvider.createBiometricKey(parameters)
         return withContext(dispatchers.ioDispatcher) {
             networkingClient.request {
                 val startResponse =
                     networkingClient.api.biometricsRegisterStart(
-                        BiometricsRegisterStartParameters().toNetworkModel(publicKey = keyPair.publicKey.encodeBase64()),
+                        BiometricsRegisterStartParameters().toNetworkModel(publicKey = publicKey),
                     )
-                val signature =
-                    encryptionClient
-                        .signEd25519(
-                            key = keyPair.privateKey,
-                            data = startResponse.data.challenge.decodeBase64Bytes(),
-                        ).encodeBase64()
+                val signature = biometricsProvider.signWithBiometricKey(startResponse.data.challenge)
                 val response =
                     networkingClient.api.biometricsRegister(
                         BiometricsRegisterParameters(sessionDurationMinutes = parameters.sessionDurationMinutes).toNetworkModel(
@@ -217,12 +207,8 @@ internal class BiometricsClientImpl(
                             signature = signature,
                         ),
                     )
-                val encKey = keyPair.encryptedPrivateKey ?: throw MissingBiometricKeyDataError()
                 // if we made it here, the registration was successful, so persist the data
-                biometricsProvider.persistRegistration(
-                    registrationId = response.data.biometricRegistrationId,
-                    privateKeyData = encKey.encodeBase64(),
-                )
+                biometricsProvider.persistRegistration(registrationId = response.data.biometricRegistrationId)
                 // return the response
                 response
             }
@@ -234,19 +220,14 @@ internal class BiometricsClientImpl(
         if (getAvailability(parameters) != BiometricsAvailability.AlreadyRegistered) {
             throw NoBiometricsRegistered()
         }
-        val keyPair = biometricsProvider.authenticate(parameters)
+        val publicKey = biometricsProvider.retrieveBiometricKey(parameters)
         return withContext(dispatchers.ioDispatcher) {
             networkingClient.request {
                 val startResponse =
                     networkingClient.api.biometricsAuthenticateStart(
-                        BiometricsAuthenticateStartParameters().toNetworkModel(publicKey = keyPair.publicKey.encodeBase64()),
+                        BiometricsAuthenticateStartParameters().toNetworkModel(publicKey = publicKey),
                     )
-                val signature =
-                    encryptionClient
-                        .signEd25519(
-                            key = keyPair.privateKey,
-                            data = startResponse.data.challenge.decodeBase64Bytes(),
-                        ).encodeBase64()
+                val signature = biometricsProvider.signWithBiometricKey(startResponse.data.challenge)
                 networkingClient.api.biometricsAuthenticate(
                     BiometricsAuthenticateParameters(sessionDurationMinutes = parameters.sessionDurationMinutes).toNetworkModel(
                         biometricRegistrationId = startResponse.data.biometricRegistrationId,
