@@ -30,6 +30,7 @@ public abstract interface class com/stytch/sdk/consumer/StytchConsumer : com/sty
 
 public final class com/stytch/sdk/consumer/StytchConsumerKt {
 	public static final fun createStytchConsumer (Lcom/stytch/sdk/data/StytchClientConfiguration;)Lcom/stytch/sdk/consumer/StytchConsumer;
+	public static final fun getStytchConsumer ()Lcom/stytch/sdk/consumer/StytchConsumer;
 }
 
 public abstract interface class com/stytch/sdk/consumer/biometrics/BiometricsClient {

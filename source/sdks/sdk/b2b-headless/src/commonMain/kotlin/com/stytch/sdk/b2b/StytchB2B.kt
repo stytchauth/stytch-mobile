@@ -154,6 +154,7 @@ public interface StytchB2B : StytchClient {
     /**
      * Hydrates a session from a given session token
      */
+    @Throws(StytchError::class, CancellationException::class)
     public suspend fun hydrate(sessionToken: String)
 }
 
@@ -164,6 +165,14 @@ public interface StytchB2B : StytchClient {
 @JsExport
 @JsName("createStytchB2B")
 public fun createStytchB2B(configuration: StytchClientConfiguration): StytchB2B = DefaultStytchB2B.getInstance(configuration)
+
+/**
+ * Retrieves a previously configured [StytchB2B] instance, in essence providing a singleton for custom use-cases
+ * Repeated calls with the same process return the same singleton instance.
+ */
+@JsExport
+@JsName("getStytchB2B")
+public fun getStytchB2B(): StytchB2B? = DefaultStytchB2B.getPreconfiguredInstance()
 
 internal class DefaultStytchB2B(
     private val configuration: StytchClientConfigurationInternal,
@@ -338,6 +347,7 @@ internal class DefaultStytchB2B(
         return DeeplinkToken(tokenType, token)
     }
 
+    @Throws(StytchError::class, CancellationException::class)
     override suspend fun hydrate(sessionToken: String) {
         withContext(dispatchers.ioDispatcher) {
             persistenceClient.save(SESSION_TOKEN_IDENTIFIER, sessionToken)
@@ -373,6 +383,8 @@ internal class DefaultStytchB2B(
         @Volatile
         private var instance: StytchB2B? = null
         private const val BOOTSTRAP_IDENTIFIER = "stytch_b2b_bootstrap_data"
+
+        fun getPreconfiguredInstance(): StytchB2B? = instance
 
         fun getInstance(configuration: StytchClientConfiguration): StytchB2B =
             instance ?: synchronized(this) {
