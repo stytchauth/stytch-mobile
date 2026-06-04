@@ -93,6 +93,7 @@ class ConsumerViewModel {
         case .loading: return "Loading..."
         case .authenticated: return "Welcome Back"
         case .unauthenticated: return "Please Login"
+        case .error: return "Error"
         }
     }
 

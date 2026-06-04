@@ -32,10 +32,6 @@ public final class com/stytch/sdk/consumer/StytchConsumerKt {
 	public static final fun createStytchConsumer (Lcom/stytch/sdk/data/StytchClientConfiguration;)Lcom/stytch/sdk/consumer/StytchConsumer;
 }
 
-public final class com/stytch/sdk/consumer/biometrics/BiometricsAlreadyEnrolled : com/stytch/sdk/data/StytchError {
-	public fun <init> ()V
-}
-
 public abstract interface class com/stytch/sdk/consumer/biometrics/BiometricsClient {
 	public abstract fun authenticate (Lcom/stytch/sdk/biometrics/BiometricsParameters;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun getAvailability (Lcom/stytch/sdk/biometrics/BiometricsParameters;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
@@ -64,6 +60,11 @@ public final class com/stytch/sdk/consumer/data/ConsumerAuthenticationState$Auth
 	public final fun getSessionJwt ()Ljava/lang/String;
 	public final fun getSessionToken ()Ljava/lang/String;
 	public final fun getUser ()Lcom/stytch/sdk/consumer/networking/models/ApiUserV1User;
+}
+
+public final class com/stytch/sdk/consumer/data/ConsumerAuthenticationState$Error : com/stytch/sdk/consumer/data/ConsumerAuthenticationState {
+	public fun <init> (Ljava/lang/Throwable;)V
+	public final fun getException ()Ljava/lang/Throwable;
 }
 
 public final class com/stytch/sdk/consumer/data/ConsumerAuthenticationState$Loading : com/stytch/sdk/consumer/data/ConsumerAuthenticationState {

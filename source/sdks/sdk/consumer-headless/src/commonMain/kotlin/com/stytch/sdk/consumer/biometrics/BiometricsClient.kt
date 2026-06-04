@@ -2,10 +2,12 @@ package com.stytch.sdk.consumer.biometrics
 
 import com.stytch.sdk.StytchApi
 import com.stytch.sdk.StytchAuthenticationStateManager
+import com.stytch.sdk.biometrics.BiometricsAlreadyEnrolledError
 import com.stytch.sdk.biometrics.BiometricsAvailability
 import com.stytch.sdk.biometrics.BiometricsParameters
 import com.stytch.sdk.biometrics.BiometricsUnsupportedError
 import com.stytch.sdk.biometrics.IBiometricsProvider
+import com.stytch.sdk.biometrics.MissingBiometricKeyDataError
 import com.stytch.sdk.consumer.networking.ConsumerNetworkingClient
 import com.stytch.sdk.consumer.networking.models.BiometricsAuthenticateParameters
 import com.stytch.sdk.consumer.networking.models.BiometricsAuthenticateResponse
@@ -190,7 +192,7 @@ internal class BiometricsClientImpl(
             throw BiometricsUnsupportedError()
         }
         if (availability == BiometricsAvailability.AlreadyRegistered) {
-            throw BiometricsAlreadyEnrolled()
+            throw BiometricsAlreadyEnrolledError()
         }
         if (sessionManager.currentSessionToken.isNullOrEmpty()) {
             throw NoSessionExists()
@@ -215,10 +217,11 @@ internal class BiometricsClientImpl(
                             signature = signature,
                         ),
                     )
+                val encKey = keyPair.encryptedPrivateKey ?: throw MissingBiometricKeyDataError()
                 // if we made it here, the registration was successful, so persist the data
                 biometricsProvider.persistRegistration(
                     registrationId = response.data.biometricRegistrationId,
-                    privateKeyData = keyPair.encryptedPrivateKey!!.encodeBase64(),
+                    privateKeyData = encKey.encodeBase64(),
                 )
                 // return the response
                 response

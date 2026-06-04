@@ -9,6 +9,7 @@ import io.ktor.client.call.body
 import io.ktor.client.plugins.ResponseException
 import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
+import io.ktor.utils.io.CancellationException
 import kotlin.time.Instant
 
 internal interface IErrorResponseParser {
@@ -47,7 +48,8 @@ internal class B2BNetworkingClientMiddleware(
                 sessionManager.revoke()
             }
             error
-        } catch (_: Exception) {
+        } catch (inner: Exception) {
+            if (inner is CancellationException) throw inner
             StytchNetworkError(errorParser.responseText(exception.response))
         }
 }
