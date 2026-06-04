@@ -209,7 +209,6 @@ internal class DefaultStytchConsumer(
             dispatchers = dispatchers,
             networkingClient = networkingClient,
             sessionManager = sessionManager,
-            encryptionClient = configuration.encryptionClient,
             biometricsProvider = configuration.biometricsProvider,
         )
 

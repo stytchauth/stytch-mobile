@@ -17,7 +17,6 @@ import com.stytch.sdk.consumer.networking.models.BiometricsRegisterStartParamete
 import com.stytch.sdk.consumer.networking.models.toNetworkModel
 import com.stytch.sdk.data.StytchDispatchers
 import com.stytch.sdk.data.StytchError
-import com.stytch.sdk.encryption.StytchEncryptionClient
 import kotlinx.coroutines.withContext
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.js.JsExport
@@ -179,7 +178,6 @@ internal class BiometricsClientImpl(
     private val dispatchers: StytchDispatchers,
     private val networkingClient: ConsumerNetworkingClient,
     private val sessionManager: StytchAuthenticationStateManager,
-    private val encryptionClient: StytchEncryptionClient,
     private val biometricsProvider: IBiometricsProvider,
 ) : BiometricsClient {
     @Throws(StytchError::class, CancellationException::class)
