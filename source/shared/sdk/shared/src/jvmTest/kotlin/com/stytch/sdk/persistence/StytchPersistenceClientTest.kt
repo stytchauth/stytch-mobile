@@ -1,5 +1,7 @@
 package com.stytch.sdk.persistence
 
+import com.stytch.sdk.data.StytchSDKError
+import com.stytch.sdk.encryption.PermanentKeyFailureException
 import com.stytch.sdk.encryption.StytchEncryptionClient
 import io.mockk.every
 import io.mockk.mockk
@@ -10,6 +12,7 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.Serializable
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.test.assertNull
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -68,16 +71,30 @@ class StytchPersistenceClientTest {
         }
 
     @Test
-    fun `get returns default and removes key when decryption throws`() =
+    fun `get removes key when decryption throws PermanentKeyFailureException`() =
         runTest(dispatcher) {
             every { encryptionClient.encrypt(any()) } answers { firstArg() }
-            every { encryptionClient.decrypt(any()) } throws RuntimeException("decryption failed")
+            every { encryptionClient.decrypt(any()) } throws PermanentKeyFailureException(cause = null)
 
             client.save("key", Payload("hello"))
             val result = client.get<Payload>("key", null)
 
             assertNull(result)
             verify { platformClient.removeData("key") }
+        }
+
+    @Test
+    fun `get rethrows transient decryption failures as StytchSDKError without removing key`() =
+        runTest(dispatcher) {
+            every { encryptionClient.encrypt(any()) } answers { firstArg() }
+            every { encryptionClient.decrypt(any()) } throws RuntimeException("transient failure")
+
+            client.save("key", Payload("hello"))
+
+            assertFailsWith<StytchSDKError> {
+                client.get<Payload>("key", null)
+            }
+            verify(exactly = 0) { platformClient.removeData("key") }
         }
 
     @Test

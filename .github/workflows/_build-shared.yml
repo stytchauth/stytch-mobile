@@ -10,6 +10,9 @@ on:
       KEYCHAIN_PASSWORD:
         required: true
 
+permissions:
+  contents: read
+
 jobs:
   build-shared:
     name: Build Shared
