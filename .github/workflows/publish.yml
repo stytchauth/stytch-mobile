@@ -490,7 +490,7 @@ jobs:
 
   create-github-release:
     name: Create GitHub Release
-    runs-on: ubuntu-latest
+    runs-on: depot-ubuntu-24.04
     needs: [publish-shared-maven, publish-sdks-maven, package-and-release-ios, publish-rn, generate-sbom]
     env:
       DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run == true }}
