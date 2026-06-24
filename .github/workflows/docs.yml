@@ -188,7 +188,7 @@ jobs:
 
   update-mintlify-docs:
     name: Update Mintlify Docs
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest-public
     needs: build-shared
 
     steps:
@@ -288,7 +288,7 @@ jobs:
 
   deploy-pages:
     name: Deploy to GitHub Pages
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest-public
     needs: [generate-android-docs, generate-ios-docs]
 
     steps:
